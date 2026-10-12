@@ -81,13 +81,13 @@ const ambientMeta = {
 
 const calendarIntro = {
   zh: [
-    "一册记录无法被安排之物的日历：天空、水、天气与光。它不把时间切成星期，也不记录约会，只把每一天交给海、湖、云或天空；有时同一种景象会连续停留几日，像天气本身一样，不平均，也不解释。首页每天只留下约二十秒的风景，作为信息与判断之间的一枚纯净锚点——明天再来，眼前也许已经换了一面。"
+    "一册记录无法被安排之物的日历：天空、水、天气与光。它从 2023 年 7 月 23 日开始，不把时间切成星期，也不记录约会，只在一天真正到来以后，把它交给海、湖、云或天空；未来的日子仍然保持未知。有时同一种景象会连续停留几日，像天气本身一样，不平均，也不解释。首页每天只留下约二十秒的风景，作为信息与判断之间的一枚纯净锚点。"
   ],
   en: [
-    "A calendar for things that cannot be scheduled: sky, water, weather and light. It does not divide time into weeks or keep appointments; it simply gives each day to the sea, lake, clouds or sky. Sometimes one view lingers for several days, like weather itself—uneven and unexplained. Each day the homepage keeps only about twenty seconds of landscape, a quiet anchor among information and judgement. Come back tomorrow and the view may already have changed."
+    "A calendar for things that cannot be scheduled: sky, water, weather and light. It begins on 23 July 2023. It does not divide time into weeks or keep appointments; only when a day actually arrives is it given to the sea, lake, clouds or sky. Future days remain unknown. Sometimes one view lingers for several days, like weather itself—uneven and unexplained. Each day the homepage keeps only about twenty seconds of landscape, a quiet anchor among information and judgement."
   ],
   ja: [
-    "予定できないもののためのカレンダー——空、水、天気、光。時間を一週間ごとに切り分けず、予定も記さず、ただ一日を海、湖、雲、空のどれかへ渡していく。同じ景色が数日続くこともある。天気そのもののように、均等でもなく、説明もされない。ホームには毎日およそ二十秒の風景だけが残り、情報や判断のあいだに小さな純粋な錨を下ろす。明日また来れば、目の前の景色はもう変わっているかもしれない。"
+    "予定できないもののためのカレンダー——空、水、天気、光。2023年7月23日から始まり、時間を一週間ごとに切り分けず、予定も記さない。一日が実際に訪れてから、海、湖、雲、空のどれかへ渡され、未来の日々はそれまで未知のままに残る。同じ景色が数日続くこともある。天気そのもののように、均等でもなく、説明もされない。ホームには毎日およそ二十秒の風景だけが残る。"
   ]
 };
 
@@ -440,6 +440,22 @@ function addMonths(date, amount) {
   return new Date(date.getFullYear(), date.getMonth() + amount, 1, 12, 0, 0, 0);
 }
 
+const CALENDAR_START = new Date(2023, 6, 23, 12, 0, 0, 0);
+const CALENDAR_START_MONTH = startOfMonth(CALENDAR_START);
+
+function dateIsBeforeCalendarStart(date) {
+  return date.getTime() < CALENDAR_START.getTime();
+}
+
+function dateIsAfterToday(date) {
+  return date.getTime() > todayAtNoon().getTime();
+}
+
+function calendarCursorIsAtStart() {
+  return state.calendarCursor.getFullYear() === CALENDAR_START_MONTH.getFullYear() &&
+    state.calendarCursor.getMonth() === CALENDAR_START_MONTH.getMonth();
+}
+
 function hashString(value) {
   var hash = 2166136261;
   for (var i = 0; i < value.length; i += 1) {
@@ -687,23 +703,41 @@ function calendarGrid() {
   var year = cursor.getFullYear();
   var month = cursor.getMonth();
   var daysInMonth = new Date(year, month + 1, 0).getDate();
-  var todayKey = dateKey(todayAtNoon());
+  var today = todayAtNoon();
+  var todayKey = dateKey(today);
   var selectedKey = dateKey(selectedDate());
 
-  /* The calendar has no weeks. Time is sorted into four landscape tracks
-     instead: sky / sea / lake / cloud. */
-  var trackOrder = ["sky", "sea", "lake", "cloud"];
-  var tracks = { sky: [], sea: [], lake: [], cloud: [] };
+  /* Past and present are known; the future is deliberately not assigned a
+     visible landscape until the date actually arrives. */
+  var trackOrder = ["sky", "sea", "lake", "cloud", "unknown"];
+  var tracks = { sky: [], sea: [], lake: [], cloud: [], unknown: [] };
+  var trackLabels = {
+    unknown: { zh: "未知", en: "unknown", ja: "未知" }
+  };
 
   for (var day = 1; day <= daysInMonth; day += 1) {
     var date = new Date(year, month, day, 12);
+
+    if (dateIsBeforeCalendarStart(date)) continue;
+
     var key = dateKey(date);
+    var isFuture = date.getTime() > today.getTime();
+    var spacing = hashString(key + ":calendar-track-spacing") % 3;
+
+    if (isFuture) {
+      tracks.unknown.push(
+        '<button type="button" class="calendar-day is-unknown calendar-space-' + spacing + '" disabled' +
+          ' aria-label="' + escapeHtml(formatDate(date) + " · " + localised(trackLabels.unknown)) + '">' +
+          '<span class="calendar-number">' + String(day).padStart(2, "0") + "</span>" +
+        "</button>"
+      );
+      continue;
+    }
+
     var type = ambientTypeForDate(date);
     var classes = "calendar-day";
     if (key === todayKey) classes += " is-today";
     if (key === selectedKey) classes += " is-selected";
-
-    var spacing = hashString(key + ":calendar-track-spacing") % 3;
     classes += " calendar-space-" + spacing;
 
     tracks[type].push(
@@ -715,9 +749,13 @@ function calendarGrid() {
   }
 
   return trackOrder.map(function(type) {
+    var label = type === "unknown"
+      ? localised(trackLabels.unknown)
+      : localised(ambientMeta[type].short);
+
     return '<section class="calendar-track calendar-track-' + type + '">' +
       '<header class="calendar-track-head">' +
-        '<span class="calendar-track-name">' + escapeHtml(localised(ambientMeta[type].short)) + "</span>" +
+        '<span class="calendar-track-name">' + escapeHtml(label) + "</span>" +
         '<span class="calendar-track-count">' + String(tracks[type].length).padStart(2, "0") + "</span>" +
       "</header>" +
       '<div class="calendar-track-days">' + tracks[type].join("") + "</div>" +
@@ -740,7 +778,8 @@ function calendarPanel() {
           '<p class="calendar-current">' + escapeHtml(formatDate(current)) + ' · ' + escapeHtml(localised(ambientMeta[currentType].day)) + "</p>" +
         "</div>" +
         '<div class="calendar-controls">' +
-          '<button type="button" data-action="month-prev" aria-label="previous month">←</button>' +
+          '<button type="button" data-action="month-prev" aria-label="previous month"' +
+            (calendarCursorIsAtStart() ? " disabled" : "") + '>←</button>' +
           '<span>' + escapeHtml(formatMonth(state.calendarCursor)) + "</span>" +
           '<button type="button" data-action="month-next" aria-label="next month">→</button>' +
         "</div>" +
@@ -1162,6 +1201,9 @@ function openCalendar(open) {
 }
 
 function chooseDate(key) {
+  var date = parseDateKey(key);
+  if (dateIsBeforeCalendarStart(date) || dateIsAfterToday(date)) return;
+
   state.previewDate = key === dateKey(todayAtNoon()) ? null : key;
   state.calendarOpen = false;
   render();
@@ -1178,7 +1220,12 @@ app.addEventListener("click", function(event) {
   if (action === "toggle-calendar") openCalendar(!state.calendarOpen);
   if (action === "close-calendar") openCalendar(false);
   if (action === "month-prev") {
-    state.calendarCursor = addMonths(state.calendarCursor, -1);
+    var previousMonth = addMonths(state.calendarCursor, -1);
+    if (previousMonth.getTime() < CALENDAR_START_MONTH.getTime()) {
+      state.calendarCursor = CALENDAR_START_MONTH;
+    } else {
+      state.calendarCursor = previousMonth;
+    }
     render();
   }
   if (action === "month-next") {
