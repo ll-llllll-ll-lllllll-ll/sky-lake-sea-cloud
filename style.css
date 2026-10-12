@@ -2679,3 +2679,244 @@ body {
     padding-right: 4px;
   }
 }
+
+
+/* ===== Seawater time / space coordinate tank ===== */
+.room-view[data-room="seawater"] .seawater-space-time {
+  position: relative;
+  z-index: 4;
+  width: min(94vw, 1280px);
+  margin: clamp(30px,5vh,70px) auto clamp(150px,20vh,230px);
+  padding: 0 clamp(14px,2.2vw,32px);
+  color: rgba(23,24,19,.76);
+}
+
+.seawater-space-time-head {
+  display: grid;
+  grid-template-columns: minmax(84px,.28fr) 1fr;
+  gap: 4px clamp(16px,2.5vw,38px);
+  align-items: baseline;
+  margin: 0 0 22px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(23,24,19,.15);
+}
+
+.seawater-space-time-kicker {
+  grid-row: 1 / span 2;
+  margin: 0;
+  color: rgba(23,24,19,.34);
+  font-size: 8px;
+  letter-spacing: .15em;
+  text-transform: uppercase;
+}
+
+.seawater-space-time-head h2 {
+  margin: 0;
+  font-family: var(--serif);
+  font-size: clamp(15px,1.35vw,20px);
+  font-weight: 400;
+  line-height: 1.35;
+  letter-spacing: .035em;
+}
+
+.seawater-space-time-subtitle {
+  margin: 2px 0 0;
+  color: rgba(23,24,19,.42);
+  font-family: ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  font-size: 8px;
+  line-height: 1.5;
+  letter-spacing: .045em;
+}
+
+.seawater-space-time-stage {
+  position: relative;
+  width: 100%;
+  overflow: visible;
+}
+
+.seawater-space-time-svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+  shape-rendering: geometricPrecision;
+}
+
+.seawater-time-plane,
+.seawater-plane-grid,
+.seawater-long-grid,
+.seawater-tank-edge,
+.seawater-axis,
+.seawater-record-guide,
+.seawater-record-time-guide,
+.seawater-time-tick-line {
+  fill: none;
+  vector-effect: non-scaling-stroke;
+}
+
+.seawater-time-plane {
+  stroke: rgba(23,24,19,.13);
+  stroke-width: .8px;
+}
+
+.seawater-plane-grid {
+  stroke: rgba(23,24,19,.055);
+  stroke-width: .62px;
+}
+
+.seawater-long-grid {
+  stroke: rgba(23,24,19,.045);
+  stroke-width: .55px;
+}
+
+.seawater-tank-edge {
+  stroke: rgba(23,24,19,.44);
+  stroke-width: 1.02px;
+}
+
+.seawater-axis {
+  stroke: rgba(23,24,19,.52);
+  stroke-width: .86px;
+}
+
+.seawater-axis-arrow-head {
+  fill: rgba(23,24,19,.52);
+}
+
+.seawater-axis-label,
+.seawater-coordinate-tick,
+.seawater-time-tick {
+  fill: rgba(23,24,19,.42);
+  font-family: ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  font-size: 8px;
+  letter-spacing: .025em;
+}
+
+.seawater-axis-label {
+  fill: rgba(23,24,19,.58);
+  font-size: 8.5px;
+  letter-spacing: .055em;
+}
+
+.seawater-record-guide {
+  stroke: rgba(23,24,19,.18);
+  stroke-width: .7px;
+  stroke-dasharray: 2.5 3.5;
+}
+
+.seawater-record-time-guide {
+  stroke: rgba(23,24,19,.10);
+  stroke-width: .62px;
+  stroke-dasharray: 1.8 4.2;
+}
+
+.seawater-record-halo {
+  fill: rgba(244,243,238,.58);
+  stroke: rgba(23,24,19,.18);
+  stroke-width: .65px;
+  vector-effect: non-scaling-stroke;
+  opacity: .72;
+  transition: r .18s ease, opacity .18s ease, stroke .18s ease;
+}
+
+.seawater-record-point {
+  fill: rgba(23,24,19,.76);
+  stroke: rgba(244,243,238,.84);
+  stroke-width: .9px;
+  vector-effect: non-scaling-stroke;
+}
+
+.seawater-record {
+  cursor: crosshair;
+  outline: none;
+}
+
+.seawater-record-label {
+  opacity: 0;
+  pointer-events: none;
+  transform-box: fill-box;
+  transition: opacity .16s ease;
+}
+
+.seawater-record-label rect {
+  fill: rgba(244,243,238,.92);
+  stroke: rgba(23,24,19,.15);
+  stroke-width: .7px;
+  vector-effect: non-scaling-stroke;
+}
+
+.seawater-record-name {
+  fill: rgba(23,24,19,.86);
+  font-family: var(--serif);
+  font-size: 10px;
+  letter-spacing: .035em;
+}
+
+.seawater-record-meta {
+  fill: rgba(23,24,19,.50);
+  font-family: ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  font-size: 7.7px;
+  letter-spacing: .025em;
+}
+
+.seawater-record:hover .seawater-record-label,
+.seawater-record:focus .seawater-record-label {
+  opacity: 1;
+}
+
+.seawater-record:hover .seawater-record-halo,
+.seawater-record:focus .seawater-record-halo {
+  r: 12px;
+  opacity: 1;
+  stroke: rgba(23,24,19,.46);
+}
+
+.seawater-space-time-note {
+  max-width: 720px;
+  margin: 14px 0 0;
+  color: rgba(23,24,19,.38);
+  font-size: 8.5px;
+  line-height: 1.65;
+  letter-spacing: .04em;
+}
+
+@media (max-width:760px) {
+  .room-view[data-room="seawater"] .seawater-space-time {
+    width: 100%;
+    margin: 12px auto 120px;
+    padding: 0 10px;
+  }
+
+  .seawater-space-time-head {
+    grid-template-columns: 1fr;
+    gap: 5px;
+    margin-bottom: 12px;
+  }
+
+  .seawater-space-time-kicker {
+    grid-row: auto;
+  }
+
+  .seawater-space-time-stage {
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding-bottom: 8px;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .seawater-space-time-svg {
+    width: 920px;
+    max-width: none;
+  }
+
+  .seawater-space-time-note {
+    padding-right: 18px;
+  }
+}
+
+@media (prefers-reduced-motion:reduce) {
+  .seawater-record-halo,
+  .seawater-record-label {
+    transition: none;
+  }
+}
