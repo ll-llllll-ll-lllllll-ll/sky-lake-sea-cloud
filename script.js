@@ -1116,33 +1116,59 @@ function renderSeawaterSpaceTimeChart(item) {
     return Math.abs(number).toFixed(2) + "°" + (number >= 0 ? positive : negative);
   }
 
+  /*
+    A deliberately reduced equirectangular world outline for the y-z plane.
+    y = longitude, z = latitude. It is not a navigational coastline dataset;
+    it functions as the spatial memory surface inside the time volume.
+  */
+  var worldShapes = [
+    [[-168,72],[-150,60],[-135,58],[-125,50],[-123,38],[-115,30],[-102,25],[-90,18],[-82,24],[-80,32],[-72,45],[-62,52],[-55,60],[-72,68],[-100,72],[-130,70],[-168,72]],
+    [[-82,12],[-76,4],[-79,-9],[-72,-18],[-67,-30],[-61,-42],[-54,-55],[-46,-52],[-40,-34],[-45,-20],[-52,-8],[-62,2],[-70,9],[-82,12]],
+    [[-18,36],[-8,44],[8,45],[18,50],[31,58],[47,60],[58,55],[72,57],[88,54],[102,50],[118,52],[132,47],[146,50],[160,58],[178,61],[170,44],[151,37],[132,34],[121,23],[110,18],[101,10],[92,19],[80,24],[68,22],[57,18],[48,12],[42,5],[36,-4],[29,-12],[21,-22],[13,-34],[4,-35],[-5,-29],[-12,-16],[-17,-2],[-11,11],[-16,23],[-18,36]],
+    [[-17,35],[-5,31],[9,34],[22,30],[32,22],[40,10],[43,-5],[35,-20],[28,-33],[18,-35],[8,-31],[0,-20],[-7,-6],[-11,8],[-17,20],[-17,35]],
+    [[112,-11],[123,-15],[135,-13],[147,-19],[153,-29],[146,-39],[133,-43],[119,-35],[113,-24],[112,-11]],
+    [[-52,60],[-43,68],[-33,75],[-25,70],[-34,61],[-43,59],[-52,60]],
+    [[130,31],[136,34],[141,39],[145,44],[143,31],[136,30],[130,31]]
+  ];
+
+  function worldMapAt(timeT) {
+    return worldShapes.map(function(shape) {
+      return polyline(shape.map(function(coord) {
+        return project(timeT, coord[0], coord[1]);
+      }), "seawater-world-outline");
+    }).join("");
+  }
+
   var copy = {
     zh: {
-      title: "海水采集 · 时间／空间坐标",
+      title: "海水采集 · 时间／空间水箱",
       subtitle: "x = 时间　·　y = 经度 λ　·　z = 纬度 φ",
-      note: "试作记录：时间沿横向展开；每一个 y–z 截面都是同一张世界坐标网格。",
+      note: "横向的 x 轴记录时间；每一个 y–z 截面都是同一张世界地图的经纬坐标面。地点因此不再只落在一张平面地图上，而被时间拉成长为一个体积。",
+      essay: "对我来说，海水承载的记忆大于它作为物质本身，也比“收集海水”这个动作更重要。因此，这张图表有意模糊空间与时间的界线：在它们交汇的地方，并不存在一条清楚的分界。就像这一缸不断混合的海水，每一滴都与来自别处、来自别的时间的水相互混合。再取出一滴，打开瓶盖闻一闻，或只是在某个时刻重新想到它，浮现出来的都是这一幅复杂而又淳朴的图景。",
       time: "时间",
       longitude: "经度 λ",
       latitude: "纬度 φ",
-      sample: "试作"
+      sample: "时间／空间试作"
     },
     en: {
-      title: "Seawater collection · time / space coordinates",
+      title: "Seawater collection · time / space tank",
       subtitle: "x = time · y = longitude λ · z = latitude φ",
-      note: "Prototype records: time unfolds horizontally; every y–z section is the same world-coordinate grid.",
+      note: "The horizontal x-axis records time; every y-z section is the same world map expressed as longitude and latitude. Place is no longer held on a single flat map, but drawn by time into a volume.",
+      essay: "For me, the memory carried by seawater matters more than the material itself, and more than the act of collecting seawater. This diagram therefore deliberately blurs the boundary between space and time: where the two meet, there is no clean division. Like the mixed water inside one tank, every drop mingles with water from somewhere else and from another moment. Taking out a drop, opening a bottle to smell it, or simply thinking of it again brings back the same image—complex, yet plain.",
       time: "time",
       longitude: "longitude λ",
       latitude: "latitude φ",
-      sample: "prototype"
+      sample: "time / space study"
     },
     ja: {
-      title: "海水採集 · 時間／空間座標",
+      title: "海水採集 · 時間／空間タンク",
       subtitle: "x = 時間　·　y = 経度 λ　·　z = 緯度 φ",
-      note: "試作記録：時間は横方向へ展開し、各 y–z 断面は同じ世界座標グリッドとなる。",
+      note: "横方向の x 軸が時間を記録し、それぞれの y–z 断面は同じ世界地図を経度と緯度で表した座標面となる。場所は一枚の平面地図に留まらず、時間によってひとつの体積へ引き延ばされる。",
+      essay: "私にとって海水が抱える記憶は、物質としての海水そのものよりも、そして「海水を集める」という行為よりも重要である。だからこの図は、空間と時間の境界を意図的に曖昧にしている。両者が交わるところに、明確な境目はない。一つのタンクで混ざり合う海水のように、一滴一滴は別の場所、別の時間から来た水と混ざり合っている。そこから一滴を取り出すとき、瓶の蓋を開けて匂いを嗅ぐとき、あるいはふと思い出すとき、立ち上がるのは複雑でありながら素朴なひとつの風景である。",
       time: "時間",
       longitude: "経度 λ",
       latitude: "緯度 φ",
-      sample: "試作"
+      sample: "時間／空間試作"
     }
   };
   var t = copy[state.lang] || copy.en;
@@ -1184,6 +1210,8 @@ function renderSeawaterSpaceTimeChart(item) {
     [-60,0,60].forEach(function(lat) {
       svg += line(project(tx,-180,lat), project(tx,180,lat), "seawater-plane-grid");
     });
+
+    svg += worldMapAt(tx);
   });
 
   // long coordinate rails through time
@@ -1295,6 +1323,7 @@ function renderSeawaterSpaceTimeChart(item) {
     '</header>' +
     '<div class="seawater-space-time-stage">' + svg + '</div>' +
     '<p class="seawater-space-time-note">' + escapeHtml(t.note) + '</p>' +
+    '<p class="seawater-space-time-essay">' + escapeHtml(t.essay) + '</p>' +
   '</section>';
 }
 
