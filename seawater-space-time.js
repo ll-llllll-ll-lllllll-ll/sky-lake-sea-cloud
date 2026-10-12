@@ -104,6 +104,13 @@
       ' L ' + xy(p(0,r,latitude)) + ' Q ' + xy(p(0,0,latitude)) +
       ' ' + xy(p(t,0,latitude)) + ' L ' + xy(p(1,0,latitude)) + '"/>';
   }
+  function leftFloorRail(g, longitude) {
+    var p = g.project, radius = .15, timeBend = 30 / g.width;
+    // The third rounded junction: left geographic face -> time/floor rail.
+    return '<path class="seawater-floor-rail" d="M ' + xy(p(0,longitude,1)) +
+      ' L ' + xy(p(0,longitude,radius)) + ' Q ' + xy(p(0,longitude,0)) +
+      ' ' + xy(p(timeBend,longitude,0)) + ' L ' + xy(p(1,longitude,0)) + '"/>';
+  }
   function cube(g, record, time, longitude, latitude, index, lang) {
     var p = g.project, dt = 15 / g.width, dy = .074, dz = .062;
     function v(x, y, z) { return p(time + x*dt, longitude + y*dy, latitude + z*dz); }
@@ -137,16 +144,11 @@
     var g = geometry(spatial, temporal), p = g.project;
     var lines = ['<g class="seawater-mesh" aria-hidden="true">'];
 
-    // Do not draw a solid "rear board": the leftmost YZ face stays a
-    // coordinate reference, indicated by sparse, transparent longitude rails.
-    for (var y=1; y<=6; y++) {
-      lines.push(line(p(0,y/7,0),p(0,y/7,1),"seawater-map-guide"));
-    }
+    // YZ positioning remains implicit in the sparse left-hand coordinate face.
+    // All three changes of direction now pass through actual quadratic bends.
     for (var t=0; t<=g.slices; t++) lines.push(basinSlice(g,t/g.slices));
     for (var z=0; z<=6; z++) lines.push(sideWallRail(g,z/6));
-    for (var floor=1; floor<=6; floor++) {
-      lines.push(line(p(0,floor/7,0),p(1,floor/7,0),"seawater-floor-rail"));
-    }
+    for (var y=1; y<=6; y++) lines.push(leftFloorRail(g,y/7));
     lines.push("</g>");
 
     var valid = records.filter(function (r) {
