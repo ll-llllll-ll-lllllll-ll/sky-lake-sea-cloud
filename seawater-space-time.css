@@ -11,26 +11,43 @@
 .seawater-space-time-svg {
   width:100%;height:auto;display:block;overflow:visible;shape-rendering:geometricPrecision;
 }
-.seawater-map-guide,.seawater-rail,.seawater-slice {
-  fill:none;stroke:rgba(22,24,23,.68);stroke-width:.9px;
-  stroke-linecap:round;stroke-linejoin:round;
-  vector-effect:non-scaling-stroke;pointer-events:none;
+/* The grid is a single rounded interior, not overlapping front/back panels. */
+.seawater-map-guide,
+.seawater-slice,
+.seawater-wall-rail,
+.seawater-floor-rail {
+  fill:none;
+  vector-effect:non-scaling-stroke;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+  pointer-events:none;
 }
-.seawater-map-guide {stroke:rgba(22,24,23,.23);stroke-width:.65px;}
-.seawater-rail {stroke:rgba(22,24,23,.61);stroke-width:.75px;}
-.seawater-slice {stroke:rgba(22,24,23,.82);stroke-width:.86px;}
+.seawater-map-guide {stroke:rgba(22,24,23,.23);stroke-width:.67px;}
+.seawater-slice {stroke:rgba(22,24,23,.82);stroke-width:.95px;}
+.seawater-wall-rail {stroke:rgba(22,24,23,.63);stroke-width:.83px;}
+.seawater-floor-rail {stroke:rgba(22,24,23,.58);stroke-width:.73px;}
 .seawater-water-block {outline:none;cursor:crosshair;}
-.seawater-water-face,.seawater-water-side,.seawater-water-top {
-  vector-effect:non-scaling-stroke;stroke:rgba(24,157,152,.11);stroke-width:.55px;
-  stroke-linecap:round;stroke-linejoin:round;
+.seawater-water-face,
+.seawater-water-side,
+.seawater-water-top,
+.seawater-water-body,
+.seawater-water-outline {
+  stroke-linecap:round;
+  stroke-linejoin:round;
+  vector-effect:non-scaling-stroke;
 }
-.seawater-water-face {fill:rgba(48,189,182,.50);}
-.seawater-water-side {fill:rgba(22,158,156,.51);}
-.seawater-water-top {fill:rgba(107,214,207,.62);}
+.seawater-water-body {fill:rgba(49,190,185,.28);stroke:none;}
+.seawater-water-side {fill:rgba(28,169,166,.61);stroke:none;}
+.seawater-water-face {fill:rgba(54,194,185,.63);stroke:none;}
+.seawater-water-top {fill:rgba(121,222,211,.72);stroke:none;}
+.seawater-water-outline {fill:none;stroke:rgba(29,154,151,.24);stroke-width:.62px;}
 .seawater-water-block:hover .seawater-water-face,
-.seawater-water-block:focus-visible .seawater-water-face {fill:rgba(25,183,177,.78);}
+.seawater-water-block:focus-visible .seawater-water-face {fill:rgba(24,184,175,.81);}
 .seawater-water-block:hover .seawater-water-top,
-.seawater-water-block:focus-visible .seawater-water-top {fill:rgba(99,217,207,.85);}
+.seawater-water-block:focus-visible .seawater-water-top {fill:rgba(121,230,216,.90);}
+.seawater-water-block:focus-visible .seawater-water-outline {
+  stroke:rgba(15,117,114,.83);
+}
 .seawater-water-label {
   fill:rgba(19,37,34,.87);font-family:var(--serif);
   font-size:11px;letter-spacing:.045em;opacity:0;pointer-events:none;
