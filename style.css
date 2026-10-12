@@ -2920,3 +2920,38 @@ body {
     transition: none;
   }
 }
+
+
+/* ===== Seawater time-space tank · map planes and memory note ===== */
+.seawater-world-outline {
+  fill: none;
+  stroke: rgba(23,24,19,.105);
+  stroke-width: .72px;
+  vector-effect: non-scaling-stroke;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.seawater-space-time-essay {
+  max-width: 760px;
+  margin: 28px 0 0;
+  color: rgba(23,24,19,.68);
+  font-family: var(--serif);
+  font-size: clamp(11px,.92vw,14px);
+  font-weight: 400;
+  line-height: 1.9;
+  letter-spacing: .025em;
+}
+
+@media (max-width:760px) {
+  .seawater-world-outline {
+    stroke-width: .68px;
+  }
+
+  .seawater-space-time-essay {
+    margin-top: 22px;
+    padding-right: 14px;
+    font-size: 11px;
+    line-height: 1.85;
+  }
+}
