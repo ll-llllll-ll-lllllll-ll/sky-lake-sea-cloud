@@ -1060,6 +1060,244 @@ function renderRuinArchiveCabinetPreview() {
   '</section>';
 }
 
+function renderSeawaterSpaceTimeChart(item) {
+  var records = Array.isArray(item && item.spaceTimeRecords) ? item.spaceTimeRecords : [];
+  if (!records.length) return "";
+
+  var W = 1200;
+  var H = 720;
+  var origin = { x: 118, y: 602 };
+  var timeVec = { x: 850, y: 0 };
+  var lonVec = { x: 126, y: -82 };
+  var latVec = { x: 0, y: -390 };
+
+  function clamp01(value) {
+    return Math.max(0, Math.min(1, value));
+  }
+
+  function parseDateValue(value) {
+    var d = new Date(value + "T12:00:00Z");
+    return Number.isFinite(d.getTime()) ? d.getTime() : 0;
+  }
+
+  var times = records.map(function(record) { return parseDateValue(record.date); }).filter(Boolean);
+  var minTime = Math.min.apply(Math, times);
+  var maxTime = Math.max.apply(Math, times);
+  var timeSpan = Math.max(1, maxTime - minTime);
+
+  function project(timeT, lng, lat) {
+    var tx = clamp01(timeT);
+    var ly = clamp01((Number(lng) + 180) / 360);
+    var lz = clamp01((Number(lat) + 90) / 180);
+    return {
+      x: origin.x + timeVec.x * tx + lonVec.x * ly + latVec.x * lz,
+      y: origin.y + timeVec.y * tx + lonVec.y * ly + latVec.y * lz
+    };
+  }
+
+  function pointForRecord(record) {
+    var timeT = (parseDateValue(record.date) - minTime) / timeSpan;
+    return project(timeT, record.lng, record.lat);
+  }
+
+  function line(a, b, className) {
+    return '<line class="' + className + '" x1="' + a.x.toFixed(2) + '" y1="' + a.y.toFixed(2) +
+      '" x2="' + b.x.toFixed(2) + '" y2="' + b.y.toFixed(2) + '" />';
+  }
+
+  function polyline(points, className) {
+    return '<polyline class="' + className + '" points="' +
+      points.map(function(point) { return point.x.toFixed(2) + "," + point.y.toFixed(2); }).join(" ") +
+      '" />';
+  }
+
+  function fmtCoord(value, positive, negative) {
+    var number = Number(value) || 0;
+    return Math.abs(number).toFixed(2) + "°" + (number >= 0 ? positive : negative);
+  }
+
+  var copy = {
+    zh: {
+      title: "海水采集 · 时间／空间坐标",
+      subtitle: "x = 时间　·　y = 经度 λ　·　z = 纬度 φ",
+      note: "试作记录：时间沿横向展开；每一个 y–z 截面都是同一张世界坐标网格。",
+      time: "时间",
+      longitude: "经度 λ",
+      latitude: "纬度 φ",
+      sample: "试作"
+    },
+    en: {
+      title: "Seawater collection · time / space coordinates",
+      subtitle: "x = time · y = longitude λ · z = latitude φ",
+      note: "Prototype records: time unfolds horizontally; every y–z section is the same world-coordinate grid.",
+      time: "time",
+      longitude: "longitude λ",
+      latitude: "latitude φ",
+      sample: "prototype"
+    },
+    ja: {
+      title: "海水採集 · 時間／空間座標",
+      subtitle: "x = 時間　·　y = 経度 λ　·　z = 緯度 φ",
+      note: "試作記録：時間は横方向へ展開し、各 y–z 断面は同じ世界座標グリッドとなる。",
+      time: "時間",
+      longitude: "経度 λ",
+      latitude: "緯度 φ",
+      sample: "試作"
+    }
+  };
+  var t = copy[state.lang] || copy.en;
+
+  var svg = '<svg class="seawater-space-time-svg" viewBox="0 0 ' + W + " " + H +
+    '" role="img" aria-label="' + escapeHtml(t.title) + '">';
+
+  svg += '<defs>' +
+    '<marker id="seawater-axis-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">' +
+      '<path d="M 0 0 L 10 5 L 0 10 z" class="seawater-axis-arrow-head" />' +
+    '</marker>' +
+  '</defs>';
+
+  // translucent coordinate planes at several moments in time
+  var sliceDates = [
+    records[0].date,
+    "2024-01-01",
+    "2025-01-01",
+    "2026-01-01",
+    records[records.length - 1].date
+  ];
+  var seenSlices = {};
+  sliceDates.forEach(function(dateValue) {
+    var ms = parseDateValue(dateValue);
+    var tx = clamp01((ms - minTime) / timeSpan);
+    var key = tx.toFixed(4);
+    if (seenSlices[key]) return;
+    seenSlices[key] = true;
+
+    var p00 = project(tx, -180, -90);
+    var p10 = project(tx, 180, -90);
+    var p11 = project(tx, 180, 90);
+    var p01 = project(tx, -180, 90);
+    svg += polyline([p00,p10,p11,p01,p00], "seawater-time-plane");
+
+    [-90,0,90].forEach(function(lng) {
+      svg += line(project(tx,lng,-90), project(tx,lng,90), "seawater-plane-grid");
+    });
+    [-60,0,60].forEach(function(lat) {
+      svg += line(project(tx,-180,lat), project(tx,180,lat), "seawater-plane-grid");
+    });
+  });
+
+  // long coordinate rails through time
+  [-180,-90,0,90,180].forEach(function(lng) {
+    [-60,0,60].forEach(function(lat) {
+      svg += line(project(0,lng,lat), project(1,lng,lat), "seawater-long-grid");
+    });
+  });
+
+  // tank / cuboid edges
+  var corners = {
+    a: project(0,-180,-90), b: project(1,-180,-90),
+    c: project(0,180,-90),  d: project(1,180,-90),
+    e: project(0,-180,90),  f: project(1,-180,90),
+    g: project(0,180,90),   h: project(1,180,90)
+  };
+  [
+    ["a","b"],["c","d"],["e","f"],["g","h"],
+    ["a","c"],["b","d"],["e","g"],["f","h"],
+    ["a","e"],["b","f"],["c","g"],["d","h"]
+  ].forEach(function(pair) {
+    svg += line(corners[pair[0]], corners[pair[1]], "seawater-tank-edge");
+  });
+
+  // axes
+  var xStart = project(0,-180,-90);
+  var xEnd = project(1,-180,-90);
+  var yEnd = project(0,180,-90);
+  var zEnd = project(0,-180,90);
+  svg += '<line class="seawater-axis seawater-axis-time" marker-end="url(#seawater-axis-arrow)" x1="' +
+    xStart.x + '" y1="' + xStart.y + '" x2="' + (xEnd.x+18) + '" y2="' + xEnd.y + '" />';
+  svg += '<line class="seawater-axis" marker-end="url(#seawater-axis-arrow)" x1="' +
+    xStart.x + '" y1="' + xStart.y + '" x2="' + (yEnd.x+8) + '" y2="' + (yEnd.y-6) + '" />';
+  svg += '<line class="seawater-axis" marker-end="url(#seawater-axis-arrow)" x1="' +
+    xStart.x + '" y1="' + xStart.y + '" x2="' + zEnd.x + '" y2="' + (zEnd.y-14) + '" />';
+
+  svg += '<text class="seawater-axis-label seawater-axis-label-time" x="' + (xEnd.x+28) + '" y="' + (xEnd.y+4) + '">' +
+    escapeHtml("x / " + t.time) + '</text>';
+  svg += '<text class="seawater-axis-label" x="' + (yEnd.x+18) + '" y="' + (yEnd.y-8) + '">' +
+    escapeHtml("y / " + t.longitude) + '</text>';
+  svg += '<text class="seawater-axis-label" x="' + (zEnd.x-6) + '" y="' + (zEnd.y-26) + '">' +
+    escapeHtml("z / " + t.latitude) + '</text>';
+
+  // latitude labels
+  [-60,-30,0,30,60].forEach(function(lat) {
+    var p = project(0,-180,lat);
+    svg += '<text class="seawater-coordinate-tick seawater-lat-tick" x="' + (p.x-12) + '" y="' + (p.y+3) +
+      '" text-anchor="end">' + escapeHtml((lat === 0 ? "0°" : Math.abs(lat) + "°" + (lat>0?"N":"S"))) + '</text>';
+  });
+
+  // longitude labels
+  [-180,-90,0,90,180].forEach(function(lng) {
+    var p = project(0,lng,-90);
+    svg += '<text class="seawater-coordinate-tick" x="' + (p.x+8) + '" y="' + (p.y+18) + '">' +
+      escapeHtml(lng === 0 ? "0°" : Math.abs(lng) + "°" + (lng>0?"E":"W")) + '</text>';
+  });
+
+  // date ticks
+  var timeTicks = [
+    { date: records[0].date, label: records[0].date.slice(0,7).replace("-",".") },
+    { date: "2024-01-01", label: "2024.01" },
+    { date: "2025-01-01", label: "2025.01" },
+    { date: "2026-01-01", label: "2026.01" },
+    { date: records[records.length-1].date, label: records[records.length-1].date.slice(0,7).replace("-",".") }
+  ];
+  var seenTicks = {};
+  timeTicks.forEach(function(entry) {
+    var tx = clamp01((parseDateValue(entry.date)-minTime)/timeSpan);
+    var key = tx.toFixed(4);
+    if(seenTicks[key]) return;
+    seenTicks[key] = true;
+    var p = project(tx,-180,-90);
+    svg += '<line class="seawater-time-tick-line" x1="' + p.x + '" y1="' + (p.y-5) + '" x2="' + p.x + '" y2="' + (p.y+6) + '" />';
+    svg += '<text class="seawater-time-tick" x="' + p.x + '" y="' + (p.y+25) + '" text-anchor="middle">' +
+      escapeHtml(entry.label) + '</text>';
+  });
+
+  // records and their projections
+  records.forEach(function(record, index) {
+    var p = pointForRecord(record);
+    var tx = (parseDateValue(record.date)-minTime)/timeSpan;
+    var floor = project(tx,record.lng,-90);
+    var yzBase = project(0,record.lng,record.lat);
+    var name = localised(record.name);
+    var latText = fmtCoord(record.lat,"N","S");
+    var lngText = fmtCoord(record.lng,"E","W");
+
+    svg += '<g class="seawater-record" tabindex="0" data-record-index="' + index + '">' +
+      line(floor,p,"seawater-record-guide") +
+      line(yzBase,p,"seawater-record-time-guide") +
+      '<circle class="seawater-record-halo" cx="' + p.x.toFixed(2) + '" cy="' + p.y.toFixed(2) + '" r="9" />' +
+      '<circle class="seawater-record-point" cx="' + p.x.toFixed(2) + '" cy="' + p.y.toFixed(2) + '" r="3.2" />' +
+      '<g class="seawater-record-label" transform="translate(' + (p.x+11).toFixed(2) + " " + (p.y-11).toFixed(2) + ')">' +
+        '<rect x="-7" y="-15" width="206" height="54" rx="0" />' +
+        '<text class="seawater-record-name" x="0" y="0">' + escapeHtml(name) + '</text>' +
+        '<text class="seawater-record-meta" x="0" y="16">' + escapeHtml(record.date.replaceAll("-",".")) + '</text>' +
+        '<text class="seawater-record-meta" x="0" y="31">' + escapeHtml(latText + " · " + lngText) + '</text>' +
+      '</g>' +
+    '</g>';
+  });
+
+  svg += '</svg>';
+
+  return '<section class="seawater-space-time" data-seawater-space-time>' +
+    '<header class="seawater-space-time-head">' +
+      '<p class="seawater-space-time-kicker">' + escapeHtml(t.sample) + '</p>' +
+      '<h2>' + escapeHtml(t.title) + '</h2>' +
+      '<p class="seawater-space-time-subtitle">' + escapeHtml(t.subtitle) + '</p>' +
+    '</header>' +
+    '<div class="seawater-space-time-stage">' + svg + '</div>' +
+    '<p class="seawater-space-time-note">' + escapeHtml(t.note) + '</p>' +
+  '</section>';
+}
+
 function renderRoom(item) {
   var images = item.images || [];
   var next = rooms[(roomIndex(item) + 1) % rooms.length];
@@ -1087,6 +1325,10 @@ function renderRoom(item) {
       '<figcaption>' + escapeHtml(localised(image.caption)) + "</figcaption>" +
     "</figure>";
   });
+
+  if (item.slug === "seawater") {
+    html += renderSeawaterSpaceTimeChart(item);
+  }
 
   if (item.group === "writing" && Array.isArray(item.tenetImages)) {
     html += '<section class="writing-tenets" aria-label="Ruinwright ten tenets">';
@@ -1457,6 +1699,72 @@ render();
         }
       }
     ];
+
+    // Prototype points for the time/space chart. Replace these with the actual
+    // seawater ledger once the complete list of ~20 samples is ready.
+    seawater.spaceTimeRecords = [
+      {
+        date: "2023-02-14",
+        lat: 36.0,
+        lng: 135.0,
+        name: { zh: "日本海", en: "Sea of Japan", ja: "日本海" }
+      },
+      {
+        date: "2023-07-23",
+        lat: 35.0,
+        lng: 123.0,
+        name: { zh: "黄海", en: "Yellow Sea", ja: "黄海" }
+      },
+      {
+        date: "2023-11-18",
+        lat: 28.0,
+        lng: 126.0,
+        name: { zh: "东海", en: "East China Sea", ja: "東シナ海" }
+      },
+      {
+        date: "2024-04-08",
+        lat: 34.4,
+        lng: 134.4,
+        name: { zh: "濑户内海", en: "Seto Inland Sea", ja: "瀬戸内海" }
+      },
+      {
+        date: "2024-09-21",
+        lat: 36.0,
+        lng: 18.0,
+        name: { zh: "地中海", en: "Mediterranean Sea", ja: "地中海" }
+      },
+      {
+        date: "2025-03-02",
+        lat: 40.0,
+        lng: -30.0,
+        name: { zh: "北大西洋", en: "North Atlantic", ja: "北大西洋" }
+      },
+      {
+        date: "2025-08-14",
+        lat: 46.0,
+        lng: -5.0,
+        name: { zh: "比斯开湾", en: "Bay of Biscay", ja: "ビスケー湾" }
+      },
+      {
+        date: "2026-02-11",
+        lat: 14.0,
+        lng: 114.0,
+        name: { zh: "南海", en: "South China Sea", ja: "南シナ海" }
+      },
+      {
+        date: "2026-08-17",
+        lat: 80.0,
+        lng: 0.0,
+        name: { zh: "北冰洋", en: "Arctic Ocean", ja: "北極海" }
+      },
+      {
+        date: "2026-10-03",
+        lat: 40.0,
+        lng: -160.0,
+        name: { zh: "北太平洋", en: "North Pacific", ja: "北太平洋" }
+      }
+    ];
+
   }
 
   function renderNotes(item) {
