@@ -2628,3 +2628,54 @@ body {
     line-height: 1.5;
   }
 }
+
+
+/* ===== Calendar chronology: 2023-07-23 → present known, future unknown ===== */
+.calendar-grid {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
+.calendar-track-unknown {
+  background: rgba(247,247,240,.012);
+}
+
+.calendar-track-unknown .calendar-track-head {
+  color: rgba(247,247,240,.24);
+}
+
+.calendar-day.is-unknown {
+  color: rgba(247,247,240,.20);
+  cursor: default;
+  opacity: 1;
+}
+
+.calendar-day.is-unknown:hover {
+  background: transparent;
+  color: rgba(247,247,240,.20);
+  transform: none;
+}
+
+.calendar-controls button:disabled {
+  color: rgba(247,247,240,.14);
+  cursor: default;
+}
+
+.calendar-controls button:disabled:hover {
+  color: rgba(247,247,240,.14);
+}
+
+@media (max-width:760px) {
+  .calendar-track {
+    padding-left: 4px;
+    padding-right: 4px;
+  }
+
+  .calendar-track-name {
+    font-size: 10px;
+  }
+
+  .calendar-day {
+    padding-left: 4px;
+    padding-right: 4px;
+  }
+}
