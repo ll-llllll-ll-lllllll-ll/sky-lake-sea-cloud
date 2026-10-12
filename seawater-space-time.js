@@ -1,143 +1,237 @@
-/* Seawater Collection — scroll-linked spatial perspective / time spacing. */
+/* Sea water collection · rounded inner-basin coordinate lattice.
+   X = collection time; Y/Z = longitude/latitude.
+   Scroll changes ONLY the spatial projection. The slider changes ONLY X spacing.
+   The source of sample coordinates remains the portfolio's record list. */
 (function () {
   "use strict";
-  var installed = new WeakSet();
-  var active = null;
-  var unmount = function () {};
-  function clamp(n, a, b) { return Math.max(a, Math.min(b, n)); }
-  function ease(n) { n=clamp(n,0,1); return n*n*(3-2*n); }
+
+  var mounted = null;
+  var cleanup = function () {};
+
+  function clamp(n, min, max) { return Math.max(min, Math.min(max, n)); }
+  function smooth(t) { t = clamp(t, 0, 1); return t * t * (3 - 2 * t); }
+  function mix(a, b, t) { return a + (b - a) * t; }
   function fix(n) { return Number(n).toFixed(2); }
-  function esc(s) {
-    return String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;")
-      .replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#39;");
+  function xy(p) { return fix(p.x) + " " + fix(p.y); }
+  function esc(value) {
+    return String(value == null ? "" : value)
+      .replace(/&/g, "&amp;").replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;").replace(/"/g, "&quot;")
+      .replace(/'/g, "&#39;");
   }
-  function parseDate(date) {
-    var n=Date.parse(String(date||"")+"T12:00:00Z");
+  function dateValue(date) {
+    var n = Date.parse(String(date || "") + "T12:00:00Z");
     return Number.isFinite(n) ? n : 0;
   }
-  function nameOf(record,lang) {
-    var n=record.name;
-    return typeof n==="string"?n:((n&&(n[lang]||n.zh||n.en))||"");
+  function nameFor(record, lang) {
+    var name = record.name;
+    return typeof name === "string" ? name : ((name && (name[lang] || name.zh || name.en)) || "");
   }
-  function pointStr(p) { return fix(p.x)+" "+fix(p.y); }
-  function line(a,b,klass) {
-    return '<path class="'+klass+'" d="M'+pointStr(a)+' L'+pointStr(b)+'"/>';
+  function line(a, b, kind) {
+    return '<path class="' + kind + '" d="M ' + xy(a) + ' L ' + xy(b) + '"/>';
   }
-  function roundedPolygon(v,f) {
-    var out=[];
-    v.forEach(function(p,i) {
-      var a=v[(i+v.length-1)%v.length],b=v[(i+1)%v.length];
-      var u={x:p.x+(a.x-p.x)*f,y:p.y+(a.y-p.y)*f};
-      var w={x:p.x+(b.x-p.x)*f,y:p.y+(b.y-p.y)*f};
-      out.push((i?" L":"M")+pointStr(u)+" Q"+pointStr(p)+" "+pointStr(w));
+  function polygon(points) {
+    return "M " + points.map(xy).join(" L ") + " Z";
+  }
+  function roundedPolygon(points, radius) {
+    var pieces = [], n = points.length;
+    points.forEach(function (p, i) {
+      var prev = points[(i + n - 1) % n], next = points[(i + 1) % n];
+      var a = {x: mix(p.x, prev.x, radius), y: mix(p.y, prev.y, radius)};
+      var b = {x: mix(p.x, next.x, radius), y: mix(p.y, next.y, radius)};
+      pieces.push((i ? " L " : "M ") + xy(a) + " Q " + xy(p) + " " + xy(b));
     });
-    return out.join("")+" Z";
+    return pieces.join("") + " Z";
   }
-  function geometry(scrollValue,timeValue) {
-    var perspective=ease(scrollValue),spread=ease(timeValue);
-    var extent=465+360*spread;
-    var longitudeX=189-101*perspective,longitudeY=-162+128*perspective;
-    var latitudeY=-268-8*perspective;
-    function project(t,y,z) {
-      return {x:128+t*extent+y*longitudeX,y:484+y*longitudeY+z*latitudeY};
+
+  // Outline of the projection of a real cube; used as a single rounded clip.
+  // Rounding each individual face would leave false gaps along shared seams.
+  function hull(points) {
+    var sorted = points.slice().sort(function (a, b) { return a.x - b.x || a.y - b.y; });
+    function cross(a, b, c) {
+      return (b.x-a.x)*(c.y-a.y) - (b.y-a.y)*(c.x-a.x);
     }
-    return {project:project,extent:extent,spread:spread};
-  }
-  function draw(root,records,lang,scrollValue,timeValue) {
-    var g=geometry(scrollValue,timeValue),p=g.project;
-    var s=['<g class="seawater-mesh" aria-hidden="true">'];
-    // The near-left YZ plane is the equirectangular lat/lon localization surface.
-    for(var y=0;y<=8;y++)s.push(line(p(0,y/8,0),p(0,y/8,1),"seawater-map-guide"));
-    for(var z=0;z<=6;z++)s.push(line(p(0,0,z/6),p(0,1,z/6),"seawater-map-guide"));
-    // Continuous rails along time, kept separate from the coordinate records.
-    for(var r=0;r<=6;r++)s.push(line(p(0,0,r/6),p(1,0,r/6),"seawater-rail"));
-    for(var q=1;q<=8;q++)s.push(line(p(0,q/8,0),p(1,q/8,0),"seawater-rail"));
-    // Diagrammatic rounded elbows in the time-slice lattice.
-    for(var i=0;i<=15;i++) {
-      var t=i/15,top=p(t,0,1),a=p(t,0,.12),b=p(t,.14,0),corner=p(t,0,0),end=p(t,1,0);
-      var c1={x:a.x,y:a.y+(corner.y-a.y)*.82};
-      var c2={x:b.x-(b.x-corner.x)*.60,y:b.y-(b.y-corner.y)*.10};
-      s.push('<path class="seawater-slice" d="M'+pointStr(top)+' L'+pointStr(a)+
-        ' C'+pointStr(c1)+' '+pointStr(c2)+' '+pointStr(b)+' L'+pointStr(end)+'"/>');
-    }
-    s.push('</g>');
-    var valid=records.filter(function(r){
-      return parseDate(r.date)&&Number.isFinite(Number(r.lat))&&Number.isFinite(Number(r.lng));
+    var lower = [], upper = [];
+    sorted.forEach(function (point) {
+      while (lower.length >= 2 && cross(lower[lower.length-2], lower[lower.length-1], point) <= 0) lower.pop();
+      lower.push(point);
     });
-    if(valid.length) {
-      var ts=valid.map(function(r){return parseDate(r.date);});
-      var min=Math.min.apply(null,ts),span=Math.max(1,Math.max.apply(null,ts)-min);
-      valid.forEach(function(record){
-        var t=(parseDate(record.date)-min)/span;
-        var u=clamp((Number(record.lng)+180)/360,0,1),v=clamp((Number(record.lat)+90)/180,0,1);
-        // The sample's X half-depth is measured in projected pixels, not scaled time:
-        // expanding X changes the gaps, never stretches the cubes themselves.
-        var dt=7/g.extent,du=.068,dv=.060;
-        function vertex(dx,dy,dz){return p(t+dx*dt,u+dy*du,v+dz*dv);}
-        var a=vertex(-1,-1,-1),b=vertex(-1,1,-1),c=vertex(-1,1,1),d=vertex(-1,-1,1);
-        var e=vertex(1,-1,-1),f=vertex(1,1,-1),h=vertex(1,1,1),j=vertex(1,-1,1);
-        var center=p(t,u,v),label=nameOf(record,lang);
-        var detail=label+" · "+record.date+" · "+Math.abs(Number(record.lat)).toFixed(2)+"°"+(record.lat>=0?"N":"S")+
-          " / "+Math.abs(Number(record.lng)).toFixed(2)+"°"+(record.lng>=0?"E":"W");
-        var flip=center.x>940,tx=center.x+(flip?-22:22);
-        s.push('<g class="seawater-water-block" tabindex="0" role="img" aria-label="'+esc(detail)+'">'+
-          '<title>'+esc(detail)+'</title>'+
-          '<path class="seawater-water-top" d="'+roundedPolygon([d,c,h,j],.19)+'"/>'+
-          '<path class="seawater-water-side" d="'+roundedPolygon([b,f,h,c],.19)+'"/>'+
-          '<path class="seawater-water-face" d="'+roundedPolygon([a,b,c,d],.19)+'"/>'+
-          '<text class="seawater-water-label" text-anchor="'+(flip?"end":"start")+
-          '" x="'+fix(tx)+'" y="'+fix(center.y-14)+'">'+esc(label)+'</text></g>');
+    sorted.reverse().forEach(function (point) {
+      while (upper.length >= 2 && cross(upper[upper.length-2], upper[upper.length-1], point) <= 0) upper.pop();
+      upper.push(point);
+    });
+    lower.pop(); upper.pop();
+    return lower.concat(upper);
+  }
+
+  function geometry(scrollProgress, timeProgress) {
+    var s = smooth(scrollProgress);
+    var width = 345 + 355 * smooth(timeProgress);
+    // The old longitude vector (+X,-Y) made the rear appear in front.
+    // It now points LEFT and DOWN: the inside of the basin opens toward us.
+    var longitude = {x: mix(-148, -185, s), y: mix(133, 29, s)};
+    var latitude  = {x: mix(-7, -1, s),   y: mix(-250, -238, s)};
+    var origin = {x: 389, y: 387};
+    function project(t, lng, lat) {
+      return {
+        x: origin.x + width * t + longitude.x * lng + latitude.x * lat,
+        y: origin.y + longitude.y * lng + latitude.y * lat
+      };
+    }
+    return {
+      project: project,
+      width: width,
+      spread: smooth(timeProgress),
+      // Eight YZ sections total, instead of sixteen.
+      slices: 7,
+      wallToFloorRadius: .15,
+      sideToWallRadius: .15
+    };
+  }
+
+  function basinSlice(g, time) {
+    var p = g.project, r = g.wallToFloorRadius;
+    // Vertical wall -> rounded inner corner -> projected basin floor.
+    return '<path class="seawater-slice" d="M ' + xy(p(time,0,1)) +
+      ' L ' + xy(p(time,0,r)) + ' Q ' + xy(p(time,0,0)) +
+      ' ' + xy(p(time,r,0)) + ' L ' + xy(p(time,1,0)) + '"/>';
+  }
+  function sideWallRail(g, latitude) {
+    var p = g.project, r = g.sideToWallRadius;
+    var t = 30 / g.width;
+    // Longitude face -> rounded left corner -> time-facing wall.
+    return '<path class="seawater-wall-rail" d="M ' + xy(p(0,1,latitude)) +
+      ' L ' + xy(p(0,r,latitude)) + ' Q ' + xy(p(0,0,latitude)) +
+      ' ' + xy(p(t,0,latitude)) + ' L ' + xy(p(1,0,latitude)) + '"/>';
+  }
+  function cube(g, record, time, longitude, latitude, index, lang) {
+    var p = g.project, dt = 15 / g.width, dy = .074, dz = .062;
+    function v(x, y, z) { return p(time + x*dt, longitude + y*dy, latitude + z*dz); }
+    var a=v(-1,-1,-1), b=v(1,-1,-1), c=v(1,-1,1), d=v(-1,-1,1);
+    var e=v(-1,1,-1),  f=v(1,1,-1),  h=v(1,1,1),  j=v(-1,1,1);
+    var border = roundedPolygon(hull([a,b,c,d,e,f,h,j]), .13);
+    var uid = "sea-water-cube-" + index;
+    var label = nameFor(record, lang);
+    var lat = Number(record.lat), lon = Number(record.lng);
+    var detail = label + " · " + record.date + " · " + Math.abs(lat).toFixed(2) +
+      "°" + (lat >= 0 ? "N" : "S") + " / " + Math.abs(lon).toFixed(2) +
+      "°" + (lon >= 0 ? "E" : "W");
+    var center = p(time, longitude, latitude), right = center.x <= 930;
+    return '<g class="seawater-water-block" tabindex="0" role="img" aria-label="' + esc(detail) + '">' +
+      '<title>' + esc(detail) + '</title>' +
+      '<defs><clipPath id="' + uid + '"><path d="' + border + '"/></clipPath></defs>' +
+      '<path class="seawater-water-body" d="' + border + '"/>' +
+      '<g clip-path="url(#' + uid + ')">' +
+        '<path class="seawater-water-side" d="' + polygon([b,f,h,c]) + '"/>' +
+        '<path class="seawater-water-top" d="' + polygon([d,c,h,j]) + '"/>' +
+        '<path class="seawater-water-face" d="' + polygon([e,f,h,j]) + '"/>' +
+      '</g>' +
+      '<path class="seawater-water-outline" d="' + border + '"/>' +
+      '<text class="seawater-water-label" text-anchor="' + (right ? "start" : "end") +
+        '" x="' + fix(center.x+(right?27:-27)) + '" y="' + fix(center.y-15) + '">' +
+        esc(label) + '</text>' +
+    '</g>';
+  }
+
+  function draw(chart, records, lang, spatial, temporal) {
+    var g = geometry(spatial, temporal), p = g.project;
+    var lines = ['<g class="seawater-mesh" aria-hidden="true">'];
+
+    // Do not draw a solid "rear board": the leftmost YZ face stays a
+    // coordinate reference, indicated by sparse, transparent longitude rails.
+    for (var y=1; y<=6; y++) {
+      lines.push(line(p(0,y/7,0),p(0,y/7,1),"seawater-map-guide"));
+    }
+    for (var t=0; t<=g.slices; t++) lines.push(basinSlice(g,t/g.slices));
+    for (var z=0; z<=6; z++) lines.push(sideWallRail(g,z/6));
+    for (var floor=1; floor<=6; floor++) {
+      lines.push(line(p(0,floor/7,0),p(1,floor/7,0),"seawater-floor-rail"));
+    }
+    lines.push("</g>");
+
+    var valid = records.filter(function (r) {
+      return dateValue(r.date) && Number.isFinite(Number(r.lat)) && Number.isFinite(Number(r.lng));
+    });
+    if (valid.length) {
+      var times = valid.map(function (r) { return dateValue(r.date); });
+      var min = Math.min.apply(null,times), span = Math.max(1,Math.max.apply(null,times)-min);
+      var placed = valid.map(function (record,index) {
+        return {
+          record: record,
+          index: index,
+          time: (dateValue(record.date)-min)/span,
+          longitude: clamp((Number(record.lng)+180)/360,0,1),
+          latitude: clamp((Number(record.lat)+90)/180,0,1)
+        };
+      });
+      // Rear samples first; nearby longitude samples remain legible in front.
+      placed.sort(function (a,b) { return a.longitude-b.longitude || a.time-b.time; });
+      placed.forEach(function (r) {
+        lines.push(cube(g,r.record,r.time,r.longitude,r.latitude,r.index,lang));
       });
     }
-    s.push('<g class="seawater-coord-key" aria-hidden="true">'+
-      '<text x="'+fix(p(0,0,1).x-9)+'" y="'+fix(p(0,0,1).y-17)+'">Z · φ</text>'+
-      '<text x="'+fix(p(0,1,0).x+15)+'" y="'+fix(p(0,1,0).y+22)+'">Y · λ</text>'+
-      '<text x="'+fix(p(1,0,0).x+11)+'" y="'+fix(p(1,0,0).y+26)+'">X · t</text></g>');
-    var svg=root.querySelector(".seawater-space-time-svg");
-    if(svg)svg.innerHTML=s.join("");
-    var readout=root.querySelector("[data-seawater-time-readout]");
-    if(readout)readout.textContent="×"+(1+g.spread*360/465).toFixed(2);
+    lines.push('<g class="seawater-coord-key" aria-hidden="true">' +
+      '<text x="' + fix(p(0,0,1).x-11) + '" y="' + fix(p(0,0,1).y-18) + '">Z · φ</text>' +
+      '<text x="' + fix(p(0,1,0).x-6) + '" y="' + fix(p(0,1,0).y+24) + '">Y · λ</text>' +
+      '<text x="' + fix(p(1,0,0).x+12) + '" y="' + fix(p(1,0,0).y+25) + '">X · t</text>' +
+      '</g>');
+    var svg = chart.querySelector(".seawater-space-time-svg");
+    if (svg) svg.innerHTML = lines.join("");
+    var readout = chart.querySelector("[data-seawater-time-readout]");
+    if (readout) readout.textContent = "×" + (g.width/345).toFixed(2);
   }
+
   function install() {
-    var chart=document.querySelector("[data-seawater-space-time]");
-    if(!chart) { if(active){unmount();active=null;}return; }
-    if(installed.has(chart))return;
-    unmount();installed.add(chart);active=chart;
-    var room=chart.closest(".room-view");
-    var scroll=room&&room.querySelector(".room-scroll");
-    var slider=chart.querySelector("[data-seawater-time-slider]");
-    var stage=chart.querySelector(".seawater-space-time-stage");
-    if(!scroll||!slider||!stage)return;
-    var records;
-    try{records=JSON.parse(chart.dataset.chartRecords||"[]");}catch(_){records=[];}
-    var lang=chart.dataset.chartLang||"zh",frame=0,oldScroll=-1,oldTime=-1;
-    function scrollValue() {
-      var view=scroll.getBoundingClientRect(),rect=stage.getBoundingClientRect();
+    var chart = document.querySelector("[data-seawater-space-time]");
+    if (chart === mounted) return;
+    cleanup();
+    mounted = chart;
+    cleanup = function () {};
+    if (!chart) return;
+
+    var room = chart.closest(".room-view");
+    var scroll = room && room.querySelector(".room-scroll");
+    var stage = chart.querySelector(".seawater-space-time-stage");
+    var slider = chart.querySelector("[data-seawater-time-slider]");
+    if (!scroll || !stage || !slider) return;
+    var records = [];
+    try { records=JSON.parse(chart.dataset.chartRecords||"[]"); } catch (_) {}
+    var lang=chart.dataset.chartLang||"zh";
+    var frame=0, priorSpatial=-1,priorTime=-1;
+
+    function spatialProgress() {
+      var view=scroll.getBoundingClientRect(), rect=stage.getBoundingClientRect();
       return clamp((view.bottom-rect.top)/(view.height+rect.height),0,1);
     }
     function paint() {
-      frame=0;if(!chart.isConnected)return;
-      var a=scrollValue(),b=clamp(Number(slider.value)/100,0,1);
-      if(Math.abs(a-oldScroll)<.003&&Math.abs(b-oldTime)<.0005)return;
-      oldScroll=a;oldTime=b;draw(chart,records,lang,a,b);
+      frame=0;
+      if (!chart.isConnected) return;
+      var s=spatialProgress(), t=clamp((Number(slider.value)||0)/100,0,1);
+      if (Math.abs(s-priorSpatial)<.002 && Math.abs(t-priorTime)<.0005) return;
+      priorSpatial=s;priorTime=t;
+      draw(chart,records,lang,s,t);
     }
-    function schedule(){if(!frame)frame=requestAnimationFrame(paint);}
+    function schedule() { if (!frame) frame=requestAnimationFrame(paint); }
     scroll.addEventListener("scroll",schedule,{passive:true});
     slider.addEventListener("input",schedule,{passive:true});
     window.addEventListener("resize",schedule,{passive:true});
-    var ro=null;
-    if("ResizeObserver" in window){ro=new ResizeObserver(schedule);ro.observe(scroll);}
+    var resizeObserver=null;
+    if ("ResizeObserver" in window) {
+      resizeObserver=new ResizeObserver(schedule);
+      resizeObserver.observe(stage);
+      resizeObserver.observe(scroll);
+    }
     schedule();
-    unmount=function(){
-      if(frame)cancelAnimationFrame(frame);
+    cleanup=function () {
+      if (frame) cancelAnimationFrame(frame);
       scroll.removeEventListener("scroll",schedule);
       slider.removeEventListener("input",schedule);
       window.removeEventListener("resize",schedule);
-      if(ro)ro.disconnect();
+      if (resizeObserver) resizeObserver.disconnect();
     };
   }
   var app=document.querySelector("#app");
-  if(app&&"MutationObserver" in window){
+  if (app && "MutationObserver" in window) {
     new MutationObserver(install).observe(app,{childList:true,subtree:false});
   }
   install();
