@@ -1064,266 +1064,64 @@ function renderSeawaterSpaceTimeChart(item) {
   var records = Array.isArray(item && item.spaceTimeRecords) ? item.spaceTimeRecords : [];
   if (!records.length) return "";
 
-  var W = 1200;
-  var H = 720;
-  var origin = { x: 118, y: 602 };
-  var timeVec = { x: 850, y: 0 };
-  var lonVec = { x: 126, y: -82 };
-  var latVec = { x: 0, y: -390 };
-
-  function clamp01(value) {
-    return Math.max(0, Math.min(1, value));
-  }
-
-  function parseDateValue(value) {
-    var d = new Date(value + "T12:00:00Z");
-    return Number.isFinite(d.getTime()) ? d.getTime() : 0;
-  }
-
-  var times = records.map(function(record) { return parseDateValue(record.date); }).filter(Boolean);
-  var minTime = Math.min.apply(Math, times);
-  var maxTime = Math.max.apply(Math, times);
-  var timeSpan = Math.max(1, maxTime - minTime);
-
-  function project(timeT, lng, lat) {
-    var tx = clamp01(timeT);
-    var ly = clamp01((Number(lng) + 180) / 360);
-    var lz = clamp01((Number(lat) + 90) / 180);
-    return {
-      x: origin.x + timeVec.x * tx + lonVec.x * ly + latVec.x * lz,
-      y: origin.y + timeVec.y * tx + lonVec.y * ly + latVec.y * lz
-    };
-  }
-
-  function pointForRecord(record) {
-    var timeT = (parseDateValue(record.date) - minTime) / timeSpan;
-    return project(timeT, record.lng, record.lat);
-  }
-
-  function line(a, b, className) {
-    return '<line class="' + className + '" x1="' + a.x.toFixed(2) + '" y1="' + a.y.toFixed(2) +
-      '" x2="' + b.x.toFixed(2) + '" y2="' + b.y.toFixed(2) + '" />';
-  }
-
-  function polyline(points, className) {
-    return '<polyline class="' + className + '" points="' +
-      points.map(function(point) { return point.x.toFixed(2) + "," + point.y.toFixed(2); }).join(" ") +
-      '" />';
-  }
-
-  function fmtCoord(value, positive, negative) {
-    var number = Number(value) || 0;
-    return Math.abs(number).toFixed(2) + "°" + (number >= 0 ? positive : negative);
-  }
-
-  /*
-    A deliberately reduced equirectangular world outline for the y-z plane.
-    y = longitude, z = latitude. It is not a navigational coastline dataset;
-    it functions as the spatial memory surface inside the time volume.
-  */
-  var worldShapes = [
-    [[-168,72],[-150,60],[-135,58],[-125,50],[-123,38],[-115,30],[-102,25],[-90,18],[-82,24],[-80,32],[-72,45],[-62,52],[-55,60],[-72,68],[-100,72],[-130,70],[-168,72]],
-    [[-82,12],[-76,4],[-79,-9],[-72,-18],[-67,-30],[-61,-42],[-54,-55],[-46,-52],[-40,-34],[-45,-20],[-52,-8],[-62,2],[-70,9],[-82,12]],
-    [[-18,36],[-8,44],[8,45],[18,50],[31,58],[47,60],[58,55],[72,57],[88,54],[102,50],[118,52],[132,47],[146,50],[160,58],[178,61],[170,44],[151,37],[132,34],[121,23],[110,18],[101,10],[92,19],[80,24],[68,22],[57,18],[48,12],[42,5],[36,-4],[29,-12],[21,-22],[13,-34],[4,-35],[-5,-29],[-12,-16],[-17,-2],[-11,11],[-16,23],[-18,36]],
-    [[-17,35],[-5,31],[9,34],[22,30],[32,22],[40,10],[43,-5],[35,-20],[28,-33],[18,-35],[8,-31],[0,-20],[-7,-6],[-11,8],[-17,20],[-17,35]],
-    [[112,-11],[123,-15],[135,-13],[147,-19],[153,-29],[146,-39],[133,-43],[119,-35],[113,-24],[112,-11]],
-    [[-52,60],[-43,68],[-33,75],[-25,70],[-34,61],[-43,59],[-52,60]],
-    [[130,31],[136,34],[141,39],[145,44],[143,31],[136,30],[130,31]]
-  ];
-
-  function worldMapAt(timeT) {
-    return worldShapes.map(function(shape) {
-      return polyline(shape.map(function(coord) {
-        return project(timeT, coord[0], coord[1]);
-      }), "seawater-world-outline");
-    }).join("");
-  }
-
-  var copy = {
+  var variants = {
     zh: {
-      title: "海水采集 · 时间／空间水箱",
-      subtitle: "x = 时间　·　y = 经度 λ　·　z = 纬度 φ",
-      note: "横向的 x 轴记录时间；每一个 y–z 截面都是同一张世界地图的经纬坐标面。地点因此不再只落在一张平面地图上，而被时间拉成长为一个体积。",
-      essay: "对我来说，海水承载的记忆大于它作为物质本身，也比“收集海水”这个动作更重要。因此，这张图表有意模糊空间与时间的界线：在它们交汇的地方，并不存在一条清楚的分界。就像这一缸不断混合的海水，每一滴都与来自别处、来自别的时间的水相互混合。再取出一滴，打开瓶盖闻一闻，或只是在某个时刻重新想到它，浮现出来的都是这一幅复杂而又淳朴的图景。",
-      time: "时间",
-      longitude: "经度 λ",
-      latitude: "纬度 φ",
-      sample: "时间／空间试作"
+      title: "海水收集 · 时间与空间",
+      subtitle: "X / 时间　　Y / 经度 λ　　Z / 纬度 φ",
+      label: "X / 时间间距",
+      close: "汇聚",
+      open: "展开",
+      note: "页面滚动：空间轴的视角改变　／　拖动滑条：时间切面的间距改变。",
+      essay: "随着页面的滚动，空间轴的透视逐渐改变，使空间的变化成为可见之物；拉开时间轴，不同时刻的海水又沿着时间彼此分离。然而，对我而言，海水承载的记忆远比其物质本身，甚至比收集的行为更重要。空间与时间在这里并没有明确的界线，正如这一缸混合的海水。每当取出一滴、打开瓶盖闻一闻，或只是偶然想起它，来自不同地点与时刻的记忆便重新汇聚成一幅复杂而淳朴的图景。",
+      demo: "示意定位 · 采样地点与时间尚待实际名录核对"
     },
     en: {
-      title: "Seawater collection · time / space tank",
-      subtitle: "x = time · y = longitude λ · z = latitude φ",
-      note: "The horizontal x-axis records time; every y-z section is the same world map expressed as longitude and latitude. Place is no longer held on a single flat map, but drawn by time into a volume.",
-      essay: "For me, the memory carried by seawater matters more than the material itself, and more than the act of collecting seawater. This diagram therefore deliberately blurs the boundary between space and time: where the two meet, there is no clean division. Like the mixed water inside one tank, every drop mingles with water from somewhere else and from another moment. Taking out a drop, opening a bottle to smell it, or simply thinking of it again brings back the same image—complex, yet plain.",
-      time: "time",
-      longitude: "longitude λ",
-      latitude: "latitude φ",
-      sample: "time / space study"
+      title: "Seawater collection · time and space",
+      subtitle: "X / time　　Y / longitude λ　　Z / latitude φ",
+      label: "X / time spacing",
+      close: "gather",
+      open: "unfold",
+      note: "Scroll to shift the spatial projection; move the bar to widen the intervals between moments.",
+      essay: "As the page moves, the spatial axes change perspective, making the variation of space visible. Pull the time axis apart, and the waters from different moments move away from one another. Yet the memory seawater carries matters more to me than its substance, or even the act of collecting it. Space and time have no firm boundary here, much like the water mixed in a single tank. Take out a drop, open a bottle to smell it, or simply remember it: places and moments gather again into one picture, at once intricate and plain.",
+      demo: "Diagrammatic locations · sample coordinates and dates await verification"
     },
     ja: {
-      title: "海水採集 · 時間／空間タンク",
-      subtitle: "x = 時間　·　y = 経度 λ　·　z = 緯度 φ",
-      note: "横方向の x 軸が時間を記録し、それぞれの y–z 断面は同じ世界地図を経度と緯度で表した座標面となる。場所は一枚の平面地図に留まらず、時間によってひとつの体積へ引き延ばされる。",
-      essay: "私にとって海水が抱える記憶は、物質としての海水そのものよりも、そして「海水を集める」という行為よりも重要である。だからこの図は、空間と時間の境界を意図的に曖昧にしている。両者が交わるところに、明確な境目はない。一つのタンクで混ざり合う海水のように、一滴一滴は別の場所、別の時間から来た水と混ざり合っている。そこから一滴を取り出すとき、瓶の蓋を開けて匂いを嗅ぐとき、あるいはふと思い出すとき、立ち上がるのは複雑でありながら素朴なひとつの風景である。",
-      time: "時間",
-      longitude: "経度 λ",
-      latitude: "緯度 φ",
-      sample: "時間／空間試作"
+      title: "海水採集 · 時間と空間",
+      subtitle: "X / 時間　　Y / 経度 λ　　Z / 緯度 φ",
+      label: "X / 時間の間隔",
+      close: "集約",
+      open: "展開",
+      note: "ページをスクロールすると空間軸の投影が変わり、バーを動かすと時間の断面の間隔が広がる。",
+      essay: "ページをスクロールすると空間軸の遠近が変わり、空間の変化が目に見えるようになる。時間軸を引き広げれば、異なる時に採られた海水は時間に沿って離れていく。それでも私にとって、海水が抱える記憶は、その物質そのものよりも、集める行為よりも重要である。ここでは空間と時間の境界が曖昧になる。一つの水槽に混ざり合った海水のように。一滴を取り出すとき、蓋を開けて匂いを嗅ぐとき、あるいはふと思い出すとき、異なる場所と時刻の記憶は再び集まり、複雑でありながら素朴な景色となる。",
+      demo: "図式上の位置 · 採集地点と日付は実際の記録との照合待ち"
     }
   };
-  var t = copy[state.lang] || copy.en;
-
-  var svg = '<svg class="seawater-space-time-svg" viewBox="0 0 ' + W + " " + H +
-    '" role="img" aria-label="' + escapeHtml(t.title) + '">';
-
-  svg += '<defs>' +
-    '<marker id="seawater-axis-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">' +
-      '<path d="M 0 0 L 10 5 L 0 10 z" class="seawater-axis-arrow-head" />' +
-    '</marker>' +
-  '</defs>';
-
-  // translucent coordinate planes at several moments in time
-  var sliceDates = [
-    records[0].date,
-    "2024-01-01",
-    "2025-01-01",
-    "2026-01-01",
-    records[records.length - 1].date
-  ];
-  var seenSlices = {};
-  sliceDates.forEach(function(dateValue) {
-    var ms = parseDateValue(dateValue);
-    var tx = clamp01((ms - minTime) / timeSpan);
-    var key = tx.toFixed(4);
-    if (seenSlices[key]) return;
-    seenSlices[key] = true;
-
-    var p00 = project(tx, -180, -90);
-    var p10 = project(tx, 180, -90);
-    var p11 = project(tx, 180, 90);
-    var p01 = project(tx, -180, 90);
-    svg += polyline([p00,p10,p11,p01,p00], "seawater-time-plane");
-
-    [-90,0,90].forEach(function(lng) {
-      svg += line(project(tx,lng,-90), project(tx,lng,90), "seawater-plane-grid");
-    });
-    [-60,0,60].forEach(function(lat) {
-      svg += line(project(tx,-180,lat), project(tx,180,lat), "seawater-plane-grid");
-    });
-
-    svg += worldMapAt(tx);
-  });
-
-  // long coordinate rails through time
-  [-180,-90,0,90,180].forEach(function(lng) {
-    [-60,0,60].forEach(function(lat) {
-      svg += line(project(0,lng,lat), project(1,lng,lat), "seawater-long-grid");
-    });
-  });
-
-  // tank / cuboid edges
-  var corners = {
-    a: project(0,-180,-90), b: project(1,-180,-90),
-    c: project(0,180,-90),  d: project(1,180,-90),
-    e: project(0,-180,90),  f: project(1,-180,90),
-    g: project(0,180,90),   h: project(1,180,90)
-  };
-  [
-    ["a","b"],["c","d"],["e","f"],["g","h"],
-    ["a","c"],["b","d"],["e","g"],["f","h"],
-    ["a","e"],["b","f"],["c","g"],["d","h"]
-  ].forEach(function(pair) {
-    svg += line(corners[pair[0]], corners[pair[1]], "seawater-tank-edge");
-  });
-
-  // axes
-  var xStart = project(0,-180,-90);
-  var xEnd = project(1,-180,-90);
-  var yEnd = project(0,180,-90);
-  var zEnd = project(0,-180,90);
-  svg += '<line class="seawater-axis seawater-axis-time" marker-end="url(#seawater-axis-arrow)" x1="' +
-    xStart.x + '" y1="' + xStart.y + '" x2="' + (xEnd.x+18) + '" y2="' + xEnd.y + '" />';
-  svg += '<line class="seawater-axis" marker-end="url(#seawater-axis-arrow)" x1="' +
-    xStart.x + '" y1="' + xStart.y + '" x2="' + (yEnd.x+8) + '" y2="' + (yEnd.y-6) + '" />';
-  svg += '<line class="seawater-axis" marker-end="url(#seawater-axis-arrow)" x1="' +
-    xStart.x + '" y1="' + xStart.y + '" x2="' + zEnd.x + '" y2="' + (zEnd.y-14) + '" />';
-
-  svg += '<text class="seawater-axis-label seawater-axis-label-time" x="' + (xEnd.x+28) + '" y="' + (xEnd.y+4) + '">' +
-    escapeHtml("x / " + t.time) + '</text>';
-  svg += '<text class="seawater-axis-label" x="' + (yEnd.x+18) + '" y="' + (yEnd.y-8) + '">' +
-    escapeHtml("y / " + t.longitude) + '</text>';
-  svg += '<text class="seawater-axis-label" x="' + (zEnd.x-6) + '" y="' + (zEnd.y-26) + '">' +
-    escapeHtml("z / " + t.latitude) + '</text>';
-
-  // latitude labels
-  [-60,-30,0,30,60].forEach(function(lat) {
-    var p = project(0,-180,lat);
-    svg += '<text class="seawater-coordinate-tick seawater-lat-tick" x="' + (p.x-12) + '" y="' + (p.y+3) +
-      '" text-anchor="end">' + escapeHtml((lat === 0 ? "0°" : Math.abs(lat) + "°" + (lat>0?"N":"S"))) + '</text>';
-  });
-
-  // longitude labels
-  [-180,-90,0,90,180].forEach(function(lng) {
-    var p = project(0,lng,-90);
-    svg += '<text class="seawater-coordinate-tick" x="' + (p.x+8) + '" y="' + (p.y+18) + '">' +
-      escapeHtml(lng === 0 ? "0°" : Math.abs(lng) + "°" + (lng>0?"E":"W")) + '</text>';
-  });
-
-  // date ticks
-  var timeTicks = [
-    { date: records[0].date, label: records[0].date.slice(0,7).replace("-",".") },
-    { date: "2024-01-01", label: "2024.01" },
-    { date: "2025-01-01", label: "2025.01" },
-    { date: "2026-01-01", label: "2026.01" },
-    { date: records[records.length-1].date, label: records[records.length-1].date.slice(0,7).replace("-",".") }
-  ];
-  var seenTicks = {};
-  timeTicks.forEach(function(entry) {
-    var tx = clamp01((parseDateValue(entry.date)-minTime)/timeSpan);
-    var key = tx.toFixed(4);
-    if(seenTicks[key]) return;
-    seenTicks[key] = true;
-    var p = project(tx,-180,-90);
-    svg += '<line class="seawater-time-tick-line" x1="' + p.x + '" y1="' + (p.y-5) + '" x2="' + p.x + '" y2="' + (p.y+6) + '" />';
-    svg += '<text class="seawater-time-tick" x="' + p.x + '" y="' + (p.y+25) + '" text-anchor="middle">' +
-      escapeHtml(entry.label) + '</text>';
-  });
-
-  // records and their projections
-  records.forEach(function(record, index) {
-    var p = pointForRecord(record);
-    var tx = (parseDateValue(record.date)-minTime)/timeSpan;
-    var floor = project(tx,record.lng,-90);
-    var yzBase = project(0,record.lng,record.lat);
-    var name = localised(record.name);
-    var latText = fmtCoord(record.lat,"N","S");
-    var lngText = fmtCoord(record.lng,"E","W");
-
-    svg += '<g class="seawater-record" tabindex="0" data-record-index="' + index + '">' +
-      line(floor,p,"seawater-record-guide") +
-      line(yzBase,p,"seawater-record-time-guide") +
-      '<circle class="seawater-record-halo" cx="' + p.x.toFixed(2) + '" cy="' + p.y.toFixed(2) + '" r="9" />' +
-      '<circle class="seawater-record-point" cx="' + p.x.toFixed(2) + '" cy="' + p.y.toFixed(2) + '" r="3.2" />' +
-      '<g class="seawater-record-label" transform="translate(' + (p.x+11).toFixed(2) + " " + (p.y-11).toFixed(2) + ')">' +
-        '<rect x="-7" y="-15" width="206" height="54" rx="0" />' +
-        '<text class="seawater-record-name" x="0" y="0">' + escapeHtml(name) + '</text>' +
-        '<text class="seawater-record-meta" x="0" y="16">' + escapeHtml(record.date.replaceAll("-",".")) + '</text>' +
-        '<text class="seawater-record-meta" x="0" y="31">' + escapeHtml(latText + " · " + lngText) + '</text>' +
-      '</g>' +
-    '</g>';
-  });
-
-  svg += '</svg>';
-
-  return '<section class="seawater-space-time" data-seawater-space-time>' +
+  var t = variants[state.lang] || variants.zh;
+  return '<section class="seawater-space-time" data-seawater-space-time data-chart-lang="' +
+      escapeHtml(state.lang) + '" data-chart-records="' + escapeHtml(JSON.stringify(records)) + '">' +
     '<header class="seawater-space-time-head">' +
-      '<p class="seawater-space-time-kicker">' + escapeHtml(t.sample) + '</p>' +
+      '<p class="seawater-space-time-kicker">SPACE / TIME</p>' +
       '<h2>' + escapeHtml(t.title) + '</h2>' +
       '<p class="seawater-space-time-subtitle">' + escapeHtml(t.subtitle) + '</p>' +
     '</header>' +
-    '<div class="seawater-space-time-stage">' + svg + '</div>' +
+    '<div class="seawater-space-time-stage">' +
+      '<svg class="seawater-space-time-svg" viewBox="0 0 1200 570" role="group" aria-label="' +
+        escapeHtml(t.title) + '"></svg>' +
+    '</div>' +
+    '<div class="seawater-time-control">' +
+      '<div class="seawater-time-control-labels">' +
+        '<label for="seawater-time-spacing">' + escapeHtml(t.label) + '</label>' +
+        '<output class="seawater-time-readout" data-seawater-time-readout for="seawater-time-spacing">×1.00</output>' +
+      '</div>' +
+      '<input class="seawater-time-slider" id="seawater-time-spacing" data-seawater-time-slider ' +
+        'type="range" min="0" max="100" value="0" step="1" aria-label="' + escapeHtml(t.label) + '" />' +
+      '<div class="seawater-time-control-endpoints">' +
+        '<span>' + escapeHtml(t.close) + '</span><span>' + escapeHtml(t.open) + '</span>' +
+      '</div>' +
+    '</div>' +
     '<p class="seawater-space-time-note">' + escapeHtml(t.note) + '</p>' +
     '<p class="seawater-space-time-essay">' + escapeHtml(t.essay) + '</p>' +
+    '<p class="seawater-chart-prototype">' + escapeHtml(t.demo) + '</p>' +
   '</section>';
 }
 
