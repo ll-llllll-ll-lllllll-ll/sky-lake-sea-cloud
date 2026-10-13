@@ -3609,13 +3609,11 @@ render();
     /*
       Seawater page background exposure curve
       ---------------------------------------
-      From top to bottom the page follows the requested darkness sequence:
-      0 -> 20 -> 30 -> 40 -> 30 -> 20 -> 10 -> 0.
-      Level 0 is the site's warm paper (#f4f3ee); level 40 is sampled from the
-      user's ideal-effect reference (#928c80). Each interval uses smoothstep so
-      the change reads as a slow exposure shift rather than discrete bands.
+      The white -> dark -> white passage belongs to the two artworks.
+      Complete the return to warm paper BEFORE the space/time coordinate diagram
+      enters the viewport, rather than stretching the last fade across the page.
+      Keep the original eight brightness stops inside this shorter passage.
     */
-    var seawaterBackgroundLevels = [0, 20, 30, 40, 30, 20, 10, 0];
     var seawaterPaperRgb = [244, 243, 238];
     var seawaterDeepRgb = [146, 140, 128];
     var lastSeawaterBackground = "";
@@ -3646,19 +3644,38 @@ render();
       return clamp(contentMidpoint - scroll.clientHeight * 0.5, 0, maxScroll);
     }
 
+    function chartBackgroundRestorationLimit() {
+      var maxScroll = Math.max(1, scroll.scrollHeight - scroll.clientHeight);
+      var chart = scroll.querySelector("[data-seawater-space-time]");
+      if (!chart) return maxScroll;
+
+      var scrollRect = scroll.getBoundingClientRect();
+      var chartRect = chart.getBoundingClientRect();
+      var chartTop = scroll.scrollTop + chartRect.top - scrollRect.top;
+      // A 20%-of-viewport safety margin before the chart could enter view.
+      return clamp(chartTop - scroll.clientHeight * 1.20, 0, maxScroll);
+    }
+
     function backgroundLevelForScroll() {
       var maxScroll = Math.max(1, scroll.scrollHeight - scroll.clientHeight);
       var current = clamp(scroll.scrollTop, 0, maxScroll);
-      var target = artworkMidpointTargetScroll();
+      var midpoint = artworkMidpointTargetScroll();
+      var viewport = Math.max(1, scroll.clientHeight);
 
-      if (current <= target) {
-        var before = target > 0 ? current / target : 1;
-        return interpolateBackgroundStops([0, 20, 30, 40], before);
+      // An artwork-centred passage of at most about 1.4 screen heights,
+      // further limited by the coordinate diagram's approaching top edge.
+      var finish = Math.min(maxScroll, midpoint + viewport * 0.82, chartBackgroundRestorationLimit());
+      if (finish <= 0 || current >= finish) return 0;
+
+      var fadeOut = Math.min(viewport * 0.58, finish * 0.46);
+      var peak = Math.max(0, Math.min(midpoint, finish - fadeOut));
+      var begin = Math.max(0, peak - viewport * 0.60);
+
+      if (current <= begin) return 0;
+      if (current <= peak) {
+        return interpolateBackgroundStops([0, 20, 30, 40], (current - begin) / Math.max(1, peak - begin));
       }
-
-      var afterRange = Math.max(1, maxScroll - target);
-      var after = (current - target) / afterRange;
-      return interpolateBackgroundStops([40, 30, 20, 10, 0], after);
+      return interpolateBackgroundStops([40, 30, 20, 10, 0], (current - peak) / Math.max(1, finish - peak));
     }
 
     function updateSeawaterBackground() {
