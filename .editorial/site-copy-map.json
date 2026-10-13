@@ -1,0 +1,4103 @@
+{
+  "schema": "site-copy-map/v1",
+  "revision": "460aafe21709aef83a6e1c37943f23202aa85836",
+  "generated": "2026-10-13T14:42:43.807Z",
+  "records": [
+    {
+      "file": "script.js",
+      "path": "labels.index",
+      "kind": "interface",
+      "line": 9,
+      "languages": {
+        "zh": "索引",
+        "en": "index",
+        "ja": "索引"
+      },
+      "source": {
+        "zh": {
+          "start": 234,
+          "end": 238,
+          "syntax": "literal",
+          "original": "索引"
+        },
+        "en": {
+          "start": 528,
+          "end": 535,
+          "syntax": "literal",
+          "original": "index"
+        },
+        "ja": {
+          "start": 870,
+          "end": 874,
+          "syntax": "literal",
+          "original": "索引"
+        }
+      },
+      "id": "TXT-0001"
+    },
+    {
+      "file": "script.js",
+      "path": "labels.close",
+      "kind": "interface",
+      "line": 10,
+      "languages": {
+        "zh": "收起",
+        "en": "close",
+        "ja": "閉じる"
+      },
+      "source": {
+        "zh": {
+          "start": 251,
+          "end": 255,
+          "syntax": "literal",
+          "original": "收起"
+        },
+        "en": {
+          "start": 548,
+          "end": 555,
+          "syntax": "literal",
+          "original": "close"
+        },
+        "ja": {
+          "start": 887,
+          "end": 892,
+          "syntax": "literal",
+          "original": "閉じる"
+        }
+      },
+      "id": "TXT-0002"
+    },
+    {
+      "file": "script.js",
+      "path": "labels.calendar",
+      "kind": "interface",
+      "line": 11,
+      "languages": {
+        "zh": "日历",
+        "en": "calendar",
+        "ja": "暦"
+      },
+      "source": {
+        "zh": {
+          "start": 271,
+          "end": 275,
+          "syntax": "literal",
+          "original": "日历"
+        },
+        "en": {
+          "start": 571,
+          "end": 581,
+          "syntax": "literal",
+          "original": "calendar"
+        },
+        "ja": {
+          "start": 908,
+          "end": 911,
+          "syntax": "literal",
+          "original": "暦"
+        }
+      },
+      "id": "TXT-0003"
+    },
+    {
+      "file": "script.js",
+      "path": "labels.today",
+      "kind": "interface",
+      "line": 12,
+      "languages": {
+        "zh": "今天",
+        "en": "today",
+        "ja": "今日"
+      },
+      "source": {
+        "zh": {
+          "start": 288,
+          "end": 292,
+          "syntax": "literal",
+          "original": "今天"
+        },
+        "en": {
+          "start": 594,
+          "end": 601,
+          "syntax": "literal",
+          "original": "today"
+        },
+        "ja": {
+          "start": 924,
+          "end": 928,
+          "syntax": "literal",
+          "original": "今日"
+        }
+      },
+      "id": "TXT-0004"
+    },
+    {
+      "file": "script.js",
+      "path": "labels.returnToday",
+      "kind": "interface",
+      "line": 13,
+      "languages": {
+        "zh": "回到今天",
+        "en": "return to today",
+        "ja": "今日へ戻る"
+      },
+      "source": {
+        "zh": {
+          "start": 311,
+          "end": 317,
+          "syntax": "literal",
+          "original": "回到今天"
+        },
+        "en": {
+          "start": 620,
+          "end": 637,
+          "syntax": "literal",
+          "original": "return to today"
+        },
+        "ja": {
+          "start": 947,
+          "end": 954,
+          "syntax": "literal",
+          "original": "今日へ戻る"
+        }
+      },
+      "id": "TXT-0005"
+    },
+    {
+      "file": "script.js",
+      "path": "labels.works",
+      "kind": "interface",
+      "line": 14,
+      "languages": {
+        "zh": "作品",
+        "en": "works",
+        "ja": "作品"
+      },
+      "source": {
+        "zh": {
+          "start": 330,
+          "end": 334,
+          "syntax": "literal",
+          "original": "作品"
+        },
+        "en": {
+          "start": 650,
+          "end": 657,
+          "syntax": "literal",
+          "original": "works"
+        },
+        "ja": {
+          "start": 967,
+          "end": 971,
+          "syntax": "literal",
+          "original": "作品"
+        }
+      },
+      "id": "TXT-0006"
+    },
+    {
+      "file": "script.js",
+      "path": "labels.collection",
+      "kind": "interface",
+      "line": 15,
+      "languages": {
+        "zh": "收藏",
+        "en": "collection",
+        "ja": "コレクション"
+      },
+      "source": {
+        "zh": {
+          "start": 352,
+          "end": 356,
+          "syntax": "literal",
+          "original": "收藏"
+        },
+        "en": {
+          "start": 675,
+          "end": 687,
+          "syntax": "literal",
+          "original": "collection"
+        },
+        "ja": {
+          "start": 989,
+          "end": 997,
+          "syntax": "literal",
+          "original": "コレクション"
+        }
+      },
+      "id": "TXT-0007"
+    },
+    {
+      "file": "script.js",
+      "path": "labels.writings",
+      "kind": "interface",
+      "line": 16,
+      "languages": {
+        "zh": "文稿",
+        "en": "writings",
+        "ja": "文章"
+      },
+      "source": {
+        "zh": {
+          "start": 372,
+          "end": 376,
+          "syntax": "literal",
+          "original": "文稿"
+        },
+        "en": {
+          "start": 703,
+          "end": 713,
+          "syntax": "literal",
+          "original": "writings"
+        },
+        "ja": {
+          "start": 1013,
+          "end": 1017,
+          "syntax": "literal",
+          "original": "文章"
+        }
+      },
+      "id": "TXT-0008"
+    },
+    {
+      "file": "script.js",
+      "path": "labels.back",
+      "kind": "interface",
+      "line": 17,
+      "languages": {
+        "zh": "返回",
+        "en": "back",
+        "ja": "戻る"
+      },
+      "source": {
+        "zh": {
+          "start": 388,
+          "end": 392,
+          "syntax": "literal",
+          "original": "返回"
+        },
+        "en": {
+          "start": 725,
+          "end": 731,
+          "syntax": "literal",
+          "original": "back"
+        },
+        "ja": {
+          "start": 1029,
+          "end": 1033,
+          "syntax": "literal",
+          "original": "戻る"
+        }
+      },
+      "id": "TXT-0009"
+    },
+    {
+      "file": "script.js",
+      "path": "labels.next",
+      "kind": "interface",
+      "line": 18,
+      "languages": {
+        "zh": "下一处",
+        "en": "next",
+        "ja": "次へ"
+      },
+      "source": {
+        "zh": {
+          "start": 404,
+          "end": 409,
+          "syntax": "literal",
+          "original": "下一处"
+        },
+        "en": {
+          "start": 743,
+          "end": 749,
+          "syntax": "literal",
+          "original": "next"
+        },
+        "ja": {
+          "start": 1045,
+          "end": 1049,
+          "syntax": "literal",
+          "original": "次へ"
+        }
+      },
+      "id": "TXT-0010"
+    },
+    {
+      "file": "script.js",
+      "path": "labels.weekdays[0]",
+      "kind": "interface",
+      "line": 19,
+      "languages": {
+        "zh": "一",
+        "en": "M",
+        "ja": "月"
+      },
+      "source": {
+        "zh": {
+          "start": 426,
+          "end": 429,
+          "syntax": "literal",
+          "original": "一"
+        },
+        "en": {
+          "start": 766,
+          "end": 769,
+          "syntax": "literal",
+          "original": "M"
+        },
+        "ja": {
+          "start": 1066,
+          "end": 1069,
+          "syntax": "literal",
+          "original": "月"
+        }
+      },
+      "id": "TXT-0011"
+    },
+    {
+      "file": "script.js",
+      "path": "labels.weekdays[1]",
+      "kind": "interface",
+      "line": 19,
+      "languages": {
+        "zh": "二",
+        "en": "T",
+        "ja": "火"
+      },
+      "source": {
+        "zh": {
+          "start": 431,
+          "end": 434,
+          "syntax": "literal",
+          "original": "二"
+        },
+        "en": {
+          "start": 771,
+          "end": 774,
+          "syntax": "literal",
+          "original": "T"
+        },
+        "ja": {
+          "start": 1071,
+          "end": 1074,
+          "syntax": "literal",
+          "original": "火"
+        }
+      },
+      "id": "TXT-0012"
+    },
+    {
+      "file": "script.js",
+      "path": "labels.weekdays[2]",
+      "kind": "interface",
+      "line": 19,
+      "languages": {
+        "zh": "三",
+        "en": "W",
+        "ja": "水"
+      },
+      "source": {
+        "zh": {
+          "start": 436,
+          "end": 439,
+          "syntax": "literal",
+          "original": "三"
+        },
+        "en": {
+          "start": 776,
+          "end": 779,
+          "syntax": "literal",
+          "original": "W"
+        },
+        "ja": {
+          "start": 1076,
+          "end": 1079,
+          "syntax": "literal",
+          "original": "水"
+        }
+      },
+      "id": "TXT-0013"
+    },
+    {
+      "file": "script.js",
+      "path": "labels.weekdays[3]",
+      "kind": "interface",
+      "line": 19,
+      "languages": {
+        "zh": "四",
+        "en": "T",
+        "ja": "木"
+      },
+      "source": {
+        "zh": {
+          "start": 441,
+          "end": 444,
+          "syntax": "literal",
+          "original": "四"
+        },
+        "en": {
+          "start": 781,
+          "end": 784,
+          "syntax": "literal",
+          "original": "T"
+        },
+        "ja": {
+          "start": 1081,
+          "end": 1084,
+          "syntax": "literal",
+          "original": "木"
+        }
+      },
+      "id": "TXT-0014"
+    },
+    {
+      "file": "script.js",
+      "path": "labels.weekdays[4]",
+      "kind": "interface",
+      "line": 19,
+      "languages": {
+        "zh": "五",
+        "en": "F",
+        "ja": "金"
+      },
+      "source": {
+        "zh": {
+          "start": 446,
+          "end": 449,
+          "syntax": "literal",
+          "original": "五"
+        },
+        "en": {
+          "start": 786,
+          "end": 789,
+          "syntax": "literal",
+          "original": "F"
+        },
+        "ja": {
+          "start": 1086,
+          "end": 1089,
+          "syntax": "literal",
+          "original": "金"
+        }
+      },
+      "id": "TXT-0015"
+    },
+    {
+      "file": "script.js",
+      "path": "labels.weekdays[5]",
+      "kind": "interface",
+      "line": 19,
+      "languages": {
+        "zh": "六",
+        "en": "S",
+        "ja": "土"
+      },
+      "source": {
+        "zh": {
+          "start": 451,
+          "end": 454,
+          "syntax": "literal",
+          "original": "六"
+        },
+        "en": {
+          "start": 791,
+          "end": 794,
+          "syntax": "literal",
+          "original": "S"
+        },
+        "ja": {
+          "start": 1091,
+          "end": 1094,
+          "syntax": "literal",
+          "original": "土"
+        }
+      },
+      "id": "TXT-0016"
+    },
+    {
+      "file": "script.js",
+      "path": "labels.weekdays[6]",
+      "kind": "interface",
+      "line": 19,
+      "languages": {
+        "zh": "日",
+        "en": "S",
+        "ja": "日"
+      },
+      "source": {
+        "zh": {
+          "start": 456,
+          "end": 459,
+          "syntax": "literal",
+          "original": "日"
+        },
+        "en": {
+          "start": 796,
+          "end": 799,
+          "syntax": "literal",
+          "original": "S"
+        },
+        "ja": {
+          "start": 1096,
+          "end": 1099,
+          "syntax": "literal",
+          "original": "日"
+        }
+      },
+      "id": "TXT-0017"
+    },
+    {
+      "file": "script.js",
+      "path": "labels.monthSuffix",
+      "kind": "interface",
+      "line": 20,
+      "languages": {
+        "zh": "月",
+        "en": "",
+        "ja": "月"
+      },
+      "source": {
+        "zh": {
+          "start": 479,
+          "end": 482,
+          "syntax": "literal",
+          "original": "月"
+        },
+        "en": {
+          "start": 819,
+          "end": 821,
+          "syntax": "literal",
+          "original": ""
+        },
+        "ja": {
+          "start": 1119,
+          "end": 1122,
+          "syntax": "literal",
+          "original": "月"
+        }
+      },
+      "id": "TXT-0018"
+    },
+    {
+      "file": "script.js",
+      "path": "labels.viewing",
+      "kind": "interface",
+      "line": 21,
+      "languages": {
+        "zh": "正在回看",
+        "en": "viewing",
+        "ja": "振り返り"
+      },
+      "source": {
+        "zh": {
+          "start": 497,
+          "end": 503,
+          "syntax": "literal",
+          "original": "正在回看"
+        },
+        "en": {
+          "start": 836,
+          "end": 845,
+          "syntax": "literal",
+          "original": "viewing"
+        },
+        "ja": {
+          "start": 1137,
+          "end": 1143,
+          "syntax": "literal",
+          "original": "振り返り"
+        }
+      },
+      "id": "TXT-0019"
+    },
+    {
+      "file": "script.js",
+      "path": "ambientMeta.sea.day",
+      "kind": "translation",
+      "line": 57,
+      "languages": {
+        "zh": "海之日",
+        "en": "day of the sea",
+        "ja": "海の日"
+      },
+      "source": {
+        "zh": {
+          "start": 1198,
+          "end": 1203,
+          "syntax": "literal",
+          "original": "海之日"
+        },
+        "en": {
+          "start": 1209,
+          "end": 1225,
+          "syntax": "literal",
+          "original": "day of the sea"
+        },
+        "ja": {
+          "start": 1231,
+          "end": 1236,
+          "syntax": "literal",
+          "original": "海の日"
+        }
+      },
+      "id": "TXT-0020"
+    },
+    {
+      "file": "script.js",
+      "path": "ambientMeta.sea.short",
+      "kind": "translation",
+      "line": 58,
+      "languages": {
+        "zh": "海",
+        "en": "sea",
+        "ja": "海"
+      },
+      "source": {
+        "zh": {
+          "start": 1257,
+          "end": 1260,
+          "syntax": "literal",
+          "original": "海"
+        },
+        "en": {
+          "start": 1266,
+          "end": 1271,
+          "syntax": "literal",
+          "original": "sea"
+        },
+        "ja": {
+          "start": 1277,
+          "end": 1280,
+          "syntax": "literal",
+          "original": "海"
+        }
+      },
+      "id": "TXT-0021"
+    },
+    {
+      "file": "script.js",
+      "path": "ambientMeta.sea.fallback",
+      "kind": "translation",
+      "line": 59,
+      "languages": {
+        "zh": "海面记录",
+        "en": "sea record",
+        "ja": "海面の記録"
+      },
+      "source": {
+        "zh": {
+          "start": 1304,
+          "end": 1310,
+          "syntax": "literal",
+          "original": "海面记录"
+        },
+        "en": {
+          "start": 1316,
+          "end": 1328,
+          "syntax": "literal",
+          "original": "sea record"
+        },
+        "ja": {
+          "start": 1334,
+          "end": 1341,
+          "syntax": "literal",
+          "original": "海面の記録"
+        }
+      },
+      "id": "TXT-0022"
+    },
+    {
+      "file": "script.js",
+      "path": "ambientMeta.cloud.day",
+      "kind": "translation",
+      "line": 63,
+      "languages": {
+        "zh": "云之日",
+        "en": "day of clouds",
+        "ja": "雲の日"
+      },
+      "source": {
+        "zh": {
+          "start": 1405,
+          "end": 1410,
+          "syntax": "literal",
+          "original": "云之日"
+        },
+        "en": {
+          "start": 1416,
+          "end": 1431,
+          "syntax": "literal",
+          "original": "day of clouds"
+        },
+        "ja": {
+          "start": 1437,
+          "end": 1442,
+          "syntax": "literal",
+          "original": "雲の日"
+        }
+      },
+      "id": "TXT-0023"
+    },
+    {
+      "file": "script.js",
+      "path": "ambientMeta.cloud.short",
+      "kind": "translation",
+      "line": 64,
+      "languages": {
+        "zh": "云",
+        "en": "cloud",
+        "ja": "雲"
+      },
+      "source": {
+        "zh": {
+          "start": 1463,
+          "end": 1466,
+          "syntax": "literal",
+          "original": "云"
+        },
+        "en": {
+          "start": 1472,
+          "end": 1479,
+          "syntax": "literal",
+          "original": "cloud"
+        },
+        "ja": {
+          "start": 1485,
+          "end": 1488,
+          "syntax": "literal",
+          "original": "雲"
+        }
+      },
+      "id": "TXT-0024"
+    },
+    {
+      "file": "script.js",
+      "path": "ambientMeta.cloud.fallback",
+      "kind": "translation",
+      "line": 65,
+      "languages": {
+        "zh": "云层记录",
+        "en": "cloud record",
+        "ja": "雲の記録"
+      },
+      "source": {
+        "zh": {
+          "start": 1512,
+          "end": 1518,
+          "syntax": "literal",
+          "original": "云层记录"
+        },
+        "en": {
+          "start": 1524,
+          "end": 1538,
+          "syntax": "literal",
+          "original": "cloud record"
+        },
+        "ja": {
+          "start": 1544,
+          "end": 1550,
+          "syntax": "literal",
+          "original": "雲の記録"
+        }
+      },
+      "id": "TXT-0025"
+    },
+    {
+      "file": "script.js",
+      "path": "ambientMeta.lake.day",
+      "kind": "translation",
+      "line": 69,
+      "languages": {
+        "zh": "湖之日",
+        "en": "day of the lake",
+        "ja": "湖の日"
+      },
+      "source": {
+        "zh": {
+          "start": 1613,
+          "end": 1618,
+          "syntax": "literal",
+          "original": "湖之日"
+        },
+        "en": {
+          "start": 1624,
+          "end": 1641,
+          "syntax": "literal",
+          "original": "day of the lake"
+        },
+        "ja": {
+          "start": 1647,
+          "end": 1652,
+          "syntax": "literal",
+          "original": "湖の日"
+        }
+      },
+      "id": "TXT-0026"
+    },
+    {
+      "file": "script.js",
+      "path": "ambientMeta.lake.short",
+      "kind": "translation",
+      "line": 70,
+      "languages": {
+        "zh": "湖",
+        "en": "lake",
+        "ja": "湖"
+      },
+      "source": {
+        "zh": {
+          "start": 1673,
+          "end": 1676,
+          "syntax": "literal",
+          "original": "湖"
+        },
+        "en": {
+          "start": 1682,
+          "end": 1688,
+          "syntax": "literal",
+          "original": "lake"
+        },
+        "ja": {
+          "start": 1694,
+          "end": 1697,
+          "syntax": "literal",
+          "original": "湖"
+        }
+      },
+      "id": "TXT-0027"
+    },
+    {
+      "file": "script.js",
+      "path": "ambientMeta.lake.fallback",
+      "kind": "translation",
+      "line": 71,
+      "languages": {
+        "zh": "湖面记录",
+        "en": "lake record",
+        "ja": "湖面の記録"
+      },
+      "source": {
+        "zh": {
+          "start": 1721,
+          "end": 1727,
+          "syntax": "literal",
+          "original": "湖面记录"
+        },
+        "en": {
+          "start": 1733,
+          "end": 1746,
+          "syntax": "literal",
+          "original": "lake record"
+        },
+        "ja": {
+          "start": 1752,
+          "end": 1759,
+          "syntax": "literal",
+          "original": "湖面の記録"
+        }
+      },
+      "id": "TXT-0028"
+    },
+    {
+      "file": "script.js",
+      "path": "ambientMeta.sky.day",
+      "kind": "translation",
+      "line": 75,
+      "languages": {
+        "zh": "天之日",
+        "en": "day of the sky",
+        "ja": "空の日"
+      },
+      "source": {
+        "zh": {
+          "start": 1821,
+          "end": 1826,
+          "syntax": "literal",
+          "original": "天之日"
+        },
+        "en": {
+          "start": 1832,
+          "end": 1848,
+          "syntax": "literal",
+          "original": "day of the sky"
+        },
+        "ja": {
+          "start": 1854,
+          "end": 1859,
+          "syntax": "literal",
+          "original": "空の日"
+        }
+      },
+      "id": "TXT-0029"
+    },
+    {
+      "file": "script.js",
+      "path": "ambientMeta.sky.short",
+      "kind": "translation",
+      "line": 76,
+      "languages": {
+        "zh": "天",
+        "en": "sky",
+        "ja": "空"
+      },
+      "source": {
+        "zh": {
+          "start": 1880,
+          "end": 1883,
+          "syntax": "literal",
+          "original": "天"
+        },
+        "en": {
+          "start": 1889,
+          "end": 1894,
+          "syntax": "literal",
+          "original": "sky"
+        },
+        "ja": {
+          "start": 1900,
+          "end": 1903,
+          "syntax": "literal",
+          "original": "空"
+        }
+      },
+      "id": "TXT-0030"
+    },
+    {
+      "file": "script.js",
+      "path": "ambientMeta.sky.fallback",
+      "kind": "translation",
+      "line": 77,
+      "languages": {
+        "zh": "高空记录",
+        "en": "sky record",
+        "ja": "空の記録"
+      },
+      "source": {
+        "zh": {
+          "start": 1927,
+          "end": 1933,
+          "syntax": "literal",
+          "original": "高空记录"
+        },
+        "en": {
+          "start": 1939,
+          "end": 1951,
+          "syntax": "literal",
+          "original": "sky record"
+        },
+        "ja": {
+          "start": 1957,
+          "end": 1963,
+          "syntax": "literal",
+          "original": "空の記録"
+        }
+      },
+      "id": "TXT-0031"
+    },
+    {
+      "file": "script.js",
+      "path": "calendarIntro",
+      "kind": "translation",
+      "line": 84,
+      "languages": {
+        "zh": "一册留给无法被安排之物的日历。自 2023 年 7 月 23 日起，每一天在真正抵达时，才被交给海、湖、云或天空。日期沿着星期排列，尚未到来的日子留白；四种景象轮流出现，偶尔停留，不必遵循严格的节拍。日名只属于它出现的这一天；日期一旦翻过，名字与影像便一同退去，把位置交给下一段风景。首页每日只留下一段约二十秒的风景，如信息与判断之间一处安静的间隙。",
+        "en": "A calendar for things that cannot be scheduled. Since 23 July 2023, each day has been given to the sea, lake, clouds or sky only once it arrives. The dates follow the ordinary week; days still to come are left blank. The four landscapes take turns, sometimes lingering, without a strict rhythm. Each day's name belongs only to that day; when the date turns, the name and image recede together, making room for another view. Each day the homepage holds about twenty seconds of scenery, a quiet interval between information and judgement.",
+        "ja": "予定できないもののための暦。2023年7月23日から、一日が実際に訪れたときにだけ、海、湖、雲、空のいずれかに委ねられる。日付は曜日に沿って並び、まだ訪れていない日は余白のまま残る。四つの風景は入れ替わりながら、ときに留まり、厳密な拍子には従わない。その日の名はその日だけのものだ。日付が変わると、名も映像も静かに退き、次の日の風景に場所を譲る。ホームには毎日およそ二十秒の風景だけが残る。情報と判断のあいだにある、静かな間隙のように。"
+      },
+      "source": {
+        "zh": {
+          "start": 2040,
+          "end": 2217,
+          "syntax": "literal",
+          "original": "一册留给无法被安排之物的日历。自 2023 年 7 月 23 日起，每一天在真正抵达时，才被交给海、湖、云或天空。日期沿着星期排列，尚未到来的日子留白；四种景象轮流出现，偶尔停留，不必遵循严格的节拍。日名只属于它出现的这一天；日期一旦翻过，名字与影像便一同退去，把位置交给下一段风景。首页每日只留下一段约二十秒的风景，如信息与判断之间一处安静的间隙。"
+        },
+        "en": {
+          "start": 2235,
+          "end": 2773,
+          "syntax": "literal",
+          "original": "A calendar for things that cannot be scheduled. Since 23 July 2023, each day has been given to the sea, lake, clouds or sky only once it arrives. The dates follow the ordinary week; days still to come are left blank. The four landscapes take turns, sometimes lingering, without a strict rhythm. Each day's name belongs only to that day; when the date turns, the name and image recede together, making room for another view. Each day the homepage holds about twenty seconds of scenery, a quiet interval between information and judgement."
+        },
+        "ja": {
+          "start": 2791,
+          "end": 3011,
+          "syntax": "literal",
+          "original": "予定できないもののための暦。2023年7月23日から、一日が実際に訪れたときにだけ、海、湖、雲、空のいずれかに委ねられる。日付は曜日に沿って並び、まだ訪れていない日は余白のまま残る。四つの風景は入れ替わりながら、ときに留まり、厳密な拍子には従わない。その日の名はその日だけのものだ。日付が変わると、名も映像も静かに退き、次の日の風景に場所を譲る。ホームには毎日およそ二十秒の風景だけが残る。情報と判断のあいだにある、静かな間隙のように。"
+        }
+      },
+      "id": "TXT-0032"
+    },
+    {
+      "file": "script.js",
+      "path": "works[0].title",
+      "kind": "translation",
+      "line": 98,
+      "languages": {
+        "zh": "废墟园林",
+        "en": "Folly",
+        "ja": "フォリー"
+      },
+      "source": {
+        "zh": {
+          "start": 3101,
+          "end": 3107,
+          "syntax": "literal",
+          "original": "废墟园林"
+        },
+        "en": {
+          "start": 3113,
+          "end": 3120,
+          "syntax": "literal",
+          "original": "Folly"
+        },
+        "ja": {
+          "start": 3126,
+          "end": 3132,
+          "syntax": "literal",
+          "original": "フォリー"
+        }
+      },
+      "id": "TXT-0033"
+    },
+    {
+      "file": "script.js",
+      "path": "works[0].intro",
+      "kind": "translation",
+      "line": 100,
+      "languages": {
+        "zh": "废墟不是一件已经结束的东西。材料、风、植物、重力与时间继续工作，我只在其中安排一次短暂的相遇。",
+        "en": "A ruin is not something already finished. Matter, wind, plants, gravity and time continue the work; I only arrange a brief encounter among them.",
+        "ja": "廃墟は、すでに終わったものではない。素材、風、植物、重力、時間が仕事を続け、私はそのあいだに短い出会いを置く。"
+      },
+      "source": {
+        "zh": {
+          "start": 3159,
+          "end": 3208,
+          "syntax": "literal",
+          "original": "废墟不是一件已经结束的东西。材料、风、植物、重力与时间继续工作，我只在其中安排一次短暂的相遇。"
+        },
+        "en": {
+          "start": 3220,
+          "end": 3366,
+          "syntax": "literal",
+          "original": "A ruin is not something already finished. Matter, wind, plants, gravity and time continue the work; I only arrange a brief encounter among them."
+        },
+        "ja": {
+          "start": 3378,
+          "end": 3435,
+          "syntax": "literal",
+          "original": "廃墟は、すでに終わったものではない。素材、風、植物、重力、時間が仕事を続け、私はそのあいだに短い出会いを置く。"
+        }
+      },
+      "id": "TXT-0034"
+    },
+    {
+      "file": "script.js",
+      "path": "works[0].images[0].caption",
+      "kind": "translation",
+      "line": 105,
+      "languages": {
+        "zh": "现场记录 01",
+        "en": "site record 01",
+        "ja": "現場記録 01"
+      },
+      "source": {
+        "zh": {
+          "start": 3504,
+          "end": 3513,
+          "syntax": "literal",
+          "original": "现场记录 01"
+        },
+        "en": {
+          "start": 3519,
+          "end": 3535,
+          "syntax": "literal",
+          "original": "site record 01"
+        },
+        "ja": {
+          "start": 3541,
+          "end": 3550,
+          "syntax": "literal",
+          "original": "現場記録 01"
+        }
+      },
+      "id": "TXT-0035"
+    },
+    {
+      "file": "script.js",
+      "path": "works[0].images[1].caption",
+      "kind": "translation",
+      "line": 106,
+      "languages": {
+        "zh": "现场记录 02",
+        "en": "site record 02",
+        "ja": "現場記録 02"
+      },
+      "source": {
+        "zh": {
+          "start": 3603,
+          "end": 3612,
+          "syntax": "literal",
+          "original": "现场记录 02"
+        },
+        "en": {
+          "start": 3618,
+          "end": 3634,
+          "syntax": "literal",
+          "original": "site record 02"
+        },
+        "ja": {
+          "start": 3640,
+          "end": 3649,
+          "syntax": "literal",
+          "original": "現場記録 02"
+        }
+      },
+      "id": "TXT-0036"
+    },
+    {
+      "file": "script.js",
+      "path": "works[1].title",
+      "kind": "translation",
+      "line": 112,
+      "languages": {
+        "zh": "The Instrument",
+        "en": "The Instrument",
+        "ja": "The Instrument"
+      },
+      "source": {
+        "zh": {
+          "start": 3733,
+          "end": 3749,
+          "syntax": "literal",
+          "original": "The Instrument"
+        },
+        "en": {
+          "start": 3755,
+          "end": 3771,
+          "syntax": "literal",
+          "original": "The Instrument"
+        },
+        "ja": {
+          "start": 3777,
+          "end": 3793,
+          "syntax": "literal",
+          "original": "The Instrument"
+        }
+      },
+      "id": "TXT-0037"
+    },
+    {
+      "file": "script.js",
+      "path": "works[1].intro",
+      "kind": "translation",
+      "line": 114,
+      "languages": {
+        "zh": "一些介于实验器械、声音、机械与私人宇宙学之间的装置。仪器在这里不是为了给出答案，而是让微弱的直觉暂时获得形状。",
+        "en": "Objects between experimental apparatus, sound, mechanism and private cosmology. Here an instrument does not provide an answer; it lets a faint intuition briefly take shape.",
+        "ja": "実験器械、音、機構、私的宇宙論のあいだにある装置群。ここで器械は答えを出すためではなく、かすかな直観に一時的な形を与えるためにある。"
+      },
+      "source": {
+        "zh": {
+          "start": 3820,
+          "end": 3877,
+          "syntax": "literal",
+          "original": "一些介于实验器械、声音、机械与私人宇宙学之间的装置。仪器在这里不是为了给出答案，而是让微弱的直觉暂时获得形状。"
+        },
+        "en": {
+          "start": 3889,
+          "end": 4063,
+          "syntax": "literal",
+          "original": "Objects between experimental apparatus, sound, mechanism and private cosmology. Here an instrument does not provide an answer; it lets a faint intuition briefly take shape."
+        },
+        "ja": {
+          "start": 4075,
+          "end": 4143,
+          "syntax": "literal",
+          "original": "実験器械、音、機構、私的宇宙論のあいだにある装置群。ここで器械は答えを出すためではなく、かすかな直観に一時的な形を与えるためにある。"
+        }
+      },
+      "id": "TXT-0038"
+    },
+    {
+      "file": "script.js",
+      "path": "works[1].images[0].caption",
+      "kind": "translation",
+      "line": 119,
+      "languages": {
+        "zh": "仪器试作 01",
+        "en": "instrument study 01",
+        "ja": "器械試作 01"
+      },
+      "source": {
+        "zh": {
+          "start": 4212,
+          "end": 4221,
+          "syntax": "literal",
+          "original": "仪器试作 01"
+        },
+        "en": {
+          "start": 4227,
+          "end": 4248,
+          "syntax": "literal",
+          "original": "instrument study 01"
+        },
+        "ja": {
+          "start": 4254,
+          "end": 4263,
+          "syntax": "literal",
+          "original": "器械試作 01"
+        }
+      },
+      "id": "TXT-0039"
+    },
+    {
+      "file": "script.js",
+      "path": "works[1].images[1].caption",
+      "kind": "translation",
+      "line": 120,
+      "languages": {
+        "zh": "仪器试作 02",
+        "en": "instrument study 02",
+        "ja": "器械試作 02"
+      },
+      "source": {
+        "zh": {
+          "start": 4316,
+          "end": 4325,
+          "syntax": "literal",
+          "original": "仪器试作 02"
+        },
+        "en": {
+          "start": 4331,
+          "end": 4352,
+          "syntax": "literal",
+          "original": "instrument study 02"
+        },
+        "ja": {
+          "start": 4358,
+          "end": 4367,
+          "syntax": "literal",
+          "original": "器械試作 02"
+        }
+      },
+      "id": "TXT-0040"
+    },
+    {
+      "file": "script.js",
+      "path": "collections[0].title",
+      "kind": "translation",
+      "line": 129,
+      "languages": {
+        "zh": "墟域图·遗构馆",
+        "en": "Ruin Archive",
+        "ja": "墟域図・遺構館"
+      },
+      "source": {
+        "zh": {
+          "start": 4478,
+          "end": 4487,
+          "syntax": "literal",
+          "original": "墟域图·遗构馆"
+        },
+        "en": {
+          "start": 4493,
+          "end": 4507,
+          "syntax": "literal",
+          "original": "Ruin Archive"
+        },
+        "ja": {
+          "start": 4513,
+          "end": 4522,
+          "syntax": "literal",
+          "original": "墟域図・遺構館"
+        }
+      },
+      "id": "TXT-0041"
+    },
+    {
+      "file": "script.js",
+      "path": "collections[0].intro",
+      "kind": "translation",
+      "line": 131,
+      "languages": {
+        "zh": "一张由城市、废墟与断裂共同构成的文明地表。",
+        "en": "A surface of civilisation composed of cities, ruins and fractures.",
+        "ja": "都市、廃墟、断裂によって構成された文明の地表。"
+      },
+      "source": {
+        "zh": {
+          "start": 4549,
+          "end": 4572,
+          "syntax": "literal",
+          "original": "一张由城市、废墟与断裂共同构成的文明地表。"
+        },
+        "en": {
+          "start": 4584,
+          "end": 4652,
+          "syntax": "literal",
+          "original": "A surface of civilisation composed of cities, ruins and fractures."
+        },
+        "ja": {
+          "start": 4664,
+          "end": 4689,
+          "syntax": "literal",
+          "original": "都市、廃墟、断裂によって構成された文明の地表。"
+        }
+      },
+      "id": "TXT-0042"
+    },
+    {
+      "file": "script.js",
+      "path": "collections[0].visitLabel",
+      "kind": "translation",
+      "line": 137,
+      "languages": {
+        "zh": "进入完整地图",
+        "en": "enter the full atlas",
+        "ja": "地図全体を見る"
+      },
+      "source": {
+        "zh": {
+          "start": 4766,
+          "end": 4774,
+          "syntax": "literal",
+          "original": "进入完整地图"
+        },
+        "en": {
+          "start": 4786,
+          "end": 4808,
+          "syntax": "literal",
+          "original": "enter the full atlas"
+        },
+        "ja": {
+          "start": 4820,
+          "end": 4829,
+          "syntax": "literal",
+          "original": "地図全体を見る"
+        }
+      },
+      "id": "TXT-0043"
+    },
+    {
+      "file": "script.js",
+      "path": "collections[0].notes[0].titleHtml",
+      "kind": "translation",
+      "line": 145,
+      "languages": {
+        "zh": "<strong>墟域图·</strong>——文明墨迹图",
+        "en": "<strong>Ruin Atlas ·</strong>—Civilisation Ink Map",
+        "ja": "<strong>墟域図·</strong>——文明の墨跡図"
+      },
+      "source": {
+        "zh": {
+          "start": 4909,
+          "end": 4939,
+          "syntax": "literal",
+          "original": "<strong>墟域图·</strong>——文明墨迹图"
+        },
+        "en": {
+          "start": 4955,
+          "end": 5007,
+          "syntax": "literal",
+          "original": "<strong>Ruin Atlas ·</strong>—Civilisation Ink Map"
+        },
+        "ja": {
+          "start": 5023,
+          "end": 5054,
+          "syntax": "literal",
+          "original": "<strong>墟域図·</strong>——文明の墨跡図"
+        }
+      },
+      "id": "TXT-0044"
+    },
+    {
+      "file": "script.js",
+      "path": "collections[0].notes[0].bodyHtml[0]",
+      "kind": "translation",
+      "line": 151,
+      "languages": {
+        "zh": "地图上的黑点来自真实世界中的都市区域。我参考了 <a href='https://www.naturalearthdata.com/downloads/10m-cultural-vectors/10m-urban-area/' target='_blank' rel='noreferrer'>Natural Earth 的 Urban Areas 数据</a>，将原本精确的城市轮廓大幅简化，再根据它们各自的面积估算成大小不同的点状物，最终以近似“墨斑”的样貌，沾染在一张经过修改的地形地图之上。地图的底图同样来自 <a href='https://www.naturalearthdata.com/downloads/50m-raster-data/50m-gray-earth/' target='_blank' rel='noreferrer'>Natural Earth 的 Gray Earth 数据</a>。",
+        "en": "The black points on the map come from urban areas in the real world. I referred to <a href='https://www.naturalearthdata.com/downloads/10m-cultural-vectors/10m-urban-area/' target='_blank' rel='noreferrer'>Natural Earth’s Urban Areas data</a>, greatly simplifying the precise outlines of cities and estimating them as point-like forms of different sizes according to their area. They finally stain a modified terrain map like ink blots. The underlying map is likewise derived from <a href='https://www.naturalearthdata.com/downloads/50m-raster-data/50m-gray-earth/' target='_blank' rel='noreferrer'>Natural Earth’s Gray Earth data</a>.",
+        "ja": "地図上の黒い点は、現実世界の都市域から来ている。<a href='https://www.naturalearthdata.com/downloads/10m-cultural-vectors/10m-urban-area/' target='_blank' rel='noreferrer'>Natural Earth の Urban Areas データ</a>を参照し、もともと精密だった都市の輪郭を大きく簡略化したうえで、それぞれの面積から大きさの異なる点状のかたちへ置き換えた。最終的にそれらは「墨の染み」に近い姿で、加工した地形図の上へ付着している。下地となる地図も同じく <a href='https://www.naturalearthdata.com/downloads/50m-raster-data/50m-gray-earth/' target='_blank' rel='noreferrer'>Natural Earth の Gray Earth データ</a>をもとにしている。"
+      },
+      "source": {
+        "zh": {
+          "start": 5114,
+          "end": 5527,
+          "syntax": "literal",
+          "original": "地图上的黑点来自真实世界中的都市区域。我参考了 <a href='https://www.naturalearthdata.com/downloads/10m-cultural-vectors/10m-urban-area/' target='_blank' rel='noreferrer'>Natural Earth 的 Urban Areas 数据</a>，将原本精确的城市轮廓大幅简化，再根据它们各自的面积估算成大小不同的点状物，最终以近似“墨斑”的样貌，沾染在一张经过修改的地形地图之上。地图的底图同样来自 <a href='https://www.naturalearthdata.com/downloads/50m-raster-data/50m-gray-earth/' target='_blank' rel='noreferrer'>Natural Earth 的 Gray Earth 数据</a>。"
+        },
+        "en": {
+          "start": 5757,
+          "end": 6394,
+          "syntax": "literal",
+          "original": "The black points on the map come from urban areas in the real world. I referred to <a href='https://www.naturalearthdata.com/downloads/10m-cultural-vectors/10m-urban-area/' target='_blank' rel='noreferrer'>Natural Earth’s Urban Areas data</a>, greatly simplifying the precise outlines of cities and estimating them as point-like forms of different sizes according to their area. They finally stain a modified terrain map like ink blots. The underlying map is likewise derived from <a href='https://www.naturalearthdata.com/downloads/50m-raster-data/50m-gray-earth/' target='_blank' rel='noreferrer'>Natural Earth’s Gray Earth data</a>."
+        },
+        "ja": {
+          "start": 6977,
+          "end": 7432,
+          "syntax": "literal",
+          "original": "地図上の黒い点は、現実世界の都市域から来ている。<a href='https://www.naturalearthdata.com/downloads/10m-cultural-vectors/10m-urban-area/' target='_blank' rel='noreferrer'>Natural Earth の Urban Areas データ</a>を参照し、もともと精密だった都市の輪郭を大きく簡略化したうえで、それぞれの面積から大きさの異なる点状のかたちへ置き換えた。最終的にそれらは「墨の染み」に近い姿で、加工した地形図の上へ付着している。下地となる地図も同じく <a href='https://www.naturalearthdata.com/downloads/50m-raster-data/50m-gray-earth/' target='_blank' rel='noreferrer'>Natural Earth の Gray Earth データ</a>をもとにしている。"
+        }
+      },
+      "id": "TXT-0045"
+    },
+    {
+      "file": "script.js",
+      "path": "collections[0].notes[0].bodyHtml[1]",
+      "kind": "translation",
+      "line": 152,
+      "languages": {
+        "zh": "遗构录中的废墟记录也以“点”的形式出现。它们坐落在城市的角落、边缘和缝隙里，或干脆再次被城市吞没。现代废墟往往正是这样的存在——仍然是文明的产物，却又尚未真正回到纯粹的自然之中。",
+        "en": "The ruin records in the archive appear as points as well. They sit in the corners, edges and gaps of cities, or are simply swallowed by the city once again. Modern ruins often exist in precisely this condition—still products of civilisation, yet not fully returned to a purely natural state.",
+        "ja": "遺構録に収めた廃墟の記録もまた、「点」として現れる。それらは都市の隅、縁、隙間に位置し、ときには再び都市そのものに呑み込まれていく。現代の廃墟とはしばしばそのような存在である——なお文明の産物でありながら、まだ純粋な自然へ完全には戻っていない。"
+      },
+      "source": {
+        "zh": {
+          "start": 5541,
+          "end": 5632,
+          "syntax": "literal",
+          "original": "遗构录中的废墟记录也以“点”的形式出现。它们坐落在城市的角落、边缘和缝隙里，或干脆再次被城市吞没。现代废墟往往正是这样的存在——仍然是文明的产物，却又尚未真正回到纯粹的自然之中。"
+        },
+        "en": {
+          "start": 6408,
+          "end": 6701,
+          "syntax": "literal",
+          "original": "The ruin records in the archive appear as points as well. They sit in the corners, edges and gaps of cities, or are simply swallowed by the city once again. Modern ruins often exist in precisely this condition—still products of civilisation, yet not fully returned to a purely natural state."
+        },
+        "ja": {
+          "start": 7446,
+          "end": 7570,
+          "syntax": "literal",
+          "original": "遺構録に収めた廃墟の記録もまた、「点」として現れる。それらは都市の隅、縁、隙間に位置し、ときには再び都市そのものに呑み込まれていく。現代の廃墟とはしばしばそのような存在である——なお文明の産物でありながら、まだ純粋な自然へ完全には戻っていない。"
+        }
+      },
+      "id": "TXT-0046"
+    },
+    {
+      "file": "script.js",
+      "path": "collections[0].notes[0].bodyHtml[2]",
+      "kind": "translation",
+      "line": 153,
+      "languages": {
+        "zh": "随着漫游和记录继续发生，这些遗构的标记也会越来越多。它们不断落入城市留下的墨迹之间，这张图谱也因此逐渐扩张，成为一张仍在生长的墟域图。",
+        "en": "As wandering and recording continue, the number of these marks keeps growing. They settle among the traces left by cities, and the atlas expands with them, becoming a Ruin Atlas that is still in the process of growing.",
+        "ja": "漫遊と記録が続くにつれて、遺構の印も少しずつ増えていく。それらは都市が残した墨跡のあいだへ落ち、この図譜もまた広がり続け、いまなお成長の途中にある一枚の墟域図となっていく。"
+      },
+      "source": {
+        "zh": {
+          "start": 5646,
+          "end": 5715,
+          "syntax": "literal",
+          "original": "随着漫游和记录继续发生，这些遗构的标记也会越来越多。它们不断落入城市留下的墨迹之间，这张图谱也因此逐渐扩张，成为一张仍在生长的墟域图。"
+        },
+        "en": {
+          "start": 6715,
+          "end": 6935,
+          "syntax": "literal",
+          "original": "As wandering and recording continue, the number of these marks keeps growing. They settle among the traces left by cities, and the atlas expands with them, becoming a Ruin Atlas that is still in the process of growing."
+        },
+        "ja": {
+          "start": 7584,
+          "end": 7672,
+          "syntax": "literal",
+          "original": "漫遊と記録が続くにつれて、遺構の印も少しずつ増えていく。それらは都市が残した墨跡のあいだへ落ち、この図譜もまた広がり続け、いまなお成長の途中にある一枚の墟域図となっていく。"
+        }
+      },
+      "id": "TXT-0047"
+    },
+    {
+      "file": "script.js",
+      "path": "collections[0].notes[1].titleHtml",
+      "kind": "translation",
+      "line": 169,
+      "languages": {
+        "zh": "<strong>·遗构馆</strong>——残破画框",
+        "en": "<strong>· Archive</strong>—The Broken Frame",
+        "ja": "<strong>·遺構館</strong>——壊れた額縁"
+      },
+      "source": {
+        "zh": {
+          "start": 7747,
+          "end": 7776,
+          "syntax": "literal",
+          "original": "<strong>·遗构馆</strong>——残破画框"
+        },
+        "en": {
+          "start": 7792,
+          "end": 7837,
+          "syntax": "literal",
+          "original": "<strong>· Archive</strong>—The Broken Frame"
+        },
+        "ja": {
+          "start": 7853,
+          "end": 7883,
+          "syntax": "literal",
+          "original": "<strong>·遺構館</strong>——壊れた額縁"
+        }
+      },
+      "id": "TXT-0048"
+    },
+    {
+      "file": "script.js",
+      "path": "collections[0].notes[1].bodyHtml[0]",
+      "kind": "translation",
+      "line": 175,
+      "languages": {
+        "zh": "整个网站的界面被处理得像一副残破的画框。这个设计借用了<a href='https://ruin-archive.site/manifesto.html#section-02' target='_blank' rel='noreferrer'>《墟构师宣言》中关于“残破画框”的理解</a>：透过那些断裂的边缘，我们不再只把注意力放在框中的景象上，框架自身留下的碎片，也开始成为可以被读取的残片。我把废墟地点的记录放进这些断裂的角落；随着记录逐渐积累，残片不断堆叠，这个集合也慢慢成为了“遗构馆”。",
+        "en": "The whole site interface is treated like a damaged picture frame. The design draws on <a href='https://ruin-archive.site/manifesto.html#section-02' target='_blank' rel='noreferrer'>the idea of the “broken frame” in the Manifesto of the Ruinwright</a>: through those fractured edges, attention no longer rests only on the scene within the frame; the fragments left by the frame itself also begin to become remnants that can be read. I place records of ruined sites into these broken corners; as the records accumulate, the fragments gather into a layered collection that gradually becomes the “Archive”.",
+        "ja": "サイト全体の界面は、一枚の壊れた額縁のように扱われている。このデザインは、<a href='https://ruin-archive.site/manifesto.html#section-02' target='_blank' rel='noreferrer'>『墟構師宣言』における「破碎画框」の理解</a>を借りている。断裂した縁を通して、私たちは額の内側の景色だけに目を向けるのではなく、枠そのものが残した断片も、読み取ることのできる残片として見始める。私はその断裂した角へ廃墟地点の記録を置いていく。記録が少しずつ積み重なるにつれ、残片の集積はやがてひとつの「遺構館」になっていく。"
+      },
+      "source": {
+        "zh": {
+          "start": 7943,
+          "end": 8194,
+          "syntax": "literal",
+          "original": "整个网站的界面被处理得像一副残破的画框。这个设计借用了<a href='https://ruin-archive.site/manifesto.html#section-02' target='_blank' rel='noreferrer'>《墟构师宣言》中关于“残破画框”的理解</a>：透过那些断裂的边缘，我们不再只把注意力放在框中的景象上，框架自身留下的碎片，也开始成为可以被读取的残片。我把废墟地点的记录放进这些断裂的角落；随着记录逐渐积累，残片不断堆叠，这个集合也慢慢成为了“遗构馆”。"
+        },
+        "en": {
+          "start": 8326,
+          "end": 8930,
+          "syntax": "literal",
+          "original": "The whole site interface is treated like a damaged picture frame. The design draws on <a href='https://ruin-archive.site/manifesto.html#section-02' target='_blank' rel='noreferrer'>the idea of the “broken frame” in the Manifesto of the Ruinwright</a>: through those fractured edges, attention no longer rests only on the scene within the frame; the fragments left by the frame itself also begin to become remnants that can be read. I place records of ruined sites into these broken corners; as the records accumulate, the fragments gather into a layered collection that gradually becomes the “Archive”."
+        },
+        "ja": {
+          "start": 9264,
+          "end": 9562,
+          "syntax": "literal",
+          "original": "サイト全体の界面は、一枚の壊れた額縁のように扱われている。このデザインは、<a href='https://ruin-archive.site/manifesto.html#section-02' target='_blank' rel='noreferrer'>『墟構師宣言』における「破碎画框」の理解</a>を借りている。断裂した縁を通して、私たちは額の内側の景色だけに目を向けるのではなく、枠そのものが残した断片も、読み取ることのできる残片として見始める。私はその断裂した角へ廃墟地点の記録を置いていく。記録が少しずつ積み重なるにつれ、残片の集積はやがてひとつの「遺構館」になっていく。"
+        }
+      },
+      "id": "TXT-0049"
+    },
+    {
+      "file": "script.js",
+      "path": "collections[0].notes[1].bodyHtml[1]",
+      "kind": "translation",
+      "line": 176,
+      "languages": {
+        "zh": "框中的景象与框架的残片彼此对照，一边仍指向我们正在观看的世界，一边暴露出原本支撑这种观看的结构。两者重新拼接在一起，也逐渐形成另一种理解世界的方法。",
+        "en": "The scene inside the frame and the fragments of the frame are set against one another. One still points toward the world being seen; the other exposes the structure that had supported that act of seeing. Rejoined, the two gradually form another way of understanding the world.",
+        "ja": "額の内側の景色と、枠から残された断片は互いに照らし合う。一方はなお私たちが見ている世界を指し、もう一方はその見方を支えていた構造を露わにする。二つを再びつなぎ合わせることで、そこから別の世界理解の方法が少しずつ組み上がっていく。"
+      },
+      "source": {
+        "zh": {
+          "start": 8208,
+          "end": 8284,
+          "syntax": "literal",
+          "original": "框中的景象与框架的残片彼此对照，一边仍指向我们正在观看的世界，一边暴露出原本支撑这种观看的结构。两者重新拼接在一起，也逐渐形成另一种理解世界的方法。"
+        },
+        "en": {
+          "start": 8944,
+          "end": 9222,
+          "syntax": "literal",
+          "original": "The scene inside the frame and the fragments of the frame are set against one another. One still points toward the world being seen; the other exposes the structure that had supported that act of seeing. Rejoined, the two gradually form another way of understanding the world."
+        },
+        "ja": {
+          "start": 9576,
+          "end": 9692,
+          "syntax": "literal",
+          "original": "額の内側の景色と、枠から残された断片は互いに照らし合う。一方はなお私たちが見ている世界を指し、もう一方はその見方を支えていた構造を露わにする。二つを再びつなぎ合わせることで、そこから別の世界理解の方法が少しずつ組み上がっていく。"
+        }
+      },
+      "id": "TXT-0050"
+    },
+    {
+      "file": "script.js",
+      "path": "collections[1].title",
+      "kind": "translation",
+      "line": 193,
+      "languages": {
+        "zh": "room by the lake, 2020",
+        "en": "room by the lake, 2020",
+        "ja": "room by the lake, 2020"
+      },
+      "source": {
+        "zh": {
+          "start": 9810,
+          "end": 9834,
+          "syntax": "literal",
+          "original": "room by the lake, 2020"
+        },
+        "en": {
+          "start": 9840,
+          "end": 9864,
+          "syntax": "literal",
+          "original": "room by the lake, 2020"
+        },
+        "ja": {
+          "start": 9870,
+          "end": 9894,
+          "syntax": "literal",
+          "original": "room by the lake, 2020"
+        }
+      },
+      "id": "TXT-0051"
+    },
+    {
+      "file": "script.js",
+      "path": "collections[1].intro",
+      "kind": "translation",
+      "line": 195,
+      "languages": {
+        "zh": "布面油画 · 60 × 91 cm · 密西根湖",
+        "en": "Oil on canvas · 60 × 91 cm · Lake Michigan",
+        "ja": "キャンバスに油彩 · 60 × 91 cm · ミシガン湖"
+      },
+      "source": {
+        "zh": {
+          "start": 9921,
+          "end": 9947,
+          "syntax": "literal",
+          "original": "布面油画 · 60 × 91 cm · 密西根湖"
+        },
+        "en": {
+          "start": 9959,
+          "end": 10003,
+          "syntax": "literal",
+          "original": "Oil on canvas · 60 × 91 cm · Lake Michigan"
+        },
+        "ja": {
+          "start": 10015,
+          "end": 10046,
+          "syntax": "literal",
+          "original": "キャンバスに油彩 · 60 × 91 cm · ミシガン湖"
+        }
+      },
+      "id": "TXT-0052"
+    },
+    {
+      "file": "script.js",
+      "path": "collections[1].images[0].caption",
+      "kind": "translation",
+      "line": 203,
+      "languages": {
+        "zh": "room by the lake, 2020 · 布面油画 · 60 × 91 cm · 密西根湖",
+        "en": "room by the lake, 2020 · oil on canvas · 60 × 91 cm · Lake Michigan",
+        "ja": "room by the lake, 2020 · キャンバスに油彩 · 60 × 91 cm · ミシガン湖"
+      },
+      "source": {
+        "zh": {
+          "start": 10185,
+          "end": 10236,
+          "syntax": "literal",
+          "original": "room by the lake, 2020 · 布面油画 · 60 × 91 cm · 密西根湖"
+        },
+        "en": {
+          "start": 10252,
+          "end": 10321,
+          "syntax": "literal",
+          "original": "room by the lake, 2020 · oil on canvas · 60 × 91 cm · Lake Michigan"
+        },
+        "ja": {
+          "start": 10337,
+          "end": 10393,
+          "syntax": "literal",
+          "original": "room by the lake, 2020 · キャンバスに油彩 · 60 × 91 cm · ミシガン湖"
+        }
+      },
+      "id": "TXT-0053"
+    },
+    {
+      "file": "script.js",
+      "path": "collections[1].images[1].caption",
+      "kind": "translation",
+      "line": 210,
+      "languages": {
+        "zh": "展览现场",
+        "en": "installation view",
+        "ja": "展示風景"
+      },
+      "source": {
+        "zh": {
+          "start": 10526,
+          "end": 10532,
+          "syntax": "literal",
+          "original": "展览现场"
+        },
+        "en": {
+          "start": 10538,
+          "end": 10557,
+          "syntax": "literal",
+          "original": "installation view"
+        },
+        "ja": {
+          "start": 10563,
+          "end": 10569,
+          "syntax": "literal",
+          "original": "展示風景"
+        }
+      },
+      "id": "TXT-0054"
+    },
+    {
+      "file": "script.js",
+      "path": "collections[3].title",
+      "kind": "translation",
+      "line": 228,
+      "languages": {
+        "zh": "芬芳厅",
+        "en": "Hall of Fragrance",
+        "ja": "芬芳室"
+      },
+      "source": {
+        "zh": {
+          "start": 11247,
+          "end": 11252,
+          "syntax": "literal",
+          "original": "芬芳厅"
+        },
+        "en": {
+          "start": 11258,
+          "end": 11277,
+          "syntax": "literal",
+          "original": "Hall of Fragrance"
+        },
+        "ja": {
+          "start": 11283,
+          "end": 11288,
+          "syntax": "literal",
+          "original": "芬芳室"
+        }
+      },
+      "id": "TXT-0055"
+    },
+    {
+      "file": "script.js",
+      "path": "collections[3].intro",
+      "kind": "translation",
+      "line": 230,
+      "languages": {
+        "zh": "《芬芳厅》收集那些在日常环境里悄悄脱离控制的美学：怪诞的雕塑、失去语境的设施、被习惯性忽略却突然显得诡异的生活场景与物品。它们未必宏大，也未必被设计成“作品”；真正吸引我的，是那些原本只是环境纹饰的东西，如何在失去明确用途、品味和秩序的约束以后，开始反过来凝视生活在其中的人。",
+        "en": "Hall of Fragrance gathers aesthetics that quietly slip beyond control in everyday environments: grotesque sculptures, facilities detached from their context, and ordinary scenes or objects that become uncanny once habitual attention falls away. They need not be monumental or intentionally made as “works.” What interests me is how things once treated as mere ornament can, once released from clear use, taste and order, begin to look back at the people living among them.",
+        "ja": "《芬芳室》は、日常の環境のなかで静かに制御から外れていく美学を集める。奇妙な彫刻、文脈を失った設備、普段は見過ごされているのにふと不気味に見える生活風景や物である。それらは必ずしも壮大でも、意図的に「作品」としてつくられたものでもない。私が惹かれるのは、もともと環境の装飾にすぎなかったものが、明確な用途、趣味、秩序の拘束を離れたとき、そこに暮らす人間を逆に見返し始める瞬間である。"
+      },
+      "source": {
+        "zh": {
+          "start": 11315,
+          "end": 11455,
+          "syntax": "literal",
+          "original": "《芬芳厅》收集那些在日常环境里悄悄脱离控制的美学：怪诞的雕塑、失去语境的设施、被习惯性忽略却突然显得诡异的生活场景与物品。它们未必宏大，也未必被设计成“作品”；真正吸引我的，是那些原本只是环境纹饰的东西，如何在失去明确用途、品味和秩序的约束以后，开始反过来凝视生活在其中的人。"
+        },
+        "en": {
+          "start": 11467,
+          "end": 11941,
+          "syntax": "literal",
+          "original": "Hall of Fragrance gathers aesthetics that quietly slip beyond control in everyday environments: grotesque sculptures, facilities detached from their context, and ordinary scenes or objects that become uncanny once habitual attention falls away. They need not be monumental or intentionally made as “works.” What interests me is how things once treated as mere ornament can, once released from clear use, taste and order, begin to look back at the people living among them."
+        },
+        "ja": {
+          "start": 11953,
+          "end": 12146,
+          "syntax": "literal",
+          "original": "《芬芳室》は、日常の環境のなかで静かに制御から外れていく美学を集める。奇妙な彫刻、文脈を失った設備、普段は見過ごされているのにふと不気味に見える生活風景や物である。それらは必ずしも壮大でも、意図的に「作品」としてつくられたものでもない。私が惹かれるのは、もともと環境の装飾にすぎなかったものが、明確な用途、趣味、秩序の拘束を離れたとき、そこに暮らす人間を逆に見返し始める瞬間である。"
+        }
+      },
+      "id": "TXT-0056"
+    },
+    {
+      "file": "script.js",
+      "path": "collections[3].notes[0].title",
+      "kind": "translation",
+      "line": 237,
+      "languages": {
+        "zh": "反向凝视",
+        "en": "the returning gaze",
+        "ja": "逆向きの視線"
+      },
+      "source": {
+        "zh": {
+          "start": 12212,
+          "end": 12218,
+          "syntax": "literal",
+          "original": "反向凝视"
+        },
+        "en": {
+          "start": 12224,
+          "end": 12244,
+          "syntax": "literal",
+          "original": "the returning gaze"
+        },
+        "ja": {
+          "start": 12250,
+          "end": 12258,
+          "syntax": "literal",
+          "original": "逆向きの視線"
+        }
+      },
+      "id": "TXT-0057"
+    },
+    {
+      "file": "script.js",
+      "path": "collections[3].notes[0].body[0]",
+      "kind": "translation",
+      "line": 240,
+      "languages": {
+        "zh": "我拍摄的主体通常不是一整座建筑，而是其中那些很容易被忽略的局部：一尊不知道为何存在的雕塑、一段过度装饰的护栏、一组已经失去明确用途的设施、一个因为比例、材质或摆放方式稍微偏离常识而显得诡异的日常场景。它们原本只是背景的一部分，却在某个瞬间突然从背景里浮出来。",
+        "en": "The subjects I photograph are usually not whole buildings but easily overlooked fragments within them: a sculpture whose reason for being is unclear, an over-decorated railing, a facility that has lost its obvious function, or an ordinary scene made uncanny by a slight disturbance of proportion, material or placement. They begin as background and then, for a moment, detach themselves from it.",
+        "ja": "私が撮る主体は建物全体ではなく、そのなかで見落とされやすい局部であることが多い。なぜそこにあるのか分からない彫刻、装飾過剰な手すり、明確な用途を失った設備、比率や素材、置かれ方がほんの少し常識からずれたことで不気味に見える日常風景。もともとは背景の一部だったものが、ある瞬間に背景から浮かび上がってくる。"
+      },
+      "source": {
+        "zh": {
+          "start": 12306,
+          "end": 12437,
+          "syntax": "literal",
+          "original": "我拍摄的主体通常不是一整座建筑，而是其中那些很容易被忽略的局部：一尊不知道为何存在的雕塑、一段过度装饰的护栏、一组已经失去明确用途的设施、一个因为比例、材质或摆放方式稍微偏离常识而显得诡异的日常场景。它们原本只是背景的一部分，却在某个瞬间突然从背景里浮出来。"
+        },
+        "en": {
+          "start": 12769,
+          "end": 13166,
+          "syntax": "literal",
+          "original": "The subjects I photograph are usually not whole buildings but easily overlooked fragments within them: a sculpture whose reason for being is unclear, an over-decorated railing, a facility that has lost its obvious function, or an ordinary scene made uncanny by a slight disturbance of proportion, material or placement. They begin as background and then, for a moment, detach themselves from it."
+        },
+        "ja": {
+          "start": 14037,
+          "end": 14191,
+          "syntax": "literal",
+          "original": "私が撮る主体は建物全体ではなく、そのなかで見落とされやすい局部であることが多い。なぜそこにあるのか分からない彫刻、装飾過剰な手すり、明確な用途を失った設備、比率や素材、置かれ方がほんの少し常識からずれたことで不気味に見える日常風景。もともとは背景の一部だったものが、ある瞬間に背景から浮かび上がってくる。"
+        }
+      },
+      "id": "TXT-0058"
+    },
+    {
+      "file": "script.js",
+      "path": "collections[3].notes[0].body[1]",
+      "kind": "translation",
+      "line": 241,
+      "languages": {
+        "zh": "我常想到“塞维利亚·摩尔人国王宫殿”那段描述：房间里的人的活动，被纹饰中“没有声息的嘈杂”吸收。对我来说，《芬芳厅》里的场景也有类似的力量。那些纹饰并不只是被我们观看的对象；当它们脱离了设计者原本的控制、用途与解释以后，反而开始组织我们的感受，甚至像是在画面之外反向凝视我们自己。",
+        "en": "I often return to the description of the Palace of the Moorish Kings in Seville, where human activity is absorbed by the “noiseless clamour” of ornament. The scenes in Hall of Fragrance have a similar force for me. Ornament is not merely something we look at. Once it slips beyond the designer’s original control, use and explanation, it begins to organise our feeling in return, almost looking back at us from outside the image.",
+        "ja": "私はしばしば「セビリアのムーア人王宮」の記述を思い出す。そこでは人間の活動が、装飾のなかの「無音の喧騒」に吸収される。《芬芳室》の風景にも、私にとって似た力がある。装飾は単に私たちが見る対象ではない。設計者の本来の制御、用途、説明から外れたとき、それは逆に私たちの感覚を組織し始め、まるで画面の外側から私たち自身を見返してくる。"
+      },
+      "source": {
+        "zh": {
+          "start": 12451,
+          "end": 12593,
+          "syntax": "literal",
+          "original": "我常想到“塞维利亚·摩尔人国王宫殿”那段描述：房间里的人的活动，被纹饰中“没有声息的嘈杂”吸收。对我来说，《芬芳厅》里的场景也有类似的力量。那些纹饰并不只是被我们观看的对象；当它们脱离了设计者原本的控制、用途与解释以后，反而开始组织我们的感受，甚至像是在画面之外反向凝视我们自己。"
+        },
+        "en": {
+          "start": 13180,
+          "end": 13611,
+          "syntax": "literal",
+          "original": "I often return to the description of the Palace of the Moorish Kings in Seville, where human activity is absorbed by the “noiseless clamour” of ornament. The scenes in Hall of Fragrance have a similar force for me. Ornament is not merely something we look at. Once it slips beyond the designer’s original control, use and explanation, it begins to organise our feeling in return, almost looking back at us from outside the image."
+        },
+        "ja": {
+          "start": 14205,
+          "end": 14371,
+          "syntax": "literal",
+          "original": "私はしばしば「セビリアのムーア人王宮」の記述を思い出す。そこでは人間の活動が、装飾のなかの「無音の喧騒」に吸収される。《芬芳室》の風景にも、私にとって似た力がある。装飾は単に私たちが見る対象ではない。設計者の本来の制御、用途、説明から外れたとき、それは逆に私たちの感覚を組織し始め、まるで画面の外側から私たち自身を見返してくる。"
+        }
+      },
+      "id": "TXT-0059"
+    },
+    {
+      "file": "script.js",
+      "path": "collections[3].notes[0].body[2]",
+      "kind": "translation",
+      "line": 242,
+      "languages": {
+        "zh": "这种凝视最让我不安的地方，是它没有明确的主体。没有谁真正站在背后“想要表达”这种诡异，可它偏偏出现了。它像是一种从集体制造、习惯、妥协与审美惯性中自行长出来的表情。我们以为自己在塑造环境，最后却被这些环境中失控的纹饰重新塑造了观看方式。",
+        "en": "What unsettles me most about this gaze is that it has no clear author. No one necessarily intended to produce this uncanniness, yet it appears. It is like an expression generated by collective making, habit, compromise and aesthetic inertia. We imagine that we shape our environment, only to find that these uncontrolled ornaments have begun to reshape the way we see.",
+        "ja": "この視線の最も不穏なところは、明確な主体がないことだ。誰かが意図的にこの不気味さを「表現」したわけではないのに、それは現れる。集団的な製造、習慣、妥協、美的慣性から自生した表情のようなものだ。私たちは環境を形づくっているつもりで、最後には制御を離れた装飾によって見る方法そのものを形づくられている。"
+      },
+      "source": {
+        "zh": {
+          "start": 12607,
+          "end": 12727,
+          "syntax": "literal",
+          "original": "这种凝视最让我不安的地方，是它没有明确的主体。没有谁真正站在背后“想要表达”这种诡异，可它偏偏出现了。它像是一种从集体制造、习惯、妥协与审美惯性中自行长出来的表情。我们以为自己在塑造环境，最后却被这些环境中失控的纹饰重新塑造了观看方式。"
+        },
+        "en": {
+          "start": 13625,
+          "end": 13995,
+          "syntax": "literal",
+          "original": "What unsettles me most about this gaze is that it has no clear author. No one necessarily intended to produce this uncanniness, yet it appears. It is like an expression generated by collective making, habit, compromise and aesthetic inertia. We imagine that we shape our environment, only to find that these uncontrolled ornaments have begun to reshape the way we see."
+        },
+        "ja": {
+          "start": 14385,
+          "end": 14536,
+          "syntax": "literal",
+          "original": "この視線の最も不穏なところは、明確な主体がないことだ。誰かが意図的にこの不気味さを「表現」したわけではないのに、それは現れる。集団的な製造、習慣、妥協、美的慣性から自生した表情のようなものだ。私たちは環境を形づくっているつもりで、最後には制御を離れた装飾によって見る方法そのものを形づくられている。"
+        }
+      },
+      "id": "TXT-0060"
+    },
+    {
+      "file": "script.js",
+      "path": "collections[3].notes[1].title",
+      "kind": "translation",
+      "line": 257,
+      "languages": {
+        "zh": "一段引文",
+        "en": "a passage",
+        "ja": "ある一節"
+      },
+      "source": {
+        "zh": {
+          "start": 14597,
+          "end": 14603,
+          "syntax": "literal",
+          "original": "一段引文"
+        },
+        "en": {
+          "start": 14609,
+          "end": 14620,
+          "syntax": "literal",
+          "original": "a passage"
+        },
+        "ja": {
+          "start": 14626,
+          "end": 14632,
+          "syntax": "literal",
+          "original": "ある一節"
+        }
+      },
+      "id": "TXT-0061"
+    },
+    {
+      "file": "script.js",
+      "path": "collections[3].notes[1].quote",
+      "kind": "translation",
+      "line": 259,
+      "languages": {
+        "zh": "“塞维利亚·摩尔人国王宫殿——这是一座按照幻想的原始冲动建成的建筑物，没有任何实用方面的考虑能阻止这一幻想。那高高在上的房间只是为梦想和庆典建造的，房间里成为主题的除了跳舞就是沉寂，因为一切人的活动都被房间纹饰里那没有声息的嘈杂吸收了。”",
+        "en": "“The Palace of the Moorish Kings in Seville — a building erected according to a primitive impulse of fantasy, where no practical consideration could restrain imagination. Its elevated rooms were made only for dreams and festivities; nothing takes place there but dancing or silence, for all human activity is absorbed by the noiseless clamour of the ornament.”",
+        "ja": "「セビリアのムーア人王宮――幻想の原始的な衝動に従って建てられ、実用上の考慮がその幻想を妨げることのない建築。高みにある部屋は夢と祝祭のためだけにつくられ、そこにある主題は踊りか沈黙しかない。人間のあらゆる活動は、室内装飾の無音の喧騒に吸収されてしまう。」"
+      },
+      "source": {
+        "zh": {
+          "start": 14667,
+          "end": 14788,
+          "syntax": "literal",
+          "original": "“塞维利亚·摩尔人国王宫殿——这是一座按照幻想的原始冲动建成的建筑物，没有任何实用方面的考虑能阻止这一幻想。那高高在上的房间只是为梦想和庆典建造的，房间里成为主题的除了跳舞就是沉寂，因为一切人的活动都被房间纹饰里那没有声息的嘈杂吸收了。”"
+        },
+        "en": {
+          "start": 14804,
+          "end": 15166,
+          "syntax": "literal",
+          "original": "“The Palace of the Moorish Kings in Seville — a building erected according to a primitive impulse of fantasy, where no practical consideration could restrain imagination. Its elevated rooms were made only for dreams and festivities; nothing takes place there but dancing or silence, for all human activity is absorbed by the noiseless clamour of the ornament.”"
+        },
+        "ja": {
+          "start": 15182,
+          "end": 15312,
+          "syntax": "literal",
+          "original": "「セビリアのムーア人王宮――幻想の原始的な衝動に従って建てられ、実用上の考慮がその幻想を妨げることのない建築。高みにある部屋は夢と祝祭のためだけにつくられ、そこにある主題は踊りか沈黙しかない。人間のあらゆる活動は、室内装飾の無音の喧騒に吸収されてしまう。」"
+        }
+      },
+      "id": "TXT-0062"
+    },
+    {
+      "file": "script.js",
+      "path": "collections[3].notes[1].attribution",
+      "kind": "translation",
+      "line": 263,
+      "languages": {
+        "zh": "— 噩梦审核员",
+        "en": "— Nightmare Auditor",
+        "ja": "— 『噩夢審査員』"
+      },
+      "source": {
+        "zh": {
+          "start": 15351,
+          "end": 15360,
+          "syntax": "literal",
+          "original": "— 噩梦审核员"
+        },
+        "en": {
+          "start": 15366,
+          "end": 15387,
+          "syntax": "literal",
+          "original": "— Nightmare Auditor"
+        },
+        "ja": {
+          "start": 15393,
+          "end": 15404,
+          "syntax": "literal",
+          "original": "— 『噩夢審査員』"
+        }
+      },
+      "id": "TXT-0063"
+    },
+    {
+      "file": "script.js",
+      "path": "collections[3].notes[2].title",
+      "kind": "translation",
+      "line": 266,
+      "languages": {
+        "zh": "弱化的相机",
+        "en": "a weakened camera",
+        "ja": "弱められたカメラ"
+      },
+      "source": {
+        "zh": {
+          "start": 15445,
+          "end": 15452,
+          "syntax": "literal",
+          "original": "弱化的相机"
+        },
+        "en": {
+          "start": 15458,
+          "end": 15477,
+          "syntax": "literal",
+          "original": "a weakened camera"
+        },
+        "ja": {
+          "start": 15483,
+          "end": 15493,
+          "syntax": "literal",
+          "original": "弱められたカメラ"
+        }
+      },
+      "id": "TXT-0064"
+    },
+    {
+      "file": "script.js",
+      "path": "collections[3].notes[2].body[0]",
+      "kind": "translation",
+      "line": 269,
+      "languages": {
+        "zh": "为了让这种“纹饰的反向凝视”更强，我刻意使用一台被弱化的相机——一种接近玩具相机状态的胶片相机。它不追求锋利、准确和完全可控的再现，也不会把观察者的技术能力持续摆在画面前面。失焦、颗粒、曝光的不确定、边缘的松动，都让摄影不再像一次强势的捕捉。",
+        "en": "To intensify this returning gaze of ornament, I deliberately use a weakened camera: a film camera closer in spirit to a toy camera. It does not pursue sharpness, accuracy or fully controlled representation, and it avoids continually placing the observer’s technical mastery in front of the image. Soft focus, grain, uncertain exposure and loosened edges make photography feel less like an act of capture.",
+        "ja": "この「装飾の逆向きの視線」を強めるために、私は意図的に弱められたカメラを使う。玩具カメラに近い感覚を持つフィルムカメラである。鋭さ、正確さ、完全に制御された再現を目指さず、観察者の技術的な支配を画面の前面に出さない。ピントの甘さ、粒子、不確かな露出、周縁のゆるみが、写真を強い捕獲の行為から遠ざける。"
+      },
+      "source": {
+        "zh": {
+          "start": 15541,
+          "end": 15664,
+          "syntax": "literal",
+          "original": "为了让这种“纹饰的反向凝视”更强，我刻意使用一台被弱化的相机——一种接近玩具相机状态的胶片相机。它不追求锋利、准确和完全可控的再现，也不会把观察者的技术能力持续摆在画面前面。失焦、颗粒、曝光的不确定、边缘的松动，都让摄影不再像一次强势的捕捉。"
+        },
+        "en": {
+          "start": 15952,
+          "end": 16358,
+          "syntax": "literal",
+          "original": "To intensify this returning gaze of ornament, I deliberately use a weakened camera: a film camera closer in spirit to a toy camera. It does not pursue sharpness, accuracy or fully controlled representation, and it avoids continually placing the observer’s technical mastery in front of the image. Soft focus, grain, uncertain exposure and loosened edges make photography feel less like an act of capture."
+        },
+        "ja": {
+          "start": 17100,
+          "end": 17252,
+          "syntax": "literal",
+          "original": "この「装飾の逆向きの視線」を強めるために、私は意図的に弱められたカメラを使う。玩具カメラに近い感覚を持つフィルムカメラである。鋭さ、正確さ、完全に制御された再現を目指さず、観察者の技術的な支配を画面の前面に出さない。ピントの甘さ、粒子、不確かな露出、周縁のゆるみが、写真を強い捕獲の行為から遠ざける。"
+        }
+      },
+      "id": "TXT-0065"
+    },
+    {
+      "file": "script.js",
+      "path": "collections[3].notes[2].body[1]",
+      "kind": "translation",
+      "line": 270,
+      "languages": {
+        "zh": "我希望自己的观察者身份在这里退后一点。不是我用一台精密设备去审视一个奇怪的对象，而是让相机变得迟钝、脆弱、甚至有一点不可靠，使我和场景之间的权力关系被削弱。当作者的控制感降低以后，画面中的设施、雕塑、纹饰和生活残留反而更容易获得一种独立的存在感。",
+        "en": "I want my position as observer to retreat. Rather than examining a strange object through a precise instrument, I allow the camera to become slow, fragile and slightly unreliable, weakening the hierarchy between myself and the scene. As the author’s sense of control recedes, facilities, sculptures, ornament and traces of everyday life can acquire a more independent presence.",
+        "ja": "ここでは、自分の観察者としての立場を少し後退させたい。精密な機械で奇妙な対象を検査するのではなく、カメラそのものを鈍く、脆く、少し頼りなくすることで、私と場面との権力関係を弱める。作者の制御感が下がるほど、設備、彫刻、装飾、生活の痕跡は、より独立した存在感を持ちやすくなる。"
+      },
+      "source": {
+        "zh": {
+          "start": 15678,
+          "end": 15803,
+          "syntax": "literal",
+          "original": "我希望自己的观察者身份在这里退后一点。不是我用一台精密设备去审视一个奇怪的对象，而是让相机变得迟钝、脆弱、甚至有一点不可靠，使我和场景之间的权力关系被削弱。当作者的控制感降低以后，画面中的设施、雕塑、纹饰和生活残留反而更容易获得一种独立的存在感。"
+        },
+        "en": {
+          "start": 16372,
+          "end": 16751,
+          "syntax": "literal",
+          "original": "I want my position as observer to retreat. Rather than examining a strange object through a precise instrument, I allow the camera to become slow, fragile and slightly unreliable, weakening the hierarchy between myself and the scene. As the author’s sense of control recedes, facilities, sculptures, ornament and traces of everyday life can acquire a more independent presence."
+        },
+        "ja": {
+          "start": 17266,
+          "end": 17405,
+          "syntax": "literal",
+          "original": "ここでは、自分の観察者としての立場を少し後退させたい。精密な機械で奇妙な対象を検査するのではなく、カメラそのものを鈍く、脆く、少し頼りなくすることで、私と場面との権力関係を弱める。作者の制御感が下がるほど、設備、彫刻、装飾、生活の痕跡は、より独立した存在感を持ちやすくなる。"
+        }
+      },
+      "id": "TXT-0066"
+    },
+    {
+      "file": "script.js",
+      "path": "collections[3].notes[2].body[2]",
+      "kind": "translation",
+      "line": 271,
+      "languages": {
+        "zh": "于是最重要的东西不一定出现在画面中央。它更像留在画面之外的一种情绪：那些东西仿佛并不需要我去解释，也不等待我的判断。它们只是继续存在，并以一种我无法完全掌控的方式，把视线重新投向我。",
+        "en": "The most important thing therefore may not sit at the centre of the frame. It survives more as an emotion outside the image: these things do not seem to need my explanation or wait for my judgement. They simply continue to exist, returning the gaze toward me in a way I cannot fully control.",
+        "ja": "だから最も重要なものは、必ずしも画面の中央にあるとは限らない。それはむしろ、画面の外側に残る感情に近い。それらは私の説明を必要とせず、判断を待ってもいない。ただ存在し続け、私が完全には制御できない仕方で、視線をこちらへ返してくる。"
+      },
+      "source": {
+        "zh": {
+          "start": 15817,
+          "end": 15910,
+          "syntax": "literal",
+          "original": "于是最重要的东西不一定出现在画面中央。它更像留在画面之外的一种情绪：那些东西仿佛并不需要我去解释，也不等待我的判断。它们只是继续存在，并以一种我无法完全掌控的方式，把视线重新投向我。"
+        },
+        "en": {
+          "start": 16765,
+          "end": 17058,
+          "syntax": "literal",
+          "original": "The most important thing therefore may not sit at the centre of the frame. It survives more as an emotion outside the image: these things do not seem to need my explanation or wait for my judgement. They simply continue to exist, returning the gaze toward me in a way I cannot fully control."
+        },
+        "ja": {
+          "start": 17419,
+          "end": 17536,
+          "syntax": "literal",
+          "original": "だから最も重要なものは、必ずしも画面の中央にあるとは限らない。それはむしろ、画面の外側に残る感情に近い。それらは私の説明を必要とせず、判断を待ってもいない。ただ存在し続け、私が完全には制御できない仕方で、視線をこちらへ返してくる。"
+        }
+      },
+      "id": "TXT-0067"
+    },
+    {
+      "file": "script.js",
+      "path": "collections[3].notes[3].title",
+      "kind": "translation",
+      "line": 286,
+      "languages": {
+        "zh": "共鸣的缺失",
+        "en": "a failure of resonance",
+        "ja": "共鳴の欠如"
+      },
+      "source": {
+        "zh": {
+          "start": 17597,
+          "end": 17604,
+          "syntax": "literal",
+          "original": "共鸣的缺失"
+        },
+        "en": {
+          "start": 17610,
+          "end": 17634,
+          "syntax": "literal",
+          "original": "a failure of resonance"
+        },
+        "ja": {
+          "start": 17640,
+          "end": 17647,
+          "syntax": "literal",
+          "original": "共鳴の欠如"
+        }
+      },
+      "id": "TXT-0068"
+    },
+    {
+      "file": "script.js",
+      "path": "collections[3].notes[3].body[0]",
+      "kind": "translation",
+      "line": 289,
+      "languages": {
+        "zh": "这些场景常常来自被快速制造出来的城市环境。真正吸引我的，并不是简单地判断它们“好看”或“不好看”，而是那些美学决定如何在漫长的生产链里被不断转译：要求层层传递，共鸣逐渐减少，价值不断被妥协和淡化，最后却仍然被非常具体地落实成一个雕塑、一组设施、一种装饰语言或一处空间细节。",
+        "en": "These scenes often come from rapidly produced urban environments. What interests me is not a simple judgement of whether they are beautiful or ugly, but how aesthetic decisions are repeatedly translated across a long chain of production: requirements pass from one stage to another, resonance diminishes, values are compromised and diluted, yet the result is still materialised very concretely as a sculpture, a facility, a decorative language or a spatial detail.",
+        "ja": "これらの場面は、急速につくられた都市環境から現れることが多い。私が惹かれるのは、それらを単純に「美しい」「醜い」と判断することではなく、美的な決定が長い生産の連鎖のなかでどのように何度も翻訳されるかということだ。要求は段階ごとに伝えられ、共鳴は減り、価値は妥協され薄められていく。それでも最終的には、彫刻、設備、装飾言語、空間の細部として非常に具体的に実装される。"
+      },
+      "source": {
+        "zh": {
+          "start": 17695,
+          "end": 17833,
+          "syntax": "literal",
+          "original": "这些场景常常来自被快速制造出来的城市环境。真正吸引我的，并不是简单地判断它们“好看”或“不好看”，而是那些美学决定如何在漫长的生产链里被不断转译：要求层层传递，共鸣逐渐减少，价值不断被妥协和淡化，最后却仍然被非常具体地落实成一个雕塑、一组设施、一种装饰语言或一处空间细节。"
+        },
+        "en": {
+          "start": 18234,
+          "end": 18700,
+          "syntax": "literal",
+          "original": "These scenes often come from rapidly produced urban environments. What interests me is not a simple judgement of whether they are beautiful or ugly, but how aesthetic decisions are repeatedly translated across a long chain of production: requirements pass from one stage to another, resonance diminishes, values are compromised and diluted, yet the result is still materialised very concretely as a sculpture, a facility, a decorative language or a spatial detail."
+        },
+        "ja": {
+          "start": 19888,
+          "end": 20072,
+          "syntax": "literal",
+          "original": "これらの場面は、急速につくられた都市環境から現れることが多い。私が惹かれるのは、それらを単純に「美しい」「醜い」と判断することではなく、美的な決定が長い生産の連鎖のなかでどのように何度も翻訳されるかということだ。要求は段階ごとに伝えられ、共鳴は減り、価値は妥協され薄められていく。それでも最終的には、彫刻、設備、装飾言語、空間の細部として非常に具体的に実装される。"
+        }
+      },
+      "id": "TXT-0069"
+    },
+    {
+      "file": "script.js",
+      "path": "collections[3].notes[3].body[1]",
+      "kind": "translation",
+      "line": 290,
+      "languages": {
+        "zh": "有时结果像是“得罪了风水师，并且真的照着施工图建完了”。荒诞并不一定来自某个设计者强烈的个人趣味，反而可能来自每一个参与者都能把自己暂时抽离于要求，只依据无端传承的经验，继续完成前一环留下的任务。没有人真正想制造那种诡异，可诡异仍然被制造出来。",
+        "en": "At times the result looks as though someone had offended a feng-shui master and then faithfully completed the construction drawings. The absurdity does not necessarily come from a designer with a forceful personal taste. It may instead arise because every participant can temporarily detach from the demand itself, rely on inherited experience, and continue the task passed on from the previous stage. No one truly intends to create the uncanny, yet the uncanny is still produced.",
+        "ja": "結果がときに「風水師を怒らせ、そのまま施工図どおり完成させた」ように見えることがある。不条理は必ずしも、強烈な個人趣味を持つ設計者から生まれるのではない。各参加者が要求そのものから一時的に自分を切り離し、根拠の分からないまま受け継がれた経験に頼り、前の工程から渡された仕事を続けることで生まれることがある。誰も不気味さをつくろうとしていないのに、不気味さはつくられてしまう。"
+      },
+      "source": {
+        "zh": {
+          "start": 17847,
+          "end": 17971,
+          "syntax": "literal",
+          "original": "有时结果像是“得罪了风水师，并且真的照着施工图建完了”。荒诞并不一定来自某个设计者强烈的个人趣味，反而可能来自每一个参与者都能把自己暂时抽离于要求，只依据无端传承的经验，继续完成前一环留下的任务。没有人真正想制造那种诡异，可诡异仍然被制造出来。"
+        },
+        "en": {
+          "start": 18714,
+          "end": 19196,
+          "syntax": "literal",
+          "original": "At times the result looks as though someone had offended a feng-shui master and then faithfully completed the construction drawings. The absurdity does not necessarily come from a designer with a forceful personal taste. It may instead arise because every participant can temporarily detach from the demand itself, rely on inherited experience, and continue the task passed on from the previous stage. No one truly intends to create the uncanny, yet the uncanny is still produced."
+        },
+        "ja": {
+          "start": 20086,
+          "end": 20275,
+          "syntax": "literal",
+          "original": "結果がときに「風水師を怒らせ、そのまま施工図どおり完成させた」ように見えることがある。不条理は必ずしも、強烈な個人趣味を持つ設計者から生まれるのではない。各参加者が要求そのものから一時的に自分を切り離し、根拠の分からないまま受け継がれた経験に頼り、前の工程から渡された仕事を続けることで生まれることがある。誰も不気味さをつくろうとしていないのに、不気味さはつくられてしまう。"
+        }
+      },
+      "id": "TXT-0070"
+    },
+    {
+      "file": "script.js",
+      "path": "collections[3].notes[3].body[2]",
+      "kind": "translation",
+      "line": 291,
+      "languages": {
+        "zh": "我并不要求环境必须像自然那样显得合理。人也没有蜜蜂筑巢般单一而稳定的社会使命。真正让我感兴趣的是，当人与人之间缺少共鸣时，某种无法归属于任何单一作者的美学会如何自行出现。它既属于人类制造的环境，又像已经脱离了人的意图。",
+        "en": "I do not require environments to possess the apparent rationality of nature. Humans do not have the singular social mission of bees building a hive. What interests me is how, when resonance between people is absent, an aesthetic belonging to no single author can begin to emerge on its own. It is made by humans, yet seems to have slipped free of human intention.",
+        "ja": "私は、環境が自然のように合理的に見えることを求めているわけではない。人間には、蜂が巣をつくるような単一で安定した社会的使命はない。私が関心を持つのは、人と人との共鳴が欠けたとき、誰一人の作者にも帰属しない美学がどのように自律的に現れるかということだ。それは人間がつくった環境に属しながら、人間の意図から離れてしまったように見える。"
+      },
+      "source": {
+        "zh": {
+          "start": 17985,
+          "end": 18096,
+          "syntax": "literal",
+          "original": "我并不要求环境必须像自然那样显得合理。人也没有蜜蜂筑巢般单一而稳定的社会使命。真正让我感兴趣的是，当人与人之间缺少共鸣时，某种无法归属于任何单一作者的美学会如何自行出现。它既属于人类制造的环境，又像已经脱离了人的意图。"
+        },
+        "en": {
+          "start": 19210,
+          "end": 19575,
+          "syntax": "literal",
+          "original": "I do not require environments to possess the apparent rationality of nature. Humans do not have the singular social mission of bees building a hive. What interests me is how, when resonance between people is absent, an aesthetic belonging to no single author can begin to emerge on its own. It is made by humans, yet seems to have slipped free of human intention."
+        },
+        "ja": {
+          "start": 20289,
+          "end": 20456,
+          "syntax": "literal",
+          "original": "私は、環境が自然のように合理的に見えることを求めているわけではない。人間には、蜂が巣をつくるような単一で安定した社会的使命はない。私が関心を持つのは、人と人との共鳴が欠けたとき、誰一人の作者にも帰属しない美学がどのように自律的に現れるかということだ。それは人間がつくった環境に属しながら、人間の意図から離れてしまったように見える。"
+        }
+      },
+      "id": "TXT-0071"
+    },
+    {
+      "file": "script.js",
+      "path": "collections[3].notes[3].body[3]",
+      "kind": "translation",
+      "line": 292,
+      "languages": {
+        "zh": "而我自己也不是站在外面的审判者。我同样是失去共鸣的一环。正因为我无法真正进入这些场景原本的意义，我才会从其中看见本不该透露出的诡异，也同时看见一种未经设计的美。",
+        "en": "Nor am I an outside judge. I am part of this failure of resonance too. Precisely because I cannot fully enter the original meaning of these scenes, I begin to see an uncanniness they were never meant to disclose, and at the same time an undesigned beauty.",
+        "ja": "そして私は、その外側に立つ審判者ではない。私自身も、この共鳴の欠如の一部である。これらの場面が本来持っていた意味へ完全には入れないからこそ、私はそこに本来露出するはずのなかった不気味さと、同時に設計されていない美しさを見る。"
+      },
+      "source": {
+        "zh": {
+          "start": 18110,
+          "end": 18192,
+          "syntax": "literal",
+          "original": "而我自己也不是站在外面的审判者。我同样是失去共鸣的一环。正因为我无法真正进入这些场景原本的意义，我才会从其中看见本不该透露出的诡异，也同时看见一种未经设计的美。"
+        },
+        "en": {
+          "start": 19589,
+          "end": 19846,
+          "syntax": "literal",
+          "original": "Nor am I an outside judge. I am part of this failure of resonance too. Precisely because I cannot fully enter the original meaning of these scenes, I begin to see an uncanniness they were never meant to disclose, and at the same time an undesigned beauty."
+        },
+        "ja": {
+          "start": 20470,
+          "end": 20584,
+          "syntax": "literal",
+          "original": "そして私は、その外側に立つ審判者ではない。私自身も、この共鳴の欠如の一部である。これらの場面が本来持っていた意味へ完全には入れないからこそ、私はそこに本来露出するはずのなかった不気味さと、同時に設計されていない美しさを見る。"
+        }
+      },
+      "id": "TXT-0072"
+    },
+    {
+      "file": "script.js",
+      "path": "collections[3].notes[4].title",
+      "kind": "translation",
+      "line": 309,
+      "languages": {
+        "zh": "秘密基地",
+        "en": "the secret base",
+        "ja": "秘密基地"
+      },
+      "source": {
+        "zh": {
+          "start": 20645,
+          "end": 20651,
+          "syntax": "literal",
+          "original": "秘密基地"
+        },
+        "en": {
+          "start": 20657,
+          "end": 20674,
+          "syntax": "literal",
+          "original": "the secret base"
+        },
+        "ja": {
+          "start": 20680,
+          "end": 20686,
+          "syntax": "literal",
+          "original": "秘密基地"
+        }
+      },
+      "id": "TXT-0073"
+    },
+    {
+      "file": "script.js",
+      "path": "collections[3].notes[4].body[0]",
+      "kind": "translation",
+      "line": 312,
+      "languages": {
+        "zh": "孩子为什么会把无人的角落做成秘密基地？有些地方似乎一直在自动筛选自己的光顾者。它不是为孩童设计的儿童乐园，也不是成人替孩童搭好的童真故事。它更像小时候偶然发现的“秘密基地”：只欢迎那些愿意弯下腰、暂时放弃成人尺度，并愿意再经历一次孩童视角的人。",
+        "en": "Why do children turn unattended corners into secret bases? Some places seem to select their visitors by themselves. They are neither playgrounds designed for children nor adult constructions of a ready-made childhood fantasy. They are closer to the secret bases discovered by chance in childhood, welcoming those willing to bend down, temporarily abandon adult scale, and experience a child’s point of view once more.",
+        "ja": "なぜ子どもは、人のいない隅を秘密基地にするのだろう。ある場所は、自分の訪問者を自動的に選んでいるように見える。それは子どものためにつくられた遊園地でも、大人が用意した「童心」の物語でもない。幼い頃に偶然見つけた秘密基地に近く、腰をかがめ、大人の尺度を一時的に手放し、もう一度子どもの視野を経験しようとする者を迎え入れる。"
+      },
+      "source": {
+        "zh": {
+          "start": 20734,
+          "end": 20858,
+          "syntax": "literal",
+          "original": "孩子为什么会把无人的角落做成秘密基地？有些地方似乎一直在自动筛选自己的光顾者。它不是为孩童设计的儿童乐园，也不是成人替孩童搭好的童真故事。它更像小时候偶然发现的“秘密基地”：只欢迎那些愿意弯下腰、暂时放弃成人尺度，并愿意再经历一次孩童视角的人。"
+        },
+        "en": {
+          "start": 21105,
+          "end": 21524,
+          "syntax": "literal",
+          "original": "Why do children turn unattended corners into secret bases? Some places seem to select their visitors by themselves. They are neither playgrounds designed for children nor adult constructions of a ready-made childhood fantasy. They are closer to the secret bases discovered by chance in childhood, welcoming those willing to bend down, temporarily abandon adult scale, and experience a child’s point of view once more."
+        },
+        "ja": {
+          "start": 22180,
+          "end": 22342,
+          "syntax": "literal",
+          "original": "なぜ子どもは、人のいない隅を秘密基地にするのだろう。ある場所は、自分の訪問者を自動的に選んでいるように見える。それは子どものためにつくられた遊園地でも、大人が用意した「童心」の物語でもない。幼い頃に偶然見つけた秘密基地に近く、腰をかがめ、大人の尺度を一時的に手放し、もう一度子どもの視野を経験しようとする者を迎え入れる。"
+        }
+      },
+      "id": "TXT-0074"
+    },
+    {
+      "file": "script.js",
+      "path": "collections[3].notes[4].body[1]",
+      "kind": "translation",
+      "line": 313,
+      "languages": {
+        "zh": "成年以后，我们越来越难像孩童那样珍视微不足道之物，也不再轻易被简单的新发现震动。可也正是在这些不起眼、没有被认真观看的地方，某些设施、装饰和物品开始获得一种奇怪的独立生命。",
+        "en": "As adults, we become less able to treasure insignificant things as children do, and less easily shaken by a simple new discovery. Yet it is precisely in these overlooked and insufficiently observed places that certain facilities, decorations and objects begin to acquire a strange independent life.",
+        "ja": "大人になると、子どものように取るに足らないものを大切にすることが難しくなり、単純な発見にも簡単には驚かなくなる。だが、まさにそうした目立たず、十分に見られていない場所で、設備、装飾、物は奇妙な独立した生命を持ち始める。"
+      },
+      "source": {
+        "zh": {
+          "start": 20872,
+          "end": 20960,
+          "syntax": "literal",
+          "original": "成年以后，我们越来越难像孩童那样珍视微不足道之物，也不再轻易被简单的新发现震动。可也正是在这些不起眼、没有被认真观看的地方，某些设施、装饰和物品开始获得一种奇怪的独立生命。"
+        },
+        "en": {
+          "start": 21538,
+          "end": 21838,
+          "syntax": "literal",
+          "original": "As adults, we become less able to treasure insignificant things as children do, and less easily shaken by a simple new discovery. Yet it is precisely in these overlooked and insufficiently observed places that certain facilities, decorations and objects begin to acquire a strange independent life."
+        },
+        "ja": {
+          "start": 22356,
+          "end": 22467,
+          "syntax": "literal",
+          "original": "大人になると、子どものように取るに足らないものを大切にすることが難しくなり、単純な発見にも簡単には驚かなくなる。だが、まさにそうした目立たず、十分に見られていない場所で、設備、装飾、物は奇妙な独立した生命を持ち始める。"
+        }
+      },
+      "id": "TXT-0075"
+    },
+    {
+      "file": "script.js",
+      "path": "collections[3].notes[4].body[2]",
+      "kind": "translation",
+      "line": 314,
+      "languages": {
+        "zh": "因此我拍摄它们，并不是为了把它们重新整理成一个合理世界。恰恰相反，我更愿意保留那种无法完全解释的距离：像进入一个并不真正属于我的秘密基地，短暂地允许那些被忽略的纹饰先看见我。",
+        "en": "I photograph them not in order to reorganise them into a rational world. On the contrary, I prefer to preserve the distance that cannot be fully explained: as though entering a secret base that does not truly belong to me, and briefly allowing its neglected ornaments to see me first.",
+        "ja": "私がそれらを撮るのは、合理的な世界へ整理し直すためではない。むしろ完全には説明できない距離を残したい。自分のものではない秘密基地へ入り、しばらくのあいだ、見過ごされてきた装飾のほうに先に私を見つけさせるように。"
+      },
+      "source": {
+        "zh": {
+          "start": 20974,
+          "end": 21063,
+          "syntax": "literal",
+          "original": "因此我拍摄它们，并不是为了把它们重新整理成一个合理世界。恰恰相反，我更愿意保留那种无法完全解释的距离：像进入一个并不真正属于我的秘密基地，短暂地允许那些被忽略的纹饰先看见我。"
+        },
+        "en": {
+          "start": 21852,
+          "end": 22138,
+          "syntax": "literal",
+          "original": "I photograph them not in order to reorganise them into a rational world. On the contrary, I prefer to preserve the distance that cannot be fully explained: as though entering a secret base that does not truly belong to me, and briefly allowing its neglected ornaments to see me first."
+        },
+        "ja": {
+          "start": 22481,
+          "end": 22588,
+          "syntax": "literal",
+          "original": "私がそれらを撮るのは、合理的な世界へ整理し直すためではない。むしろ完全には説明できない距離を残したい。自分のものではない秘密基地へ入り、しばらくのあいだ、見過ごされてきた装飾のほうに先に私を見つけさせるように。"
+        }
+      },
+      "id": "TXT-0076"
+    },
+    {
+      "file": "script.js",
+      "path": "writings[0].title",
+      "kind": "translation",
+      "line": 336,
+      "languages": {
+        "zh": "墟构师宣言",
+        "en": "Ruinwright Manifesto",
+        "ja": "墟構師宣言"
+      },
+      "source": {
+        "zh": {
+          "start": 22729,
+          "end": 22736,
+          "syntax": "literal",
+          "original": "墟构师宣言"
+        },
+        "en": {
+          "start": 22742,
+          "end": 22764,
+          "syntax": "literal",
+          "original": "Ruinwright Manifesto"
+        },
+        "ja": {
+          "start": 22770,
+          "end": 22777,
+          "syntax": "literal",
+          "original": "墟構師宣言"
+        }
+      },
+      "id": "TXT-0077"
+    },
+    {
+      "file": "script.js",
+      "path": "writings[0].intro[0]",
+      "kind": "translation",
+      "line": 339,
+      "languages": {
+        "zh": "《墟构师宣言》是我对废墟长期观察、研究与实践的一次整理。它记录了我理解废墟的方式，也建立起一套与之相应的理论框架，讨论我如何观看废墟、如何理解这个时代不断出现的现代废墟，以及这些认识如何进一步进入审美与创作。",
+        "en": "Ruinwright Manifesto is a consolidation of my long-term observation, study, and practice around ruins. It records the way I understand ruins and gathers the theoretical framework that has grown alongside that understanding, including how I look at ruins, how I understand the modern ruins continually appearing in this era, and how those understandings enter aesthetics and artistic practice.",
+        "ja": "『墟構師宣言』は、廃墟について長期にわたり行ってきた観察・研究・実践を整理したものである。そこには、私が廃墟をどのように理解してきたか、その理解とともに形づくられた理論的な枠組み、そして廃墟をどのように見るか、この時代に絶えず現れる現代の廃墟をどう理解するか、それらの認識が美学と制作へどう入っていくかが記されている。"
+      },
+      "source": {
+        "zh": {
+          "start": 22814,
+          "end": 22920,
+          "syntax": "literal",
+          "original": "《墟构师宣言》是我对废墟长期观察、研究与实践的一次整理。它记录了我理解废墟的方式，也建立起一套与之相应的理论框架，讨论我如何观看废墟、如何理解这个时代不断出现的现代废墟，以及这些认识如何进一步进入审美与创作。"
+        },
+        "en": {
+          "start": 23161,
+          "end": 23555,
+          "syntax": "literal",
+          "original": "Ruinwright Manifesto is a consolidation of my long-term observation, study, and practice around ruins. It records the way I understand ruins and gathers the theoretical framework that has grown alongside that understanding, including how I look at ruins, how I understand the modern ruins continually appearing in this era, and how those understandings enter aesthetics and artistic practice."
+        },
+        "ja": {
+          "start": 24218,
+          "end": 24379,
+          "syntax": "literal",
+          "original": "『墟構師宣言』は、廃墟について長期にわたり行ってきた観察・研究・実践を整理したものである。そこには、私が廃墟をどのように理解してきたか、その理解とともに形づくられた理論的な枠組み、そして廃墟をどのように見るか、この時代に絶えず現れる現代の廃墟をどう理解するか、それらの認識が美学と制作へどう入っていくかが記されている。"
+        }
+      },
+      "id": "TXT-0078"
+    },
+    {
+      "file": "script.js",
+      "path": "writings[0].intro[1]",
+      "kind": "translation",
+      "line": 340,
+      "languages": {
+        "zh": "随着研究逐渐进入实践，“墟构师”也从一种称谓变成了我在废墟中工作的角色。我以这一身份进入废墟进行创作，并将“墟构”发展为属于自身实践的方法，用于《废墟园林》系列作品的建造。",
+        "en": "As research gradually entered practice, “Ruinwright” shifted from a name into the role through which I work inside ruins. In that role I enter ruins to make work, and have developed “Ruinwork” as a method belonging to my own practice, used in the construction of the Folly Series.",
+        "ja": "研究が次第に実践へ入っていくにつれ、「墟構師」は一つの呼称から、私が廃墟の中で仕事をするための役割へと変わった。私はこの立場で廃墟へ入り制作を行い、「墟構」を自らの実践に属する方法として育て、『フォリー』シリーズの制作に用いている。"
+      },
+      "source": {
+        "zh": {
+          "start": 22930,
+          "end": 23018,
+          "syntax": "literal",
+          "original": "随着研究逐渐进入实践，“墟构师”也从一种称谓变成了我在废墟中工作的角色。我以这一身份进入废墟进行创作，并将“墟构”发展为属于自身实践的方法，用于《废墟园林》系列作品的建造。"
+        },
+        "en": {
+          "start": 23565,
+          "end": 23847,
+          "syntax": "literal",
+          "original": "As research gradually entered practice, “Ruinwright” shifted from a name into the role through which I work inside ruins. In that role I enter ruins to make work, and have developed “Ruinwork” as a method belonging to my own practice, used in the construction of the Folly Series."
+        },
+        "ja": {
+          "start": 24389,
+          "end": 24507,
+          "syntax": "literal",
+          "original": "研究が次第に実践へ入っていくにつれ、「墟構師」は一つの呼称から、私が廃墟の中で仕事をするための役割へと変わった。私はこの立場で廃墟へ入り制作を行い、「墟構」を自らの実践に属する方法として育て、『フォリー』シリーズの制作に用いている。"
+        }
+      },
+      "id": "TXT-0079"
+    },
+    {
+      "file": "script.js",
+      "path": "writings[0].intro[2]",
+      "kind": "translation",
+      "line": 341,
+      "languages": {
+        "zh": "最终，我将对废墟的理解、由此形成的理论，以及在实践中逐渐建立的墟构方法整理在一起，构成《墟构师宣言》。它既是一份个人陈述，也是一套仍在持续修订的工作体系，并作为我面对这个时代“现代废墟”的一部个人法典。",
+        "en": "I eventually brought these understandings of ruins, the theories that emerged from them, and the methods of Ruinwork developed through practice together as the Ruinwright Manifesto. It is both a personal statement and a working system that remains open to revision: a personal code for confronting the “modern ruins” of this era.",
+        "ja": "最終的に、廃墟についての理解、そこから生まれた理論、そして実践の中で築いてきた墟構の方法を一つに編み直し、『墟構師宣言』とした。それは個人的なステートメントであると同時に、なお更新され続ける作業体系であり、この時代の「現代の廃墟」に向き合うための私自身の法典でもある。"
+      },
+      "source": {
+        "zh": {
+          "start": 23028,
+          "end": 23131,
+          "syntax": "literal",
+          "original": "最终，我将对废墟的理解、由此形成的理论，以及在实践中逐渐建立的墟构方法整理在一起，构成《墟构师宣言》。它既是一份个人陈述，也是一套仍在持续修订的工作体系，并作为我面对这个时代“现代废墟”的一部个人法典。"
+        },
+        "en": {
+          "start": 23857,
+          "end": 24188,
+          "syntax": "literal",
+          "original": "I eventually brought these understandings of ruins, the theories that emerged from them, and the methods of Ruinwork developed through practice together as the Ruinwright Manifesto. It is both a personal statement and a working system that remains open to revision: a personal code for confronting the “modern ruins” of this era."
+        },
+        "ja": {
+          "start": 24517,
+          "end": 24653,
+          "syntax": "literal",
+          "original": "最終的に、廃墟についての理解、そこから生まれた理論、そして実践の中で築いてきた墟構の方法を一つに編み直し、『墟構師宣言』とした。それは個人的なステートメントであると同時に、なお更新され続ける作業体系であり、この時代の「現代の廃墟」に向き合うための私自身の法典でもある。"
+        }
+      },
+      "id": "TXT-0080"
+    },
+    {
+      "file": "script.js",
+      "path": "writings[0].visitLabel",
+      "kind": "translation",
+      "line": 356,
+      "languages": {
+        "zh": "阅读《墟构师宣言》",
+        "en": "read the Ruinwright Manifesto",
+        "ja": "『墟構師宣言』を読む"
+      },
+      "source": {
+        "zh": {
+          "start": 24752,
+          "end": 24763,
+          "syntax": "literal",
+          "original": "阅读《墟构师宣言》"
+        },
+        "en": {
+          "start": 24775,
+          "end": 24806,
+          "syntax": "literal",
+          "original": "read the Ruinwright Manifesto"
+        },
+        "ja": {
+          "start": 24818,
+          "end": 24830,
+          "syntax": "literal",
+          "original": "『墟構師宣言』を読む"
+        }
+      },
+      "id": "TXT-0081"
+    },
+    {
+      "file": "script.js",
+      "path": "updatedCopy",
+      "kind": "translation",
+      "line": 898,
+      "languages": {
+        "zh": "地点更新于 [2026 10 3]",
+        "en": "sites updated [2026 10 3]",
+        "ja": "地点更新 [2026 10 3]"
+      },
+      "source": {
+        "zh": {
+          "start": 44229,
+          "end": 44248,
+          "syntax": "literal",
+          "original": "地点更新于 [2026 10 3]"
+        },
+        "en": {
+          "start": 44258,
+          "end": 44285,
+          "syntax": "literal",
+          "original": "sites updated [2026 10 3]"
+        },
+        "ja": {
+          "start": 44295,
+          "end": 44313,
+          "syntax": "literal",
+          "original": "地点更新 [2026 10 3]"
+        }
+      },
+      "id": "TXT-0082"
+    },
+    {
+      "file": "script.js",
+      "path": "ariaCopy",
+      "kind": "translation",
+      "line": 908,
+      "languages": {
+        "zh": "墟域图·遗构馆 互动地图",
+        "en": "Ruin Archive interactive map",
+        "ja": "墟域図・遺構館 インタラクティブ地図"
+      },
+      "source": {
+        "zh": {
+          "start": 44566,
+          "end": 44580,
+          "syntax": "literal",
+          "original": "墟域图·遗构馆 互动地图"
+        },
+        "en": {
+          "start": 44590,
+          "end": 44620,
+          "syntax": "literal",
+          "original": "Ruin Archive interactive map"
+        },
+        "ja": {
+          "start": 44630,
+          "end": 44650,
+          "syntax": "literal",
+          "original": "墟域図・遺構館 インタラクティブ地図"
+        }
+      },
+      "id": "TXT-0083"
+    },
+    {
+      "file": "script.js",
+      "path": "ariaCopy",
+      "kind": "translation",
+      "line": 935,
+      "languages": {
+        "zh": "遗构馆 archive-doc 与 index-drawer 缩小系统",
+        "en": "Scaled Ruin Archive archive-doc and index-drawer system",
+        "ja": "遺構館 archive-doc / index-drawer 縮小システム"
+      },
+      "source": {
+        "zh": {
+          "start": 45715,
+          "end": 45752,
+          "syntax": "literal",
+          "original": "遗构馆 archive-doc 与 index-drawer 缩小系统"
+        },
+        "en": {
+          "start": 45762,
+          "end": 45819,
+          "syntax": "literal",
+          "original": "Scaled Ruin Archive archive-doc and index-drawer system"
+        },
+        "ja": {
+          "start": 45829,
+          "end": 45868,
+          "syntax": "literal",
+          "original": "遺構館 archive-doc / index-drawer 縮小システム"
+        }
+      },
+      "id": "TXT-0084"
+    },
+    {
+      "file": "script.js",
+      "path": "seawaterVesselDescription",
+      "kind": "translation",
+      "line": 1134,
+      "languages": {
+        "zh": "tote tank（吨桶）的形体一直使我着迷。它的标准化与普遍性，让这种容器出现在世界各地，盛放过彼此迥异的液体。那种方正又庞大的样貌，使我想到一枚现代的帆船符号：单凭外形，便仿佛带着一种什么地方都去过、什么东西都装过的能力与经验。“吨”这个称呼连同它巨大的体量，又让这种能力隐约带上了野心。只不过在这里，海水从船舱外来到了舱内。我借用这个现成的形体，让那段无法证实的回忆继续有一个可以寄存的地方。",
+        "en": "I have long been drawn to the form of the tote tank. Its standardisation and ubiquity allow it to appear almost anywhere in the world, carrying liquids of very different kinds. That enormous, matter-of-fact shape strikes me as a contemporary emblem of the sailing ship: it seems, by its very appearance, to have been everywhere and to have held everything. The suggestion of a tonne in its name, and the scale of its body, lend that capacity a certain ambition. Here, however, the seawater has moved from outside the hull to within it. I have borrowed this familiar form to give an unverifiable memory somewhere to remain.",
+        "ja": "私はずっと、tote tank（トートタンク／大型液体コンテナ）の形に惹かれてきた。規格化され、世界中に普及したこの容器は、土地を問わず現れ、性質の異なるさまざまな液体を収めてきた。その四角く巨大な姿は、私には現代の帆船の記号のように見える。どこへでも行き、あらゆるものを積んできたかのような、能力と経験を形そのものが語っている。「トン」という重量の響きとその大きな量塊は、そこに幾分の野心さえ与える。ただしここでは、海水は船体の外から内へ移された。私はこの既製の形を借り、確かめることのできない記憶を、なお留めておく場所にした。"
+      },
+      "source": {
+        "zh": {
+          "start": 55911,
+          "end": 56112,
+          "syntax": "literal",
+          "original": "tote tank（吨桶）的形体一直使我着迷。它的标准化与普遍性，让这种容器出现在世界各地，盛放过彼此迥异的液体。那种方正又庞大的样貌，使我想到一枚现代的帆船符号：单凭外形，便仿佛带着一种什么地方都去过、什么东西都装过的能力与经验。“吨”这个称呼连同它巨大的体量，又让这种能力隐约带上了野心。只不过在这里，海水从船舱外来到了舱内。我借用这个现成的形体，让那段无法证实的回忆继续有一个可以寄存的地方。"
+        },
+        "en": {
+          "start": 56120,
+          "end": 56744,
+          "syntax": "literal",
+          "original": "I have long been drawn to the form of the tote tank. Its standardisation and ubiquity allow it to appear almost anywhere in the world, carrying liquids of very different kinds. That enormous, matter-of-fact shape strikes me as a contemporary emblem of the sailing ship: it seems, by its very appearance, to have been everywhere and to have held everything. The suggestion of a tonne in its name, and the scale of its body, lend that capacity a certain ambition. Here, however, the seawater has moved from outside the hull to within it. I have borrowed this familiar form to give an unverifiable memory somewhere to remain."
+        },
+        "ja": {
+          "start": 56752,
+          "end": 57019,
+          "syntax": "literal",
+          "original": "私はずっと、tote tank（トートタンク／大型液体コンテナ）の形に惹かれてきた。規格化され、世界中に普及したこの容器は、土地を問わず現れ、性質の異なるさまざまな液体を収めてきた。その四角く巨大な姿は、私には現代の帆船の記号のように見える。どこへでも行き、あらゆるものを積んできたかのような、能力と経験を形そのものが語っている。「トン」という重量の響きとその大きな量塊は、そこに幾分の野心さえ与える。ただしここでは、海水は船体の外から内へ移された。私はこの既製の形を借り、確かめることのできない記憶を、なお留めておく場所にした。"
+        }
+      },
+      "id": "TXT-0085"
+    },
+    {
+      "file": "script.js",
+      "path": "fragranceThemes[0].label",
+      "kind": "translation",
+      "line": 1400,
+      "languages": {
+        "zh": "天空",
+        "en": "sky",
+        "ja": "空"
+      },
+      "source": {
+        "zh": {
+          "start": 66423,
+          "end": 66427,
+          "syntax": "literal",
+          "original": "天空"
+        },
+        "en": {
+          "start": 66433,
+          "end": 66438,
+          "syntax": "literal",
+          "original": "sky"
+        },
+        "ja": {
+          "start": 66444,
+          "end": 66447,
+          "syntax": "literal",
+          "original": "空"
+        }
+      },
+      "id": "TXT-0086"
+    },
+    {
+      "file": "script.js",
+      "path": "fragranceThemes[1].label",
+      "kind": "translation",
+      "line": 1416,
+      "languages": {
+        "zh": "宇宙",
+        "en": "cosmos",
+        "ja": "宇宙"
+      },
+      "source": {
+        "zh": {
+          "start": 66706,
+          "end": 66710,
+          "syntax": "literal",
+          "original": "宇宙"
+        },
+        "en": {
+          "start": 66716,
+          "end": 66724,
+          "syntax": "literal",
+          "original": "cosmos"
+        },
+        "ja": {
+          "start": 66730,
+          "end": 66734,
+          "syntax": "literal",
+          "original": "宇宙"
+        }
+      },
+      "id": "TXT-0087"
+    },
+    {
+      "file": "script.js",
+      "path": "fragranceThemes[2].label",
+      "kind": "translation",
+      "line": 1429,
+      "languages": {
+        "zh": "肢体",
+        "en": "body",
+        "ja": "身体"
+      },
+      "source": {
+        "zh": {
+          "start": 66939,
+          "end": 66943,
+          "syntax": "literal",
+          "original": "肢体"
+        },
+        "en": {
+          "start": 66949,
+          "end": 66955,
+          "syntax": "literal",
+          "original": "body"
+        },
+        "ja": {
+          "start": 66961,
+          "end": 66965,
+          "syntax": "literal",
+          "original": "身体"
+        }
+      },
+      "id": "TXT-0088"
+    },
+    {
+      "file": "script.js",
+      "path": "fragranceThemes[3].label",
+      "kind": "translation",
+      "line": 1443,
+      "languages": {
+        "zh": "画廊",
+        "en": "gallery",
+        "ja": "ギャラリー"
+      },
+      "source": {
+        "zh": {
+          "start": 67189,
+          "end": 67193,
+          "syntax": "literal",
+          "original": "画廊"
+        },
+        "en": {
+          "start": 67199,
+          "end": 67208,
+          "syntax": "literal",
+          "original": "gallery"
+        },
+        "ja": {
+          "start": 67214,
+          "end": 67221,
+          "syntax": "literal",
+          "original": "ギャラリー"
+        }
+      },
+      "id": "TXT-0089"
+    },
+    {
+      "file": "script.js",
+      "path": "fragranceThemes[4].label",
+      "kind": "translation",
+      "line": 1453,
+      "languages": {
+        "zh": "眼睛",
+        "en": "eyes",
+        "ja": "眼"
+      },
+      "source": {
+        "zh": {
+          "start": 67370,
+          "end": 67374,
+          "syntax": "literal",
+          "original": "眼睛"
+        },
+        "en": {
+          "start": 67380,
+          "end": 67386,
+          "syntax": "literal",
+          "original": "eyes"
+        },
+        "ja": {
+          "start": 67392,
+          "end": 67395,
+          "syntax": "literal",
+          "original": "眼"
+        }
+      },
+      "id": "TXT-0090"
+    },
+    {
+      "file": "script.js",
+      "path": "lakeRoom.images[0].caption",
+      "kind": "translation",
+      "line": 1491,
+      "languages": {
+        "zh": "room by the lake, 2020 · 布面油画 · 60 × 91 cm · 密西根湖",
+        "en": "room by the lake, 2020 · oil on canvas · 60 × 91 cm · Lake Michigan",
+        "ja": "room by the lake, 2020 · キャンバスに油彩 · 60 × 91 cm · ミシガン湖"
+      },
+      "source": {
+        "zh": {
+          "start": 68328,
+          "end": 68379,
+          "syntax": "literal",
+          "original": "room by the lake, 2020 · 布面油画 · 60 × 91 cm · 密西根湖"
+        },
+        "en": {
+          "start": 68395,
+          "end": 68464,
+          "syntax": "literal",
+          "original": "room by the lake, 2020 · oil on canvas · 60 × 91 cm · Lake Michigan"
+        },
+        "ja": {
+          "start": 68480,
+          "end": 68536,
+          "syntax": "literal",
+          "original": "room by the lake, 2020 · キャンバスに油彩 · 60 × 91 cm · ミシガン湖"
+        }
+      },
+      "id": "TXT-0091"
+    },
+    {
+      "file": "script.js",
+      "path": "lakeRoom.images[1].caption",
+      "kind": "translation",
+      "line": 1498,
+      "languages": {
+        "zh": "展示空间",
+        "en": "painting on site",
+        "ja": "展示空間"
+      },
+      "source": {
+        "zh": {
+          "start": 68654,
+          "end": 68660,
+          "syntax": "literal",
+          "original": "展示空间"
+        },
+        "en": {
+          "start": 68666,
+          "end": 68684,
+          "syntax": "literal",
+          "original": "painting on site"
+        },
+        "ja": {
+          "start": 68690,
+          "end": 68696,
+          "syntax": "literal",
+          "original": "展示空間"
+        }
+      },
+      "id": "TXT-0092"
+    },
+    {
+      "file": "script.js",
+      "path": "seawater.title",
+      "kind": "translation",
+      "line": 1506,
+      "languages": {
+        "zh": "collection of (all) oceans and seas",
+        "en": "collection of (all) oceans and seas",
+        "ja": "collection of (all) oceans and seas"
+      },
+      "source": {
+        "zh": {
+          "start": 68815,
+          "end": 68852,
+          "syntax": "literal",
+          "original": "collection of (all) oceans and seas"
+        },
+        "en": {
+          "start": 68864,
+          "end": 68901,
+          "syntax": "literal",
+          "original": "collection of (all) oceans and seas"
+        },
+        "ja": {
+          "start": 68913,
+          "end": 68950,
+          "syntax": "literal",
+          "original": "collection of (all) oceans and seas"
+        }
+      },
+      "id": "TXT-0093"
+    },
+    {
+      "file": "script.js",
+      "path": "seawater.intro",
+      "kind": "translation",
+      "line": 1511,
+      "languages": {
+        "zh": "起点是一段悬置在真实与虚构之间的童年记忆：大约十一岁时，我记得在一座美术馆的角落看见一个正在漏水的 tote tank，并听见一句“55个海洋的海水”。多年后再回头查询，我找不到任何相关记录。于是这段无法被证实的记忆，慢慢变成了一项持续至今的海水收集。",
+        "en": "The collection begins with a childhood memory suspended between fact and fiction. At about eleven, I remember a leaking tote tank in the corner of a museum and the phrase “water from 55 oceans.” Years later I could find no record of it. That unverifiable fragment gradually became an ongoing collection of seawater.",
+        "ja": "このコレクションの起点は、現実と虚構のあいだに宙づりになった幼少期の記憶である。十一歳頃、美術館の隅で水の漏れる tote tank を見て、「55の海の海水」という言葉を聞いた記憶がある。何年も後に調べ直しても、関連する記録は何も見つからなかった。その確かめようのない断片が、現在まで続く海水採集へと少しずつ変わっていった。"
+      },
+      "source": {
+        "zh": {
+          "start": 68991,
+          "end": 69119,
+          "syntax": "literal",
+          "original": "起点是一段悬置在真实与虚构之间的童年记忆：大约十一岁时，我记得在一座美术馆的角落看见一个正在漏水的 tote tank，并听见一句“55个海洋的海水”。多年后再回头查询，我找不到任何相关记录。于是这段无法被证实的记忆，慢慢变成了一项持续至今的海水收集。"
+        },
+        "en": {
+          "start": 69131,
+          "end": 69448,
+          "syntax": "literal",
+          "original": "The collection begins with a childhood memory suspended between fact and fiction. At about eleven, I remember a leaking tote tank in the corner of a museum and the phrase “water from 55 oceans.” Years later I could find no record of it. That unverifiable fragment gradually became an ongoing collection of seawater."
+        },
+        "ja": {
+          "start": 69460,
+          "end": 69625,
+          "syntax": "literal",
+          "original": "このコレクションの起点は、現実と虚構のあいだに宙づりになった幼少期の記憶である。十一歳頃、美術館の隅で水の漏れる tote tank を見て、「55の海の海水」という言葉を聞いた記憶がある。何年も後に調べ直しても、関連する記録は何も見つからなかった。その確かめようのない断片が、現在まで続く海水採集へと少しずつ変わっていった。"
+        }
+      },
+      "id": "TXT-0094"
+    },
+    {
+      "file": "script.js",
+      "path": "seawater.images[0].caption",
+      "kind": "translation",
+      "line": 1520,
+      "languages": {
+        "zh": "《角落里漏着“55个海洋的海水”》 · 30 × 40 cm · 布面油画 · 2019",
+        "en": "Water from ‘55 Oceans’ Leaking in the Corner · 30 × 40 cm · oil on canvas · 2019",
+        "ja": "《隅で漏れている「55の海の海水」》 · 30 × 40 cm · キャンバスに油彩 · 2019"
+      },
+      "source": {
+        "zh": {
+          "start": 69779,
+          "end": 69825,
+          "syntax": "literal",
+          "original": "《角落里漏着“55个海洋的海水”》 · 30 × 40 cm · 布面油画 · 2019"
+        },
+        "en": {
+          "start": 69841,
+          "end": 69923,
+          "syntax": "literal",
+          "original": "Water from ‘55 Oceans’ Leaking in the Corner · 30 × 40 cm · oil on canvas · 2019"
+        },
+        "ja": {
+          "start": 69939,
+          "end": 69990,
+          "syntax": "literal",
+          "original": "《隅で漏れている「55の海の海水」》 · 30 × 40 cm · キャンバスに油彩 · 2019"
+        }
+      },
+      "id": "TXT-0095"
+    },
+    {
+      "file": "script.js",
+      "path": "seawater.images[1].caption",
+      "kind": "translation",
+      "line": 1529,
+      "languages": {
+        "zh": "collection of (all) oceans and seas · H: — · D: — · 2023/2— ·（坐标、坐标、坐标……）",
+        "en": "collection of (all) oceans and seas · H: — · D: — · 2023/2— · (coordinates, coordinates, coordinates …)",
+        "ja": "collection of (all) oceans and seas · H: — · D: — · 2023/2— ·（座標、座標、座標……）"
+      },
+      "source": {
+        "zh": {
+          "start": 70133,
+          "end": 70208,
+          "syntax": "literal",
+          "original": "collection of (all) oceans and seas · H: — · D: — · 2023/2— ·（坐标、坐标、坐标……）"
+        },
+        "en": {
+          "start": 70224,
+          "end": 70329,
+          "syntax": "literal",
+          "original": "collection of (all) oceans and seas · H: — · D: — · 2023/2— · (coordinates, coordinates, coordinates …)"
+        },
+        "ja": {
+          "start": 70345,
+          "end": 70420,
+          "syntax": "literal",
+          "original": "collection of (all) oceans and seas · H: — · D: — · 2023/2— ·（座標、座標、座標……）"
+        }
+      },
+      "id": "TXT-0096"
+    },
+    {
+      "file": "script.js",
+      "path": "seawater.notes[0].title",
+      "kind": "translation",
+      "line": 1537,
+      "languages": {
+        "zh": "55个海洋",
+        "en": "55 oceans",
+        "ja": "55の海"
+      },
+      "source": {
+        "zh": {
+          "start": 70498,
+          "end": 70505,
+          "syntax": "literal",
+          "original": "55个海洋"
+        },
+        "en": {
+          "start": 70511,
+          "end": 70522,
+          "syntax": "literal",
+          "original": "55 oceans"
+        },
+        "ja": {
+          "start": 70528,
+          "end": 70534,
+          "syntax": "literal",
+          "original": "55の海"
+        }
+      },
+      "id": "TXT-0097"
+    },
+    {
+      "file": "script.js",
+      "path": "seawater.notes[0].body[0]",
+      "kind": "translation",
+      "line": 1540,
+      "languages": {
+        "zh": "我不知道这段记忆究竟真实发生过，还是在漫长的回想中被重新拼接出来。也许当时真的有这样一件作品；也许只是路过的人对一缸水的过度解读，被十一岁的我无意听见；也可能还有别的来源。奇怪的是，当它多年后突然重新回到脑海里，我越想确认它，它反而越显得不真实。",
+        "en": "I do not know whether the memory actually happened or was gradually reassembled through years of recollection. Perhaps such a work existed; perhaps I overheard a passer-by over-interpreting an ordinary tank of water; perhaps there was another source entirely. The stranger part is that the more I tried to verify the memory after it returned years later, the less real it began to feel.",
+        "ja": "この記憶が本当に起きたことなのか、それとも長い回想のなかで少しずつ組み替えられたものなのか、私には分からない。本当にそのような作品があったのかもしれないし、通りすがりの誰かが一槽の水を過剰に解釈した言葉を、十一歳の私が偶然聞いただけなのかもしれない。別の可能性もある。奇妙なのは、何年も後に記憶が突然戻ってきて、確かめようとすればするほど、それが現実から遠ざかって見えたことだった。"
+      },
+      "source": {
+        "zh": {
+          "start": 70582,
+          "end": 70707,
+          "syntax": "literal",
+          "original": "我不知道这段记忆究竟真实发生过，还是在漫长的回想中被重新拼接出来。也许当时真的有这样一件作品；也许只是路过的人对一缸水的过度解读，被十一岁的我无意听见；也可能还有别的来源。奇怪的是，当它多年后突然重新回到脑海里，我越想确认它，它反而越显得不真实。"
+        },
+        "en": {
+          "start": 70890,
+          "end": 71278,
+          "syntax": "literal",
+          "original": "I do not know whether the memory actually happened or was gradually reassembled through years of recollection. Perhaps such a work existed; perhaps I overheard a passer-by over-interpreting an ordinary tank of water; perhaps there was another source entirely. The stranger part is that the more I tried to verify the memory after it returned years later, the less real it began to feel."
+        },
+        "ja": {
+          "start": 71665,
+          "end": 71858,
+          "syntax": "literal",
+          "original": "この記憶が本当に起きたことなのか、それとも長い回想のなかで少しずつ組み替えられたものなのか、私には分からない。本当にそのような作品があったのかもしれないし、通りすがりの誰かが一槽の水を過剰に解釈した言葉を、十一歳の私が偶然聞いただけなのかもしれない。別の可能性もある。奇妙なのは、何年も後に記憶が突然戻ってきて、確かめようとすればするほど、それが現実から遠ざかって見えたことだった。"
+        }
+      },
+      "id": "TXT-0098"
+    },
+    {
+      "file": "script.js",
+      "path": "seawater.notes[0].body[1]",
+      "kind": "translation",
+      "line": 1541,
+      "languages": {
+        "zh": "它因此变成了一场关于媒介的恐惧：一边担心原始记忆会随着时间彻底消失，一边又担心任何试图把它画下来、做出来、命名出来的动作，都会替换掉那段记忆本身。重要的东西不再只是“它到底有没有发生过”，而是记忆一旦需要媒介才能继续存在，就不可避免地开始被媒介改变。",
+        "en": "It became a form of media anxiety: fear that the original memory might disappear with time, paired with fear that every attempt to paint, build or name it would replace the memory itself. The question is no longer only whether it happened. Once memory needs a medium in order to persist, the medium inevitably begins to alter it.",
+        "ja": "それはやがて、メディアに対する二重の不安になった。原初の記憶が時間とともに完全に消えることへの恐れと、それを描き、つくり、名づけようとする行為そのものが記憶を置き換えてしまうことへの恐れである。問題はもはや「本当に起きたか」だけではない。記憶が存続するために媒体を必要とした瞬間、媒体は必ず記憶を変え始める。"
+      },
+      "source": {
+        "zh": {
+          "start": 70721,
+          "end": 70848,
+          "syntax": "literal",
+          "original": "它因此变成了一场关于媒介的恐惧：一边担心原始记忆会随着时间彻底消失，一边又担心任何试图把它画下来、做出来、命名出来的动作，都会替换掉那段记忆本身。重要的东西不再只是“它到底有没有发生过”，而是记忆一旦需要媒介才能继续存在，就不可避免地开始被媒介改变。"
+        },
+        "en": {
+          "start": 71292,
+          "end": 71623,
+          "syntax": "literal",
+          "original": "It became a form of media anxiety: fear that the original memory might disappear with time, paired with fear that every attempt to paint, build or name it would replace the memory itself. The question is no longer only whether it happened. Once memory needs a medium in order to persist, the medium inevitably begins to alter it."
+        },
+        "ja": {
+          "start": 71872,
+          "end": 72028,
+          "syntax": "literal",
+          "original": "それはやがて、メディアに対する二重の不安になった。原初の記憶が時間とともに完全に消えることへの恐れと、それを描き、つくり、名づけようとする行為そのものが記憶を置き換えてしまうことへの恐れである。問題はもはや「本当に起きたか」だけではない。記憶が存続するために媒体を必要とした瞬間、媒体は必ず記憶を変え始める。"
+        }
+      },
+      "id": "TXT-0099"
+    },
+    {
+      "file": "script.js",
+      "path": "seawater.notes[1].title",
+      "kind": "translation",
+      "line": 1554,
+      "languages": {
+        "zh": "物质化",
+        "en": "materialisation",
+        "ja": "物質化"
+      },
+      "source": {
+        "zh": {
+          "start": 72089,
+          "end": 72094,
+          "syntax": "literal",
+          "original": "物质化"
+        },
+        "en": {
+          "start": 72100,
+          "end": 72117,
+          "syntax": "literal",
+          "original": "materialisation"
+        },
+        "ja": {
+          "start": 72123,
+          "end": 72128,
+          "syntax": "literal",
+          "original": "物質化"
+        }
+      },
+      "id": "TXT-0100"
+    },
+    {
+      "file": "script.js",
+      "path": "seawater.notes[1].body[0]",
+      "kind": "translation",
+      "line": 1557,
+      "languages": {
+        "zh": "于是我没有试图制作一个完美的复制品。材料在手工过程中留下的偏差、接缝与不完整，更接近我对记忆本身的认识：记忆从来不是无损保存的文件，而是一件每次被取出时都会重新生成的东西。瑕疵不是为了制造怀旧，而是承认重述本身就会带来变形。",
+        "en": "I therefore did not try to manufacture a perfect replica. Deviations, seams and incompleteness left by making are closer to how I understand memory itself: not a lossless file, but something regenerated each time it is retrieved. Imperfection is not used to simulate nostalgia; it acknowledges that retelling always produces distortion.",
+        "ja": "だから私は、完全な複製をつくろうとはしなかった。手作業の過程で残るずれ、継ぎ目、不完全さのほうが、記憶そのものについての私の理解に近い。記憶は劣化せず保存されるファイルではなく、取り出されるたびに生成し直されるものだ。瑕疵はノスタルジーを演出するためではなく、語り直すこと自体が変形を生むと認めるためにある。"
+      },
+      "source": {
+        "zh": {
+          "start": 72176,
+          "end": 72290,
+          "syntax": "literal",
+          "original": "于是我没有试图制作一个完美的复制品。材料在手工过程中留下的偏差、接缝与不完整，更接近我对记忆本身的认识：记忆从来不是无损保存的文件，而是一件每次被取出时都会重新生成的东西。瑕疵不是为了制造怀旧，而是承认重述本身就会带来变形。"
+        },
+        "en": {
+          "start": 72430,
+          "end": 72768,
+          "syntax": "literal",
+          "original": "I therefore did not try to manufacture a perfect replica. Deviations, seams and incompleteness left by making are closer to how I understand memory itself: not a lossless file, but something regenerated each time it is retrieved. Imperfection is not used to simulate nostalgia; it acknowledges that retelling always produces distortion."
+        },
+        "ja": {
+          "start": 73052,
+          "end": 73208,
+          "syntax": "literal",
+          "original": "だから私は、完全な複製をつくろうとはしなかった。手作業の過程で残るずれ、継ぎ目、不完全さのほうが、記憶そのものについての私の理解に近い。記憶は劣化せず保存されるファイルではなく、取り出されるたびに生成し直されるものだ。瑕疵はノスタルジーを演出するためではなく、語り直すこと自体が変形を生むと認めるためにある。"
+        }
+      },
+      "id": "TXT-0101"
+    },
+    {
+      "file": "script.js",
+      "path": "seawater.notes[1].body[1]",
+      "kind": "translation",
+      "line": 1558,
+      "languages": {
+        "zh": "从2019年开始，我把在不同地方遇见的海水一点点留下。那些真实的水样和那句无法证实的“55个海洋”形成一种镜像关系——它们不是对童年记忆的复制，而是一种迟到的回应。",
+        "en": "Since 2019 I have kept small samples of seawater from different places. These actual waters form a mirror relation with the unverifiable phrase “55 oceans.” They do not reproduce the childhood memory; they answer it belatedly.",
+        "ja": "2019年から、私は異なる土地で出会った海水を少しずつ残してきた。それらの実在する水と、確かめることのできない「55の海」という言葉は鏡像のような関係を結ぶ。童年の記憶を複製するのではなく、遅れて返す応答である。"
+      },
+      "source": {
+        "zh": {
+          "start": 72304,
+          "end": 72388,
+          "syntax": "literal",
+          "original": "从2019年开始，我把在不同地方遇见的海水一点点留下。那些真实的水样和那句无法证实的“55个海洋”形成一种镜像关系——它们不是对童年记忆的复制，而是一种迟到的回应。"
+        },
+        "en": {
+          "start": 72782,
+          "end": 73010,
+          "syntax": "literal",
+          "original": "Since 2019 I have kept small samples of seawater from different places. These actual waters form a mirror relation with the unverifiable phrase “55 oceans.” They do not reproduce the childhood memory; they answer it belatedly."
+        },
+        "ja": {
+          "start": 73222,
+          "end": 73330,
+          "syntax": "literal",
+          "original": "2019年から、私は異なる土地で出会った海水を少しずつ残してきた。それらの実在する水と、確かめることのできない「55の海」という言葉は鏡像のような関係を結ぶ。童年の記憶を複製するのではなく、遅れて返す応答である。"
+        }
+      },
+      "id": "TXT-0102"
+    },
+    {
+      "file": "script.js",
+      "path": "seawater.notes[2].title",
+      "kind": "translation",
+      "line": 1571,
+      "languages": {
+        "zh": "愚人船号",
+        "en": "Ship of Fools",
+        "ja": "愚人船号"
+      },
+      "source": {
+        "zh": {
+          "start": 73391,
+          "end": 73397,
+          "syntax": "literal",
+          "original": "愚人船号"
+        },
+        "en": {
+          "start": 73403,
+          "end": 73418,
+          "syntax": "literal",
+          "original": "Ship of Fools"
+        },
+        "ja": {
+          "start": 73424,
+          "end": 73430,
+          "syntax": "literal",
+          "original": "愚人船号"
+        }
+      },
+      "id": "TXT-0103"
+    },
+    {
+      "file": "script.js",
+      "path": "seawater.notes[2].body[0]",
+      "kind": "translation",
+      "line": 1574,
+      "languages": {
+        "zh": "“愚人船号”把这种无法被证实的记忆继续推向真实世界。在构想中，它携带自2019年以来收集的各地海水，让这些样本随着洋流继续移动。中世纪的愚人船载着无法被理解的人驶向未知；这里的船则载着一段无法被证明的记忆，进入同样没有明确终点的航行。",
+        "en": "The Ship of Fools extends this unverifiable memory back into the physical world. In the proposal, it carries seawater gathered since 2019 and lets the samples continue moving with ocean currents. The medieval ship of fools carried those who could not be understood toward the unknown; this vessel carries an unprovable memory into a journey without a necessary destination.",
+        "ja": "「愚人船号」は、この証明できない記憶をもう一度物理的な世界へ押し出す構想である。2019年以降に集めた各地の海水を載せ、サンプルを海流とともに移動させる。中世の愚人船が理解されない者たちを未知へ運んだのなら、ここでの船は証明できないひとつの記憶を、同じように明確な終点を必要としない航海へ運ぶ。"
+      },
+      "source": {
+        "zh": {
+          "start": 73478,
+          "end": 73597,
+          "syntax": "literal",
+          "original": "“愚人船号”把这种无法被证实的记忆继续推向真实世界。在构想中，它携带自2019年以来收集的各地海水，让这些样本随着洋流继续移动。中世纪的愚人船载着无法被理解的人驶向未知；这里的船则载着一段无法被证明的记忆，进入同样没有明确终点的航行。"
+        },
+        "en": {
+          "start": 73732,
+          "end": 74107,
+          "syntax": "literal",
+          "original": "The Ship of Fools extends this unverifiable memory back into the physical world. In the proposal, it carries seawater gathered since 2019 and lets the samples continue moving with ocean currents. The medieval ship of fools carried those who could not be understood toward the unknown; this vessel carries an unprovable memory into a journey without a necessary destination."
+        },
+        "ja": {
+          "start": 74398,
+          "end": 74547,
+          "syntax": "literal",
+          "original": "「愚人船号」は、この証明できない記憶をもう一度物理的な世界へ押し出す構想である。2019年以降に集めた各地の海水を載せ、サンプルを海流とともに移動させる。中世の愚人船が理解されない者たちを未知へ運んだのなら、ここでの船は証明できないひとつの記憶を、同じように明確な終点を必要としない航海へ運ぶ。"
+        }
+      },
+      "id": "TXT-0104"
+    },
+    {
+      "file": "script.js",
+      "path": "seawater.notes[2].body[1]",
+      "kind": "translation",
+      "line": 1575,
+      "languages": {
+        "zh": "到这里，真实性反而不再是唯一的重点。更重要的是，一段记忆如何因为不断被回想、怀疑、绘画、收集和重述而获得新的生命。它没有被“还原”，而是在时间里持续生成。",
+        "en": "At that point authenticity is no longer the only question. What matters is how a memory acquires another life through recollection, doubt, painting, collecting and retelling. It is not restored. It keeps being generated through time.",
+        "ja": "ここでは、真実性だけが中心ではなくなる。重要なのは、記憶が回想され、疑われ、描かれ、採集され、語り直されることで、どのように別の生命を得るかということだ。それは「復元」されるのではなく、時間のなかで生成され続ける。"
+      },
+      "source": {
+        "zh": {
+          "start": 73611,
+          "end": 73690,
+          "syntax": "literal",
+          "original": "到这里，真实性反而不再是唯一的重点。更重要的是，一段记忆如何因为不断被回想、怀疑、绘画、收集和重述而获得新的生命。它没有被“还原”，而是在时间里持续生成。"
+        },
+        "en": {
+          "start": 74121,
+          "end": 74356,
+          "syntax": "literal",
+          "original": "At that point authenticity is no longer the only question. What matters is how a memory acquires another life through recollection, doubt, painting, collecting and retelling. It is not restored. It keeps being generated through time."
+        },
+        "ja": {
+          "start": 74561,
+          "end": 74670,
+          "syntax": "literal",
+          "original": "ここでは、真実性だけが中心ではなくなる。重要なのは、記憶が回想され、疑われ、描かれ、採集され、語り直されることで、どのように別の生命を得るかということだ。それは「復元」されるのではなく、時間のなかで生成され続ける。"
+        }
+      },
+      "id": "TXT-0105"
+    },
+    {
+      "file": "script.js",
+      "path": "seawater.spaceTimeRecords[0].name",
+      "kind": "translation",
+      "line": 1596,
+      "languages": {
+        "zh": "日本海",
+        "en": "Sea of Japan",
+        "ja": "日本海"
+      },
+      "source": {
+        "zh": {
+          "start": 74989,
+          "end": 74994,
+          "syntax": "literal",
+          "original": "日本海"
+        },
+        "en": {
+          "start": 75000,
+          "end": 75014,
+          "syntax": "literal",
+          "original": "Sea of Japan"
+        },
+        "ja": {
+          "start": 75020,
+          "end": 75025,
+          "syntax": "literal",
+          "original": "日本海"
+        }
+      },
+      "id": "TXT-0106"
+    },
+    {
+      "file": "script.js",
+      "path": "seawater.spaceTimeRecords[1].name",
+      "kind": "translation",
+      "line": 1602,
+      "languages": {
+        "zh": "黄海",
+        "en": "Yellow Sea",
+        "ja": "黄海"
+      },
+      "source": {
+        "zh": {
+          "start": 75132,
+          "end": 75136,
+          "syntax": "literal",
+          "original": "黄海"
+        },
+        "en": {
+          "start": 75142,
+          "end": 75154,
+          "syntax": "literal",
+          "original": "Yellow Sea"
+        },
+        "ja": {
+          "start": 75160,
+          "end": 75164,
+          "syntax": "literal",
+          "original": "黄海"
+        }
+      },
+      "id": "TXT-0107"
+    },
+    {
+      "file": "script.js",
+      "path": "seawater.spaceTimeRecords[2].name",
+      "kind": "translation",
+      "line": 1608,
+      "languages": {
+        "zh": "东海",
+        "en": "East China Sea",
+        "ja": "東シナ海"
+      },
+      "source": {
+        "zh": {
+          "start": 75271,
+          "end": 75275,
+          "syntax": "literal",
+          "original": "东海"
+        },
+        "en": {
+          "start": 75281,
+          "end": 75297,
+          "syntax": "literal",
+          "original": "East China Sea"
+        },
+        "ja": {
+          "start": 75303,
+          "end": 75309,
+          "syntax": "literal",
+          "original": "東シナ海"
+        }
+      },
+      "id": "TXT-0108"
+    },
+    {
+      "file": "script.js",
+      "path": "seawater.spaceTimeRecords[3].name",
+      "kind": "translation",
+      "line": 1614,
+      "languages": {
+        "zh": "濑户内海",
+        "en": "Seto Inland Sea",
+        "ja": "瀬戸内海"
+      },
+      "source": {
+        "zh": {
+          "start": 75416,
+          "end": 75422,
+          "syntax": "literal",
+          "original": "濑户内海"
+        },
+        "en": {
+          "start": 75428,
+          "end": 75445,
+          "syntax": "literal",
+          "original": "Seto Inland Sea"
+        },
+        "ja": {
+          "start": 75451,
+          "end": 75457,
+          "syntax": "literal",
+          "original": "瀬戸内海"
+        }
+      },
+      "id": "TXT-0109"
+    },
+    {
+      "file": "script.js",
+      "path": "seawater.spaceTimeRecords[4].name",
+      "kind": "translation",
+      "line": 1620,
+      "languages": {
+        "zh": "地中海",
+        "en": "Mediterranean Sea",
+        "ja": "地中海"
+      },
+      "source": {
+        "zh": {
+          "start": 75563,
+          "end": 75568,
+          "syntax": "literal",
+          "original": "地中海"
+        },
+        "en": {
+          "start": 75574,
+          "end": 75593,
+          "syntax": "literal",
+          "original": "Mediterranean Sea"
+        },
+        "ja": {
+          "start": 75599,
+          "end": 75604,
+          "syntax": "literal",
+          "original": "地中海"
+        }
+      },
+      "id": "TXT-0110"
+    },
+    {
+      "file": "script.js",
+      "path": "seawater.spaceTimeRecords[5].name",
+      "kind": "translation",
+      "line": 1626,
+      "languages": {
+        "zh": "北大西洋",
+        "en": "North Atlantic",
+        "ja": "北大西洋"
+      },
+      "source": {
+        "zh": {
+          "start": 75711,
+          "end": 75717,
+          "syntax": "literal",
+          "original": "北大西洋"
+        },
+        "en": {
+          "start": 75723,
+          "end": 75739,
+          "syntax": "literal",
+          "original": "North Atlantic"
+        },
+        "ja": {
+          "start": 75745,
+          "end": 75751,
+          "syntax": "literal",
+          "original": "北大西洋"
+        }
+      },
+      "id": "TXT-0111"
+    },
+    {
+      "file": "script.js",
+      "path": "seawater.spaceTimeRecords[6].name",
+      "kind": "translation",
+      "line": 1632,
+      "languages": {
+        "zh": "比斯开湾",
+        "en": "Bay of Biscay",
+        "ja": "ビスケー湾"
+      },
+      "source": {
+        "zh": {
+          "start": 75857,
+          "end": 75863,
+          "syntax": "literal",
+          "original": "比斯开湾"
+        },
+        "en": {
+          "start": 75869,
+          "end": 75884,
+          "syntax": "literal",
+          "original": "Bay of Biscay"
+        },
+        "ja": {
+          "start": 75890,
+          "end": 75897,
+          "syntax": "literal",
+          "original": "ビスケー湾"
+        }
+      },
+      "id": "TXT-0112"
+    },
+    {
+      "file": "script.js",
+      "path": "seawater.spaceTimeRecords[7].name",
+      "kind": "translation",
+      "line": 1638,
+      "languages": {
+        "zh": "南海",
+        "en": "South China Sea",
+        "ja": "南シナ海"
+      },
+      "source": {
+        "zh": {
+          "start": 76004,
+          "end": 76008,
+          "syntax": "literal",
+          "original": "南海"
+        },
+        "en": {
+          "start": 76014,
+          "end": 76031,
+          "syntax": "literal",
+          "original": "South China Sea"
+        },
+        "ja": {
+          "start": 76037,
+          "end": 76043,
+          "syntax": "literal",
+          "original": "南シナ海"
+        }
+      },
+      "id": "TXT-0113"
+    },
+    {
+      "file": "script.js",
+      "path": "seawater.spaceTimeRecords[8].name",
+      "kind": "translation",
+      "line": 1644,
+      "languages": {
+        "zh": "北冰洋",
+        "en": "Arctic Ocean",
+        "ja": "北極海"
+      },
+      "source": {
+        "zh": {
+          "start": 76148,
+          "end": 76153,
+          "syntax": "literal",
+          "original": "北冰洋"
+        },
+        "en": {
+          "start": 76159,
+          "end": 76173,
+          "syntax": "literal",
+          "original": "Arctic Ocean"
+        },
+        "ja": {
+          "start": 76179,
+          "end": 76184,
+          "syntax": "literal",
+          "original": "北極海"
+        }
+      },
+      "id": "TXT-0114"
+    },
+    {
+      "file": "script.js",
+      "path": "seawater.spaceTimeRecords[9].name",
+      "kind": "translation",
+      "line": 1650,
+      "languages": {
+        "zh": "北太平洋",
+        "en": "North Pacific",
+        "ja": "北太平洋"
+      },
+      "source": {
+        "zh": {
+          "start": 76292,
+          "end": 76298,
+          "syntax": "literal",
+          "original": "北太平洋"
+        },
+        "en": {
+          "start": 76304,
+          "end": 76319,
+          "syntax": "literal",
+          "original": "North Pacific"
+        },
+        "ja": {
+          "start": 76325,
+          "end": 76331,
+          "syntax": "literal",
+          "original": "北太平洋"
+        }
+      },
+      "id": "TXT-0115"
+    },
+    {
+      "file": "script.js",
+      "path": "folly.images[0].caption",
+      "kind": "translation",
+      "line": 2000,
+      "languages": {
+        "zh": "现场记录 01",
+        "en": "site record 01",
+        "ja": "現場記録 01"
+      },
+      "source": {
+        "zh": {
+          "start": 89000,
+          "end": 89009,
+          "syntax": "literal",
+          "original": "现场记录 01"
+        },
+        "en": {
+          "start": 89015,
+          "end": 89031,
+          "syntax": "literal",
+          "original": "site record 01"
+        },
+        "ja": {
+          "start": 89037,
+          "end": 89046,
+          "syntax": "literal",
+          "original": "現場記録 01"
+        }
+      },
+      "id": "TXT-0116"
+    },
+    {
+      "file": "script.js",
+      "path": "folly.images[1].caption",
+      "kind": "translation",
+      "line": 2004,
+      "languages": {
+        "zh": "现场记录 02",
+        "en": "site record 02",
+        "ja": "現場記録 02"
+      },
+      "source": {
+        "zh": {
+          "start": 89139,
+          "end": 89148,
+          "syntax": "literal",
+          "original": "现场记录 02"
+        },
+        "en": {
+          "start": 89154,
+          "end": 89170,
+          "syntax": "literal",
+          "original": "site record 02"
+        },
+        "ja": {
+          "start": 89176,
+          "end": 89185,
+          "syntax": "literal",
+          "original": "現場記録 02"
+        }
+      },
+      "id": "TXT-0117"
+    },
+    {
+      "file": "script.js",
+      "path": "instrument.images[0].caption",
+      "kind": "translation",
+      "line": 2014,
+      "languages": {
+        "zh": "仪器试作 01",
+        "en": "instrument study 01",
+        "ja": "器械試作 01"
+      },
+      "source": {
+        "zh": {
+          "start": 89394,
+          "end": 89403,
+          "syntax": "literal",
+          "original": "仪器试作 01"
+        },
+        "en": {
+          "start": 89409,
+          "end": 89430,
+          "syntax": "literal",
+          "original": "instrument study 01"
+        },
+        "ja": {
+          "start": 89436,
+          "end": 89445,
+          "syntax": "literal",
+          "original": "器械試作 01"
+        }
+      },
+      "id": "TXT-0118"
+    },
+    {
+      "file": "script.js",
+      "path": "instrument.images[1].caption",
+      "kind": "translation",
+      "line": 2018,
+      "languages": {
+        "zh": "仪器试作 02",
+        "en": "instrument study 02",
+        "ja": "器械試作 02"
+      },
+      "source": {
+        "zh": {
+          "start": 89541,
+          "end": 89550,
+          "syntax": "literal",
+          "original": "仪器试作 02"
+        },
+        "en": {
+          "start": 89556,
+          "end": 89577,
+          "syntax": "literal",
+          "original": "instrument study 02"
+        },
+        "ja": {
+          "start": 89583,
+          "end": 89592,
+          "syntax": "literal",
+          "original": "器械試作 02"
+        }
+      },
+      "id": "TXT-0119"
+    },
+    {
+      "file": "script.js",
+      "path": "fictionalTopography.title",
+      "kind": "translation",
+      "line": 2028,
+      "languages": {
+        "zh": "虚构地形学",
+        "en": "Fictional Topography",
+        "ja": "架空地形学"
+      },
+      "source": {
+        "zh": {
+          "start": 89783,
+          "end": 89790,
+          "syntax": "literal",
+          "original": "虚构地形学"
+        },
+        "en": {
+          "start": 89804,
+          "end": 89826,
+          "syntax": "literal",
+          "original": "Fictional Topography"
+        },
+        "ja": {
+          "start": 89840,
+          "end": 89847,
+          "syntax": "literal",
+          "original": "架空地形学"
+        }
+      },
+      "id": "TXT-0120"
+    },
+    {
+      "file": "script.js",
+      "path": "fictionalTopography.intro",
+      "kind": "translation",
+      "line": 2033,
+      "languages": {
+        "zh": "这里的地图不负责复原世界，而负责收留遗漏之物。地点被发现、命名、记录，再以图像、声音与文本进入《墟域图·遗构馆》，成为一片不断改写自身的地理。",
+        "en": "These maps do not restore the world; they shelter what it leaves out. Sites are found, named and recorded, then enter the Atlas of Ruins through image, sound and text—an unfinished geography rewriting itself.",
+        "ja": "この地図は世界を復元するためではなく、こぼれ落ちたものを収めるためにある。場所は発見され、名づけられ、記録され、像・音・言葉として《墟域図・遺構館》へ入り、自らを書き換え続ける地理となる。"
+      },
+      "source": {
+        "zh": {
+          "start": 89884,
+          "end": 89957,
+          "syntax": "literal",
+          "original": "这里的地图不负责复原世界，而负责收留遗漏之物。地点被发现、命名、记录，再以图像、声音与文本进入《墟域图·遗构馆》，成为一片不断改写自身的地理。"
+        },
+        "en": {
+          "start": 89971,
+          "end": 90181,
+          "syntax": "literal",
+          "original": "These maps do not restore the world; they shelter what it leaves out. Sites are found, named and recorded, then enter the Atlas of Ruins through image, sound and text—an unfinished geography rewriting itself."
+        },
+        "ja": {
+          "start": 90195,
+          "end": 90291,
+          "syntax": "literal",
+          "original": "この地図は世界を復元するためではなく、こぼれ落ちたものを収めるためにある。場所は発見され、名づけられ、記録され、像・音・言葉として《墟域図・遺構館》へ入り、自らを書き換え続ける地理となる。"
+        }
+      },
+      "id": "TXT-0121"
+    },
+    {
+      "file": "script.js",
+      "path": "fictionalTopography.images[0].caption",
+      "kind": "translation",
+      "line": 2040,
+      "languages": {
+        "zh": "地形记录 01",
+        "en": "terrain record 01",
+        "ja": "地形記録 01"
+      },
+      "source": {
+        "zh": {
+          "start": 90413,
+          "end": 90422,
+          "syntax": "literal",
+          "original": "地形记录 01"
+        },
+        "en": {
+          "start": 90428,
+          "end": 90447,
+          "syntax": "literal",
+          "original": "terrain record 01"
+        },
+        "ja": {
+          "start": 90453,
+          "end": 90462,
+          "syntax": "literal",
+          "original": "地形記録 01"
+        }
+      },
+      "id": "TXT-0122"
+    },
+    {
+      "file": "script.js",
+      "path": "fictionalTopography.images[1].caption",
+      "kind": "translation",
+      "line": 2044,
+      "languages": {
+        "zh": "地形记录 02",
+        "en": "terrain record 02",
+        "ja": "地形記録 02"
+      },
+      "source": {
+        "zh": {
+          "start": 90572,
+          "end": 90581,
+          "syntax": "literal",
+          "original": "地形记录 02"
+        },
+        "en": {
+          "start": 90587,
+          "end": 90606,
+          "syntax": "literal",
+          "original": "terrain record 02"
+        },
+        "ja": {
+          "start": 90612,
+          "end": 90621,
+          "syntax": "literal",
+          "original": "地形記録 02"
+        }
+      },
+      "id": "TXT-0123"
+    },
+    {
+      "file": "calendar-motion.js",
+      "path": "cycleNames",
+      "kind": "translation",
+      "line": 42,
+      "languages": {
+        "zh": "天－湖－海－云 日历",
+        "en": "sky · lake · sea · clouds calendar",
+        "ja": "空・湖・海・雲 の暦"
+      },
+      "source": {
+        "zh": {
+          "start": 1637,
+          "end": 1649,
+          "syntax": "literal",
+          "original": "天－湖－海－云 日历"
+        },
+        "en": {
+          "start": 1661,
+          "end": 1697,
+          "syntax": "literal",
+          "original": "sky · lake · sea · clouds calendar"
+        },
+        "ja": {
+          "start": 1709,
+          "end": 1721,
+          "syntax": "literal",
+          "original": "空・湖・海・雲 の暦"
+        }
+      },
+      "id": "TXT-0124"
+    },
+    {
+      "file": "ruin-mini-detail-v4.js",
+      "path": "INDEX_GROUPS[0]",
+      "kind": "translation",
+      "line": 15,
+      "languages": {
+        "zh": "土地",
+        "en": "LAND",
+        "ja": "土地"
+      },
+      "source": {
+        "zh": {
+          "start": 407,
+          "end": 411,
+          "syntax": "literal",
+          "original": "土地"
+        },
+        "en": {
+          "start": 417,
+          "end": 423,
+          "syntax": "literal",
+          "original": "LAND"
+        },
+        "ja": {
+          "start": 429,
+          "end": 433,
+          "syntax": "literal",
+          "original": "土地"
+        }
+      },
+      "id": "TXT-0125"
+    },
+    {
+      "file": "ruin-mini-detail-v4.js",
+      "path": "INDEX_GROUPS[1]",
+      "kind": "translation",
+      "line": 23,
+      "languages": {
+        "zh": "建筑",
+        "en": "STRUCTURE",
+        "ja": "建築"
+      },
+      "source": {
+        "zh": {
+          "start": 639,
+          "end": 643,
+          "syntax": "literal",
+          "original": "建筑"
+        },
+        "en": {
+          "start": 649,
+          "end": 660,
+          "syntax": "literal",
+          "original": "STRUCTURE"
+        },
+        "ja": {
+          "start": 666,
+          "end": 670,
+          "syntax": "literal",
+          "original": "建築"
+        }
+      },
+      "id": "TXT-0126"
+    },
+    {
+      "file": "ruin-mini-detail-v4.js",
+      "path": "INDEX_GROUPS[2]",
+      "kind": "translation",
+      "line": 34,
+      "languages": {
+        "zh": "状态",
+        "en": "STATE",
+        "ja": "状態"
+      },
+      "source": {
+        "zh": {
+          "start": 1065,
+          "end": 1069,
+          "syntax": "literal",
+          "original": "状态"
+        },
+        "en": {
+          "start": 1075,
+          "end": 1082,
+          "syntax": "literal",
+          "original": "STATE"
+        },
+        "ja": {
+          "start": 1088,
+          "end": 1092,
+          "syntax": "literal",
+          "original": "状態"
+        }
+      },
+      "id": "TXT-0127"
+    },
+    {
+      "file": "ruin-mini-detail-v4.js",
+      "path": "INDEX_GROUPS[3]",
+      "kind": "translation",
+      "line": 44,
+      "languages": {
+        "zh": "自然",
+        "en": "NATURE",
+        "ja": "自然"
+      },
+      "source": {
+        "zh": {
+          "start": 1412,
+          "end": 1416,
+          "syntax": "literal",
+          "original": "自然"
+        },
+        "en": {
+          "start": 1422,
+          "end": 1430,
+          "syntax": "literal",
+          "original": "NATURE"
+        },
+        "ja": {
+          "start": 1436,
+          "end": 1440,
+          "syntax": "literal",
+          "original": "自然"
+        }
+      },
+      "id": "TXT-0128"
+    }
+  ]
+}
