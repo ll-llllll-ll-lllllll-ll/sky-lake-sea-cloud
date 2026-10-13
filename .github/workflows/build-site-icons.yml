@@ -1,0 +1,54 @@
+name: Replace site icons (Safari and other browsers)
+
+on:
+  push:
+    paths:
+      - 'assets/site-icon-v2.webp'
+      - 'scripts/build_site_icons.py'
+      - '.github/workflows/build-site-icons.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: site-icons-build
+  cancel-in-progress: false
+
+jobs:
+  build:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Install PNG icon tools
+        run: python3 -m pip install --disable-pip-version-check Pillow
+      - name: Generate transparent icons and Safari files
+        run: python3 scripts/build_site_icons.py
+      - name: Verify PNG transparency and ICO sizes
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from PIL import Image
+          for name in ('apple-touch-icon.png','favicon-16.png','favicon-32.png','icon-192.png','icon-512.png','logo-master-1024.png'):
+              im=Image.open(name)
+              assert im.mode == 'RGBA', (name, im.mode)
+              assert im.getchannel('A').getextrema()[0] == 0, name
+          assert set(Image.open('favicon.ico').info['sizes']) == {(16,16),(32,32),(48,48),(64,64)}
+          print('PNG RGBA and transparent multi-size ICO verified')
+          PY
+      - name: Commit generated replacement icons
+        shell: bash
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add apple-touch-icon.png favicon.ico favicon-16.png favicon-16x16.png favicon-32.png favicon-32x32.png icon-192.png icon-512.png logo-master-1024.png site.webmanifest
+          if git diff --cached --quiet; then
+            echo 'Icon files already match the new source.'
+          else
+            git commit -m 'Replace site favicons and Apple Touch icon with translucent v2'
+            git push
+          fi
