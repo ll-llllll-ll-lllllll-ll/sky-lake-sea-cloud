@@ -1,0 +1,49 @@
+/* Calendar beside the vertical daily title.
+   Preserve the dark page's quiet typography and ample negative space. */
+.home-view .home-head {
+  justify-content:flex-end;
+}
+.home-view .home-day-calligraphy.has-calendar-trigger {
+  pointer-events:auto;
+  z-index:60;
+}
+.home-view .home-day-calligraphy-title {
+  display:block;
+  cursor:pointer;
+  text-align:start;
+  font-family:var(--serif);
+  font-weight:300;
+  color:inherit;
+  transition:opacity .25s ease;
+}
+.home-view .home-day-calligraphy-title:hover,
+.home-view .home-day-calligraphy-title:focus-visible {
+  opacity:.68;
+}
+.home-view .home-day-calendar-link {
+  display:block;
+  font-family:var(--sans);
+  font-size:10px;
+  font-weight:400;
+  line-height:1.25;
+  letter-spacing:.14em;
+  color:rgba(247,247,240,.52);
+  text-transform:lowercase;
+  text-align:start;
+  writing-mode:vertical-rl;
+  text-orientation:mixed;
+  transition:color .25s ease;
+}
+.home-view .home-day-calendar-link:hover,
+.home-view .home-day-calendar-link:focus-visible {
+  color:rgba(247,247,240,.94);
+}
+.home-view.is-ambient-obscured .ambient-video {
+  /* The existing glass-blur backdrop remains in charge of the soft focus.
+     Playback rate, not an opacity fade or paused frame, creates the slow motion. */
+  transition:filter .5s ease;
+}
+@media (max-width:760px) {
+  .home-view .home-day-calligraphy.has-calendar-trigger {gap:10px;}
+  .home-view .home-day-calendar-link {font-size:9px;}
+}
