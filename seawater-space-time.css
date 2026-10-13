@@ -109,3 +109,27 @@
   .seawater-space-time-essay {font-size:11px;padding-right:9px;}
   .seawater-coord-key text {font-size:12px;}
 }
+
+/* Small-label legibility pass — do not change the spatial diagram itself. */
+.seawater-water-label {font-size:13px;}
+.seawater-coord-key text {font-size:12px;}
+.seawater-time-control-labels {
+  font-size:11px;
+  font-family:var(--serif);
+  letter-spacing:.065em;
+}
+.seawater-time-control-endpoints {
+  font-size:10px;
+  font-family:var(--serif);
+}
+.seawater-space-time-note {font-size:12px;line-height:1.75;}
+.seawater-chart-prototype {
+  font-size:10px;
+  font-family:var(--serif);
+}
+@media (max-width:760px) {
+  .seawater-time-control-labels {font-size:11px;}
+  .seawater-time-control-endpoints {font-size:10px;}
+  .seawater-space-time-note {font-size:11px;}
+  .seawater-chart-prototype {font-size:10px;}
+}
