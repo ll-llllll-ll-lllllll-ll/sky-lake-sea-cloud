@@ -1,0 +1,27 @@
+/* Homepage ambient video: a barely perceptible optical softness layer.
+   This is an overlay, not a video-source filter: UI type stays sharp.
+   Adjust --ambient-soft-blur to test a different amount. */
+
+.home-view {
+  --ambient-soft-blur: 0.7px;
+}
+
+.home-view .ambient-field::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: transparent;
+  -webkit-backdrop-filter: blur(var(--ambient-soft-blur));
+  backdrop-filter: blur(var(--ambient-soft-blur));
+}
+
+/* Keep the original subtle tint and grain above the optical blur. */
+.home-view .ambient-veil {
+  z-index: 2;
+}
+
+.home-view .ambient-grain {
+  z-index: 3;
+}
