@@ -36,15 +36,15 @@
   stroke-linejoin:round;
   vector-effect:non-scaling-stroke;
 }
-.seawater-water-body {fill:rgba(49,190,185,.28);stroke:none;}
-.seawater-water-side {fill:rgba(28,169,166,.61);stroke:none;}
-.seawater-water-face {fill:rgba(54,194,185,.63);stroke:none;}
-.seawater-water-top {fill:rgba(121,222,211,.72);stroke:none;}
-.seawater-water-outline {fill:none;stroke:rgba(29,154,151,.24);stroke-width:.62px;}
+.seawater-water-body {fill:rgba(49,190,185,.14);stroke:none;}
+.seawater-water-side {fill:rgba(28,169,166,.34);stroke:none;}
+.seawater-water-face {fill:rgba(54,194,185,.36);stroke:none;}
+.seawater-water-top {fill:rgba(121,222,211,.44);stroke:none;}
+.seawater-water-outline {fill:none;stroke:rgba(29,154,151,.16);stroke-width:.58px;}
 .seawater-water-block:hover .seawater-water-face,
-.seawater-water-block:focus-visible .seawater-water-face {fill:rgba(24,184,175,.81);}
+.seawater-water-block:focus-visible .seawater-water-face {fill:rgba(24,184,175,.52);}
 .seawater-water-block:hover .seawater-water-top,
-.seawater-water-block:focus-visible .seawater-water-top {fill:rgba(121,230,216,.90);}
+.seawater-water-block:focus-visible .seawater-water-top {fill:rgba(121,230,216,.60);}
 .seawater-water-block:focus-visible .seawater-water-outline {
   stroke:rgba(15,117,114,.83);
 }
