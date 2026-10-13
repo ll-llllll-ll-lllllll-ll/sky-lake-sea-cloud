@@ -81,13 +81,13 @@ const ambientMeta = {
 
 const calendarIntro = {
   zh: [
-    "一册留给无法被安排之物的日历。自 2023 年 7 月 23 日起，每一天在真正抵达时，才被交给海、湖、云或天空。日期沿着星期排列，尚未到来的日子留白；四种景象轮流出现，偶尔停留，不必遵循严格的节拍。首页每日只留下一段约二十秒的风景，如信息与判断之间一处安静的间隙。"
+    "一册留给无法被安排之物的日历。自 2023 年 7 月 23 日起，每一天在真正抵达时，才被交给海、湖、云或天空。日期沿着星期排列，尚未到来的日子留白；四种景象轮流出现，偶尔停留，不必遵循严格的节拍。日名只属于它出现的这一天；日期一旦翻过，名字与影像便一同退去，把位置交给下一段风景。首页每日只留下一段约二十秒的风景，如信息与判断之间一处安静的间隙。"
   ],
   en: [
-    "A calendar for things that cannot be scheduled. Since 23 July 2023, each day has been given to the sea, lake, clouds or sky only once it arrives. The dates follow the ordinary week; days still to come are left blank. The four landscapes take turns, sometimes lingering, without a strict rhythm. Each day the homepage holds about twenty seconds of scenery, a quiet interval between information and judgement."
+    "A calendar for things that cannot be scheduled. Since 23 July 2023, each day has been given to the sea, lake, clouds or sky only once it arrives. The dates follow the ordinary week; days still to come are left blank. The four landscapes take turns, sometimes lingering, without a strict rhythm. Each day's name belongs only to that day; when the date turns, the name and image recede together, making room for another view. Each day the homepage holds about twenty seconds of scenery, a quiet interval between information and judgement."
   ],
   ja: [
-    "予定できないもののための暦。2023年7月23日から、一日が実際に訪れたときにだけ、海、湖、雲、空のいずれかに委ねられる。日付は曜日に沿って並び、まだ訪れていない日は余白のまま残る。四つの風景は入れ替わりながら、ときに留まり、厳密な拍子には従わない。ホームには毎日およそ二十秒の風景だけが残る。情報と判断のあいだにある、静かな間隙のように。"
+    "予定できないもののための暦。2023年7月23日から、一日が実際に訪れたときにだけ、海、湖、雲、空のいずれかに委ねられる。日付は曜日に沿って並び、まだ訪れていない日は余白のまま残る。四つの風景は入れ替わりながら、ときに留まり、厳密な拍子には従わない。その日の名はその日だけのものだ。日付が変わると、名も映像も静かに退き、次の日の風景に場所を譲る。ホームには毎日およそ二十秒の風景だけが残る。情報と判断のあいだにある、静かな間隙のように。"
   ]
 };
 
@@ -858,9 +858,9 @@ function renderHome() {
     '<div class="home-day-calligraphy' + (state.lang === "en" ? " is-latin" : "") +
       '" aria-label="' + escapeHtml(localised(ambientMeta[type].day)) + '">' +
       '<span class="home-day-calligraphy-title">' +
-        escapeHtml(state.lang === "en" ? localised(ambientMeta[type].short) : localised(ambientMeta[type].day)) +
+        escapeHtml(localised(ambientMeta[type].day)) +
       '</span>' +
-      (!state.previewDate ? "" : '<span class="home-day-calligraphy-date">' + escapeHtml(formatDate(date)) + '</span>') +
+      '<span class="home-day-calligraphy-date">' + escapeHtml(formatDate(date)) + '</span>' +
     '</div>' +
     '<button class="index-toggle" type="button" data-action="toggle-index">index</button>' +
     (state.previewDate

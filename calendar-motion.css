@@ -47,3 +47,20 @@
   .home-view .home-day-calligraphy.has-calendar-trigger {gap:10px;}
   .home-view .home-day-calendar-link {font-size:9px;}
 }
+/* The English name names this particular day, not the whole website.
+   Keep a long phrase quietly aligned with the vertical calendar link. */
+.home-view .home-day-calligraphy.is-latin .home-day-calligraphy-title {
+  font-size:clamp(22px,2.45vw,32px);
+  line-height:1.2;
+  letter-spacing:.025em;
+  white-space:nowrap;
+}
+.home-view .home-day-calligraphy-date {
+  white-space:nowrap;
+}
+@media (max-width:760px) {
+  .home-view .home-day-calligraphy.is-latin .home-day-calligraphy-title {
+    font-size:21px;
+    letter-spacing:.015em;
+  }
+}

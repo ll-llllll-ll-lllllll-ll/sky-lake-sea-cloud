@@ -118,6 +118,45 @@
   // language changes preserve the same in-memory video element.
   window.render = refreshHome;
 
+  // The title is deliberately a day-title, never a permanent site name.
+  // If the page stays open across local midnight, quietly replace yesterday's
+  // date and scene without requiring a reload. Browsers may suspend timers
+  // while hidden, so pageshow / visibilitychange also reconcile the date.
+  var lastLocalDay = dateKey(todayAtNoon());
+  var midnightTimer = 0;
+
+  function updateDayIfNeeded() {
+    var currentDay = dateKey(todayAtNoon());
+    if (currentDay === lastLocalDay) return;
+    lastLocalDay = currentDay;
+    // Leave a visitor's chosen historical date alone.
+    if (state.previewDate || parseRoute()) return;
+    refreshHome();
+  }
+
+  function scheduleNextDay() {
+    if (midnightTimer) clearTimeout(midnightTimer);
+    var now = new Date();
+    var nextDay = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 0, 0, 2);
+    midnightTimer = setTimeout(function () {
+      updateDayIfNeeded();
+      scheduleNextDay();
+    }, Math.max(1000, nextDay.getTime() - now.getTime()));
+  }
+
+  document.addEventListener("visibilitychange", function () {
+    if (!document.hidden) {
+      updateDayIfNeeded();
+      scheduleNextDay();
+    }
+  });
+  window.addEventListener("pageshow", function () {
+    updateDayIfNeeded();
+    scheduleNextDay();
+  });
+
+  scheduleNextDay();
+
   // First installation is decorative only: do not re-render the playing clip.
   var initial = host.querySelector(".home-view");
   setCalendarEntry(initial);
