@@ -147,7 +147,7 @@
     // YZ positioning remains implicit in the sparse left-hand coordinate face.
     // All three changes of direction now pass through actual quadratic bends.
     for (var t=0; t<=g.slices; t++) lines.push(basinSlice(g,t/g.slices));
-    for (var z=0; z<=6; z++) lines.push(sideWallRail(g,z/6));
+    for (var z=1; z<=6; z++) lines.push(sideWallRail(g,z/6));
     for (var y=1; y<=6; y++) lines.push(leftFloorRail(g,y/7));
     lines.push("</g>");
 
