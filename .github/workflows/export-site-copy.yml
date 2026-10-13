@@ -1,0 +1,47 @@
+name: Export editable website copy
+on:
+  push:
+    paths:
+      - '.editorial/export-copy.cjs'
+      - '.editorial/build-word.py'
+      - '.github/workflows/export-site-copy.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: editable-site-copy
+  cancel-in-progress: false
+jobs:
+  export:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout text source
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Extract current website text, all available languages
+        run: node .editorial/export-copy.cjs
+      - name: Install Word export library
+        run: python3 -m pip install --disable-pip-version-check python-docx
+      - name: Generate an editable Word document
+        run: python3 .editorial/build-word.py
+      - name: Validate the finished Word file
+        run: |
+          python3 - <<'PY'
+          from docx import Document
+          import json
+          data=json.load(open('.editorial/site-copy-map.json'))
+          doc=Document('downloads/site-copy-editable.docx')
+          count=len(doc.tables)
+          assert count==len(data['records']), (count,len(data['records']))
+          assert count>30, f'Only {count} records: check extraction'
+          print(f'Word document validated: {count} editable text entries')
+          PY
+      - name: Publish downloadable document to repository
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add downloads/site-copy-editable.docx .editorial/site-copy-map.json
+          git diff --cached --quiet || { git commit -m "Export editable multilingual website text to Word"; git push; }
