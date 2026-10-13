@@ -145,8 +145,9 @@
     var lines = ['<g class="seawater-mesh" aria-hidden="true">'];
 
     // YZ positioning remains implicit in the sparse left-hand coordinate face.
-    // All three changes of direction now pass through actual quadratic bends.
-    for (var t=0; t<=g.slices; t++) lines.push(basinSlice(g,t/g.slices));
+    // All three changes of direction use quadratic bends. The outermost
+    // t=0 basin slice is intentionally omitted: it is the unwanted left edge.
+    for (var t=1; t<=g.slices; t++) lines.push(basinSlice(g,t/g.slices));
     for (var z=1; z<=6; z++) lines.push(sideWallRail(g,z/6));
     for (var y=1; y<=6; y++) lines.push(leftFloorRail(g,y/7));
     lines.push("</g>");
