@@ -32,7 +32,7 @@
       titleButton.className = title.className;
       titleButton.textContent = title.textContent;
       titleButton.dataset.action = "toggle-calendar";
-      titleButton.setAttribute("aria-label", title.textContent.trim() + " · calendar");
+      titleButton.setAttribute("aria-label", title.textContent.trim() + " · " + labels[state.lang].calendar);
       title.replaceWith(titleButton);
       title = titleButton;
     }

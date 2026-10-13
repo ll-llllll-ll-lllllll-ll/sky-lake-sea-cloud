@@ -64,3 +64,38 @@
     letter-spacing:.015em;
   }
 }
+
+/* Shared site typography for translated navigation; no separate UI font. */
+.home-view .index-toggle,
+.home-view .home-day-calendar-link,
+.index-heading,
+.calendar-kicker,
+.calendar-current,
+.calendar-controls,
+.calendar-weekday,
+.calendar-day-type,
+.room-group,
+.room-head > p {
+  font-family: var(--serif);
+  font-weight: 300;
+}
+.home-view .index-toggle {
+  font-size: 13px;
+  line-height: 1.45;
+  letter-spacing: .075em;
+}
+.home-view .home-day-calendar-link {
+  font-size: 11px;
+  letter-spacing: .07em;
+}
+.home-view .home-day-calligraphy-date {
+  font-family: var(--serif);
+  font-weight: 300;
+  font-size: 11px;
+  letter-spacing: .08em;
+}
+@media (max-width:760px) {
+  .home-view .index-toggle {font-size: 12px;}
+  .home-view .home-day-calendar-link {font-size: 10px;}
+  .home-view .home-day-calligraphy-date {font-size: 10px;}
+}

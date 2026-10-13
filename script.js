@@ -6,14 +6,14 @@ const AMBIENT_LIBRARY = window.AMBIENT_LIBRARY || { sea: [], cloud: [], lake: []
 
 const labels = {
   zh: {
-    index: "index",
+    index: "索引",
     close: "收起",
-    calendar: "calendar",
+    calendar: "日历",
     today: "今天",
     returnToday: "回到今天",
-    works: "works",
-    collection: "collection",
-    writings: "writings",
+    works: "作品",
+    collection: "收藏",
+    writings: "文稿",
     back: "返回",
     next: "下一处",
     weekdays: ["一", "二", "三", "四", "五", "六", "日"],
@@ -36,14 +36,14 @@ const labels = {
     viewing: "viewing"
   },
   ja: {
-    index: "index",
+    index: "索引",
     close: "閉じる",
-    calendar: "calendar",
+    calendar: "暦",
     today: "今日",
     returnToday: "今日へ戻る",
-    works: "works",
-    collection: "collection",
-    writings: "writings",
+    works: "作品",
+    collection: "コレクション",
+    writings: "文章",
     back: "戻る",
     next: "次へ",
     weekdays: ["月", "火", "水", "木", "金", "土", "日"],
@@ -678,20 +678,13 @@ function ambientPlace(entry) {
 }
 
 function formatDate(date) {
-  if (state.lang === "en") {
-    return date.toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" });
-  }
-  if (state.lang === "ja") {
-    return date.getFullYear() + "." + pad(date.getMonth() + 1) + "." + pad(date.getDate());
-  }
-  return date.getFullYear() + "." + pad(date.getMonth() + 1) + "." + pad(date.getDate());
+  // One concise calendar notation in every interface language: YY-MM-DD.
+  return pad(date.getFullYear() % 100) + "-" + pad(date.getMonth() + 1) + "-" + pad(date.getDate());
 }
 
 function formatMonth(date) {
-  if (state.lang === "en") {
-    return date.toLocaleDateString("en-GB", { month: "long", year: "numeric" });
-  }
-  return date.getFullYear() + " / " + (date.getMonth() + 1) + labels[state.lang].monthSuffix;
+  // Month navigator follows the same numerical convention: YY-MM.
+  return pad(date.getFullYear() % 100) + "-" + pad(date.getMonth() + 1);
 }
 
 function languageSwitch() {
@@ -775,7 +768,7 @@ function calendarPanel() {
   var todayKey = dateKey(todayAtNoon());
   var selectedKey = dateKey(current);
 
-  return '<section class="calendar-layer" ' + (state.calendarOpen ? "" : "hidden") + ' aria-label="calendar">' +
+  return '<section class="calendar-layer" ' + (state.calendarOpen ? "" : "hidden") + ' aria-label="' + escapeHtml(labels[state.lang].calendar) + '">' +
     '<button class="calendar-backdrop" type="button" data-action="close-calendar" aria-label="close"></button>' +
     '<div class="calendar-panel">' +
       '<div class="calendar-intro">' +
@@ -785,7 +778,7 @@ function calendarPanel() {
       "</div>" +
       '<header class="calendar-head">' +
         '<div class="calendar-current-wrap">' +
-          '<p class="calendar-kicker">calendar</p>' +
+          '<p class="calendar-kicker">' + escapeHtml(labels[state.lang].calendar) + '</p>' +
           '<p class="calendar-current">' + escapeHtml(formatDate(current)) + ' · ' +
              escapeHtml(localised(ambientMeta[currentType].day)) + "</p>" +
         "</div>" +
@@ -807,7 +800,7 @@ function calendarPanel() {
 }
 
 function indexPanel() {
-  var html = '<aside class="index-layer" ' + (state.indexOpen ? "" : "hidden") + ' aria-label="index">' +
+  var html = '<aside class="index-layer" ' + (state.indexOpen ? "" : "hidden") + ' aria-label="' + escapeHtml(labels[state.lang].index) + '">' +
     '<button class="index-backdrop" type="button" data-action="close-index" aria-label="close"></button>' +
     '<div class="index-panel">' +
       '<section class="index-group"><p class="index-heading">' + labels[state.lang].works + "</p>";
@@ -837,7 +830,7 @@ function indexPanel() {
 function homeHeader(date, type, entry) {
   return '<header class="home-head">' +
     '<button class="calendar-toggle" type="button" data-action="toggle-calendar">' +
-      '<span>calendar</span>' +
+      '<span>' + escapeHtml(labels[state.lang].calendar) + '</span>' +
     "</button>" +
     languageSwitch() +
   "</header>";
@@ -862,7 +855,7 @@ function renderHome() {
       '</span>' +
       '<span class="home-day-calligraphy-date">' + escapeHtml(formatDate(date)) + '</span>' +
     '</div>' +
-    '<button class="index-toggle" type="button" data-action="toggle-index">index</button>' +
+    '<button class="index-toggle" type="button" data-action="toggle-index">' + escapeHtml(labels[state.lang].index) + '</button>' +
     (state.previewDate
       ? '<button class="home-today" type="button" data-action="today">' + escapeHtml(labels[state.lang].returnToday) + "</button>"
       : "") +
