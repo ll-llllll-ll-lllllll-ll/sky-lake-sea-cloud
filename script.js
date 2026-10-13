@@ -81,13 +81,13 @@ const ambientMeta = {
 
 const calendarIntro = {
   zh: [
-    "一册记录无法被安排之物的日历：天空、水、天气与光。它从 2023 年 7 月 23 日开始，不把时间切成星期，也不记录约会，只在一天真正到来以后，把它交给海、湖、云或天空；未来的日子仍然保持未知。有时同一种景象会连续停留几日，像天气本身一样，不平均，也不解释。首页每天只留下约二十秒的风景，作为信息与判断之间的一枚纯净锚点。"
+    "一册留给无法被安排之物的日历。自 2023 年 7 月 23 日起，每一天在真正抵达时，才被交给海、湖、云或天空。日期沿着星期排列，尚未到来的日子留白；四种景象轮流出现，偶尔停留，不必遵循严格的节拍。首页每日只留下一段约二十秒的风景，如信息与判断之间一处安静的间隙。"
   ],
   en: [
-    "A calendar for things that cannot be scheduled: sky, water, weather and light. It begins on 23 July 2023. It does not divide time into weeks or keep appointments; only when a day actually arrives is it given to the sea, lake, clouds or sky. Future days remain unknown. Sometimes one view lingers for several days, like weather itself—uneven and unexplained. Each day the homepage keeps only about twenty seconds of landscape, a quiet anchor among information and judgement."
+    "A calendar for things that cannot be scheduled. Since 23 July 2023, each day has been given to the sea, lake, clouds or sky only once it arrives. The dates follow the ordinary week; days still to come are left blank. The four landscapes take turns, sometimes lingering, without a strict rhythm. Each day the homepage holds about twenty seconds of scenery, a quiet interval between information and judgement."
   ],
   ja: [
-    "予定できないもののためのカレンダー——空、水、天気、光。2023年7月23日から始まり、時間を一週間ごとに切り分けず、予定も記さない。一日が実際に訪れてから、海、湖、雲、空のどれかへ渡され、未来の日々はそれまで未知のままに残る。同じ景色が数日続くこともある。天気そのもののように、均等でもなく、説明もされない。ホームには毎日およそ二十秒の風景だけが残る。"
+    "予定できないもののための暦。2023年7月23日から、一日が実際に訪れたときにだけ、海、湖、雲、空のいずれかに委ねられる。日付は曜日に沿って並び、まだ訪れていない日は余白のまま残る。四つの風景は入れ替わりながら、ときに留まり、厳密な拍子には従わない。ホームには毎日およそ二十秒の風景だけが残る。情報と判断のあいだにある、静かな間隙のように。"
   ]
 };
 
@@ -549,68 +549,84 @@ function ambientNextEntryIndex(type, bags, lastEntry, random) {
 
 function ambientBuildYearSchedule(year) {
   var signature = ambientLibrarySignature();
-  var cacheKey = String(year) + "|" + signature;
+  var cacheKey = String(year) + "|" + signature + ":balanced-five-day-v1";
   if (ambientYearCache[cacheKey]) return ambientYearCache[cacheKey];
 
-  var random = ambientSeededRandom(hashString(cacheKey + ":quiet-calendar-v4"));
-  var assignments = {};
-  var bags = {};
-  var lastEntry = {};
+  /*
+    Deterministic, loosely randomized five-day bags. Every complete bag
+    contains sea / cloud / lake / sky once, plus one balanced extra day.
+    The sequence is continuous across month and year boundaries, so every
+    sliding ten-day window includes all four landscapes, even at New Year.
+    Different video clips still come from the existing no-repeat clip bags.
+  */
+  var random = ambientSeededRandom(hashString(signature + ":balanced-five-day-v1"));
+  var available = AMBIENT_TYPES.filter(function(type) {
+    return ambientLibraryCount(type) > 0;
+  });
+  var count = {};
+  available.forEach(function(type) { count[type] = 0; });
+
+  var assignments = {}, clipBags = {}, lastClip = {};
   var previousType = null;
+  var firstYear = Math.min(2023, year);
+  var day = new Date(firstYear, 0, 1, 12);
+  var lastDay = new Date(year, 11, 31, 12);
 
-  for (var month = 0; month < 12; month += 1) {
-    var daysInMonth = new Date(year, month + 1, 0).getDate();
+  function randomizedBag(items, priorType) {
+    var bag = items.slice();
+    for (var i = bag.length - 1; i > 0; i -= 1) {
+      var j = Math.floor(random() * (i + 1));
+      var swap = bag[i]; bag[i] = bag[j]; bag[j] = swap;
+    }
 
-    /* Inventory is the primary probability. A folder with ten clips receives
-       roughly ten times the base weight of a folder with one. The modest
-       month-specific multiplier keeps each month irregular without overturning
-       that stock-based hierarchy. */
-    var availableTypes = AMBIENT_TYPES.filter(function(type) {
-      return ambientLibraryCount(type) > 0;
-    });
-
-    var monthWeights = availableTypes.map(function(type) {
-      var inventory = ambientLibraryCount(type);
-      return inventory * (0.82 + random() * 0.36);
-    });
-
-    var day = 1;
-    while (day <= daysInMonth) {
-      var choiceWeights = monthWeights.slice();
-
-      /* A one-clip category (currently cloud) can never form back-to-back
-         runs, because that would necessarily repeat the exact same video on
-         consecutive days. */
-      if (previousType && ambientLibraryCount(previousType) <= 1) {
-        var previousIndex = availableTypes.indexOf(previousType);
-        if (previousIndex >= 0 && availableTypes.length > 1) {
-          choiceWeights[previousIndex] = 0;
-        }
+    // Backtracking finds a valid shuffle if a category has only one clip.
+    // Such a category may reappear, but never on adjacent days.
+    function arrange(remaining, arranged, last) {
+      if (!remaining.length) return arranged;
+      for (var k = 0; k < remaining.length; k += 1) {
+        var type = remaining[k];
+        if (type === last && ambientLibraryCount(type) <= 1) continue;
+        var result = arrange(remaining.slice(0,k).concat(remaining.slice(k+1)),
+          arranged.concat(type), type);
+        if (result) return result;
       }
+      return null;
+    }
+    return arrange(bag, [], priorType) || bag;
+  }
 
-      var type = ambientWeightedChoice(availableTypes, choiceWeights, random);
-      var inventoryCount = ambientLibraryCount(type);
+  while (day.getTime() <= lastDay.getTime()) {
+    if (!available.length) break;
 
-      /* Consecutive landscape days remain possible, but a run cannot be longer
-         than the number of unique clips in that category. Thus sea may run for
-         up to three days with three different clips; cloud stays one day; lake
-         and sky can linger longer without repeating footage. */
-      var run = Math.min(ambientRunLength(random), Math.max(1, inventoryCount));
+    var block = available.slice();
+    while (block.length < 5) {
+      // Each type has nearly equal exposure regardless of the number of videos.
+      // Library size affects clip variety, not the odds of a day type.
+      var least = Math.min.apply(null, available.map(function(type) { return count[type]; }));
+      var candidates = available.filter(function(type) { return count[type] === least; });
+      block.push(candidates[Math.floor(random() * candidates.length)]);
+      count[block[block.length - 1]] += 1;
+    }
+    // A category is always present at least once in every five-day bag.
+    var order = randomizedBag(block, previousType);
 
-      for (var offset = 0; offset < run && day <= daysInMonth; offset += 1, day += 1) {
-        var date = new Date(year, month, day, 12);
-        assignments[dateKey(date)] = {
-          type: type,
-          entryIndex: ambientNextEntryIndex(type, bags, lastEntry, random)
-        };
-      }
-
+    for (var offset = 0; offset < order.length && day.getTime() <= lastDay.getTime(); offset++) {
+      var type = order[offset];
+      assignments[dateKey(day)] = {
+        type: type,
+        entryIndex: ambientNextEntryIndex(type, clipBags, lastClip, random)
+      };
       previousType = type;
+      day.setDate(day.getDate() + 1);
     }
   }
 
-  ambientYearCache[cacheKey] = assignments;
-  return assignments;
+  var output = {};
+  for (var dateString in assignments) {
+    if (Number(dateString.slice(0, 4)) === year) output[dateString] = assignments[dateString];
+  }
+  ambientYearCache[cacheKey] = output;
+  return output;
 }
 
 function ambientAssignmentForDate(date) {
@@ -703,64 +719,54 @@ function calendarGrid() {
   var year = cursor.getFullYear();
   var month = cursor.getMonth();
   var daysInMonth = new Date(year, month + 1, 0).getDate();
-  var today = todayAtNoon();
-  var todayKey = dateKey(today);
+  var firstWeekday = (new Date(year, month, 1).getDay() + 6) % 7;
+  var today = todayAtNoon(), todayKey = dateKey(today);
   var selectedKey = dateKey(selectedDate());
+  var cells = [];
 
-  /* Past and present are known; the future is deliberately not assigned a
-     visible landscape until the date actually arrives. */
-  var trackOrder = ["sky", "sea", "lake", "cloud", "unknown"];
-  var tracks = { sky: [], sea: [], lake: [], cloud: [], unknown: [] };
-  var trackLabels = {
-    unknown: { zh: "未知", en: "unknown", ja: "未知" }
-  };
+  // Monday through Sunday, as in an ordinary calendar.
+  labels[state.lang].weekdays.forEach(function(label) {
+    cells.push('<span class="calendar-weekday" aria-hidden="true">' +
+      escapeHtml(label) + '</span>');
+  });
 
-  for (var day = 1; day <= daysInMonth; day += 1) {
-    var date = new Date(year, month, day, 12);
+  for (var padIndex = 0; padIndex < firstWeekday; padIndex++) {
+    cells.push('<span class="calendar-empty" aria-hidden="true"></span>');
+  }
 
-    if (dateIsBeforeCalendarStart(date)) continue;
-
+  for (var number = 1; number <= daysInMonth; number++) {
+    var date = new Date(year, month, number, 12);
     var key = dateKey(date);
-    var isFuture = date.getTime() > today.getTime();
-    var spacing = hashString(key + ":calendar-track-spacing") % 3;
-
-    if (isFuture) {
-      tracks.unknown.push(
-        '<button type="button" class="calendar-day is-unknown calendar-space-' + spacing + '" disabled' +
-          ' aria-label="' + escapeHtml(formatDate(date) + " · " + localised(trackLabels.unknown)) + '">' +
-          '<span class="calendar-number">' + String(day).padStart(2, "0") + "</span>" +
-        "</button>"
-      );
+    var unavailable = dateIsBeforeCalendarStart(date) || date.getTime() > today.getTime();
+    var classes = "calendar-day";
+    if (unavailable) {
+      // Keep the date but leave its landscape unassigned and unlabelled.
+      cells.push('<span class="calendar-day is-unassigned" aria-label="' +
+        escapeHtml(formatDate(date)) + '">' +
+        '<span class="calendar-number">' + String(number).padStart(2, "0") + '</span>' +
+      '</span>');
       continue;
     }
 
     var type = ambientTypeForDate(date);
-    var classes = "calendar-day";
+    classes += " calendar-day-" + type;
     if (key === todayKey) classes += " is-today";
     if (key === selectedKey) classes += " is-selected";
-    classes += " calendar-space-" + spacing;
 
-    tracks[type].push(
-      '<button type="button" class="' + classes + '" data-action="choose-date" data-date="' + key + '"' +
-        ' aria-label="' + escapeHtml(formatDate(date) + " · " + localised(ambientMeta[type].day)) + '">' +
-        '<span class="calendar-number">' + String(day).padStart(2, "0") + "</span>" +
-      "</button>"
-    );
+    cells.push('<button type="button" class="' + classes +
+      '" data-action="choose-date" data-date="' + key + '" aria-label="' +
+      escapeHtml(formatDate(date) + " · " + localised(ambientMeta[type].day)) + '">' +
+      '<span class="calendar-number">' + String(number).padStart(2, "0") + '</span>' +
+      '<span class="calendar-day-type">' + escapeHtml(localised(ambientMeta[type].short)) + '</span>' +
+      '</button>');
   }
 
-  return trackOrder.map(function(type) {
-    var label = type === "unknown"
-      ? localised(trackLabels.unknown)
-      : localised(ambientMeta[type].short);
-
-    return '<section class="calendar-track calendar-track-' + type + '">' +
-      '<header class="calendar-track-head">' +
-        '<span class="calendar-track-name">' + escapeHtml(label) + "</span>" +
-        '<span class="calendar-track-count">' + String(tracks[type].length).padStart(2, "0") + "</span>" +
-      "</header>" +
-      '<div class="calendar-track-days">' + tracks[type].join("") + "</div>" +
-    "</section>";
-  }).join("");
+  // Close the last calendar week with truly empty spaces, not "unknown" cells.
+  var trailing = (7 - (firstWeekday + daysInMonth) % 7) % 7;
+  for (var empty = 0; empty < trailing; empty++) {
+    cells.push('<span class="calendar-empty" aria-hidden="true"></span>');
+  }
+  return cells.join("");
 }
 
 function calendarPanel() {
@@ -772,10 +778,16 @@ function calendarPanel() {
   return '<section class="calendar-layer" ' + (state.calendarOpen ? "" : "hidden") + ' aria-label="calendar">' +
     '<button class="calendar-backdrop" type="button" data-action="close-calendar" aria-label="close"></button>' +
     '<div class="calendar-panel">' +
+      '<div class="calendar-intro">' +
+        calendarIntro[state.lang].map(function(paragraph) {
+          return "<p>" + escapeHtml(paragraph) + "</p>";
+        }).join("") +
+      "</div>" +
       '<header class="calendar-head">' +
-        '<div>' +
+        '<div class="calendar-current-wrap">' +
           '<p class="calendar-kicker">calendar</p>' +
-          '<p class="calendar-current">' + escapeHtml(formatDate(current)) + ' · ' + escapeHtml(localised(ambientMeta[currentType].day)) + "</p>" +
+          '<p class="calendar-current">' + escapeHtml(formatDate(current)) + ' · ' +
+             escapeHtml(localised(ambientMeta[currentType].day)) + "</p>" +
         "</div>" +
         '<div class="calendar-controls">' +
           '<button type="button" data-action="month-prev" aria-label="previous month"' +
@@ -784,15 +796,12 @@ function calendarPanel() {
           '<button type="button" data-action="month-next" aria-label="next month">→</button>' +
         "</div>" +
       "</header>" +
-      '<div class="calendar-grid">' + calendarGrid() + "</div>" +
+      '<div class="calendar-grid" role="group" aria-label="' +
+        escapeHtml(formatMonth(state.calendarCursor)) + '">' + calendarGrid() + "</div>" +
       (selectedKey !== todayKey
-        ? '<button class="calendar-today" type="button" data-action="today">' + escapeHtml(labels[state.lang].returnToday) + "</button>"
+        ? '<button class="calendar-today" type="button" data-action="today">' +
+          escapeHtml(labels[state.lang].returnToday) + "</button>"
         : "") +
-      '<div class="calendar-intro">' +
-        calendarIntro[state.lang].map(function(paragraph) {
-          return "<p>" + escapeHtml(paragraph) + "</p>";
-        }).join("") +
-      "</div>" +
     "</div>" +
   "</section>";
 }
@@ -826,19 +835,10 @@ function indexPanel() {
 }
 
 function homeHeader(date, type, entry) {
-  var isToday = dateKey(date) === dateKey(todayAtNoon());
-  var place = ambientPlace(entry);
-  var caption = localised(ambientMeta[type].day) + " · " + ambientTitle(entry, type);
-  if (place) caption += " · " + place;
-
   return '<header class="home-head">' +
     '<button class="calendar-toggle" type="button" data-action="toggle-calendar">' +
-      '<span>calendar</span><span class="calendar-day-name">' + escapeHtml(localised(ambientMeta[type].day)) + "</span>" +
+      '<span>calendar</span>' +
     "</button>" +
-    '<p class="ambient-caption">' +
-      (!isToday ? escapeHtml(labels[state.lang].viewing) + " · " + escapeHtml(formatDate(date)) + " · " : "") +
-      escapeHtml(caption) +
-    "</p>" +
     languageSwitch() +
   "</header>";
 }
@@ -855,6 +855,13 @@ function renderHome() {
       '<span class="ambient-grain"></span>' +
     "</div>" +
     homeHeader(date, type, entry) +
+    '<div class="home-day-calligraphy' + (state.lang === "en" ? " is-latin" : "") +
+      '" aria-label="' + escapeHtml(localised(ambientMeta[type].day)) + '">' +
+      '<span class="home-day-calligraphy-title">' +
+        escapeHtml(state.lang === "en" ? localised(ambientMeta[type].short) : localised(ambientMeta[type].day)) +
+      '</span>' +
+      (!state.previewDate ? "" : '<span class="home-day-calligraphy-date">' + escapeHtml(formatDate(date)) + '</span>') +
+    '</div>' +
     '<button class="index-toggle" type="button" data-action="toggle-index">index</button>' +
     (state.previewDate
       ? '<button class="home-today" type="button" data-action="today">' + escapeHtml(labels[state.lang].returnToday) + "</button>"
