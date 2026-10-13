@@ -37,8 +37,18 @@
       title = titleButton;
     }
 
+    // The four landscapes are a daily cycle, not a permanent site title.
+    var cycleNames = {
+      zh: "天－湖－海－云 日历",
+      en: "sky · lake · sea · clouds calendar",
+      ja: "空・湖・海・雲 の暦"
+    };
+    var cycleName = cycleNames[state.lang] || cycleNames.zh;
+
     // Physically move the existing link so the former top-left entry disappears.
     if (former) {
+      former.textContent = cycleName;
+      former.setAttribute("aria-label", cycleName);
       former.classList.remove("calendar-toggle");
       former.classList.add("home-day-calendar-link");
       group.insertBefore(former, title.nextSibling);
