@@ -214,7 +214,7 @@ const collections = [
   {
     slug: "seawater",
     group: "collection",
-    title: { zh: "海水收集", en: "Seawater Collection", ja: "海水採集" },
+    title: { zh: "collection of (all) oceans and seas", en: "collection of (all) oceans and seas", ja: "collection of (all) oceans and seas" },
     intro: {
       zh: "从不同海岸留下少量海水。地点、日期、容器与水本身一起构成记录；它们并不试图证明什么，只保存曾经抵达过的一小部分海。",
       en: "Small amounts of seawater kept from different coasts. Place, date, vessel and water form the record together; they prove nothing, but keep a small part of a sea once reached.",
@@ -1073,7 +1073,7 @@ function renderSeawaterSpaceTimeChart(item) {
 
   var variants = {
     zh: {
-      title: "海水收集 · 时间与空间",
+      title: "时间与空间",
       subtitle: "X / 时间　　Y / 经度 λ　　Z / 纬度 φ",
       label: "X / 时间间距",
       close: "汇聚",
@@ -1083,7 +1083,7 @@ function renderSeawaterSpaceTimeChart(item) {
       demo: "示意定位 · 采样地点与时间尚待实际名录核对"
     },
     en: {
-      title: "Seawater collection · time and space",
+      title: "Space and time",
       subtitle: "X / time　　Y / longitude λ　　Z / latitude φ",
       label: "X / time spacing",
       close: "gather",
@@ -1093,7 +1093,7 @@ function renderSeawaterSpaceTimeChart(item) {
       demo: "Diagrammatic locations · sample coordinates and dates await verification"
     },
     ja: {
-      title: "海水採集 · 時間と空間",
+      title: "時間と空間",
       subtitle: "X / 時間　　Y / 経度 λ　　Z / 緯度 φ",
       label: "X / 時間の間隔",
       close: "集約",
@@ -1130,6 +1130,57 @@ function renderSeawaterSpaceTimeChart(item) {
     '<p class="seawater-space-time-essay">' + escapeHtml(t.essay) + '</p>' +
     '<p class="seawater-chart-prototype">' + escapeHtml(t.demo) + '</p>' +
   '</section>';
+}
+
+/*
+  Seawater's reading sequence grows from the two original artworks:
+  painting → remembered scene → tank → vessel → time/space chart → later notes.
+  Preserve the existing image viewer, captions, multilingual notes and chart.
+*/
+const seawaterVesselDescription = {
+  zh: "tote tank（吨桶）的形体一直使我着迷。它的标准化与普遍性，让这种容器出现在世界各地，盛放过彼此迥异的液体。那种方正又庞大的样貌，使我想到一枚现代的帆船符号：单凭外形，便仿佛带着一种什么地方都去过、什么东西都装过的能力与经验。“吨”这个称呼连同它巨大的体量，又让这种能力隐约带上了野心。只不过在这里，海水从船舱外来到了舱内。我借用这个现成的形体，让那段无法证实的回忆继续有一个可以寄存的地方。",
+  en: "I have long been drawn to the form of the tote tank. Its standardisation and ubiquity allow it to appear almost anywhere in the world, carrying liquids of very different kinds. That enormous, matter-of-fact shape strikes me as a contemporary emblem of the sailing ship: it seems, by its very appearance, to have been everywhere and to have held everything. The suggestion of a tonne in its name, and the scale of its body, lend that capacity a certain ambition. Here, however, the seawater has moved from outside the hull to within it. I have borrowed this familiar form to give an unverifiable memory somewhere to remain.",
+  ja: "私はずっと、tote tank（トートタンク／大型液体コンテナ）の形に惹かれてきた。規格化され、世界中に普及したこの容器は、土地を問わず現れ、性質の異なるさまざまな液体を収めてきた。その四角く巨大な姿は、私には現代の帆船の記号のように見える。どこへでも行き、あらゆるものを積んできたかのような、能力と経験を形そのものが語っている。「トン」という重量の響きとその大きな量塊は、そこに幾分の野心さえ与える。ただしここでは、海水は船体の外から内へ移された。私はこの既製の形を借り、確かめることのできない記憶を、なお留めておく場所にした。"
+};
+
+function rearrangeSeawaterStory(markup) {
+  var template = document.createElement("template");
+  template.innerHTML = markup;
+  var root = template.content.querySelector(".room-view");
+  var scroll = root && root.querySelector(".room-scroll");
+  if (!scroll) return markup;
+
+  var lead = scroll.querySelector(".room-lead");
+  var frames = scroll.querySelectorAll(".room-image");
+  var notes = scroll.querySelector(".room-notes");
+  var chart = scroll.querySelector(".seawater-space-time");
+  if (!lead || frames.length < 2 || !notes || !chart) return markup;
+
+  var memoryPainting = frames[0], toteArtwork = frames[1];
+  memoryPainting.classList.add("seawater-memory-painting");
+  toteArtwork.classList.add("seawater-light-artwork");
+
+  // A painting before any prose: the introductory memory follows it.
+  var introduction = lead.querySelector(".room-intro-stack, .room-intro");
+  var memoryNote = notes.querySelector(".room-note");
+  var memoryChapter = document.createElement("section");
+  memoryChapter.className = "seawater-memory-chapter";
+  if (introduction) memoryChapter.appendChild(introduction);
+  if (memoryNote) memoryChapter.appendChild(memoryNote);
+  memoryPainting.insertAdjacentElement("afterend", memoryChapter);
+
+  // The tank opens a second phase, followed by its own short essay.
+  var vesselEssay = document.createElement("section");
+  vesselEssay.className = "seawater-vessel-chapter";
+  var paragraph = document.createElement("p");
+  paragraph.className = "seawater-vessel-text";
+  paragraph.textContent = localised(seawaterVesselDescription);
+  vesselEssay.appendChild(paragraph);
+  toteArtwork.insertAdjacentElement("afterend", vesselEssay);
+
+  // Keep the chart's own essay immediately under its interactive diagram.
+  // Materialisation and Ship of Fools remain intact as the final notes.
+  return template.innerHTML;
 }
 
 function renderRoom(item) {
@@ -1230,7 +1281,7 @@ function renderRoom(item) {
     "</button>" +
   "</footer></div></section>";
 
-  return html;
+  return item.slug === "seawater" ? rearrangeSeawaterStory(html) : html;
 }
 
 function render() {
@@ -1459,9 +1510,9 @@ render();
   var seawater = findCollection("seawater");
   if (seawater) {
     seawater.title = {
-      zh: "海水收集",
+      zh: "collection of (all) oceans and seas",
       en: "collection of (all) oceans and seas",
-      ja: "すべての海の採集"
+      ja: "collection of (all) oceans and seas"
     };
     seawater.intro = {
       zh: "起点是一段悬置在真实与虚构之间的童年记忆：大约十一岁时，我记得在一座美术馆的角落看见一个正在漏水的 tote tank，并听见一句“55个海洋的海水”。多年后再回头查询，我找不到任何相关记录。于是这段无法被证实的记忆，慢慢变成了一项持续至今的海水收集。",
@@ -3607,19 +3658,41 @@ render();
       return { x: lerp(a.x, b.x, t), y: lerp(a.y, b.y, t) };
     }
 
+    function seawaterArtworkScrollWindow() {
+      var artwork = scroll.querySelector(".seawater-light-artwork");
+      if (!artwork) return null;
+      var viewport = Math.max(1, scroll.clientHeight);
+      var rect = artwork.getBoundingClientRect();
+      var parentRect = scroll.getBoundingClientRect();
+      var top = scroll.scrollTop + rect.top - parentRect.top;
+      var heightOfArtwork = Math.max(1, rect.height);
+      var maxScroll = Math.max(1, scroll.scrollHeight - viewport);
+      // Begin shortly before the tank enters view; finish soon after it passes.
+      var start = clamp(top - viewport * 0.82, 0, maxScroll);
+      var finish = clamp(top + heightOfArtwork - viewport * 0.22, 0, maxScroll);
+      // The chart must never inherit the tank's darkness.
+      var chart = scroll.querySelector("[data-seawater-space-time]");
+      if (chart) {
+        var chartRect = chart.getBoundingClientRect();
+        var chartTop = scroll.scrollTop + chartRect.top - parentRect.top;
+        finish = Math.min(finish, Math.max(0, chartTop - viewport * 1.05));
+      }
+      return { start: start, finish: Math.max(start + 1, finish) };
+    }
+
     function scrollProgress() {
-      var maxScroll = Math.max(1, scroll.scrollHeight - scroll.clientHeight);
-      return clamp(scroll.scrollTop / maxScroll, 0, 1);
+      var windowOfArt = seawaterArtworkScrollWindow();
+      if (!windowOfArt) return 0;
+      return clamp((scroll.scrollTop - windowOfArt.start) /
+        Math.max(1, windowOfArt.finish - windowOfArt.start), 0, 1);
     }
 
 
     /*
-      Seawater page background exposure curve
-      ---------------------------------------
-      The white -> dark -> white passage belongs to the two artworks.
-      Complete the return to warm paper BEFORE the space/time coordinate diagram
-      enters the viewport, rather than stretching the last fade across the page.
-      Keep the original eight brightness stops inside this shorter passage.
+      Seawater background exposure:
+      the white–dark–white interval belongs ONLY to the tote-tank photograph.
+      The preceding painted memory stays on warm paper, and the chart returns
+      to warm paper well before entering the viewport.
     */
     var seawaterPaperRgb = [244, 243, 238];
     var seawaterDeepRgb = [146, 140, 128];
@@ -3637,53 +3710,18 @@ render();
       return lerp(stops[index], stops[index + 1], local);
     }
 
-    function artworkMidpointTargetScroll() {
-      var maxScroll = Math.max(1, scroll.scrollHeight - scroll.clientHeight);
-      var images = Array.prototype.slice.call(scroll.querySelectorAll(".room-image img")).slice(0, 2);
-      if (images.length < 2) return maxScroll * 0.5;
-
-      var scrollRect = scroll.getBoundingClientRect();
-      var centers = images.map(function (image) {
-        var rect = image.getBoundingClientRect();
-        return (rect.top - scrollRect.top) + scroll.scrollTop + rect.height * 0.5;
-      });
-      var contentMidpoint = (centers[0] + centers[1]) * 0.5;
-      return clamp(contentMidpoint - scroll.clientHeight * 0.5, 0, maxScroll);
-    }
-
-    function chartBackgroundRestorationLimit() {
-      var maxScroll = Math.max(1, scroll.scrollHeight - scroll.clientHeight);
-      var chart = scroll.querySelector("[data-seawater-space-time]");
-      if (!chart) return maxScroll;
-
-      var scrollRect = scroll.getBoundingClientRect();
-      var chartRect = chart.getBoundingClientRect();
-      var chartTop = scroll.scrollTop + chartRect.top - scrollRect.top;
-      // A 20%-of-viewport safety margin before the chart could enter view.
-      return clamp(chartTop - scroll.clientHeight * 1.20, 0, maxScroll);
-    }
-
     function backgroundLevelForScroll() {
-      var maxScroll = Math.max(1, scroll.scrollHeight - scroll.clientHeight);
-      var current = clamp(scroll.scrollTop, 0, maxScroll);
-      var midpoint = artworkMidpointTargetScroll();
-      var viewport = Math.max(1, scroll.clientHeight);
-
-      // An artwork-centred passage of at most about 1.4 screen heights,
-      // further limited by the coordinate diagram's approaching top edge.
-      var finish = Math.min(maxScroll, midpoint + viewport * 0.82, chartBackgroundRestorationLimit());
-      if (finish <= 0 || current >= finish) return 0;
-
-      var fadeOut = Math.min(viewport * 0.58, finish * 0.46);
-      var peak = Math.max(0, Math.min(midpoint, finish - fadeOut));
-      var begin = Math.max(0, peak - viewport * 0.60);
-
-      if (current <= begin) return 0;
-      if (current <= peak) {
-        return interpolateBackgroundStops([0, 20, 30, 40], (current - begin) / Math.max(1, peak - begin));
-      }
-      return interpolateBackgroundStops([40, 30, 20, 10, 0], (current - peak) / Math.max(1, finish - peak));
+      var interval = seawaterArtworkScrollWindow();
+      if (!interval) return 0;
+      var current = scroll.scrollTop;
+      if (current <= interval.start || current >= interval.finish) return 0;
+      var progress = clamp((current - interval.start) /
+        Math.max(1, interval.finish - interval.start), 0, 1);
+      return progress <= 0.50
+        ? interpolateBackgroundStops([0, 20, 30, 40], progress * 2)
+        : interpolateBackgroundStops([40, 30, 20, 10, 0], (progress - 0.5) * 2);
     }
+
 
     function updateSeawaterBackground() {
       var level = backgroundLevelForScroll();
@@ -4198,7 +4236,7 @@ render();
         updateSeawaterBackground();
 
         var canvasRect = canvas.getBoundingClientRect();
-        var images = Array.prototype.slice.call(scroll.querySelectorAll(".room-image img")).slice(0, 2);
+        var images = Array.prototype.slice.call(scroll.querySelectorAll(".seawater-light-artwork img"));
         var light = lightForFrame();
         var anyVisible = false;
 
@@ -4225,7 +4263,7 @@ render();
 
     window.addEventListener("resize", resizeWorld, { passive: true });
     window.addEventListener("orientationchange", resizeWorld, { passive: true });
-    scroll.querySelectorAll(".room-image img").forEach(function (image) {
+    scroll.querySelectorAll(".seawater-light-artwork img").forEach(function (image) {
       if (!image.complete) image.addEventListener("load", resizeWorld, { once: true });
     });
 

@@ -2898,3 +2898,100 @@ body {
     line-height: 1.85;
   }
 }
+
+/* ===== Seawater narrative: painting / memory / tote / chart / aftermath ===== */
+.room-view[data-room="seawater"] .room-lead {
+  min-height:clamp(290px,54svh,620px);
+  padding-bottom:clamp(42px,6vh,85px);
+}
+.room-view[data-room="seawater"] .room-lead h1 {
+  font-size:clamp(28px,4.4vw,60px);
+  line-height:1.14;
+  max-width:min(1100px,84vw);
+  overflow-wrap:anywhere;
+}
+.room-view[data-room="seawater"] .seawater-memory-painting {
+  margin-top:1vh;
+  margin-bottom:clamp(55px,11vh,125px);
+}
+.room-view[data-room="seawater"] .seawater-memory-painting::before,
+.room-view[data-room="seawater"] .seawater-memory-painting::after {
+  display:none !important;
+}
+.room-view[data-room="seawater"] .seawater-memory-chapter,
+.room-view[data-room="seawater"] .seawater-vessel-chapter {
+  position:relative;
+  z-index:4;
+  width:min(920px,calc(100vw - 48px));
+  margin:0 auto clamp(95px,15vh,180px);
+}
+.room-view[data-room="seawater"] .seawater-memory-chapter > .room-intro,
+.room-view[data-room="seawater"] .seawater-memory-chapter > .room-intro-stack {
+  display:block;
+  margin:0 0 38px;
+  max-width:760px;
+  width:100%;
+}
+.room-view[data-room="seawater"] .seawater-memory-chapter .room-intro {
+  width:100%;
+  max-width:760px;
+  margin:0;
+  line-height:1.95;
+}
+.room-view[data-room="seawater"] .seawater-memory-chapter .room-note {
+  border-top:1px solid rgba(23,24,19,.11);
+  border-bottom:0;
+  padding:clamp(45px,7vh,75px) 0 0;
+}
+.room-view[data-room="seawater"] .seawater-light-artwork {
+  margin-top:clamp(75px,12vh,150px);
+  margin-bottom:clamp(65px,11vh,140px);
+}
+.room-view[data-room="seawater"] .seawater-vessel-chapter {
+  margin-bottom:clamp(80px,12vh,155px);
+}
+.room-view[data-room="seawater"] .seawater-vessel-text {
+  max-width:760px;
+  margin:0;
+  font-family:var(--serif);
+  font-size:clamp(16px,1.26vw,19px);
+  line-height:2.05;
+  letter-spacing:.025em;
+  color:rgba(23,24,19,.82);
+}
+.room-view[data-room="seawater"] .seawater-space-time {
+  margin-top:clamp(35px,7vh,85px);
+  margin-bottom:clamp(110px,16vh,210px);
+}
+.room-view[data-room="seawater"] .room-notes {
+  margin-top:clamp(20px,4vh,60px);
+}
+@media (max-width:760px) {
+  .room-view[data-room="seawater"] .room-lead {
+    min-height:43svh;
+    padding:11vh 8vw 5vh;
+  }
+  .room-view[data-room="seawater"] .room-lead h1 {
+    font-size:clamp(26px,8vw,40px);
+    max-width:90vw;
+  }
+  .room-view[data-room="seawater"] .seawater-memory-chapter,
+  .room-view[data-room="seawater"] .seawater-vessel-chapter {
+    width:calc(100vw - 42px);
+    margin-bottom:11vh;
+  }
+  .room-view[data-room="seawater"] .seawater-memory-chapter .room-note {
+    padding-top:42px;
+  }
+  .room-view[data-room="seawater"] .seawater-memory-painting {
+    margin-bottom:9vh;
+  }
+  .room-view[data-room="seawater"] .seawater-light-artwork {
+    margin-top:8vh;
+    margin-bottom:9vh;
+  }
+  .room-view[data-room="seawater"] .seawater-vessel-text {
+    font-size:15px;
+    line-height:1.97;
+  }
+}
