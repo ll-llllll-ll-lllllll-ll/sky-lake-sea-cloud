@@ -1,23 +1,23 @@
 /* Folly · tableaux, not a film player. A narrow photographic archive with
    magnetic centring; projected film and notation exist only on selection. */
 .fc-room {
-  --fc-bg:#131514;
-  --fc-ink:#e5e5dd;
-  --fc-haze:rgba(230,231,223,.57);
-  --fc-hair:rgba(230,231,223,.14);
+  --fc-bg:#ebeae5;
+  --fc-ink:#242925;
+  --fc-haze:rgba(36,41,37,.52);
+  --fc-hair:rgba(36,41,37,.16);
   --fc-card-width:clamp(224px,25vw,390px);
   --fc-card-height:clamp(230px,27vw,360px);
   background:var(--fc-bg);
   color:var(--fc-ink);
 }
 .fc-room .room-head {
-  background:rgba(19,21,20,.95);
+  background:rgba(239,238,233,.93);
   color:var(--fc-ink);
   border-bottom:1px solid var(--fc-hair);
   backdrop-filter:blur(14px);
 }
 .fc-room .room-head > p,.fc-room .room-back { color:var(--fc-haze); }
-.fc-room .room-head .language button { color:rgba(230,231,223,.45); }
+.fc-room .room-head .language button { color:rgba(36,41,37,.38); }
 .fc-room .room-head .language button.is-active,
 .fc-room .room-head .language button[aria-pressed="true"] { color:var(--fc-ink); }
 .fc-room button { -webkit-tap-highlight-color:transparent; }
@@ -42,12 +42,12 @@
   font:400 clamp(25px,3vw,41px)/1.17 var(--serif),serif;
   letter-spacing:.07em;
 }
-.fc-instruction { margin:0 0 2px; font:400 clamp(12px,1vw,14px)/1.9 var(--serif),serif; color:rgba(230,231,223,.74); }
-.fc-instruction span { display:block; color:rgba(230,231,223,.42); }
+.fc-instruction { margin:0 0 2px; font:400 clamp(12px,1vw,14px)/1.9 var(--serif),serif; color:rgba(36,41,37,.76); }
+.fc-instruction span { display:block; color:rgba(36,41,37,.46); }
 .fc-series-tabs { display:flex; align-items:end; gap:22px; }
 .fc-series-tabs button {
   min-width:76px; padding:0 0 8px;
-  color:rgba(230,231,223,.35);
+  color:rgba(36,41,37,.36);
   font:400 22px/1.1 var(--serif),serif;
   text-align:left;
   border-bottom:1px solid transparent;
@@ -64,7 +64,7 @@
   position:relative;
   display:flex; align-items:center;
   min-height:0; overflow:hidden;
-  background:radial-gradient(ellipse 65% 70% at 48% 48%,#1e211f,#131514 85%);
+  background:radial-gradient(ellipse 65% 70% at 48% 48%,#deddd7,#ebeae5 85%);
 }
 .fc-gallery-area::before,.fc-gallery-area::after {
   content:""; position:absolute; top:0; bottom:0;
@@ -95,7 +95,7 @@
   width:var(--fc-card-width); min-width:var(--fc-card-width);
   scroll-snap-align:center; scroll-snap-stop:always;
   transition:transform .52s cubic-bezier(.17,.82,.19,1),opacity .5s ease;
-  opacity:.65;
+  opacity:.84;
 }
 .fc-card.is-magnet { transform:translateY(-7px) scale(1.035); opacity:1; }
 .fc-card:hover { opacity:1; }
@@ -110,8 +110,8 @@
   transition:border-color .3s ease,box-shadow .45s ease;
 }
 .fc-card.is-magnet .fc-frame {
-  border-color:rgba(230,231,223,.46);
-  box-shadow:0 23px 62px rgba(0,0,0,.35),0 0 0 3px rgba(230,231,223,.025);
+  border-color:rgba(36,41,37,.48);
+  box-shadow:0 23px 62px rgba(0,0,0,.20),0 0 0 3px rgba(36,41,37,.04);
 }
 .fc-preview,.fc-poster {
   position:absolute; inset:0;
@@ -120,12 +120,12 @@
   user-select:none; -webkit-user-drag:none;
 }
 .fc-poster {
-  filter:saturate(.68) contrast(1.07) brightness(.76);
+  filter:saturate(.91) contrast(1.03) brightness(.95);
   transition:opacity .55s ease;
 }
 .fc-preview {
   opacity:0;
-  filter:grayscale(.18) saturate(.66) contrast(1.12) brightness(.85);
+  filter:saturate(.92) contrast(1.04) brightness(.97);
   transition:opacity .5s ease;
 }
 .fc-card.has-frame .fc-preview { opacity:1; }
@@ -147,7 +147,7 @@
 .fc-card-copy {
   display:flex; align-items:baseline; justify-content:space-between; gap:17px;
   min-height:35px; margin-top:15px;
-  font-size:11px; color:rgba(230,231,223,.77);
+  font-size:11px; color:rgba(36,41,37,.76);
 }
 .fc-card-count { font:400 23px/1 var(--serif),serif; white-space:nowrap; color:var(--fc-ink); }
 .fc-card-count small { font:10px/1 var(--sans),sans-serif; color:rgba(230,231,223,.42); }
@@ -167,28 +167,31 @@
   font:16px/1 var(--sans),sans-serif;
   transition:border-color .24s;
 }
-.fc-nudge:hover { border-color:rgba(230,231,223,.7); }
+.fc-nudge:hover { border-color:rgba(36,41,37,.7); }
 .fc-slider {
   flex:1; height:30px; min-width:100px;
   cursor:pointer;
   background:transparent;
   appearance:none; -webkit-appearance:none;
 }
-.fc-slider::-webkit-slider-runnable-track { height:1px; background:rgba(230,231,223,.5); }
-.fc-slider::-moz-range-track { height:1px; background:rgba(230,231,223,.5); }
+.fc-slider::-webkit-slider-runnable-track { height:1px; background:rgba(36,41,37,.43); }
+.fc-slider::-moz-range-track { height:1px; background:rgba(36,41,37,.43); }
 .fc-slider::-webkit-slider-thumb {
   appearance:none;-webkit-appearance:none;
-  width:11px;height:11px;border-radius:50%;background:#e5e5dd;
-  border:2px solid #131514;box-shadow:0 0 0 1px rgba(230,231,223,.65);margin-top:-5px;
+  width:11px;height:11px;border-radius:50%;background:#242925;
+  border:2px solid #ebeae5;box-shadow:0 0 0 1px rgba(36,41,37,.65);margin-top:-5px;
 }
 .fc-slider::-moz-range-thumb {
-  width:10px;height:10px;border-radius:50%;background:#e5e5dd;
-  border:2px solid #131514;box-shadow:0 0 0 1px rgba(230,231,223,.65);
+  width:10px;height:10px;border-radius:50%;background:#242925;
+  border:2px solid #ebeae5;box-shadow:0 0 0 1px rgba(36,41,37,.65);
 }
 .fc-rail-caption { min-width:150px; margin:0 0 0 auto; text-align:right; color:var(--fc-haze); font:12px/1.5 var(--serif),serif; }
 .fc-rail-caption span { display:inline-block; margin-left:14px; font-style:italic; font-size:17px; color:var(--fc-ink); }
 .fc-projection[hidden],.fc-inspection[hidden] {display:none!important;}
 .fc-projection {
+  --fc-ink:#e5e5dd;
+  --fc-haze:rgba(230,231,223,.57);
+  --fc-hair:rgba(230,231,223,.14);
   position:absolute; inset:0;
   z-index:30; display:grid;
   place-items:center;
@@ -462,8 +465,9 @@
 .fc-inspect-wings{display:flex;gap:18px;}
 .fc-inspect-wings button{min-width:28px;border-bottom:1px solid var(--fc-hair);color:var(--fc-ink);font:13px/1.8 var(--serif),serif;}
 .fc-room button:focus-visible,.fc-room [tabindex]:focus-visible,.fc-room input:focus-visible{
-  outline:1px solid rgba(230,231,223,.9);outline-offset:3px;
+  outline:1px solid rgba(36,41,37,.72);outline-offset:3px;
 }
+.fc-projection button:focus-visible,.fc-projection [tabindex]:focus-visible,.fc-projection input:focus-visible{outline-color:rgba(230,231,223,.92);}
 /* The viewing interface is an overlay, while the collection remains the work. */
 .fc-page.is-projected .fc-gallery-area,.fc-page.is-projected .fc-navigation,.fc-page.is-projected .fc-page-heading{filter:brightness(.57);}
 @media(max-width:1100px){
