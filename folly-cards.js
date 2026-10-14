@@ -437,7 +437,7 @@
   function wireRail(si){
     var rail=railFor(si),root=block(si);
     if(!rail||!root)return;
-    var physics={target:0,raf:0,timer:0,drag:null};
+    var physics={target:0,raf:0,timer:0,drag:null,touchActive:false};
     function stopPhysics(){
       if(physics.raf){cancelAnimationFrame(physics.raf);physics.raf=0;}
       if(physics.timer){clearTimeout(physics.timer);physics.timer=0;}
@@ -476,6 +476,7 @@
     },{passive:false});
     // Native touch inertia owns all touch gestures. Mouse drag is distinct.
     rail.addEventListener('pointerdown',function(event){
+      if(event.pointerType==='touch'||event.pointerType==='pen'){physics.touchActive=true;stopPhysics();return;}
       if(event.pointerType!=='mouse'||event.button!==0)return;
       stopPhysics();
       physics.drag={id:event.pointerId,x:event.clientX,left:rail.scrollLeft,moved:false};
@@ -501,8 +502,14 @@
         align(si,nearest(si),true);
       }
     }
-    rail.addEventListener('pointerup',finishDrag);
-    rail.addEventListener('pointercancel',finishDrag);
+    rail.addEventListener('pointerup',function(event){
+      if(event.pointerType==='touch'||event.pointerType==='pen'){physics.touchActive=false;return;}
+      finishDrag();
+    });
+    rail.addEventListener('pointercancel',function(event){
+      if(event.pointerType==='touch'||event.pointerType==='pen'){physics.touchActive=false;return;}
+      finishDrag();
+    });
     rail.addEventListener('lostpointercapture',finishDrag);
     rail.addEventListener('click',function(e){
       if(rail.dataset.fcJustDragged){e.preventDefault();e.stopPropagation();}
@@ -515,10 +522,10 @@
         if(n!==selection.focus[si])focusCard(si,n,false);
       });
       clearTimeout(scrollTimer);
-      if(!physics.raf&&!physics.drag){
+      if(!physics.raf&&!physics.drag&&!physics.touchActive){
         // Only native trackpad/touch input settles after it has stopped.
         scrollTimer=setTimeout(function(){
-          if(!selection.open&&!physics.raf&&!physics.drag&&!rail.classList.contains('is-wheel-active')){
+          if(!selection.open&&!physics.raf&&!physics.drag&&!physics.touchActive&&!rail.classList.contains('is-wheel-active')){
             align(si,nearest(si),true);
           }
         },210);
