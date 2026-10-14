@@ -47,7 +47,7 @@
   var FILES_I=Array.from({length:15},function(_,i){return ARCHIVE+'attachments/effluent-sedimentation/score-1-'+(i+1)+'.webp';});
   var FILES_I_MOBILE=Array.from({length:15},function(_,i){return ARCHIVE+'assets/mobile-score/effluent-sedimentation/score-1-'+(i+1)+'.webp';});
   var FOLD_BASE=ARCHIVE+'attachments/aether-scorched-earth/';
-  var selection={series:0,index:0,open:false,muted:true,paused:false,scoreInspect:false,scoreZoom:1,scorePanX:0,scorePanY:0,folds:[0,0,0],lastTime:0,manualFrame:null};
+  var selection={series:0,index:0,focus:[0,0],open:false,muted:true,paused:false,scoreInspect:false,scoreZoom:1,scorePanX:0,scorePanY:0,folds:[0,0,0],lastTime:0,manualFrame:null};
   var scene=null,player=null,serial=0,queue=[],previewInFlight=0,previewComplete=new Set(),mountedToken=0;
   var io=null,scrollFrame=0,playRaf=0,hoverRAF=0,lastTrigger=null,resizeTimer=0;
 
@@ -92,8 +92,8 @@
       '</div>';
   }
   function cardMarkup(stage,index,s){
-    return '<li class="fc-card" data-fc-card="'+index+'">'+
-      '<button class="fc-card-button" type="button" data-fc-action="select" data-fc-index="'+index+'" aria-label="'+esc(i18n('open')+': '+label(stage))+'">'+
+    return '<li class="fc-card" data-fc-card="'+index+'" data-fc-series="'+SERIES.indexOf(s)+'">'+
+      '<button class="fc-card-button" type="button" data-fc-action="select" data-fc-index="'+index+'" data-fc-series="'+SERIES.indexOf(s)+'" aria-label="'+esc(i18n('open')+': '+label(stage))+'">'+
         '<span class="fc-frame"><img class="fc-poster" alt="" src="'+esc(s.poster)+'" decoding="async" loading="'+(index<3?'eager':'lazy')+'">'+
           '<video class="fc-preview" playsinline webkit-playsinline preload="none" muted aria-hidden="true"></video>'+
           '<span class="fc-card-filmwash" aria-hidden="true"></span><span class="fc-card-open-sign">↗</span></span>'+
@@ -101,436 +101,483 @@
         '<span class="fc-card-name">'+esc(label(stage))+'</span></span>'+
       '</button></li>';
   }
-  function pageMarkup(item){
-    var s=current();
+
+  // Each film is laid out independently; neither is hidden by a series tab.
+  function projectionMarkup(s, si) {
+    return '<div class="fc-projection" data-fc-projection="'+si+'" hidden role="dialog" aria-modal="true" aria-label="'+esc(i18n('open'))+'">'+
+      '<div class="fc-projection-scrim" data-fc-action="close"></div>'+
+      '<div class="fc-projection-shell">'+
+        '<div class="fc-projection-top"><span>FOLLY '+s.roman+' <b data-fc-projection-count>01 / '+pad(s.stages.length)+'</b></span>'+
+          '<button type="button" data-fc-action="close" aria-label="'+esc(i18n('close'))+'">×</button></div>'+
+        '<div class="fc-projection-center">'+
+          '<button type="button" class="fc-projection-arrow fc-arrow-prev" data-fc-action="previous" aria-label="'+esc(i18n('prev'))+'">←</button>'+
+          '<div class="fc-film-wrap"><video class="fc-film" data-fc-film playsinline webkit-playsinline preload="metadata" muted></video>'+
+            '<div class="fc-film-vignette"></div><span class="fc-film-status" data-fc-film-status aria-live="polite"></span>'+
+            '<button class="fc-film-pause-sign" type="button" data-fc-action="play" aria-label="'+esc(i18n('pause'))+'">Ⅱ</button></div>'+
+          '<button type="button" class="fc-projection-arrow fc-arrow-next" data-fc-action="next" aria-label="'+esc(i18n('next'))+'">→</button>'+
+        '</div>'+
+        scoreMarkup(s)+
+        '<div class="fc-projection-bottom"><span class="fc-now-title" data-fc-now-title>'+esc(label(s.stages[0]))+'</span>'+
+          '<span class="fc-time-index" data-fc-time-index>01 / '+pad(s.stages.length)+'</span>'+
+          '<div class="fc-play-actions"><button type="button" data-fc-action="play" aria-label="'+esc(i18n('pause'))+'">Ⅱ</button>'+
+            '<button type="button" data-fc-action="sound" aria-label="'+esc(i18n('sound'))+'">♪̸</button></div></div>'+
+        '<div class="fc-inspection" data-fc-inspection hidden>'+
+          '<div class="fc-inspection-head"><span>FOLLY '+s.roman+' / SCORE</span>'+
+            '<button type="button" data-fc-action="stop-inspect" aria-label="'+esc(i18n('close'))+'">×</button></div>'+
+          '<div class="fc-inspection-body">'+(s.kind==='linear'?
+              '<div class="fc-inspect-mechanical"><img data-fc-inspect-img src="'+mechanicalImage(15)+'" alt="">'+
+                '<input class="fc-inspect-lever" data-fc-inspect-lever type="range" min="1" max="15" step="1" value="15" orient="vertical" aria-label="15 score frames"></div>':
+              '<div class="fc-inspect-fold">'+foldMarkup(false)+
+                '<div class="fc-inspect-wings">'+[1,2,3].map(function(i){return '<button type="button" data-fc-action="wing" data-fc-wing-index="'+(i-1)+'">'+pad(i)+'</button>';}).join('')+'</div></div>')+
+          '</div><div class="fc-inspection-foot">'+
+            '<button type="button" data-fc-action="zoom-out" aria-label="Zoom out">−</button>'+
+            '<button type="button" data-fc-action="zoom-in" aria-label="Zoom in">+</button>'+
+            '<button type="button" data-fc-action="reset-score">'+esc(i18n('reset'))+' ↺</button></div>'+
+        '</div>'+
+      '</div></div>';
+  }
+  function sectionMarkup(s, si) {
+    return '<section class="fc-series-block" data-fc-series-block="'+si+'" style="--fc-video-aspect:16 / 9;--fc-ratio-number:1.77778">'+
+      '<div class="fc-series-heading">'+
+        '<div class="fc-series-number">'+s.roman+' <span>/ 0'+(si+1)+'</span></div>'+
+        '<div class="fc-series-title"><h2>'+esc(label(s.title))+'</h2><p>FOLLY '+s.roman+' <span>—</span> '+pad(s.stages.length)+' '+(state.lang==='zh'?'个瞬间':state.lang==='ja'?'の瞬間':'MOMENTS')+'</p></div>'+
+      '</div>'+
+      '<div class="fc-gallery-area"><div class="fc-rail" data-fc-rail="'+si+'" tabindex="0" aria-label="'+esc(i18n('seek')+' / '+label(s.title))+'">'+
+        '<ol class="fc-strip">'+s.stages.map(function(stage,index){return cardMarkup(stage,index,s);}).join('')+'</ol>'+
+      '</div></div>'+
+      '<div class="fc-navigation">'+
+        '<div class="fc-rail-index"><strong data-fc-index-display>01</strong><span> / '+pad(s.stages.length)+'</span></div>'+
+        '<button type="button" data-fc-action="previous" data-fc-series="'+si+'" class="fc-nudge" aria-label="'+esc(i18n('prev'))+'">←</button>'+
+        '<input class="fc-slider" data-fc-slider="'+si+'" type="range" min="0" max="'+(s.stages.length-1)+'" step="1" value="0" aria-label="'+esc(i18n('seek'))+' / '+label(s.title)+'">'+
+        '<button type="button" data-fc-action="next" data-fc-series="'+si+'" class="fc-nudge" aria-label="'+esc(i18n('next'))+'">→</button>'+
+        '<p class="fc-rail-caption">'+esc(label(s.title))+' <span>'+s.roman+'</span></p>'+
+      '</div>'+
+      '<div class="fc-series-breath" aria-hidden="true"></div>'+
+    '</section>';
+  }
+  function pageMarkup(item) {
+    var intro=localised(item.intro);
     return '<section class="room-view fc-room"><header class="room-head">'+
       '<button type="button" data-action="home" class="room-back">← '+esc(labels[state.lang].back)+'</button>'+
       '<p>'+esc(labels[state.lang].works)+' / '+esc(localised(item.title))+'</p>'+languageSwitch()+'</header>'+
       '<div class="fc-page" data-fc-scene>'+
-        '<div class="fc-page-heading"><div class="fc-heading-primary"><p>'+esc(i18n('group'))+'</p><h1>'+esc(localised(item.title))+'</h1></div>'+
-        '<p class="fc-instruction">'+esc(i18n('instruction'))+'<span>'+esc(i18n('selection'))+'</span></p>'+
-        '<div class="fc-series-tabs" role="group" aria-label="Folly series">'+
-          SERIES.map(function(serie,i){return '<button type="button" data-fc-action="series" data-fc-series="'+i+'" class="'+(i===selection.series?'is-current':'')+'" aria-pressed="'+String(i===selection.series)+'">'+
-          serie.roman+'<small>'+esc(label(serie.title))+'</small></button>';}).join('')+
-        '</div></div>'+
-        '<div class="fc-gallery-area"><div class="fc-rail" data-fc-rail tabindex="0" aria-label="'+esc(i18n('seek'))+'"><ol class="fc-strip">'+
-          s.stages.map(function(stage,i){return cardMarkup(stage,i,s);}).join('')+
-        '</ol></div></div>'+
-        '<div class="fc-navigation">'+
-          '<div class="fc-rail-index"><strong data-fc-index-display>01</strong><span> / '+pad(s.stages.length)+'</span></div>'+
-          '<button type="button" data-fc-action="previous" class="fc-nudge" aria-label="'+esc(i18n('prev'))+'">←</button>'+
-          '<input data-fc-slider class="fc-slider" type="range" min="0" max="'+(s.stages.length-1)+'" step="1" value="0" aria-label="'+esc(i18n('seek'))+'">'+
-          '<button type="button" data-fc-action="next" class="fc-nudge" aria-label="'+esc(i18n('next'))+'">→</button>'+
-          '<p class="fc-rail-caption">'+esc(label(s.title))+' <span>'+s.roman+'</span></p>'+
-        '</div>'+
-        '<div class="fc-projection" data-fc-projection hidden role="dialog" aria-modal="true" aria-label="'+esc(i18n('open'))+'">'+
-          '<div class="fc-projection-scrim" data-fc-action="close"></div>'+
-          '<div class="fc-projection-shell">'+
-            '<div class="fc-projection-top"><span>'+esc(i18n('group'))+' <b data-fc-projection-count>01 / '+pad(s.stages.length)+'</b></span>'+
-              '<button type="button" data-fc-action="close" aria-label="'+esc(i18n('close'))+'">×</button></div>'+
-            '<div class="fc-projection-center">'+
-              '<button type="button" class="fc-projection-arrow fc-arrow-prev" data-fc-action="previous" aria-label="'+esc(i18n('prev'))+'">←</button>'+
-              '<div class="fc-film-wrap"><video class="fc-film" data-fc-film playsinline webkit-playsinline preload="metadata" muted></video>'+
-                '<div class="fc-film-vignette"></div><span class="fc-film-status" data-fc-film-status aria-live="polite"></span>'+
-                '<button class="fc-film-pause-sign" type="button" data-fc-action="play" aria-label="'+esc(i18n('pause'))+'">Ⅱ</button></div>'+
-              '<button type="button" class="fc-projection-arrow fc-arrow-next" data-fc-action="next" aria-label="'+esc(i18n('next'))+'">→</button>'+
-            '</div>'+
-            scoreMarkup(s)+
-            '<div class="fc-projection-bottom"><span class="fc-now-title" data-fc-now-title>'+esc(label(s.stages[0]))+'</span>'+
-              '<span class="fc-time-index" data-fc-time-index>01 / '+pad(s.stages.length)+'</span>'+
-              '<div class="fc-play-actions"><button type="button" data-fc-action="play" aria-label="'+esc(i18n('pause'))+'">Ⅱ</button>'+
-                '<button type="button" data-fc-action="sound" aria-label="'+esc(i18n('sound'))+'">♪̸</button>'+
-              '</div></div>'+
-            '<div class="fc-inspection" data-fc-inspection hidden>'+
-              '<div class="fc-inspection-head"><span>FOLLY '+s.roman+' / SCORE</span>'+
-                '<button type="button" data-fc-action="stop-inspect" aria-label="'+esc(i18n('close'))+'">×</button></div>'+
-              '<div class="fc-inspection-body">'+(s.kind==='linear'?
-                  '<div class="fc-inspect-mechanical"><img data-fc-inspect-img src="'+mechanicalImage(15)+'" alt="">'+
-                     '<input class="fc-inspect-lever" data-fc-inspect-lever type="range" min="1" max="15" step="1" value="15" orient="vertical" aria-label="15 score frames">'+
-                   '</div>':
-                  '<div class="fc-inspect-fold">'+foldMarkup(false)+
-                    '<div class="fc-inspect-wings">'+[1,2,3].map(function(i){return '<button type="button" data-fc-action="wing" data-fc-wing-index="'+(i-1)+'">'+pad(i)+'</button>';}).join('')+'</div></div>')+
-                '</div><div class="fc-inspection-foot">'+
-                  '<button type="button" data-fc-action="zoom-out" aria-label="Zoom out">−</button><button type="button" data-fc-action="zoom-in" aria-label="Zoom in">+</button>'+
-                  '<button type="button" data-fc-action="reset-score">'+esc(i18n('reset'))+' ↺</button></div>'+
-            '</div>'+
-          '</div>'+
-        '</div></div></section>';
+        '<div class="fc-page-heading"><div class="fc-heading-primary">'+
+          '<p>'+esc(i18n('group'))+'</p><h1>'+esc(localised(item.title))+'</h1></div>'+
+          '<p class="fc-instruction">'+esc(i18n('instruction'))+'<span>'+esc(i18n('selection'))+'</span></p></div>'+
+        '<main class="fc-scroll-content">'+SERIES.map(sectionMarkup).join('')+
+          '<section class="fc-essay" aria-label="Folly notes"><div class="fc-essay-rule"></div>'+
+            '<p class="fc-essay-index">FOLLY / '+(state.lang==='zh'?'关于作品':state.lang==='ja'?'作品について':'NOTES')+'</p>'+
+            '<p class="fc-essay-intro">'+esc(intro)+'</p>'+
+            '<div class="fc-essay-space" aria-hidden="true"></div>'+
+          '</section>'+
+        '</main>'+
+        SERIES.map(projectionMarkup).join('')+
+      '</div></section>';
   }
   var originalRoom=renderRoom;
-  renderRoom=function(item){return item && item.slug==='ruin-garden'?pageMarkup(item):originalRoom(item);};
+  renderRoom=function(item){return item&&item.slug==='ruin-garden'?pageMarkup(item):originalRoom(item);};
 
-  function isLive(){return !!(scene && scene.isConnected);}
+  function activeOverlay(){return scene?.querySelector('[data-fc-projection="'+selection.series+'"]')||null;}
+  function block(si){return scene?.querySelector('[data-fc-series-block="'+si+'"]')||null;}
+  function railFor(si){return block(si)?.querySelector('[data-fc-rail]')||null;}
+  function isLive(){return !!(scene&&scene.isConnected);}
   function stopMedia(){
     serial++;
     if(player){try{player.pause();player.removeAttribute('src');player.load();}catch(_){}}
     if(playRaf){cancelAnimationFrame(playRaf);playRaf=0;}
   }
   function clearPreviews(){
-    queue=[];previewInFlight=0;previewComplete=new Set();mountedToken++;
+    mountedToken++;queue=[];previewComplete=new Set();previewInFlight=0;
     if(io){io.disconnect();io=null;}
-    if(scene)scene.querySelectorAll('.fc-preview').forEach(function(v){try{v.pause();v.removeAttribute('src');v.load();}catch(_){}});
-  }
-  function align(index,smooth){
-    if(!isLive())return;
-    var rail=scene.querySelector('[data-fc-rail]');
-    var card=scene.querySelector('[data-fc-card="'+index+'"]');
-    if(!rail||!card)return;
-    var x=card.offsetLeft+(card.offsetWidth/2)-rail.clientWidth/2;
-    rail.scrollTo({left:x,behavior:smooth&&!window.matchMedia('(prefers-reduced-motion: reduce)').matches?'smooth':'auto'});
-  }
-  function focusCard(index,scroll){
-    if(!isLive())return;
-    var s=current(),i=clamp(index,0,s.stages.length-1);
-    selection.index=i;
-    scene.querySelectorAll('[data-fc-card]').forEach(function(card){
-      var selected=Number(card.dataset.fcCard)===i;
-      card.classList.toggle('is-magnet',selected);
+    if(scene)scene.querySelectorAll('.fc-preview').forEach(function(v){
+      try{v.pause();v.removeAttribute('src');v.load();}catch(_){}
     });
-    var display=scene.querySelector('[data-fc-index-display]');
-    var slider=scene.querySelector('[data-fc-slider]');
-    if(display)display.textContent=pad(i+1);
-    if(slider)slider.value=String(i);
-    if(scroll)align(i,true);
-    var name=scene.querySelector('[data-fc-now-title]');
-    var time=scene.querySelector('[data-fc-time-index]');
-    var progress=scene.querySelector('[data-fc-projection-count]');
-    if(name)name.textContent=label(s.stages[i]);
-    if(time)time.textContent=pad(i+1)+' / '+pad(s.stages.length);
-    if(progress)progress.textContent=pad(i+1)+' / '+pad(s.stages.length);
-    updatePreviewPriority(i);
   }
-  function updatePreviewPriority(index){
+  function align(si,index,smooth) {
+    var rail=railFor(si),card=block(si)?.querySelector('[data-fc-card="'+index+'"]');
+    if(!rail||!card)return;
+    var x=card.offsetLeft+card.offsetWidth/2-rail.clientWidth/2;
+    rail.scrollTo({left:x,behavior:smooth&&!window.matchMedia('(prefers-reduced-motion:reduce)').matches?'smooth':'auto'});
+  }
+  function focusCard(si,index,scroll) {
     if(!isLive())return;
-    var n=current().stages.length,sequence=[];
-    for(var dist=0;dist<n;dist++){
-      if(index+dist<n)sequence.push(index+dist);
-      if(dist>0 && index-dist>=0)sequence.push(index-dist);
+    var s=SERIES[si],i=clamp(index,0,s.stages.length-1),root=block(si);
+    if(!root)return;
+    selection.focus[si]=i;
+    if(!selection.open){selection.series=si;selection.index=i;}
+    root.querySelectorAll('[data-fc-card]').forEach(function(card){
+      card.classList.toggle('is-magnet',Number(card.dataset.fcCard)===i);
+    });
+    root.querySelector('[data-fc-index-display]').textContent=pad(i+1);
+    root.querySelector('[data-fc-slider]').value=String(i);
+    if(scroll)align(si,i,true);
+    prioritizePreviews(si,i);
+    if(selection.open&&selection.series===si){
+      var overlay=activeOverlay();
+      overlay.querySelector('[data-fc-now-title]').textContent=label(s.stages[i]);
+      overlay.querySelector('[data-fc-time-index]').textContent=pad(i+1)+' / '+pad(s.stages.length);
+      overlay.querySelector('[data-fc-projection-count]').textContent=pad(i+1)+' / '+pad(s.stages.length);
     }
-    queue=sequence.filter(function(i){return !previewComplete.has(i);});
+  }
+  function prioritizePreviews(si,index) {
+    if(!isLive())return;
+    // Only the current neighbourhood, not all thirteen videos at once.
+    var n=SERIES[si].stages.length;
+    var nearby=[index,index+1,index-1,index+2,index-2].filter(function(i){return i>=0&&i<n;});
+    var waiting=nearby.map(function(i){return {si:si,index:i,key:si+':'+i};})
+      .filter(function(task){return !previewComplete.has(task.key) && !queue.some(function(q){return q.key===task.key;});});
+    queue=waiting.concat(queue);
     processPreviews();
   }
-  function processPreviews(){
-    if(!isLive())return;
-    while(previewInFlight<2 && queue.length){
-      var next=queue.shift(),card=scene.querySelector('[data-fc-card="'+next+'"]');
-      if(!card || previewComplete.has(next))continue;
-      previewComplete.add(next);previewInFlight++;
-      var v=card.querySelector('video'), token=mountedToken,settled=false;
-      var watchdog=window.setTimeout(function(){release(false);},14000);
-      var release=function(success){
-        if(settled)return;
-        settled=true;
-        window.clearTimeout(watchdog);
-        v.removeEventListener('loadedmetadata',onMeta);
-        v.removeEventListener('seeked',onSeek);
-        v.removeEventListener('error',onError);
-        if(token!==mountedToken)return;
-        if(success)card.classList.add('has-frame');
-        else {card.classList.add('has-poster-fallback');card.title=i18n('missing');try{v.removeAttribute('src');v.load();}catch(_){}}
-        previewInFlight=Math.max(0,previewInFlight-1);
-        processPreviews();
-      };
-      var onMeta=function(){
-        if(token!==mountedToken)return;
-        try{
-          var seek=clamp(1,0,Math.max(0,v.duration-.15));
-          if(v.duration<.35){release(true);return;}
-          v.currentTime=seek;
-        }catch(_){release(false);}
-      };
-      var onSeek=function(){v.pause();release(true);};
-      var onError=function(){release(false);};
-      v.addEventListener('loadedmetadata',onMeta);
-      v.addEventListener('seeked',onSeek);
-      v.addEventListener('error',onError);
-      v.preload='auto';
-      v.muted=true;
-      v.src=source(current(),next);
-      v.load();
+  function applyVideoRatio(si,video) {
+    if(!video||!video.videoWidth||!video.videoHeight)return;
+    var root=block(si);if(!root)return;
+    var ratio=video.videoWidth/video.videoHeight;
+    // Metadata, rather than the image's thumbnail crop, defines every frame's physical shape.
+    if(ratio>.2&&ratio<6){
+      root.style.setProperty('--fc-video-aspect',video.videoWidth+' / '+video.videoHeight);
+      root.style.setProperty('--fc-ratio-number',String(ratio));
     }
   }
-  function updateScore(absolute){
+  function processPreviews() {
     if(!isLive())return;
+    while(previewInFlight<2&&queue.length){
+      var task=queue.shift();
+      if(previewComplete.has(task.key))continue;
+      var root=block(task.si),card=root?.querySelector('[data-fc-card="'+task.index+'"]');
+      if(!card)continue;
+      var v=card.querySelector('video'),token=mountedToken,settled=false;
+      previewComplete.add(task.key);previewInFlight++;
+      var watchdog=window.setTimeout(function(){release(false);},16000);
+      function release(ok) {
+        if(settled)return;settled=true;
+        clearTimeout(watchdog);
+        v.removeEventListener('loadedmetadata',meta);
+        v.removeEventListener('seeked',seek);
+        v.removeEventListener('error',bad);
+        if(token!==mountedToken)return;
+        if(ok)card.classList.add('has-frame');
+        else {
+          card.classList.add('has-poster-fallback');
+          try{v.removeAttribute('src');v.load();}catch(_){}
+        }
+        previewInFlight=Math.max(0,previewInFlight-1);processPreviews();
+      }
+      function meta(){
+        if(token!==mountedToken)return;
+        applyVideoRatio(task.si,v);
+        try {
+          if(!Number.isFinite(v.duration)||v.duration<.2){release(false);return;}
+          // Stop-frame: one second after THIS stage began, no continuous preview playback.
+          v.currentTime=Math.min(1,Math.max(.01,v.duration-.08));
+        }catch(_){release(false);}
+      }
+      function seek(){v.pause();release(true);}
+      function bad(){release(false);}
+      v.addEventListener('loadedmetadata',meta);
+      v.addEventListener('seeked',seek);
+      v.addEventListener('error',bad);
+      v.preload='metadata';v.muted=true;v.src=source(SERIES[task.si],task.index);v.load();
+    }
+  }
+  function updateScore(absolute) {
+    var overlay=activeOverlay();
+    if(!overlay)return;
     var s=current(),ratio=clamp(absolute/s.endTime,0,1);
-    var cluster=scene.querySelector('.fc-score-cluster');
-    if(!cluster)return;
     if(s.kind==='linear'){
       var frame=sourceScoreFrame(ratio),frameURL=mechanicalImage(frame);
-      scene.querySelectorAll('[data-fc-score-frame],[data-fc-score-shadow-img]').forEach(function(img){
+      overlay.querySelectorAll('[data-fc-score-frame],[data-fc-score-shadow-img]').forEach(function(img){
         if(img.dataset.frame!==String(frame)){img.src=frameURL;img.dataset.frame=String(frame);}
       });
-      scene.querySelectorAll('[data-fc-line],[data-fc-shadow-line]').forEach(function(line){
+      overlay.querySelectorAll('[data-fc-line],[data-fc-shadow-line]').forEach(function(line){
         line.style.left=(12+76*ratio)+'%';
       });
-      var pulse=scene.querySelector('[data-fc-pulse]');
-      if(pulse){
+      var pulse=overlay.querySelector('[data-fc-pulse]');
+      if(pulse) {
         pulse.style.opacity=absolute>=113?'0':'.9';
         pulse.style.left=(12+76*ratio)+'%';
         pulse.style.top=(89-18*ratio)+'%';
         pulse.style.transform='scale('+(0.68+Math.abs(Math.sin(absolute*3.4))*.4)+')';
       }
     }else{
-      scene.querySelectorAll('[data-fc-needle="0"]').forEach(function(el){el.style.transform='rotate('+(-65+95*ratio)+'deg)';});
-      scene.querySelectorAll('[data-fc-needle="1"]').forEach(function(el){el.style.transform='rotate('+(-55+129*Math.min(1,ratio*1.2))+'deg)';});
+      overlay.querySelector('[data-fc-needle="0"]')?.style.setProperty('transform','rotate('+(-65+95*ratio)+'deg)');
+      overlay.querySelector('[data-fc-needle="1"]')?.style.setProperty('transform','rotate('+(-55+129*Math.min(1,ratio*1.2))+'deg)');
       var wings=[clamp((ratio-.12)*260,0,180),clamp((ratio-.37)*275,0,180),clamp((ratio-.69)*440,0,180)];
-      scene.querySelectorAll('.fc-score-cluster [data-fc-wing]').forEach(function(el){
+      overlay.querySelectorAll('.fc-score-cluster [data-fc-wing]').forEach(function(el){
         el.style.setProperty('--fc-fold-angle',wings[Number(el.dataset.fcWing)]+'deg');
       });
-      scene.querySelectorAll('.fc-score-cluster .fc-fold-stage').forEach(function(el){
+      overlay.querySelectorAll('.fc-score-cluster .fc-fold-stage').forEach(function(el){
         el.classList.toggle('is-folded',wings.every(function(a){return a>=174;}));
       });
     }
   }
-  function updateInspect(){
-    if(!isLive())return;
-    var s=current();
-    if(s.kind==='linear'){
-      var frame=selection.manualFrame==null?sourceScoreFrame(selection.lastTime/s.endTime):selection.manualFrame,lever=scene.querySelector('[data-fc-inspect-lever]');
-      var img=scene.querySelector('[data-fc-inspect-img]');
+  function updateInspect() {
+    var overlay=activeOverlay();if(!overlay)return;
+    if(current().kind==='linear'){
+      var frame=selection.manualFrame==null?sourceScoreFrame(selection.lastTime/current().endTime):selection.manualFrame;
+      var lever=overlay.querySelector('[data-fc-inspect-lever]'),img=overlay.querySelector('[data-fc-inspect-img]');
       if(img&&img.dataset.frame!==String(frame)){img.src=mechanicalImage(frame);img.dataset.frame=String(frame);}
-      if(lever && document.activeElement!==lever)lever.value=frame;
+      if(lever&&document.activeElement!==lever)lever.value=frame;
     }else{
-      scene.querySelectorAll('.fc-inspection [data-fc-wing]').forEach(function(el){
+      overlay.querySelectorAll('.fc-inspection [data-fc-wing]').forEach(function(el){
         el.style.setProperty('--fc-fold-angle',selection.folds[Number(el.dataset.fcWing)]+'deg');
       });
-      var full=selection.folds.every(function(a){return a>175;});
-      scene.querySelectorAll('.fc-inspection .fc-fold-stage').forEach(function(el){el.classList.toggle('is-folded',full);});
+      overlay.querySelectorAll('.fc-inspection .fc-fold-stage').forEach(function(el){
+        el.classList.toggle('is-folded',selection.folds.every(function(a){return a>175;}));
+      });
     }
-    var target=scene.querySelector('.fc-inspection .fc-inspect-mechanical, .fc-inspection .fc-inspect-fold');
+    var target=overlay.querySelector('.fc-inspection .fc-inspect-mechanical, .fc-inspection .fc-inspect-fold');
     if(target)target.style.transform='translate('+selection.scorePanX+'px,'+selection.scorePanY+'px) scale('+selection.scoreZoom+')';
   }
-  function progress(){
+  function progress() {
     if(!isLive()||!player||!selection.open)return;
     var m=current().stages[selection.index];
-    if(Number.isFinite(player.currentTime))selection.lastTime=m.start+player.currentTime;
+    selection.lastTime=m.start+(Number(player.currentTime)||0);
     updateScore(selection.lastTime);
     if(selection.scoreInspect)updateInspect();
   }
-  function select(index){
+  function syncPlayButton(){
+    var overlay=activeOverlay();if(!overlay)return;
+    overlay.querySelectorAll('[data-fc-action="play"]').forEach(function(btn){
+      btn.textContent=selection.paused?'▶':'Ⅱ';
+      btn.setAttribute('aria-label',i18n(selection.paused?'play':'pause'));
+    });
+  }
+  function select(si,index) {
     if(!isLive())return;
-    var s=current(),i=clamp(index,0,s.stages.length-1);
+    if(selection.open)closeProjection();
     lastTrigger=document.activeElement;
-    focusCard(i,true);
-    selection.open=true;selection.paused=false;selection.scoreInspect=false;
-    var overlay=scene.querySelector('[data-fc-projection]');
-    overlay.hidden=false;scene.classList.add('is-projected');
-    scene.querySelectorAll('.fc-gallery-area,.fc-navigation,.fc-page-heading').forEach(function(el){el.inert=true;});
-    var inspect=scene.querySelector('[data-fc-inspection]');
-    inspect.hidden=true;
-    var close=scene.querySelector('[data-fc-action="close"]:not(.fc-projection-scrim)');
-    if(close)close.focus({preventScroll:true});
+    selection.series=si;
+    selection.open=true;selection.index=clamp(index,0,SERIES[si].stages.length-1);
+    selection.paused=false;selection.scoreInspect=false;
+    var overlay=activeOverlay();
+    overlay.hidden=false;
+    scene.classList.add('is-projected');
+    scene.style.overflow='hidden';
+    scene.querySelectorAll('.fc-page-heading,.fc-scroll-content').forEach(function(node){node.inert=true;});
+    focusCard(si,index,true);
+    overlay.querySelector('[data-fc-action="close"]:not(.fc-projection-scrim)')?.focus({preventScroll:true});
     loadSelected();
   }
   function loadSelected(){
     if(!isLive()||!selection.open)return;
     stopMedia();
-    var token=serial,s=current(),i=selection.index;
-    player=scene.querySelector('[data-fc-film]');
-    var status=scene.querySelector('[data-fc-film-status]');
-    var frame=scene.querySelector('.fc-film-wrap');
+    var token=serial,s=current(),i=selection.index,overlay=activeOverlay();
+    player=overlay.querySelector('[data-fc-film]');
+    var status=overlay.querySelector('[data-fc-film-status]');
+    var frame=overlay.querySelector('.fc-film-wrap');
     frame.classList.remove('has-error','has-started');
-    if(status)status.textContent=i18n('loading');
-    player.muted=selection.muted;
-    player.loop=false;
-    player.poster=s.poster;
-    player.src=source(s,i);
-    player.load();
+    status.textContent=i18n('loading');
     selection.lastTime=s.stages[i].start;
-    updateScore(selection.lastTime);
+    selection.paused=false;syncPlayButton();updateScore(selection.lastTime);
+    player.muted=selection.muted;player.loop=false;player.poster=s.poster;
+    player.src=source(s,i);player.load();
     function play(){
-      if(token!==serial || !isLive() || !selection.open)return;
-      var promise=player.play();
-      if(promise&&promise.then){
-        promise.then(function(){if(token!==serial)return;frame.classList.add('has-started');status.textContent='';selection.paused=false;syncPlayButton();})
-        .catch(function(){if(token===serial){status.textContent=i18n('play')+' ▶';selection.paused=true;syncPlayButton();}});
-      }
+      if(token!==serial||!isLive()||!selection.open)return;
+      var p=player.play();
+      if(p&&p.then)p.then(function(){
+        if(token!==serial)return;
+        frame.classList.add('has-started');
+        status.textContent='';selection.paused=false;syncPlayButton();
+      }).catch(function(){
+        if(token===serial){status.textContent=i18n('play')+' ▶';selection.paused=true;syncPlayButton();}
+      });
     }
-    var ready=function(){
-      if(token!==serial)return;
-      try{player.currentTime=0;}catch(_){}
-      play();
-    };
-    if(player.readyState>=2)ready();
-    else player.addEventListener('canplay',ready,{once:true});
+    if(player.readyState>=2)play();
+    else player.addEventListener('canplay',play,{once:true});
   }
-  function nextStage(dir){
-    if(!isLive())return;
-    var s=current(),n=selection.index+dir;
+  function nextStage(dir) {
+    if(!isLive()||!selection.open)return;
+    var n=selection.index+dir,s=current();
     if(n<0||n>=s.stages.length){
-      if(selection.open && dir>0){
+      if(dir>0){
         selection.paused=true;syncPlayButton();
-        var status=scene.querySelector('[data-fc-film-status]');
-        if(status)status.textContent=i18n('allEnd');
+        activeOverlay().querySelector('[data-fc-film-status]').textContent=i18n('allEnd');
       }
       return;
     }
-    focusCard(n,true);
-    if(selection.open)loadSelected();
+    selection.index=n;
+    focusCard(selection.series,n,true);
+    loadSelected();
   }
-  function syncPlayButton(){
-    if(!isLive())return;
-    scene.querySelectorAll('[data-fc-action="play"]').forEach(function(btn){
-      var t=selection.paused?i18n('play'):i18n('pause');
-      btn.setAttribute('aria-label',t);
-      btn.textContent=selection.paused?'▶':'Ⅱ';
-    });
-  }
-  function closeProjection(){
-    if(!isLive()||!selection.open)return;
-    stopMedia();selection.open=false;selection.scoreInspect=false;
-    scene.classList.remove('is-projected');
-    scene.querySelectorAll('.fc-gallery-area,.fc-navigation,.fc-page-heading').forEach(function(el){el.inert=false;});
-    scene.querySelector('[data-fc-projection]').hidden=true;
-    scene.querySelector('[data-fc-inspection]').hidden=true;
-    scene.querySelector('.fc-score-cluster')?.classList.remove('is-magnetic');
-    if(lastTrigger&&lastTrigger.isConnected){lastTrigger.focus({preventScroll:true});}
-    else scene.querySelector('[data-fc-card="'+selection.index+'"] button')?.focus({preventScroll:true});
-  }
-  function rebuildSeries(index){
-    if(!isLive()||selection.series===index)return;
-    stopMedia();clearPreviews();
-    selection.series=index;selection.index=0;selection.open=false;
-    selection.scoreInspect=false;selection.folds=[0,0,0];selection.lastTime=0;
-    var item=works.find(function(w){return w.slug==='ruin-garden';});
-    var old=scene;
-    var parent=old.parentNode;
-    var template=document.createElement('template');template.innerHTML=pageMarkup(item);
-    var next=template.content.querySelector('[data-fc-scene]');
-    parent.replaceChild(next,old);scene=null;
-    mount();
-  }
-  function setInspect(open){
-    if(!isLive()||!selection.open)return;
+  function setInspect(open) {
+    var overlay=activeOverlay();if(!overlay||!selection.open)return;
     selection.scoreInspect=open;
-    var overlay=scene.querySelector('[data-fc-inspection]');
-    overlay.hidden=!open;
-    if(open){selection.scoreZoom=1;selection.scorePanX=0;selection.scorePanY=0;selection.manualFrame=null;updateInspect();overlay.querySelector('button')?.focus({preventScroll:true});}
-  }
-  function wireEvents(){
-    if(!isLive())return;
-    var rail=scene.querySelector('[data-fc-rail]');
-    var strip=scene.querySelector('.fc-strip');
-    scene.addEventListener('click',function(event){
-      var node=event.target.closest('[data-fc-action]');
-      if(!node)return;
-      var action=node.dataset.fcAction;
-      if(action==='select'){select(Number(node.dataset.fcIndex));return;}
-      if(action==='series'){rebuildSeries(Number(node.dataset.fcSeries));return;}
-      if(action==='close'){closeProjection();return;}
-      if(action==='inspect'){setInspect(true);return;}
-      if(action==='stop-inspect'){setInspect(false);return;}
-      if(action==='previous'){if(selection.open)nextStage(-1);else focusCard(selection.index-1,true);return;}
-      if(action==='next'){if(selection.open)nextStage(1);else focusCard(selection.index+1,true);return;}
-      if(action==='sound'){
-        selection.muted=!selection.muted;
-        if(player)player.muted=selection.muted;
-        node.textContent=selection.muted?'♪̸':'♫';
-        node.setAttribute('aria-label',i18n(selection.muted?'sound':'mute'));return;
-      }
-      if(action==='play'&&player){
-        if(player.paused){var p=player.play();if(p&&p.catch)p.catch(function(){});selection.paused=false;}
-        else{player.pause();selection.paused=true;}
-        syncPlayButton();return;
-      }
-      if(action==='wing'){
-        var wi=Number(node.dataset.fcWingIndex);selection.folds[wi]=selection.folds[wi]>90?0:180;
-        updateInspect();return;
-      }
-      if(action==='zoom-in'||action==='zoom-out'){
-        selection.scoreZoom=clamp(selection.scoreZoom*(action==='zoom-in'?1.19:1/1.19),.7,3);updateInspect();return;
-      }
-      if(action==='reset-score'){
-        selection.folds=[0,0,0];selection.manualFrame=null;selection.scoreZoom=1;selection.scorePanX=0;selection.scorePanY=0;updateInspect();return;
-      }
-    });
-    scene.querySelector('[data-fc-slider]').addEventListener('input',function(event){
-      focusCard(Number(event.target.value),true);
-    });
-    function nearest(){
-      if(!isLive())return;
-      var center=rail.scrollLeft+rail.clientWidth/2,closest=0,diff=Infinity;
-      scene.querySelectorAll('[data-fc-card]').forEach(function(card,i){
-        var distance=Math.abs(card.offsetLeft+card.offsetWidth/2-center);
-        if(distance<diff){closest=i;diff=distance;}
-      });
-      return closest;
+    var pane=overlay.querySelector('[data-fc-inspection]');
+    pane.hidden=!open;
+    if(open){
+      selection.manualFrame=null;selection.scoreZoom=1;selection.scorePanX=0;selection.scorePanY=0;
+      updateInspect();pane.querySelector('button')?.focus({preventScroll:true});
+    }else{
+      overlay.querySelector('[data-fc-action="inspect"]')?.focus({preventScroll:true});
     }
-    rail.addEventListener('scroll',function(){
-      if(scrollFrame)return;
-      scrollFrame=requestAnimationFrame(function(){
-        scrollFrame=0;
-        var near=nearest();
-        if(!selection.open && near!==selection.index)focusCard(near,false);
-      });
-    },{passive:true});
-    var drag=null;
-    rail.addEventListener('pointerdown',function(ev){
-      if(ev.pointerType!=='mouse'||ev.button!==0)return;
-      drag={id:ev.pointerId,x:ev.clientX,left:rail.scrollLeft,moved:false};
-      rail.classList.add('is-dragging');
+  }
+  function closeProjection() {
+    if(!selection.open||!isLive())return;
+    stopMedia();
+    var overlay=activeOverlay();
+    overlay.querySelector('[data-fc-inspection]').hidden=true;
+    overlay.hidden=true;
+    overlay.querySelector('.fc-score-cluster')?.classList.remove('is-magnetic');
+    selection.open=false;selection.scoreInspect=false;
+    scene.classList.remove('is-projected');scene.style.removeProperty('overflow');
+    scene.querySelectorAll('.fc-page-heading,.fc-scroll-content').forEach(function(node){node.inert=false;});
+    if(lastTrigger?.isConnected)lastTrigger.focus({preventScroll:true});
+    else block(selection.series)?.querySelector('[data-fc-card="'+selection.index+'"] button')?.focus({preventScroll:true});
+  }
+  function nearest(si){
+    var rail=railFor(si);if(!rail)return 0;
+    var r=rail.getBoundingClientRect(),cx=r.left+r.width/2,best=0,diff=Infinity;
+    rail.querySelectorAll('[data-fc-card]').forEach(function(card,i){
+      var v=card.getBoundingClientRect(),d=Math.abs((v.left+v.right)/2-cx);
+      if(d<diff){best=i;diff=d;}
     });
-    rail.addEventListener('pointermove',function(ev){
-      if(!drag||drag.id!==ev.pointerId)return;
-      var dx=ev.clientX-drag.x;
-      if(Math.abs(dx)>7){drag.moved=true;rail.dataset.fcJustDragged='1';}
-      if(drag.moved){rail.scrollLeft=drag.left-dx;}
+    return best;
+  }
+  function wireRail(si){
+    var rail=railFor(si),root=block(si);
+    if(!rail||!root)return;
+    var physics={target:0,raf:0,timer:0,drag:null};
+    function stopPhysics(){
+      if(physics.raf){cancelAnimationFrame(physics.raf);physics.raf=0;}
+      if(physics.timer){clearTimeout(physics.timer);physics.timer=0;}
+      rail.classList.remove('is-wheel-active');
+    }
+    function snap(){
+      stopPhysics();
+      align(si,nearest(si),true);
+    }
+    function animateWheel(){
+      physics.raf=0;
+      if(!rail.isConnected)return;
+      var diff=physics.target-rail.scrollLeft;
+      rail.scrollLeft+=diff*.24;
+      if(Math.abs(diff)>.45)physics.raf=requestAnimationFrame(animateWheel);
+      else rail.scrollLeft=physics.target;
+    }
+    rail.addEventListener('wheel',function(event){
+      if(selection.open)return;
+      var dx=event.deltaX,dy=event.deltaY;
+      // Trackpad horizontal pan is native (including Safari momentum).
+      if(Math.abs(dx)>=Math.abs(dy)*.8) return;
+      if(!dy)return;
+      var scale=event.deltaMode===1?22:event.deltaMode===2?rail.clientWidth:1;
+      var move=dy*scale,atEnd=rail.scrollLeft>=rail.scrollWidth-rail.clientWidth-2;
+      var atStart=rail.scrollLeft<=2;
+      // At ends the wheel belongs to vertical page scrolling again.
+      if((move>0&&atEnd)||(move<0&&atStart))return;
+      event.preventDefault();
+      if(!physics.raf)physics.target=rail.scrollLeft;
+      rail.classList.add('is-wheel-active');
+      physics.target=clamp(physics.target+move*.94,0,Math.max(0,rail.scrollWidth-rail.clientWidth));
+      if(!physics.raf)physics.raf=requestAnimationFrame(animateWheel);
+      clearTimeout(physics.timer);
+      physics.timer=setTimeout(snap,190);
+    },{passive:false});
+    // Native touch inertia owns all touch gestures. Mouse drag is distinct.
+    rail.addEventListener('pointerdown',function(event){
+      if(event.pointerType!=='mouse'||event.button!==0)return;
+      stopPhysics();
+      physics.drag={id:event.pointerId,x:event.clientX,left:rail.scrollLeft,moved:false};
     });
-    var finishDrag=function(){
-      if(!drag)return;drag=null;rail.classList.remove('is-dragging');
-      window.setTimeout(function(){if(rail.isConnected)delete rail.dataset.fcJustDragged;},100);
-      align(nearest(),true);
-    };
+    rail.addEventListener('pointermove',function(event){
+      var drag=physics.drag;
+      if(!drag||drag.id!==event.pointerId)return;
+      var delta=event.clientX-drag.x;
+      if(Math.abs(delta)>7&&!drag.moved){
+        drag.moved=true;
+        rail.classList.add('is-dragging');
+        try{rail.setPointerCapture?.(event.pointerId);}catch(_){}
+      }
+      if(drag.moved)rail.scrollLeft=drag.left-delta;
+    });
+    function finishDrag(){
+      var drag=physics.drag;if(!drag)return;
+      physics.drag=null;rail.classList.remove('is-dragging');
+      if(drag.moved){
+        rail.dataset.fcJustDragged='1';
+        setTimeout(function(){if(rail.isConnected)delete rail.dataset.fcJustDragged;},100);
+        // A single spring-like settle, never repeated centring during a touch.
+        align(si,nearest(si),true);
+      }
+    }
     rail.addEventListener('pointerup',finishDrag);
     rail.addEventListener('pointercancel',finishDrag);
-    rail.addEventListener('click',function(ev){
-      if(rail.dataset.fcJustDragged){ev.preventDefault();ev.stopPropagation();}
+    rail.addEventListener('lostpointercapture',finishDrag);
+    rail.addEventListener('click',function(e){
+      if(rail.dataset.fcJustDragged){e.preventDefault();e.stopPropagation();}
     },true);
-    rail.addEventListener('wheel',function(ev){
-      if(selection.open)return;
-      // Keep ordinary vertical page scrolling elsewhere intact.
-      if(Math.abs(ev.deltaX)>Math.abs(ev.deltaY)*.6 || ev.shiftKey){
-        ev.preventDefault();rail.scrollLeft+=(ev.deltaX||ev.deltaY);
+    var scrollTimer=0;
+    rail.addEventListener('scroll',function(){
+      if(!scrollFrame)scrollFrame=requestAnimationFrame(function(){
+        scrollFrame=0;
+        var n=nearest(si);
+        if(n!==selection.focus[si])focusCard(si,n,false);
+      });
+      clearTimeout(scrollTimer);
+      if(!physics.raf&&!physics.drag){
+        // Only native trackpad/touch input settles after it has stopped.
+        scrollTimer=setTimeout(function(){
+          if(!selection.open&&!physics.raf&&!physics.drag&&!rail.classList.contains('is-wheel-active')){
+            align(si,nearest(si),true);
+          }
+        },210);
       }
-    },{passive:false});
-    player=scene.querySelector('[data-fc-film]');
-    player.addEventListener('timeupdate',progress);
-    player.addEventListener('ended',function(){nextStage(1);});
-    player.addEventListener('error',function(){
-      if(!selection.open)return;
-      var status=scene.querySelector('[data-fc-film-status]');
-      if(status)status.textContent=i18n('missing');
-      scene.querySelector('.fc-film-wrap').classList.add('has-error');
-      // No fake video or endless loading for clips not yet uploaded.
+    },{passive:true});
+    root.querySelector('[data-fc-slider]').addEventListener('input',function(event){
+      focusCard(si,Number(event.target.value),true);
+    });
+    rail.addEventListener('keydown',function(event){
+      if(event.key==='ArrowRight'){focusCard(si,selection.focus[si]+1,true);event.preventDefault();}
+      else if(event.key==='ArrowLeft'){focusCard(si,selection.focus[si]-1,true);event.preventDefault();}
+      else if(event.key==='Enter'){select(si,selection.focus[si]);event.preventDefault();}
+    });
+  }
+  function wireOverlay(si) {
+    var overlay=scene.querySelector('[data-fc-projection="'+si+'"]');
+    var video=overlay.querySelector('[data-fc-film]');
+    video.addEventListener('timeupdate',function(){
+      if(selection.open&&selection.series===si)progress();
+    });
+    video.addEventListener('ended',function(){
+      if(selection.open&&selection.series===si)nextStage(1);
+    });
+    video.addEventListener('error',function(){
+      if(!selection.open||selection.series!==si||video!==player)return;
+      overlay.querySelector('[data-fc-film-status]').textContent=i18n('missing');
+      overlay.querySelector('.fc-film-wrap').classList.add('has-error');
       selection.paused=true;syncPlayButton();
     });
-    var cluster=scene.querySelector('.fc-score-cluster');
+    var cluster=overlay.querySelector('.fc-score-cluster');
     cluster.addEventListener('pointerenter',function(){
       if(window.matchMedia('(hover:hover)').matches)cluster.classList.add('is-magnetic');
     });
     cluster.addEventListener('pointerleave',function(){
       cluster.classList.remove('is-magnetic');
-      cluster.style.setProperty('--fc-magnet-x','0px');cluster.style.setProperty('--fc-magnet-y','0px');
+      cluster.style.setProperty('--fc-magnet-x','0px');
+      cluster.style.setProperty('--fc-magnet-y','0px');
     });
     cluster.addEventListener('pointermove',function(ev){
       if(!cluster.classList.contains('is-magnetic'))return;
-      var rect=cluster.getBoundingClientRect(),cx=(ev.clientX-rect.left)/rect.width-.5,cy=(ev.clientY-rect.top)/rect.height-.5;
-      cluster.style.setProperty('--fc-magnet-x',(cx*9).toFixed(1)+'px');
-      cluster.style.setProperty('--fc-magnet-y',(cy*8).toFixed(1)+'px');
+      var r=cluster.getBoundingClientRect();
+      cluster.style.setProperty('--fc-magnet-x',(((ev.clientX-r.left)/r.width-.5)*9).toFixed(1)+'px');
+      cluster.style.setProperty('--fc-magnet-y',(((ev.clientY-r.top)/r.height-.5)*8).toFixed(1)+'px');
     },{passive:true});
-    var lever=scene.querySelector('[data-fc-inspect-lever]');
+    var lever=overlay.querySelector('[data-fc-inspect-lever]');
     if(lever)lever.addEventListener('input',function(){
+      if(selection.series!==si)return;
       selection.manualFrame=Number(lever.value);
-      var img=scene.querySelector('[data-fc-inspect-img]');
-      img.src=mechanicalImage(Number(lever.value));
-      img.dataset.frame=String(lever.value);
+      var img=overlay.querySelector('[data-fc-inspect-img]');
+      img.src=mechanicalImage(selection.manualFrame);
+      img.dataset.frame=String(selection.manualFrame);
     });
-    scene.querySelectorAll('.fc-inspection [data-fc-drag-wing]').forEach(function(wing){
+    overlay.querySelectorAll('.fc-inspection [data-fc-drag-wing]').forEach(function(wing){
       var wi=Number(wing.dataset.fcDragWing),start=null,deg=[0,120,-120][wi]*Math.PI/180;
       wing.addEventListener('pointerdown',function(ev){
         if(ev.pointerType==='mouse'&&ev.button!==0)return;
         start={id:ev.pointerId,x:ev.clientX,y:ev.clientY,angle:selection.folds[wi]};
-        wing.setPointerCapture?.(ev.pointerId);ev.preventDefault();
+        try{wing.setPointerCapture?.(ev.pointerId);}catch(_){}
+        ev.preventDefault();
       });
       wing.addEventListener('pointermove',function(ev){
         if(!start||ev.pointerId!==start.id)return;
@@ -538,25 +585,72 @@
         selection.folds[wi]=clamp(start.angle+(dx*Math.sin(deg)-dy*Math.cos(deg))*.8,0,180);
         updateInspect();ev.preventDefault();
       });
-      var end=function(ev){
+      var finish=function(ev){
         if(!start||(ev.pointerId!=null&&ev.pointerId!==start.id))return;
         selection.folds[wi]=selection.folds[wi]>=90?180:0;start=null;updateInspect();
       };
-      wing.addEventListener('pointerup',end);wing.addEventListener('pointercancel',end);
+      wing.addEventListener('pointerup',finish);
+      wing.addEventListener('pointercancel',finish);
     });
-    var inspectBody=scene.querySelector('.fc-inspection-body'),pan=null;
-    inspectBody.addEventListener('pointerdown',function(ev){
+    var body=overlay.querySelector('.fc-inspection-body'),pan=null;
+    body.addEventListener('pointerdown',function(ev){
       if(ev.target.closest('button,input,[data-fc-drag-wing]'))return;
       pan={id:ev.pointerId,x:ev.clientX,y:ev.clientY,px:selection.scorePanX,py:selection.scorePanY};
-      inspectBody.setPointerCapture?.(ev.pointerId);
+      try{body.setPointerCapture?.(ev.pointerId);}catch(_){}
     });
-    inspectBody.addEventListener('pointermove',function(ev){
-      if(!pan||pan.id!==ev.pointerId)return;
+    body.addEventListener('pointermove',function(ev){
+      if(!pan||ev.pointerId!==pan.id)return;
       selection.scorePanX=pan.px+ev.clientX-pan.x;
       selection.scorePanY=pan.py+ev.clientY-pan.y;updateInspect();
     });
-    inspectBody.addEventListener('pointerup',function(){pan=null;});
-    inspectBody.addEventListener('pointercancel',function(){pan=null;});
+    body.addEventListener('pointerup',function(){pan=null;});
+    body.addEventListener('pointercancel',function(){pan=null;});
+  }
+  function wireEvents(){
+    if(!isLive())return;
+    SERIES.forEach(function(_,i){wireRail(i);wireOverlay(i);});
+    scene.addEventListener('click',function(event){
+      var node=event.target.closest('[data-fc-action]');
+      if(!node)return;
+      var action=node.dataset.fcAction;
+      var si=Number(node.dataset.fcSeries);
+      if(action==='select'){
+        select(Number(node.dataset.fcSeries),Number(node.dataset.fcIndex));return;
+      }
+      if(action==='close'){closeProjection();return;}
+      if(action==='inspect'){setInspect(true);return;}
+      if(action==='stop-inspect'){setInspect(false);return;}
+      if(action==='previous'||action==='next'){
+        var dir=action==='next'?1:-1;
+        if(selection.open)nextStage(dir);
+        else focusCard(Number.isInteger(si)?si:selection.series,selection.focus[Number.isInteger(si)?si:selection.series]+dir,true);
+        return;
+      }
+      if(action==='sound'){
+        selection.muted=!selection.muted;if(player)player.muted=selection.muted;
+        node.textContent=selection.muted?'♪̸':'♫';node.setAttribute('aria-label',i18n(selection.muted?'sound':'mute'));
+        return;
+      }
+      if(action==='play'&&player){
+        if(player.paused){
+          var p=player.play();if(p&&p.catch)p.catch(function(){});
+          selection.paused=false;
+        }else{player.pause();selection.paused=true;}
+        syncPlayButton();return;
+      }
+      if(action==='wing'){
+        var wi=Number(node.dataset.fcWingIndex);
+        selection.folds[wi]=selection.folds[wi]>=90?0:180;updateInspect();return;
+      }
+      if(action==='zoom-in'||action==='zoom-out'){
+        selection.scoreZoom=clamp(selection.scoreZoom*(action==='zoom-in'?1.19:1/1.19),.7,3);updateInspect();return;
+      }
+      if(action==='reset-score'){
+        selection.folds=[0,0,0];selection.manualFrame=null;
+        selection.scoreZoom=1;selection.scorePanX=0;selection.scorePanY=0;
+        updateInspect();return;
+      }
+    });
   }
   function mount(){
     var next=document.querySelector('[data-fc-scene]');
@@ -564,11 +658,14 @@
     if(scene){stopMedia();clearPreviews();}
     scene=next;player=null;
     if(!scene)return;
-    selection.open=false;selection.scoreInspect=false;
-    selection.index=0;selection.folds=[0,0,0];
+    selection.open=false;selection.scoreInspect=false;selection.focus=[0,0];
     wireEvents();
-    focusCard(0,false);
-    requestAnimationFrame(function(){if(isLive()){align(0,false);updatePreviewPriority(0);}});
+    SERIES.forEach(function(_,si){focusCard(si,0,false);});
+    requestAnimationFrame(function(){
+      if(isLive()){
+        SERIES.forEach(function(_,si){prioritizePreviews(si,0);});
+      }
+    });
   }
   var app=document.getElementById('app');
   if(app&&'MutationObserver' in window){new MutationObserver(mount).observe(app,{childList:true,subtree:false});}
@@ -578,11 +675,10 @@
       if(selection.scoreInspect){setInspect(false);event.preventDefault();event.stopImmediatePropagation();return;}
       if(selection.open){closeProjection();event.preventDefault();event.stopImmediatePropagation();return;}
     }
-    if(event.altKey||event.ctrlKey||event.metaKey)return;
+    if(!selection.open || event.altKey||event.ctrlKey||event.metaKey)return;
     if(/INPUT|TEXTAREA|SELECT/.test(document.activeElement?.tagName||''))return;
-    if(event.key==='ArrowRight'){selection.open?nextStage(1):focusCard(selection.index+1,true);event.preventDefault();}
-    if(event.key==='ArrowLeft'){selection.open?nextStage(-1):focusCard(selection.index-1,true);event.preventDefault();}
-    if(event.key==='Enter'&&!selection.open&&document.activeElement===scene.querySelector('[data-fc-rail]'))select(selection.index);
+    if(event.key==='ArrowRight'){nextStage(1);event.preventDefault();}
+    if(event.key==='ArrowLeft'){nextStage(-1);event.preventDefault();}
   },true);
   render();
   mount();
