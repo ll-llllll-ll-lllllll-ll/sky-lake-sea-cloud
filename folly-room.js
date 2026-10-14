@@ -42,13 +42,15 @@
     en:{eyebrow:'FOLLY / FRAGMENTS',intro:'Move right. Brief views leave the unseen intervals for the mind to assemble.',hint:'SWIPE RIGHT / →',back:'Back',prev:'Previous moment',next:'Next moment',play:'Play',pause:'Pause',sound:'Sound on',mute:'Mute',score:'Score',close:'Close score',reset:'Reset',scoreI:'Drag the lever through fifteen mechanical-score frames. In the film, the score runs from last to first.',scoreII:'Drag the three triangular wings, or tap their numbers to fold and unfold.',loading:'Preparing the moment',unavailable:'This moment cannot be loaded. View the original film instead.',original:'Original film',step:'Moment'},
     ja:{eyebrow:'フォリー / 断片',intro:'右へ滑る。短い場面と場面のあいだにある見えない時間を、心の中でつなぎ合わせてゆく。',hint:'右にスワイプ / →',back:'戻る',prev:'前の瞬間',next:'次の瞬間',play:'再生',pause:'一時停止',sound:'音声',mute:'消音',score:'楽譜',close:'楽譜を閉じる',reset:'リセット',scoreI:'レバーを動かし、十五枚の機械楽譜を検視する。映像とともに最終フレームから最初へ進む。',scoreII:'三つの三角翼をドラッグするか、番号を押して折り畳み／展開する。',loading:'映像を準備中',unavailable:'この場面を読み込めません。元の映像をご覧ください。',original:'元の映像',step:'瞬間'}
   };
+  var scoreMobile=window.matchMedia('(max-width: 600px)').matches;
   var scoreIUrls = Array.from({length:15},function(_,i){
-    return ARCHIVE+'attachments/effluent-sedimentation/score-1-'+(i+1)+'.webp';
+    return ARCHIVE+(scoreMobile?'assets/mobile-score/effluent-sedimentation/':'attachments/effluent-sedimentation/')+'score-1-'+(i+1)+'.webp';
   });
   var foldBase = ARCHIVE+'attachments/aether-scorched-earth/';
   var seriesIndex = 0, currentIndex = 0, controller = null, scoreOpened = false;
   var activeRoot = null, freezeScore = false, foldAngles = [0,0,0];
-  var lastProgress = 0, soundOn = false, lastFocus = null, resizeObserver = null;
+  var lastProgress = 0, soundOn = false, lastFocus = null;
+  var scoreZoom=1, scorePanX=0, scorePanY=0, scoreImagesPrimed=false;
 
   function lang(){return COPY[state.lang] ? state.lang : 'zh';}
   function t(key){return COPY[lang()][key];}
@@ -130,7 +132,7 @@
            )+
           '</div>'+
           '<div class="folly-score-footer"><p>'+h(t(f.score==='mechanical'?'scoreI':'scoreII'))+'</p>'+
-          '<button type="button" data-folly-control="reset-score">'+h(t('reset'))+' ↺</button></div>'+
+          '<div class="folly-score-transform-actions"><button type="button" data-folly-control="zoom-out" aria-label="Zoom out">−</button><button type="button" data-folly-control="zoom-in" aria-label="Zoom in">+</button><button type="button" data-folly-control="reset-score">'+h(t('reset'))+' ↺</button></div></div>'+
         '</div>'+
       '</div>';
   }
@@ -170,6 +172,16 @@
     if(image && image.dataset.frame!==String(frame)){image.src=scoreIUrls[frame-1];image.dataset.frame=String(frame);}
     if(lever && document.activeElement!==lever)lever.value=frame;
     if(label)label.textContent=pad(frame)+' / 15';
+  }
+  function transformScore() {
+    if(!activeRoot)return;
+    var target=activeRoot.querySelector('.folly-score-art .folly-mechanical, .folly-score-art .folly-fold-space');
+    if(target)target.style.transform='translate('+scorePanX+'px,'+scorePanY+'px) scale('+scoreZoom+')';
+  }
+  function primeMechanicalScore(){
+    if(scoreImagesPrimed || series().score!=='mechanical')return;
+    scoreImagesPrimed=true;
+    scoreIUrls.forEach(function(url){var img=new Image();img.decoding='async';img.src=url;});
   }
   function reflectFolds(){
     if(!activeRoot)return;
@@ -290,12 +302,14 @@
     lastFocus=document.activeElement;
     scoreOpened=true;
     freezeScore=false;
+    primeMechanicalScore();
     pauseAll();
     var overlay=activeRoot.querySelector('[data-folly-overlay]');
     overlay.hidden=false;
     activeRoot.classList.add('is-score-open');
     reflectFolds();
     setScoreProgress(lastProgress);
+    transformScore();
     var close=overlay.querySelector('[data-folly-control="close-score"]');
     if(close)close.focus({preventScroll:true});
   }
@@ -312,6 +326,7 @@
     pauseAll();
     seriesIndex=index; currentIndex=0; freezeScore=false;scoreOpened=false;
     foldAngles=[0,0,0];soundOn=false;lastProgress=0;
+    scoreZoom=1;scorePanX=0;scorePanY=0;
     var fresh=document.createElement('div');
     fresh.className='folly-cinema';
     fresh.setAttribute('data-folly-root','');
@@ -357,7 +372,10 @@
       if(op==='next')jump(1);
       if(op==='score')openScore();
       if(op==='close-score')closeScore();
+      if(op==='zoom-in'){scoreZoom=clamp(scoreZoom*1.18,0.7,2.8);transformScore();}
+      if(op==='zoom-out'){scoreZoom=clamp(scoreZoom/1.18,0.7,2.8);transformScore();}
       if(op==='reset-score'){
+        scoreZoom=1;scorePanX=0;scorePanY=0;transformScore();
         if(series().score==='mechanical'){freezeScore=false;setScoreProgress(lastProgress);}
         else{foldAngles=[0,0,0];reflectFolds();}
       }
@@ -423,6 +441,26 @@
       el.addEventListener('pointerup',finish);
       el.addEventListener('pointercancel',finish);
     });
+    var art=root.querySelector('.folly-score-art'), drag=null;
+    art.addEventListener('wheel',function(ev){
+      if(!scoreOpened)return;
+      ev.preventDefault();
+      scoreZoom=clamp(scoreZoom*(ev.deltaY>0?.92:1.08),.7,2.8);
+      transformScore();
+    },{passive:false});
+    art.addEventListener('pointerdown',function(ev){
+      if(!scoreOpened || ev.target.closest('[data-fold-grab], [data-folly-lever], button'))return;
+      drag={id:ev.pointerId,x:ev.clientX,y:ev.clientY,px:scorePanX,py:scorePanY};
+      try{art.setPointerCapture(ev.pointerId);}catch(_){}
+    });
+    art.addEventListener('pointermove',function(ev){
+      if(!drag || drag.id!==ev.pointerId)return;
+      scorePanX=drag.px+ev.clientX-drag.x;
+      scorePanY=drag.py+ev.clientY-drag.y;
+      transformScore();
+    });
+    art.addEventListener('pointerup',function(){drag=null;});
+    art.addEventListener('pointercancel',function(){drag=null;});
     var overlay=root.querySelector('[data-folly-overlay]');
     overlay.addEventListener('click',function(ev){if(ev.target===overlay)closeScore();});
     // Begin playback only after the browser has laid out the horizontal track.
