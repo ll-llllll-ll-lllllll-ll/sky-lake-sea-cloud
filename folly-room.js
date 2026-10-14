@@ -284,11 +284,14 @@
     var panel=video.closest('.folly-moment');
     if(!panel || Number(panel.dataset.follyMoment)!==currentIndex)return;
     var m=series().moments[currentIndex];
-    if(video.currentTime>=m.end-0.1){
-      try{video.currentTime=m.time;}catch(_){}
+    var actualDuration=Number.isFinite(video.duration)?video.duration:m.end;
+    var stop=Math.min(m.end,actualDuration-0.08);
+    var restart=Math.min(m.time,Math.max(0,stop-0.5));
+    if(video.currentTime>=stop-0.1){
+      try{video.currentTime=restart;}catch(_){}
       if(!video.paused)attemptPlay(video,panel);
     }
-    setScoreProgress(progressFromTime(clamp(video.currentTime,m.time,m.end)));
+    setScoreProgress(progressFromTime(clamp(video.currentTime,restart,stop)));
   }
   function jump(step) {
     if(!activeRoot)return;
