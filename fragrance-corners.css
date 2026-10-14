@@ -1,0 +1,62 @@
+/* Corners of the Hall of Fragrance — photographs appear inside the essay. */
+.fragrance-room .fragrance-lead {
+  min-height: 64svh;
+  padding-bottom: 11vh;
+}
+.fragrance-room .fragrance-lead .room-intro {
+  max-width: 760px;
+  width: min(760px, 78vw);
+}
+.fragrance-room .fragrance-gallery-in-essay {
+  margin: 0 0 clamp(70px, 12vh, 130px);
+}
+.fragrance-room .fragrance-essay {
+  width: min(760px, calc(100vw - 48px));
+  margin: 0 auto clamp(78px, 13vh, 150px);
+  font-family: var(--serif);
+  font-size: clamp(15px, 1.22vw, 18px);
+  font-weight: 400;
+  line-height: 2.04;
+  letter-spacing: .022em;
+  color: rgba(23,24,19,.82);
+}
+.fragrance-room .fragrance-essay p { margin:0; }
+.fragrance-room .fragrance-essay p + p { margin-top: 1.55em; }
+.fragrance-room .fragrance-gallery-in-essay .fragrance-frame figcaption {
+  justify-content:flex-end;
+}
+.fragrance-room .fragrance-final-quote {
+  width: min(760px, calc(100vw - 48px));
+  margin: 0 auto clamp(120px, 17vh, 220px);
+  padding: 33px 0 0;
+  border-top: 1px solid rgba(23,24,19,.14);
+  font-family:var(--serif);
+  font-size:clamp(14px,1.14vw,17px);
+  font-weight:300;
+  line-height:2.02;
+  letter-spacing:.025em;
+  color:rgba(23,24,19,.59);
+}
+.fragrance-room .fragrance-final-quote p {margin:0;}
+@media (max-width:760px) {
+  .fragrance-room .fragrance-lead {
+    min-height: 58svh;
+    padding-bottom: 9vh;
+  }
+  .fragrance-room .fragrance-lead .room-intro { width:100%; max-width:100%; }
+  .fragrance-room .fragrance-gallery-in-essay {margin-bottom: 10vh;}
+  .fragrance-room .fragrance-essay {
+    width:calc(100vw - 42px);
+    margin-bottom: 10vh;
+    font-size: 15px;
+    line-height:1.95;
+  }
+  .fragrance-room .fragrance-essay p + p {margin-top:1.55em;}
+  .fragrance-room .fragrance-final-quote {
+    width:calc(100vw - 42px);
+    margin-bottom: 13vh;
+    padding-top:25px;
+    font-size:14px;
+    line-height:1.92;
+  }
+}
