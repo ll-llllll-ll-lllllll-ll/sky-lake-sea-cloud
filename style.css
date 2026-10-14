@@ -2995,3 +2995,11 @@ body {
     line-height:1.97;
   }
 }
+
+/* Revised seawater memory: retain the author's two paragraph breaks. */
+.room-view[data-room="seawater"] .seawater-memory-chapter .room-intro + .room-intro {
+  margin-top:1.45em;
+}
+.room-view[data-room="seawater"] .seawater-memory-chapter > .room-intro-stack {
+  margin-bottom:0;
+}

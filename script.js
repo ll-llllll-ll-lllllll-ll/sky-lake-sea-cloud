@@ -128,6 +128,21 @@ const works = [
   }
 ];
 
+const seawaterMemoryText = {
+  "zh": [
+    "起点是一段悬置在真实与虚构之间的童年记忆：大约十一岁时，我记得在楼梯下的角落看见一个正在漏水的吨桶，并隐约听见一句“55个海洋的海水”的话。多年后再回头查询，我找不到任何相关记录。我不知道这段记忆究竟真实发生过，还是在漫长的回想中被重新拼接出来。也许当时真的有这样一件作品；也许只是路过的人对一缸水的过度解读。奇怪的是，当它多年后突然重新回到脑海里，我越想确认它，它反而越显得不真实。",
+    "一边担心原始记忆会随着时间彻底消失，一边又担心任何试图把它画下来、做出来、命名出来的动作，都会替换掉那段记忆本身。于是我将这段无法被证实的记忆用朦胧的画记录了下来。"
+  ],
+  "en": [
+    "The starting point is a childhood memory suspended between reality and fiction: at about eleven, I remember seeing a leaking tote tank in a corner beneath the stairs, and vaguely hearing someone say, “seawater from 55 oceans.” Years later, when I tried to look it up, I could find no record of it. I do not know whether this memory ever happened as I recall it, or whether it was pieced together anew over years of remembering. Perhaps there really was such a work; perhaps a passer-by had simply read too much into a tank of water. Strangely, when the memory suddenly returned to me many years later, the more I tried to confirm it, the less real it seemed.",
+    "I feared that the original memory would disappear entirely with time, yet also feared that any attempt to paint it, make it, or give it a name would replace the memory itself. So I recorded this unverifiable memory in a hazy painting."
+  ],
+  "ja": [
+    "始まりは、現実と虚構のあいだに宙づりになった幼い頃の記憶である。十一歳くらいのとき、階段下の隅で水の漏れているトートタンク（大型液体コンテナ）を見かけ、「55の海の海水」という言葉をぼんやり耳にした覚えがある。何年もたってから調べ直しても、関連する記録は何も見つからなかった。この記憶が本当にあった出来事なのか、それとも長い歳月の回想のなかでつなぎ直されたものなのか、私には分からない。実際にそういう作品があったのかもしれないし、通りすがりの誰かが一槽の水を深読みしただけなのかもしれない。奇妙なのは、何年も後になって突然その記憶がよみがえったとき、確かめようとするほどかえって現実味を失っていったことだ。",
+    "もとの記憶が時間とともにすっかり消えてしまうことを恐れる一方で、それを描き、形にし、名づけようとする行為が、その記憶そのものを置き換えてしまうことも恐れていた。そこで私は、確かめようのないその記憶を、ぼんやりとした絵に留めることにした。"
+  ]
+};
+
 const collections = [
   {
     slug: "ruin-atlas",
@@ -221,11 +236,7 @@ const collections = [
     slug: "seawater",
     group: "collection",
     title: { zh: "collection of (all) oceans and seas", en: "collection of (all) oceans and seas", ja: "collection of (all) oceans and seas" },
-    intro: {
-      zh: "从不同海岸留下少量海水。地点、日期、容器与水本身一起构成记录；它们并不试图证明什么，只保存曾经抵达过的一小部分海。",
-      en: "Small amounts of seawater kept from different coasts. Place, date, vessel and water form the record together; they prove nothing, but keep a small part of a sea once reached.",
-      ja: "異なる海岸から少量の海水を残す。場所、日付、容器、水そのものが一つの記録になる。何かを証明するためではなく、かつて辿り着いた海の小さな一部を保存する。"
-    },
+    intro: seawaterMemoryText,
     images: []
   },
   {
@@ -1078,7 +1089,6 @@ function renderSeawaterSpaceTimeChart(item) {
       close: "汇聚",
       open: "展开",
       note: "页面滚动：空间轴的视角改变　／　拖动滑条：时间切面的间距改变。",
-      essay: "随着页面的滚动，空间轴的透视逐渐改变，使空间的变化成为可见之物；拉开时间轴，不同时刻的海水又沿着时间彼此分离。然而，对我而言，海水承载的记忆远比其物质本身，甚至比收集的行为更重要。空间与时间在这里并没有明确的界线，正如这一缸混合的海水。每当取出一滴、打开瓶盖闻一闻，或只是偶然想起它，来自不同地点与时刻的记忆便重新汇聚成一幅复杂而淳朴的图景。",
       demo: "示意定位 · 采样地点与时间尚待实际名录核对"
     },
     en: {
@@ -1088,7 +1098,6 @@ function renderSeawaterSpaceTimeChart(item) {
       close: "gather",
       open: "unfold",
       note: "Scroll to shift the spatial projection; move the bar to widen the intervals between moments.",
-      essay: "As the page moves, the spatial axes change perspective, making the variation of space visible. Pull the time axis apart, and the waters from different moments move away from one another. Yet the memory seawater carries matters more to me than its substance, or even the act of collecting it. Space and time have no firm boundary here, much like the water mixed in a single tank. Take out a drop, open a bottle to smell it, or simply remember it: places and moments gather again into one picture, at once intricate and plain.",
       demo: "Diagrammatic locations · sample coordinates and dates await verification"
     },
     ja: {
@@ -1098,7 +1107,6 @@ function renderSeawaterSpaceTimeChart(item) {
       close: "集約",
       open: "展開",
       note: "ページをスクロールすると空間軸の投影が変わり、バーを動かすと時間の断面の間隔が広がる。",
-      essay: "ページをスクロールすると空間軸の遠近が変わり、空間の変化が目に見えるようになる。時間軸を引き広げれば、異なる時に採られた海水は時間に沿って離れていく。それでも私にとって、海水が抱える記憶は、その物質そのものよりも、集める行為よりも重要である。ここでは空間と時間の境界が曖昧になる。一つの水槽に混ざり合った海水のように。一滴を取り出すとき、蓋を開けて匂いを嗅ぐとき、あるいはふと思い出すとき、異なる場所と時刻の記憶は再び集まり、複雑でありながら素朴な景色となる。",
       demo: "図式上の位置 · 採集地点と日付は実際の記録との照合待ち"
     }
   };
@@ -1126,20 +1134,19 @@ function renderSeawaterSpaceTimeChart(item) {
       '</div>' +
     '</div>' +
     '<p class="seawater-space-time-note">' + escapeHtml(t.note) + '</p>' +
-    '<p class="seawater-space-time-essay">' + escapeHtml(t.essay) + '</p>' +
     '<p class="seawater-chart-prototype">' + escapeHtml(t.demo) + '</p>' +
   '</section>';
 }
 
 /*
   Seawater's reading sequence grows from the two original artworks:
-  painting → remembered scene → tank → vessel → time/space chart → later notes.
-  Preserve the existing image viewer, captions, multilingual notes and chart.
+  painting → two memory paragraphs → tank → vessel → time/space chart.
+  Preserve the existing image viewer, captions, chart and brief annotations.
 */
 const seawaterVesselDescription = {
-  zh: "tote tank（吨桶）的形体一直使我着迷。它的标准化与普遍性，让这种容器出现在世界各地，盛放过彼此迥异的液体。那种方正又庞大的样貌，使我想到一枚现代的帆船符号：单凭外形，便仿佛带着一种什么地方都去过、什么东西都装过的能力与经验。“吨”这个称呼连同它巨大的体量，又让这种能力隐约带上了野心。只不过在这里，海水从船舱外来到了舱内。我借用这个现成的形体，让那段无法证实的回忆继续有一个可以寄存的地方。",
-  en: "I have long been drawn to the form of the tote tank. Its standardisation and ubiquity allow it to appear almost anywhere in the world, carrying liquids of very different kinds. That enormous, matter-of-fact shape strikes me as a contemporary emblem of the sailing ship: it seems, by its very appearance, to have been everywhere and to have held everything. The suggestion of a tonne in its name, and the scale of its body, lend that capacity a certain ambition. Here, however, the seawater has moved from outside the hull to within it. I have borrowed this familiar form to give an unverifiable memory somewhere to remain.",
-  ja: "私はずっと、tote tank（トートタンク／大型液体コンテナ）の形に惹かれてきた。規格化され、世界中に普及したこの容器は、土地を問わず現れ、性質の異なるさまざまな液体を収めてきた。その四角く巨大な姿は、私には現代の帆船の記号のように見える。どこへでも行き、あらゆるものを積んできたかのような、能力と経験を形そのものが語っている。「トン」という重量の響きとその大きな量塊は、そこに幾分の野心さえ与える。ただしここでは、海水は船体の外から内へ移された。私はこの既製の形を借り、確かめることのできない記憶を、なお留めておく場所にした。"
+  "zh": "吨桶的形体一直使我着迷。它的标准化与普遍性，让这种容器出现在世界各地，盛放过彼此迥异的液体。那种圆润又方正、庞大又结实的样貌，使我想到一枚“现代漂流瓶”的符号：单凭外形，便仿佛带着一种什么地方都去过、什么东西都装过的经验，只不过在这里，海水从船舱外来到了舱内。“吨”这个称呼连同它巨大的体量，又让这种能力隐约带上了野心，仿佛始终带着“你尽管带海水回来装”的态度。于是，我借用这个现成的形体，让那段无法证实的回忆继续有一个可以寄存的地方，随后慢慢变成了一项持续至今的海水收集。",
+  "en": "The form of the tote tank has always fascinated me. Its standardisation and ubiquity mean that this kind of container appears all over the world, holding liquids of widely different kinds. Rounded yet square, enormous yet sturdy, it strikes me as the emblem of a “modern message in a bottle”: from its appearance alone, it seems to carry the experience of having been everywhere and held everything. Only here, the seawater has passed from outside the hull into its hold. The word “tonne” and the tank’s immense size lend that capacity a faint ambition, as though it were forever saying, “Bring back as much seawater as you like; I’ll hold it.” So I borrowed this ready-made form to give that unverifiable memory somewhere to remain. Gradually, it became a collection of seawater that continues to this day.",
+  "ja": "トートタンク（大型液体コンテナ）の形には、ずっと心を惹かれてきた。規格化され、広く普及しているからこそ、世界のさまざまな場所に現れ、互いにまったく異なる液体を入れてきた。丸みがありながら四角く、大きく頑丈な姿は、私には「現代の漂流瓶」の記号のように思える。その形だけで、どこへでも行き、何でも入れてきた経験をまとっているように見える。ただしここでは、海水は船倉の外から内へと移されている。「トン」という呼び名と巨大な容量は、その力にどこか野心めいたものまで与えている。「海水ならいくらでも持ち帰って入れればいい」とでも言いたげな態度だ。私はその既製の形を借りて、証明できない記憶がなお身を寄せられる場所をつくった。やがてそれは、今も続く海水の採集へと少しずつ変わっていった。"
 };
 
 function rearrangeSeawaterStory(markup) {
@@ -1151,9 +1158,8 @@ function rearrangeSeawaterStory(markup) {
 
   var lead = scroll.querySelector(".room-lead");
   var frames = scroll.querySelectorAll(".room-image");
-  var notes = scroll.querySelector(".room-notes");
   var chart = scroll.querySelector(".seawater-space-time");
-  if (!lead || frames.length < 2 || !notes || !chart) return markup;
+  if (!lead || frames.length < 2 || !chart) return markup;
 
   var memoryPainting = frames[0], toteArtwork = frames[1];
   memoryPainting.classList.add("seawater-memory-painting");
@@ -1161,11 +1167,9 @@ function rearrangeSeawaterStory(markup) {
 
   // A painting before any prose: the introductory memory follows it.
   var introduction = lead.querySelector(".room-intro-stack, .room-intro");
-  var memoryNote = notes.querySelector(".room-note");
   var memoryChapter = document.createElement("section");
   memoryChapter.className = "seawater-memory-chapter";
   if (introduction) memoryChapter.appendChild(introduction);
-  if (memoryNote) memoryChapter.appendChild(memoryNote);
   memoryPainting.insertAdjacentElement("afterend", memoryChapter);
 
   // The tank opens a second phase, followed by its own short essay.
@@ -1177,8 +1181,8 @@ function rearrangeSeawaterStory(markup) {
   vesselEssay.appendChild(paragraph);
   toteArtwork.insertAdjacentElement("afterend", vesselEssay);
 
-  // Keep the chart's own essay immediately under its interactive diagram.
-  // Materialisation and Ship of Fools remain intact as the final notes.
+  // Keep the artwork captions and chart controls / provenance annotations,
+  // without the old long-form essays.
   return template.innerHTML;
 }
 
@@ -1512,11 +1516,7 @@ render();
       en: "collection of (all) oceans and seas",
       ja: "collection of (all) oceans and seas"
     };
-    seawater.intro = {
-      zh: "起点是一段悬置在真实与虚构之间的童年记忆：大约十一岁时，我记得在一座美术馆的角落看见一个正在漏水的 tote tank，并听见一句“55个海洋的海水”。多年后再回头查询，我找不到任何相关记录。于是这段无法被证实的记忆，慢慢变成了一项持续至今的海水收集。",
-      en: "The collection begins with a childhood memory suspended between fact and fiction. At about eleven, I remember a leaking tote tank in the corner of a museum and the phrase “water from 55 oceans.” Years later I could find no record of it. That unverifiable fragment gradually became an ongoing collection of seawater.",
-      ja: "このコレクションの起点は、現実と虚構のあいだに宙づりになった幼少期の記憶である。十一歳頃、美術館の隅で水の漏れる tote tank を見て、「55の海の海水」という言葉を聞いた記憶がある。何年も後に調べ直しても、関連する記録は何も見つからなかった。その確かめようのない断片が、現在まで続く海水採集へと少しずつ変わっていった。"
-    };
+    seawater.intro = seawaterMemoryText;
     seawater.images = [
       {
         src: "./collection/oceans-and-seas/memory.jpeg",
@@ -1537,59 +1537,8 @@ render();
         }
       }
     ];
-    seawater.notes = [
-      {
-        title: { zh: "55个海洋", en: "55 oceans", ja: "55の海" },
-        body: {
-          zh: [
-            "我不知道这段记忆究竟真实发生过，还是在漫长的回想中被重新拼接出来。也许当时真的有这样一件作品；也许只是路过的人对一缸水的过度解读，被十一岁的我无意听见；也可能还有别的来源。奇怪的是，当它多年后突然重新回到脑海里，我越想确认它，它反而越显得不真实。",
-            "它因此变成了一场关于媒介的恐惧：一边担心原始记忆会随着时间彻底消失，一边又担心任何试图把它画下来、做出来、命名出来的动作，都会替换掉那段记忆本身。重要的东西不再只是“它到底有没有发生过”，而是记忆一旦需要媒介才能继续存在，就不可避免地开始被媒介改变。"
-          ],
-          en: [
-            "I do not know whether the memory actually happened or was gradually reassembled through years of recollection. Perhaps such a work existed; perhaps I overheard a passer-by over-interpreting an ordinary tank of water; perhaps there was another source entirely. The stranger part is that the more I tried to verify the memory after it returned years later, the less real it began to feel.",
-            "It became a form of media anxiety: fear that the original memory might disappear with time, paired with fear that every attempt to paint, build or name it would replace the memory itself. The question is no longer only whether it happened. Once memory needs a medium in order to persist, the medium inevitably begins to alter it."
-          ],
-          ja: [
-            "この記憶が本当に起きたことなのか、それとも長い回想のなかで少しずつ組み替えられたものなのか、私には分からない。本当にそのような作品があったのかもしれないし、通りすがりの誰かが一槽の水を過剰に解釈した言葉を、十一歳の私が偶然聞いただけなのかもしれない。別の可能性もある。奇妙なのは、何年も後に記憶が突然戻ってきて、確かめようとすればするほど、それが現実から遠ざかって見えたことだった。",
-            "それはやがて、メディアに対する二重の不安になった。原初の記憶が時間とともに完全に消えることへの恐れと、それを描き、つくり、名づけようとする行為そのものが記憶を置き換えてしまうことへの恐れである。問題はもはや「本当に起きたか」だけではない。記憶が存続するために媒体を必要とした瞬間、媒体は必ず記憶を変え始める。"
-          ]
-        }
-      },
-      {
-        title: { zh: "物质化", en: "materialisation", ja: "物質化" },
-        body: {
-          zh: [
-            "于是我没有试图制作一个完美的复制品。材料在手工过程中留下的偏差、接缝与不完整，更接近我对记忆本身的认识：记忆从来不是无损保存的文件，而是一件每次被取出时都会重新生成的东西。瑕疵不是为了制造怀旧，而是承认重述本身就会带来变形。",
-            "从2019年开始，我把在不同地方遇见的海水一点点留下。那些真实的水样和那句无法证实的“55个海洋”形成一种镜像关系——它们不是对童年记忆的复制，而是一种迟到的回应。"
-          ],
-          en: [
-            "I therefore did not try to manufacture a perfect replica. Deviations, seams and incompleteness left by making are closer to how I understand memory itself: not a lossless file, but something regenerated each time it is retrieved. Imperfection is not used to simulate nostalgia; it acknowledges that retelling always produces distortion.",
-            "Since 2019 I have kept small samples of seawater from different places. These actual waters form a mirror relation with the unverifiable phrase “55 oceans.” They do not reproduce the childhood memory; they answer it belatedly."
-          ],
-          ja: [
-            "だから私は、完全な複製をつくろうとはしなかった。手作業の過程で残るずれ、継ぎ目、不完全さのほうが、記憶そのものについての私の理解に近い。記憶は劣化せず保存されるファイルではなく、取り出されるたびに生成し直されるものだ。瑕疵はノスタルジーを演出するためではなく、語り直すこと自体が変形を生むと認めるためにある。",
-            "2019年から、私は異なる土地で出会った海水を少しずつ残してきた。それらの実在する水と、確かめることのできない「55の海」という言葉は鏡像のような関係を結ぶ。童年の記憶を複製するのではなく、遅れて返す応答である。"
-          ]
-        }
-      },
-      {
-        title: { zh: "愚人船号", en: "Ship of Fools", ja: "愚人船号" },
-        body: {
-          zh: [
-            "“愚人船号”把这种无法被证实的记忆继续推向真实世界。在构想中，它携带自2019年以来收集的各地海水，让这些样本随着洋流继续移动。中世纪的愚人船载着无法被理解的人驶向未知；这里的船则载着一段无法被证明的记忆，进入同样没有明确终点的航行。",
-            "到这里，真实性反而不再是唯一的重点。更重要的是，一段记忆如何因为不断被回想、怀疑、绘画、收集和重述而获得新的生命。它没有被“还原”，而是在时间里持续生成。"
-          ],
-          en: [
-            "The Ship of Fools extends this unverifiable memory back into the physical world. In the proposal, it carries seawater gathered since 2019 and lets the samples continue moving with ocean currents. The medieval ship of fools carried those who could not be understood toward the unknown; this vessel carries an unprovable memory into a journey without a necessary destination.",
-            "At that point authenticity is no longer the only question. What matters is how a memory acquires another life through recollection, doubt, painting, collecting and retelling. It is not restored. It keeps being generated through time."
-          ],
-          ja: [
-            "「愚人船号」は、この証明できない記憶をもう一度物理的な世界へ押し出す構想である。2019年以降に集めた各地の海水を載せ、サンプルを海流とともに移動させる。中世の愚人船が理解されない者たちを未知へ運んだのなら、ここでの船は証明できないひとつの記憶を、同じように明確な終点を必要としない航海へ運ぶ。",
-            "ここでは、真実性だけが中心ではなくなる。重要なのは、記憶が回想され、疑われ、描かれ、採集され、語り直されることで、どのように別の生命を得るかということだ。それは「復元」されるのではなく、時間のなかで生成され続ける。"
-          ]
-        }
-      }
-    ];
+    // Keep artwork captions and the chart's annotations, without older essays.
+    seawater.notes = [];
 
     // Prototype points for the time/space chart. Replace these with the actual
     // seawater ledger once the complete list of ~20 samples is ready.
