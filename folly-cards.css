@@ -89,7 +89,7 @@
   display:flex; align-items:center;
   min-height:100%; width:max-content;
   gap:clamp(14px,3vw,51px);
-  margin:0; padding:24px calc((100vw - var(--fc-card-width))/2);
+  margin:0; padding:24px calc((100vw - var(--fc-card-width))/2) 24px clamp(20px,6vw,100px);
   list-style:none;
 }
 .fc-card {
@@ -493,7 +493,7 @@
   .fc-series-tabs button small{font-size:8px;max-width:82px;}
   .fc-instruction{font-size:11px;line-height:1.55;}
   .fc-rail{scroll-padding-inline:calc((100vw - var(--fc-card-width))/2);}
-  .fc-strip{gap:22px;padding-block:23px;padding-inline:calc((100vw - var(--fc-card-width))/2);}
+  .fc-strip{gap:22px;padding-block:23px;padding-left:17px;padding-right:calc((100vw - var(--fc-card-width))/2);}
   .fc-card-copy{margin-top:9px;}
   .fc-card-count{font-size:20px;}
   .fc-navigation{height:71px;padding:9px 13px;gap:11px;}
