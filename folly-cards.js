@@ -47,7 +47,7 @@
   var FILES_I=Array.from({length:15},function(_,i){return ARCHIVE+'attachments/effluent-sedimentation/score-1-'+(i+1)+'.webp';});
   var FILES_I_MOBILE=Array.from({length:15},function(_,i){return ARCHIVE+'assets/mobile-score/effluent-sedimentation/score-1-'+(i+1)+'.webp';});
   var FOLD_BASE=ARCHIVE+'attachments/aether-scorched-earth/';
-  var selection={series:0,index:0,open:false,muted:true,paused:false,scoreInspect:false,scoreZoom:1,scorePanX:0,scorePanY:0,folds:[0,0,0],lastTime:0};
+  var selection={series:0,index:0,open:false,muted:true,paused:false,scoreInspect:false,scoreZoom:1,scorePanX:0,scorePanY:0,folds:[0,0,0],lastTime:0,manualFrame:null};
   var scene=null,player=null,serial=0,queue=[],previewInFlight=0,previewComplete=new Set(),mountedToken=0;
   var io=null,scrollFrame=0,playRaf=0,hoverRAF=0,lastTrigger=null,resizeTimer=0;
 
@@ -217,15 +217,17 @@
       if(!card || previewComplete.has(next))continue;
       previewComplete.add(next);previewInFlight++;
       var v=card.querySelector('video'), token=mountedToken,settled=false;
+      var watchdog=window.setTimeout(function(){release(false);},14000);
       var release=function(success){
         if(settled)return;
         settled=true;
+        window.clearTimeout(watchdog);
         v.removeEventListener('loadedmetadata',onMeta);
         v.removeEventListener('seeked',onSeek);
         v.removeEventListener('error',onError);
         if(token!==mountedToken)return;
         if(success)card.classList.add('has-frame');
-        else card.classList.add('has-poster-fallback');
+        else {card.classList.add('has-poster-fallback');try{v.removeAttribute('src');v.load();}catch(_){}}
         previewInFlight=Math.max(0,previewInFlight-1);
         processPreviews();
       };
@@ -284,7 +286,7 @@
     if(!isLive())return;
     var s=current();
     if(s.kind==='linear'){
-      var frame=sourceScoreFrame(selection.lastTime/s.endTime),lever=scene.querySelector('[data-fc-inspect-lever]');
+      var frame=selection.manualFrame==null?sourceScoreFrame(selection.lastTime/s.endTime):selection.manualFrame,lever=scene.querySelector('[data-fc-inspect-lever]');
       var img=scene.querySelector('[data-fc-inspect-img]');
       if(img&&img.dataset.frame!==String(frame)){img.src=mechanicalImage(frame);img.dataset.frame=String(frame);}
       if(lever && document.activeElement!==lever)lever.value=frame;
@@ -400,7 +402,7 @@
     selection.scoreInspect=open;
     var overlay=scene.querySelector('[data-fc-inspection]');
     overlay.hidden=!open;
-    if(open){selection.scoreZoom=1;selection.scorePanX=0;selection.scorePanY=0;updateInspect();overlay.querySelector('button')?.focus({preventScroll:true});}
+    if(open){selection.scoreZoom=1;selection.scorePanX=0;selection.scorePanY=0;selection.manualFrame=null;updateInspect();overlay.querySelector('button')?.focus({preventScroll:true});}
   }
   function wireEvents(){
     if(!isLive())return;
@@ -436,7 +438,7 @@
         selection.scoreZoom=clamp(selection.scoreZoom*(action==='zoom-in'?1.19:1/1.19),.7,3);updateInspect();return;
       }
       if(action==='reset-score'){
-        selection.folds=[0,0,0];selection.scoreZoom=1;selection.scorePanX=0;selection.scorePanY=0;updateInspect();return;
+        selection.folds=[0,0,0];selection.manualFrame=null;selection.scoreZoom=1;selection.scorePanX=0;selection.scorePanY=0;updateInspect();return;
       }
     });
     scene.querySelector('[data-fc-slider]').addEventListener('input',function(event){
@@ -515,6 +517,7 @@
     },{passive:true});
     var lever=scene.querySelector('[data-fc-inspect-lever]');
     if(lever)lever.addEventListener('input',function(){
+      selection.manualFrame=Number(lever.value);
       var img=scene.querySelector('[data-fc-inspect-img]');
       img.src=mechanicalImage(Number(lever.value));
       img.dataset.frame=String(lever.value);
