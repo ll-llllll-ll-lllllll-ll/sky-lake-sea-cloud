@@ -80,14 +80,20 @@ const ambientMeta = {
 };
 
 const calendarIntro = {
-  zh: [
-    "一册留给无法被安排之物的日历。自 2023 年 7 月 23 日起，每一天在真正抵达时，才被交给海、湖、云或天空。日期沿着星期排列，尚未到来的日子留白；四种景象轮流出现，偶尔停留，不必遵循严格的节拍。日名只属于它出现的这一天；日期一旦翻过，名字与影像便一同退去，把位置交给下一段风景。首页每日只留下一段约二十秒的风景，如信息与判断之间一处安静的间隙。"
+  "zh": [
+    "一册由天空、海洋、湖泊与云层这些瞬息万变、无法被安排之物占据的日历。每一天的景象便如天气般自行更替，首页背景也随之播放着不同的环境影像。在这个看似没有重点的日历中，目光仿佛短暂地“失焦”，从日常琐事的焦点移开，重新落到那些原本退入生活背景的自然景象上。",
+    "这些景象在这里承担着重新校准感官的作用。这里所谓的“纯净”并非空白，而是一枚让观看暂时退回到解释与判断之前的“锚点”。",
+    "我的艺术创作理念也是如此：看完世界后，仍可以回到这里。所谓纯粹的心灵，并不是从未见过复杂，而是在洞见复杂之后，仍愿意抬头看一眼天空。"
   ],
-  en: [
-    "A calendar for things that cannot be scheduled. Since 23 July 2023, each day has been given to the sea, lake, clouds or sky only once it arrives. The dates follow the ordinary week; days still to come are left blank. The four landscapes take turns, sometimes lingering, without a strict rhythm. Each day's name belongs only to that day; when the date turns, the name and image recede together, making room for another view. Each day the homepage holds about twenty seconds of scenery, a quiet interval between information and judgement."
+  "en": [
+    "A calendar occupied by sky, oceans, lakes and clouds—things that change in an instant and cannot be arranged. Each day's scenery changes of its own accord, like the weather, and the homepage plays a different ambient film in the background. In this seemingly aimless calendar, the gaze briefly slips “out of focus”: it moves away from the concerns of everyday life and settles once more on the natural scenes that had receded into its background.",
+    "Here, these scenes serve to recalibrate the senses. What I call “purity” is not emptiness, but an “anchor” that allows looking to return, for a moment, to a point before explanation and judgement.",
+    "My approach to making art follows much the same thought: after seeing the world, one can still return here. A pure heart is not one that has never encountered complexity, but one that, having looked deeply into it, is still willing to look up at the sky."
   ],
-  ja: [
-    "予定できないもののための暦。2023年7月23日から、一日が実際に訪れたときにだけ、海、湖、雲、空のいずれかに委ねられる。日付は曜日に沿って並び、まだ訪れていない日は余白のまま残る。四つの風景は入れ替わりながら、ときに留まり、厳密な拍子には従わない。その日の名はその日だけのものだ。日付が変わると、名も映像も静かに退き、次の日の風景に場所を譲る。ホームには毎日およそ二十秒の風景だけが残る。情報と判断のあいだにある、静かな間隙のように。"
+  "ja": [
+    "空、海、湖、雲――刻々と姿を変え、人の手では予定できないものに占められた暦。一日の風景は天気のようにおのずと移り変わり、ホームの背景にも、それに応じて異なる環境映像が流れる。これといった中心のない暦のなかで、視線はふと「ピントを外す」ように、日々の雑事へ向けていた焦点を離れ、暮らしの背景へと退いていた自然の風景に、再び落ち着く。",
+    "ここでは、こうした風景が感覚を整え直す役割を担っている。ここでいう「純粋」は空白ではなく、見ることを一時的に説明や判断よりも前へと戻す「錨」である。",
+    "私の芸術制作に対する考え方も同じだ。世界を見てきたあとにも、ここへ戻ってくることができる。純粋な心とは、複雑さを知らない心ではなく、その複雑さを見通したあとにも、なお空を見上げようとする心のことだ。"
   ]
 };
 
@@ -380,7 +386,7 @@ const state = {
   indexOpen: false,
   calendarOpen: false,
   previewDate: null,
-  calendarCursor: startOfMonth(new Date())
+  calendarCursor: todayAtNoon()
 };
 
 const app = document.querySelector("#app");
@@ -452,8 +458,17 @@ function dateIsAfterToday(date) {
 }
 
 function calendarCursorIsAtStart() {
-  return state.calendarCursor.getFullYear() === CALENDAR_START_MONTH.getFullYear() &&
-    state.calendarCursor.getMonth() === CALENDAR_START_MONTH.getMonth();
+  return state.calendarCursor.getTime() <= CALENDAR_START.getTime();
+}
+
+function calendarCursorIsAtToday() {
+  return state.calendarCursor.getTime() >= todayAtNoon().getTime();
+}
+
+// Noon-based local dates avoid DST and timezone drift in the eight-day window.
+function shiftCalendarDate(date, numberOfDays) {
+  return new Date(date.getFullYear(), date.getMonth(),
+    date.getDate() + numberOfDays, 12, 0, 0, 0);
 }
 
 function hashString(value) {
@@ -708,56 +723,40 @@ function ambientMedia(date, type, entry) {
 }
 
 function calendarGrid() {
-  var cursor = state.calendarCursor;
-  var year = cursor.getFullYear();
-  var month = cursor.getMonth();
-  var daysInMonth = new Date(year, month + 1, 0).getDate();
-  var firstWeekday = (new Date(year, month, 1).getDay() + 6) % 7;
-  var today = todayAtNoon(), todayKey = dateKey(today);
+  var anchor = state.calendarCursor;
+  var today = todayAtNoon();
+  var todayKey = dateKey(today);
   var selectedKey = dateKey(selectedDate());
   var cells = [];
 
-  // Monday through Sunday, as in an ordinary calendar.
-  labels[state.lang].weekdays.forEach(function(label) {
-    cells.push('<span class="calendar-weekday" aria-hidden="true">' +
-      escapeHtml(label) + '</span>');
-  });
-
-  for (var padIndex = 0; padIndex < firstWeekday; padIndex++) {
-    cells.push('<span class="calendar-empty" aria-hidden="true"></span>');
-  }
-
-  for (var number = 1; number <= daysInMonth; number++) {
-    var date = new Date(year, month, number, 12);
+  // Seven recorded days ending on the cursor date, then one following day.
+  // At the latest window that last day is tomorrow: deliberately unassigned.
+  for (var offset = -6; offset <= 1; offset += 1) {
+    var date = shiftCalendarDate(anchor, offset);
     var key = dateKey(date);
-    var unavailable = dateIsBeforeCalendarStart(date) || date.getTime() > today.getTime();
-    var classes = "calendar-day";
+    var weekday = labels[state.lang].weekdays[(date.getDay() + 6) % 7];
+    var unavailable = dateIsBeforeCalendarStart(date) || dateIsAfterToday(date);
+    var head = '<span class="calendar-window-weekday">' +
+      escapeHtml(weekday) + '</span>' +
+      '<span class="calendar-number">' + escapeHtml(formatDate(date)) + '</span>';
+
     if (unavailable) {
-      // Keep the date but leave its landscape unassigned and unlabelled.
+      // The eighth day has a date, but no forecast, type, or "unknown" label.
       cells.push('<span class="calendar-day is-unassigned" aria-label="' +
-        escapeHtml(formatDate(date)) + '">' +
-        '<span class="calendar-number">' + String(number).padStart(2, "0") + '</span>' +
-      '</span>');
+        escapeHtml(formatDate(date)) + '">' + head + '</span>');
       continue;
     }
 
     var type = ambientTypeForDate(date);
-    classes += " calendar-day-" + type;
+    var classes = "calendar-day calendar-day-" + type;
     if (key === todayKey) classes += " is-today";
     if (key === selectedKey) classes += " is-selected";
-
     cells.push('<button type="button" class="' + classes +
       '" data-action="choose-date" data-date="' + key + '" aria-label="' +
       escapeHtml(formatDate(date) + " · " + localised(ambientMeta[type].day)) + '">' +
-      '<span class="calendar-number">' + String(number).padStart(2, "0") + '</span>' +
+      head +
       '<span class="calendar-day-type">' + escapeHtml(localised(ambientMeta[type].short)) + '</span>' +
       '</button>');
-  }
-
-  // Close the last calendar week with truly empty spaces, not "unknown" cells.
-  var trailing = (7 - (firstWeekday + daysInMonth) % 7) % 7;
-  for (var empty = 0; empty < trailing; empty++) {
-    cells.push('<span class="calendar-empty" aria-hidden="true"></span>');
   }
   return cells.join("");
 }
@@ -765,12 +764,18 @@ function calendarGrid() {
 function calendarPanel() {
   var current = selectedDate();
   var currentType = ambientTypeForDate(current);
-  var todayKey = dateKey(todayAtNoon());
   var selectedKey = dateKey(current);
+  var todayKey = dateKey(todayAtNoon());
+  var anchor = state.calendarCursor;
+  var rangeStart = shiftCalendarDate(anchor, -6);
+  var rangeEnd = shiftCalendarDate(anchor, 1);
+  var earlierLabel = state.lang === "zh" ? "前七天" : (state.lang === "ja" ? "前の七日間" : "previous seven days");
+  var laterLabel = state.lang === "zh" ? "后七天" : (state.lang === "ja" ? "次の七日間" : "next seven days");
 
-  return '<section class="calendar-layer" ' + (state.calendarOpen ? "" : "hidden") + ' aria-label="' + escapeHtml(labels[state.lang].calendar) + '">' +
+  return '<section class="calendar-layer" ' + (state.calendarOpen ? "" : "hidden") +
+    ' aria-label="' + escapeHtml(labels[state.lang].calendar) + '">' +
     '<button class="calendar-backdrop" type="button" data-action="close-calendar" aria-label="close"></button>' +
-    '<div class="calendar-panel">' +
+    '<div class="calendar-panel calendar-panel-rolling">' +
       '<div class="calendar-intro">' +
         calendarIntro[state.lang].map(function(paragraph) {
           return "<p>" + escapeHtml(paragraph) + "</p>";
@@ -780,20 +785,21 @@ function calendarPanel() {
         '<div class="calendar-current-wrap">' +
           '<p class="calendar-kicker">' + escapeHtml(labels[state.lang].calendar) + '</p>' +
           '<p class="calendar-current">' + escapeHtml(formatDate(current)) + ' · ' +
-             escapeHtml(localised(ambientMeta[currentType].day)) + "</p>" +
+            escapeHtml(localised(ambientMeta[currentType].day)) + "</p>" +
         "</div>" +
         '<div class="calendar-controls">' +
-          '<button type="button" data-action="month-prev" aria-label="previous month"' +
+          '<button type="button" data-action="calendar-window-prev" aria-label="' + escapeHtml(earlierLabel) + '"' +
             (calendarCursorIsAtStart() ? " disabled" : "") + '>←</button>' +
-          '<span>' + escapeHtml(formatMonth(state.calendarCursor)) + "</span>" +
-          '<button type="button" data-action="month-next" aria-label="next month">→</button>' +
+          '<span>' + escapeHtml(formatDate(rangeStart)) + ' — ' + escapeHtml(formatDate(rangeEnd)) + '</span>' +
+          '<button type="button" data-action="calendar-window-next" aria-label="' + escapeHtml(laterLabel) + '"' +
+            (calendarCursorIsAtToday() ? " disabled" : "") + '>→</button>' +
         "</div>" +
       "</header>" +
-      '<div class="calendar-grid" role="group" aria-label="' +
-        escapeHtml(formatMonth(state.calendarCursor)) + '">' + calendarGrid() + "</div>" +
+      '<div class="calendar-grid calendar-rolling-grid" role="group" aria-label="' +
+        escapeHtml(formatDate(rangeStart) + " — " + formatDate(rangeEnd)) + '">' + calendarGrid() + "</div>" +
       (selectedKey !== todayKey
         ? '<button class="calendar-today" type="button" data-action="today">' +
-          escapeHtml(labels[state.lang].returnToday) + "</button>"
+            escapeHtml(labels[state.lang].returnToday) + "</button>"
         : "") +
     "</div>" +
   "</section>";
@@ -1315,7 +1321,7 @@ function openCalendar(open) {
   state.calendarOpen = open;
   if (open) {
     state.indexOpen = false;
-    state.calendarCursor = startOfMonth(selectedDate());
+    state.calendarCursor = selectedDate();
   }
   render();
 }
@@ -1339,23 +1345,22 @@ app.addEventListener("click", function(event) {
   if (action === "close-index") openIndex(false);
   if (action === "toggle-calendar") openCalendar(!state.calendarOpen);
   if (action === "close-calendar") openCalendar(false);
-  if (action === "month-prev") {
-    var previousMonth = addMonths(state.calendarCursor, -1);
-    if (previousMonth.getTime() < CALENDAR_START_MONTH.getTime()) {
-      state.calendarCursor = CALENDAR_START_MONTH;
-    } else {
-      state.calendarCursor = previousMonth;
-    }
+  if (action === "calendar-window-prev") {
+    var previousWindow = shiftCalendarDate(state.calendarCursor, -7);
+    state.calendarCursor = previousWindow.getTime() < CALENDAR_START.getTime()
+      ? CALENDAR_START : previousWindow;
     render();
   }
-  if (action === "month-next") {
-    state.calendarCursor = addMonths(state.calendarCursor, 1);
+  if (action === "calendar-window-next") {
+    var nextWindow = shiftCalendarDate(state.calendarCursor, 7);
+    state.calendarCursor = nextWindow.getTime() > todayAtNoon().getTime()
+      ? todayAtNoon() : nextWindow;
     render();
   }
   if (action === "choose-date") chooseDate(target.dataset.date);
   if (action === "today") {
     state.previewDate = null;
-    state.calendarCursor = startOfMonth(todayAtNoon());
+    state.calendarCursor = todayAtNoon();
     state.calendarOpen = false;
     render();
   }
