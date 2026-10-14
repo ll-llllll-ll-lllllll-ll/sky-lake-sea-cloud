@@ -21,6 +21,7 @@
 .fc-room .room-head .language button.is-active,
 .fc-room .room-head .language button[aria-pressed="true"] { color:var(--fc-ink); }
 .fc-room button { -webkit-tap-highlight-color:transparent; }
+.fc-rail { cursor:grab; }
 .fc-page { position:absolute; inset:54px 0 0; display:grid; grid-template-rows:auto minmax(0,1fr) auto; overflow:hidden; isolation:isolate; }
 .fc-page-heading {
   min-height:155px;
@@ -150,7 +151,7 @@
   font-size:11px; color:rgba(36,41,37,.76);
 }
 .fc-card-count { font:400 23px/1 var(--serif),serif; white-space:nowrap; color:var(--fc-ink); }
-.fc-card-count small { font:10px/1 var(--sans),sans-serif; color:rgba(230,231,223,.42); }
+.fc-card-count small { font:10px/1 var(--sans),sans-serif; color:rgba(36,41,37,.42); }
 .fc-card-name { font:12px/1.7 var(--serif),serif; text-align:right; }
 .fc-navigation {
   display:flex; align-items:center; gap:clamp(10px,1.8vw,27px);
