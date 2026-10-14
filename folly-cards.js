@@ -36,7 +36,7 @@
   var COPY = {
     zh:{group:'废墟园林 / 图景',instruction:'向右翻阅散落的瞬间。',selection:'点击一幅图景，进入它短暂的变化。',seek:'滑动阶段',open:'观看这一瞬间',close:'回到图景',prev:'上一阶段',next:'下一阶段',sound:'打开声音',mute:'静音',play:'继续',pause:'暂停',score:'检视图谱',reset:'复位',loading:'影像就位中',missing:'这一阶段的影像尚未就位',allEnd:'本卷已至尾声',hintI:'图谱随时间逆行 · 悬停校准指针',hintII:'三角翼可折叠 · 悬停校准指针',loadingPoster:'',zoom:'放大'},
     en:{group:'FOLLY / TABLEAUX',instruction:'Move right through scattered moments.',selection:'Select a tableau to enter its brief transformation.',seek:'Move through stages',open:'Open this moment',close:'Return to the tableaux',prev:'Previous stage',next:'Next stage',sound:'Sound on',mute:'Mute',play:'Resume',pause:'Pause',score:'Inspect the score',reset:'Reset',loading:'Preparing the moving image',missing:'This fragment is not available yet',allEnd:'The sequence has ended',hintI:'Score runs in reverse · Hover to calibrate',hintII:'Three folding wings · Hover to calibrate',loadingPoster:'',zoom:'Zoom'},
-    ja:{group:'フォリー / 風景の断片',instruction:'右へ進み、散らばった瞬間をたどる。',selection:'一枚を選び、その短い変化に入る。',seek:'段階を移動',open:'この瞬間を見る',close:'風景に戻る',prev:'前の段階',next:'次の段階',sound:'音声オン',mute:'消音',play:'再開',pause:'一時停止',score:'楽譜を検視',reset:'リセット',loading:'映像を準備中',missing:'この断片はまだありません',allEnd:'この巻は終わりました',hintI:'楽譜は逆行 · 悬停で校正',hintII:'三つの翼を折る · ホバーで校正',loadingPoster:'',zoom:'拡大'}
+    ja:{group:'フォリー / 風景の断片',instruction:'右へ進み、散らばった瞬間をたどる。',selection:'一枚を選び、その短い変化に入る。',seek:'段階を移動',open:'この瞬間を見る',close:'風景に戻る',prev:'前の段階',next:'次の段階',sound:'音声オン',mute:'消音',play:'再開',pause:'一時停止',score:'楽譜を検視',reset:'リセット',loading:'映像を準備中',missing:'この断片はまだありません',allEnd:'この巻は終わりました',hintI:'楽譜は逆行 · ホバーで校正',hintII:'三つの翼を折る · ホバーで校正',loadingPoster:'',zoom:'拡大'}
   };
   var i18n=function(k){return (COPY[state.lang]||COPY.zh)[k]||'';};
   var label=function(obj){return obj[state.lang]||obj.zh||'';};
@@ -315,6 +315,7 @@
     selection.open=true;selection.paused=false;selection.scoreInspect=false;
     var overlay=scene.querySelector('[data-fc-projection]');
     overlay.hidden=false;scene.classList.add('is-projected');
+    scene.querySelectorAll('.fc-gallery-area,.fc-navigation,.fc-page-heading').forEach(function(el){el.inert=true;});
     var inspect=scene.querySelector('[data-fc-inspection]');
     inspect.hidden=true;
     var close=scene.querySelector('[data-fc-action="close"]:not(.fc-projection-scrim)');
@@ -358,6 +359,7 @@
     var s=current(),n=selection.index+dir;
     if(n<0||n>=s.stages.length){
       if(selection.open && dir>0){
+        selection.paused=true;syncPlayButton();
         var status=scene.querySelector('[data-fc-film-status]');
         if(status)status.textContent=i18n('allEnd');
       }
@@ -378,6 +380,7 @@
     if(!isLive()||!selection.open)return;
     stopMedia();selection.open=false;selection.scoreInspect=false;
     scene.classList.remove('is-projected');
+    scene.querySelectorAll('.fc-gallery-area,.fc-navigation,.fc-page-heading').forEach(function(el){el.inert=false;});
     scene.querySelector('[data-fc-projection]').hidden=true;
     scene.querySelector('[data-fc-inspection]').hidden=true;
     scene.querySelector('.fc-score-cluster')?.classList.remove('is-magnetic');
