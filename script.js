@@ -255,6 +255,50 @@ const collections = [
   }
 ];
 
+const writings = [
+  {
+    slug: "ruinwright-manifesto",
+    group: "writing",
+    title: { zh: "墟构师宣言", en: "Ruinwright Manifesto", ja: "墟構師宣言" },
+    intro: {
+      zh: [
+        "《墟构师宣言》是我对废墟长期观察、研究与实践的一次整理。它记录了我理解废墟的方式，也建立起一套与之相应的理论框架，讨论我如何观看废墟、如何理解这个时代不断出现的现代废墟，以及这些认识如何进一步进入审美与创作。",
+        "随着研究逐渐进入实践，“墟构师”也从一种称谓变成了我在废墟中工作的角色。我以这一身份进入废墟进行创作，并将“墟构”发展为属于自身实践的方法，用于《废墟园林》系列作品的建造。",
+        "最终，我将对废墟的理解、由此形成的理论，以及在实践中逐渐建立的墟构方法整理在一起，构成《墟构师宣言》。它既是一份个人陈述，也是一套仍在持续修订的工作体系，并作为我面对这个时代“现代废墟”的一部个人法典。"
+      ],
+      en: [
+        "Ruinwright Manifesto is a consolidation of my long-term observation, study, and practice around ruins. It records the way I understand ruins and gathers the theoretical framework that has grown alongside that understanding, including how I look at ruins, how I understand the modern ruins continually appearing in this era, and how those understandings enter aesthetics and artistic practice.",
+        "As research gradually entered practice, “Ruinwright” shifted from a name into the role through which I work inside ruins. In that role I enter ruins to make work, and have developed “Ruinwork” as a method belonging to my own practice, used in the construction of the Folly Series.",
+        "I eventually brought these understandings of ruins, the theories that emerged from them, and the methods of Ruinwork developed through practice together as the Ruinwright Manifesto. It is both a personal statement and a working system that remains open to revision: a personal code for confronting the “modern ruins” of this era."
+      ],
+      ja: [
+        "『墟構師宣言』は、廃墟について長期にわたり行ってきた観察・研究・実践を整理したものである。そこには、私が廃墟をどのように理解してきたか、その理解とともに形づくられた理論的な枠組み、そして廃墟をどのように見るか、この時代に絶えず現れる現代の廃墟をどう理解するか、それらの認識が美学と制作へどう入っていくかが記されている。",
+        "研究が次第に実践へ入っていくにつれ、「墟構師」は一つの呼称から、私が廃墟の中で仕事をするための役割へと変わった。私はこの立場で廃墟へ入り制作を行い、「墟構」を自らの実践に属する方法として育て、『フォリー』シリーズの制作に用いている。",
+        "最終的に、廃墟についての理解、そこから生まれた理論、そして実践の中で築いてきた墟構の方法を一つに編み直し、『墟構師宣言』とした。それは個人的なステートメントであると同時に、なお更新され続ける作業体系であり、この時代の「現代の廃墟」に向き合うための私自身の法典でもある。"
+      ]
+    },
+    visit: "https://ruin-archive.site/manifesto.html",
+    visitLabel: {
+      zh: "阅读《墟构师宣言》",
+      en: "read the Ruinwright Manifesto",
+      ja: "『墟構師宣言』を読む"
+    },
+    tenetImages: [
+      "https://ruin-archive.site/manifesto-assets/tenets/chapters/01.png",
+      "https://ruin-archive.site/manifesto-assets/tenets/chapters/02.png",
+      "https://ruin-archive.site/manifesto-assets/tenets/chapters/03.png",
+      "https://ruin-archive.site/manifesto-assets/tenets/chapters/04.png",
+      "https://ruin-archive.site/manifesto-assets/tenets/chapters/05.png",
+      "https://ruin-archive.site/manifesto-assets/tenets/chapters/06.png",
+      "https://ruin-archive.site/manifesto-assets/tenets/chapters/07.png",
+      "https://ruin-archive.site/manifesto-assets/tenets/chapters/08.png",
+      "https://ruin-archive.site/manifesto-assets/tenets/chapters/09.png",
+      "https://ruin-archive.site/manifesto-assets/tenets/chapters/10.png"
+    ],
+    images: []
+  }
+];
+
 const rooms = works.concat(collections, writings);
 
 const state = {
