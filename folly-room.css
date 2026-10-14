@@ -347,8 +347,9 @@
   aspect-ratio:1;
   flex-shrink:0;
   transform-style:preserve-3d;
-  --fold-side:34%;
-  --fold-high:30%;
+  container-type:inline-size;
+  --fold-side:34cqw;
+  --fold-high:30cqw;
 }
 .folly-fold-center {
   position:absolute;
@@ -380,7 +381,7 @@
 .folly-fold-axis-3 { left:58.5%; top:53%; transform:rotateZ(-120deg); }
 .folly-fold-flap {
   position:absolute;
-  left:calc(var(--fold-side) / -2);
+  left:calc(var(--fold-side) * -.5);
   top:calc(var(--fold-high) * -1);
   width:var(--fold-side);
   height:var(--fold-high);
