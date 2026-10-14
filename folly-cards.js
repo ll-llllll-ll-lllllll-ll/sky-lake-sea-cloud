@@ -242,13 +242,13 @@
   function processPreviews() {
     if(!isLive())return;
     while(previewInFlight<2&&queue.length){
-      var task=queue.shift();
+      let task=queue.shift();
       if(previewComplete.has(task.key))continue;
-      var root=block(task.si),card=root?.querySelector('[data-fc-card="'+task.index+'"]');
+      let root=block(task.si),card=root?.querySelector('[data-fc-card="'+task.index+'"]');
       if(!card)continue;
-      var v=card.querySelector('video'),token=mountedToken,settled=false;
+      let v=card.querySelector('video'),token=mountedToken,settled=false;
       previewComplete.add(task.key);previewInFlight++;
-      var watchdog=window.setTimeout(function(){release(false);},16000);
+      let watchdog=window.setTimeout(function(){release(false);},12000);
       function release(ok) {
         if(settled)return;settled=true;
         clearTimeout(watchdog);
@@ -507,10 +507,10 @@
     rail.addEventListener('click',function(e){
       if(rail.dataset.fcJustDragged){e.preventDefault();e.stopPropagation();}
     },true);
-    var scrollTimer=0;
+    var scrollTimer=0, railScrollFrame=0;
     rail.addEventListener('scroll',function(){
-      if(!scrollFrame)scrollFrame=requestAnimationFrame(function(){
-        scrollFrame=0;
+      if(!railScrollFrame)railScrollFrame=requestAnimationFrame(function(){
+        railScrollFrame=0;
         var n=nearest(si);
         if(n!==selection.focus[si])focusCard(si,n,false);
       });
