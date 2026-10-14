@@ -227,7 +227,7 @@
         v.removeEventListener('error',onError);
         if(token!==mountedToken)return;
         if(success)card.classList.add('has-frame');
-        else {card.classList.add('has-poster-fallback');try{v.removeAttribute('src');v.load();}catch(_){}}
+        else {card.classList.add('has-poster-fallback');card.title=i18n('missing');try{v.removeAttribute('src');v.load();}catch(_){}}
         previewInFlight=Math.max(0,previewInFlight-1);
         processPreviews();
       };
