@@ -220,3 +220,14 @@
   .home-view .home-day-calendar-link {font-size:11px;}
   .home-view .home-day-calligraphy-date {font-size:11px;}
 }
+
+/* The day name stays vertical; only the mobile date reads left-to-right. */
+@media (max-width:760px) {
+  .home-view .home-day-calligraphy-date {
+    display:inline-block;
+    writing-mode:horizontal-tb;
+    text-orientation:mixed;
+    direction:ltr;
+    white-space:nowrap;
+  }
+}
