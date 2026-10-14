@@ -206,9 +206,23 @@
     video.muted=!soundOn;
     var p;
     try{p=video.play();}catch(_){p=null;}
-    if(p && p.then)p.then(function(){panel.classList.add('is-playing');status(panel,'');}).catch(function(){
+    if(p && p.then)p.then(function(){
+      if(!panel.isConnected || panel.querySelector('video')!==video)return;
+      panel.classList.add('is-playing');status(panel,'');
+      updatePauseLabel();
+    }).catch(function(){
       panel.classList.remove('is-playing');status(panel,t('play')+' ▶');
+      updatePauseLabel();
     });
+  }
+  function updatePauseLabel() {
+    if(!activeRoot)return;
+    var video=activeRoot.querySelector('.folly-moment.is-active video');
+    var button=activeRoot.querySelector('[data-folly-control="pause"]');
+    if(!button || !video)return;
+    var isPaused=video.paused;
+    button.textContent=isPaused?t('play'):t('pause');
+    button.setAttribute('aria-label',isPaused?t('play'):t('pause'));
   }
   function activateMoment(index) {
     if(!activeRoot || !activeRoot.isConnected) return;
@@ -224,6 +238,7 @@
     var line=activeRoot.querySelector('[data-folly-line]');
     if(line)line.style.setProperty('--folly-progress',((next+1)/f.moments.length*100)+'%');
     clearInactive();
+    updatePauseLabel();
     var panel=activeRoot.querySelector('.folly-moment[data-folly-moment="'+next+'"]');
     if(!panel)return;
     var video=panel.querySelector('video'), moment=f.moments[next];
@@ -236,9 +251,16 @@
     function seekAndPlay() {
       if(!panel.isConnected || currentIndex!==next || series()!==f || scoreOpened)return;
       var start=Math.min(moment.time,Math.max(0,(Number(video.duration)||f.total)-1));
-      try{if(Math.abs(video.currentTime-start)>0.9)video.currentTime=start;}catch(_){}
-      setScoreProgress(progressFromTime(start));
-      attemptPlay(video,panel);
+      function startPlayback() {
+        if(!panel.isConnected || currentIndex!==next || series()!==f || scoreOpened)return;
+        setScoreProgress(progressFromTime(start));
+        attemptPlay(video,panel);
+      }
+      if(Math.abs(video.currentTime-start)>0.6) {
+        video.addEventListener('seeked',startPlayback,{once:true});
+        try { video.currentTime=start; }
+        catch(_){video.removeEventListener('seeked',startPlayback);startPlayback();}
+      } else startPlayback();
     }
     if(video.readyState>=1) seekAndPlay();
     else video.addEventListener('loadedmetadata',seekAndPlay,{once:true});
@@ -343,7 +365,7 @@
         var panel=root.querySelector('.folly-moment[data-folly-moment="'+currentIndex+'"]');
         var v=panel && panel.querySelector('video');
         if(!v)return;
-        if(v.paused)attemptPlay(v,panel);else{v.pause();panel.classList.remove('is-playing');}
+        if(v.paused)attemptPlay(v,panel);else{v.pause();panel.classList.remove('is-playing');updatePauseLabel();}
       }
       if(op==='sound'){
         soundOn=!soundOn;
@@ -354,6 +376,8 @@
     });
     root.querySelectorAll('video').forEach(function(video){
       video.addEventListener('timeupdate',onTick);
+      video.addEventListener('pause',updatePauseLabel);
+      video.addEventListener('play',updatePauseLabel);
       video.addEventListener('ended',function(){onTick({target:video});});
       video.addEventListener('error',function(){
         var panel=video.closest('.folly-moment');
