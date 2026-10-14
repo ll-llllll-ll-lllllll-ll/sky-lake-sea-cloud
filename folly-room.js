@@ -217,6 +217,7 @@
     activeRoot.querySelectorAll('.folly-moment').forEach(function(panel,i){
       panel.classList.toggle('is-active',i===next);
       panel.setAttribute('aria-hidden',String(i!==next));
+      panel.inert=(i!==next);
     });
     var count=activeRoot.querySelector('[data-folly-count]');
     if(count) count.textContent=pad(next+1);
@@ -289,8 +290,15 @@
     pauseAll();
     seriesIndex=index; currentIndex=0; freezeScore=false;scoreOpened=false;
     foldAngles=[0,0,0];soundOn=false;lastProgress=0;
-    activeRoot.innerHTML=bodyMarkup();
-    wireRoot(activeRoot);
+    var fresh=document.createElement('div');
+    fresh.className='folly-cinema';
+    fresh.setAttribute('data-folly-root','');
+    fresh.innerHTML=bodyMarkup();
+    activeRoot.replaceWith(fresh);
+    activeRoot=fresh;
+    wireRoot(fresh);
+    var focusTab=fresh.querySelector('.folly-series-switch .is-current');
+    if(focusTab)focusTab.focus({preventScroll:true});
   }
   function wireRoot(root) {
     var track=root.querySelector('[data-folly-track]'), scheduled=0;
