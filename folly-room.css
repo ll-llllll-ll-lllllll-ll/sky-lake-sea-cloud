@@ -286,7 +286,11 @@
 .folly-score-footer { border-top:1px solid var(--folly-rule); font-size:11px; line-height:1.7; color:var(--folly-soft); }
 .folly-score-footer p { margin:0; max-width:560px; }
 .folly-score-footer button { flex-shrink:0; font-size:11px; color:var(--folly-ink); border-bottom:1px solid var(--folly-rule); padding:8px 0; }
+.folly-score-transform-actions { display:flex; align-items:center; gap:16px; flex-shrink:0; }
+.folly-score-transform-actions button { min-width:25px; font-size:15px; text-align:center; }
+.folly-score-transform-actions button:last-child { font-size:11px; }
 .folly-score-art {
+  touch-action:none;
   position:relative;
   display:flex;
   justify-content:center;
