@@ -130,16 +130,16 @@ const works = [
 
 const seawaterMemoryText = {
   "zh": [
-    "起点是一段悬置在真实与虚构之间的童年记忆：大约十一岁时，我记得在楼梯下的角落看见一个正在漏水的吨桶，并隐约听见一句“55个海洋的海水”的话。多年后再回头查询，我找不到任何相关记录。我不知道这段记忆究竟真实发生过，还是在漫长的回想中被重新拼接出来。也许当时真的有这样一件作品；也许只是路过的人对一缸水的过度解读。奇怪的是，当它多年后突然重新回到脑海里，我越想确认它，它反而越显得不真实。",
-    "一边担心原始记忆会随着时间彻底消失，一边又担心任何试图把它画下来、做出来、命名出来的动作，都会替换掉那段记忆本身。于是我将这段无法被证实的记忆用朦胧的画记录了下来。"
+    "起点是一段悬置在真实与虚构之间的童年记忆：大约十一岁时，我记得在楼梯下的角落看见一个正在漏水的吨桶，并隐约听见一句“55个海洋的海水”。多年后回头查证，我找不到任何相关记录。我不知道这段记忆究竟来自真实经历，还是在漫长的回想中被重新拼接出来。也许当时真的有这样一件作品；也许只是路过的人对一缸水的过度解读。奇怪的是，当它多年后突然重新回到脑海里，我越想确认它，它反而越显得不真实。",
+    "一边担心原始记忆会随着时间彻底消失，一边又担心任何试图把它画下来、做出来、命名出来的动作，都会替换掉那段记忆本身。于是，我将这段无法被证实的记忆，用一幅朦胧的画记录了下来。"
   ],
   "en": [
-    "The starting point is a childhood memory suspended between reality and fiction: at about eleven, I remember seeing a leaking tote tank in a corner beneath the stairs, and vaguely hearing someone say, “seawater from 55 oceans.” Years later, when I tried to look it up, I could find no record of it. I do not know whether this memory ever happened as I recall it, or whether it was pieced together anew over years of remembering. Perhaps there really was such a work; perhaps a passer-by had simply read too much into a tank of water. Strangely, when the memory suddenly returned to me many years later, the more I tried to confirm it, the less real it seemed.",
-    "I feared that the original memory would disappear entirely with time, yet also feared that any attempt to paint it, make it, or give it a name would replace the memory itself. So I recorded this unverifiable memory in a hazy painting."
+    "It begins with a childhood memory suspended between reality and fiction: when I was about eleven, I remember seeing a leaking tote tank in a corner beneath the stairs, and vaguely hearing someone say “seawater from 55 oceans.” Years later, looking back for evidence, I could find no record of it. I do not know whether this memory comes from an experience that really happened or was pieced together anew over years of recollection. Perhaps such a work did exist; perhaps it was merely a passer-by reading too much into a tank of water. Strangely, when the memory suddenly returned to me years later, the more I tried to confirm it, the less real it seemed.",
+    "I feared that the original memory might vanish entirely with time, yet also feared that any attempt to paint it, make it or name it would replace the memory itself. So I recorded this unverifiable memory in a hazy painting."
   ],
   "ja": [
-    "始まりは、現実と虚構のあいだに宙づりになった幼い頃の記憶である。十一歳くらいのとき、階段下の隅で水の漏れているトートタンク（大型液体コンテナ）を見かけ、「55の海の海水」という言葉をぼんやり耳にした覚えがある。何年もたってから調べ直しても、関連する記録は何も見つからなかった。この記憶が本当にあった出来事なのか、それとも長い歳月の回想のなかでつなぎ直されたものなのか、私には分からない。実際にそういう作品があったのかもしれないし、通りすがりの誰かが一槽の水を深読みしただけなのかもしれない。奇妙なのは、何年も後になって突然その記憶がよみがえったとき、確かめようとするほどかえって現実味を失っていったことだ。",
-    "もとの記憶が時間とともにすっかり消えてしまうことを恐れる一方で、それを描き、形にし、名づけようとする行為が、その記憶そのものを置き換えてしまうことも恐れていた。そこで私は、確かめようのないその記憶を、ぼんやりとした絵に留めることにした。"
+    "始まりは、現実と虚構のあいだに宙づりになった幼い頃の記憶である。十一歳くらいのとき、階段下の隅で水の漏れているトートタンク（大型液体コンテナ）を見かけ、「55の海の海水」という言葉をぼんやり耳にした覚えがある。何年もたってから確かめようと調べても、関連する記録は何も見つからなかった。この記憶が実際の体験に由来するのか、それとも長い歳月の回想のなかでつなぎ直されたものなのか、私には分からない。実際にそういう作品があったのかもしれないし、通りすがりの誰かが一槽の水を深読みしただけなのかもしれない。奇妙なのは、何年も後になって突然その記憶がよみがえったとき、確かめようとするほどかえって現実味を失っていったことだ。",
+    "もとの記憶が時間とともにすっかり消えてしまうことを恐れる一方で、それを描き、形にし、名づけようとする行為が、その記憶そのものを置き換えてしまうことも恐れていた。そこで私は、この確かめようのない記憶を、朦朧とした一枚の絵に記録した。"
   ]
 };
 
@@ -1144,9 +1144,18 @@ function renderSeawaterSpaceTimeChart(item) {
   Preserve the existing image viewer, captions, chart and brief annotations.
 */
 const seawaterVesselDescription = {
-  "zh": "吨桶的形体一直使我着迷。它的标准化与普遍性，让这种容器出现在世界各地，盛放过彼此迥异的液体。那种圆润又方正、庞大又结实的样貌，使我想到一枚“现代漂流瓶”的符号：单凭外形，便仿佛带着一种什么地方都去过、什么东西都装过的经验，只不过在这里，海水从船舱外来到了舱内。“吨”这个称呼连同它巨大的体量，又让这种能力隐约带上了野心，仿佛始终带着“你尽管带海水回来装”的态度。于是，我借用这个现成的形体，让那段无法证实的回忆继续有一个可以寄存的地方，随后慢慢变成了一项持续至今的海水收集。",
-  "en": "The form of the tote tank has always fascinated me. Its standardisation and ubiquity mean that this kind of container appears all over the world, holding liquids of widely different kinds. Rounded yet square, enormous yet sturdy, it strikes me as the emblem of a “modern message in a bottle”: from its appearance alone, it seems to carry the experience of having been everywhere and held everything. Only here, the seawater has passed from outside the hull into its hold. The word “tonne” and the tank’s immense size lend that capacity a faint ambition, as though it were forever saying, “Bring back as much seawater as you like; I’ll hold it.” So I borrowed this ready-made form to give that unverifiable memory somewhere to remain. Gradually, it became a collection of seawater that continues to this day.",
-  "ja": "トートタンク（大型液体コンテナ）の形には、ずっと心を惹かれてきた。規格化され、広く普及しているからこそ、世界のさまざまな場所に現れ、互いにまったく異なる液体を入れてきた。丸みがありながら四角く、大きく頑丈な姿は、私には「現代の漂流瓶」の記号のように思える。その形だけで、どこへでも行き、何でも入れてきた経験をまとっているように見える。ただしここでは、海水は船倉の外から内へと移されている。「トン」という呼び名と巨大な容量は、その力にどこか野心めいたものまで与えている。「海水ならいくらでも持ち帰って入れればいい」とでも言いたげな態度だ。私はその既製の形を借りて、証明できない記憶がなお身を寄せられる場所をつくった。やがてそれは、今も続く海水の採集へと少しずつ変わっていった。"
+  "zh": [
+    "吨桶的形体一直使我着迷。它的标准化与普遍性，让这种容器出现在世界各地，盛放过彼此迥异的液体。那种圆润又方正、庞大又结实的样貌，使我想到一枚“现代帆船”的符号：单凭外形，便仿佛带着一种什么地方都去过、什么东西都装过的经验。只不过在这里，海水从船舱外来到了舱内。",
+    "“吨”这个称呼连同它巨大的体量，又让这种能力隐约带上了野心，仿佛始终带着一种“你尽管带海水回来装”的态度。于是，我借用这个现成的形体，让那段无法证实的回忆继续有一个可以寄存的地方。这一尝试随后慢慢变成了一项持续至今的海水收集。"
+  ],
+  "en": [
+    "The form of the tote tank has always fascinated me. Its standardisation and ubiquity allow this kind of container to appear all over the world, holding liquids of widely different kinds. Rounded yet square, enormous yet sturdy, it reminds me of an emblem of a “modern sailing ship”: its very shape seems to carry the experience of having been everywhere and held everything. Only here, the seawater has passed from outside the hull into its hold.",
+    "The word “tonne”, together with the tank’s immense bulk, lends that capacity a faint ambition, as though it always had an attitude of “Bring back as much seawater as you like; I’ll hold it.” So I borrowed this ready-made form to give that unverifiable memory somewhere to remain. This attempt gradually became a collection of seawater that continues to this day."
+  ],
+  "ja": [
+    "トートタンク（大型液体コンテナ）の形には、ずっと心を惹かれてきた。規格化され、広く普及しているからこそ、この容器は世界のさまざまな場所に現れ、互いにまったく異なる液体を入れてきた。丸みがありながら四角く、大きく頑丈な姿は、私には「現代の帆船」という一つの記号を思わせる。その形だけで、どこへでも行き、何でも入れてきた経験をまとっているように見える。ただしここでは、海水は船倉の外から内へと移されている。",
+    "「トン」という呼び名とその巨大な量塊は、その能力にどこか野心めいたものまで与え、いつも「海水ならいくらでも持ち帰って入れればいい」とでも言いたげな態度を感じさせる。私はその既製の形を借りて、証明できない記憶がなお身を寄せられる場所をつくった。この試みはやがて、今も続く海水の採集へと少しずつ変わっていった。"
+  ]
 };
 
 function rearrangeSeawaterStory(markup) {
@@ -1175,10 +1184,14 @@ function rearrangeSeawaterStory(markup) {
   // The tank opens a second phase, followed by its own short essay.
   var vesselEssay = document.createElement("section");
   vesselEssay.className = "seawater-vessel-chapter";
-  var paragraph = document.createElement("p");
-  paragraph.className = "seawater-vessel-text";
-  paragraph.textContent = localised(seawaterVesselDescription);
-  vesselEssay.appendChild(paragraph);
+  // Keep the two paragraphs of the vessel text separate, as in the manuscript.
+  var vesselParagraphs = localised(seawaterVesselDescription);
+  (Array.isArray(vesselParagraphs) ? vesselParagraphs : [vesselParagraphs]).forEach(function (copy) {
+    var paragraph = document.createElement("p");
+    paragraph.className = "seawater-vessel-text";
+    paragraph.textContent = copy;
+    vesselEssay.appendChild(paragraph);
+  });
   toteArtwork.insertAdjacentElement("afterend", vesselEssay);
 
   // Keep the artwork captions and chart controls / provenance annotations,

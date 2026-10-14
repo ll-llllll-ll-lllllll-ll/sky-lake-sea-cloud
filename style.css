@@ -3003,3 +3003,8 @@ body {
 .room-view[data-room="seawater"] .seawater-memory-chapter > .room-intro-stack {
   margin-bottom:0;
 }
+
+/* Maintain the author's two-part vessel essay, without changing image spacing. */
+.room-view[data-room="seawater"] .seawater-vessel-text + .seawater-vessel-text {
+  margin-top:1.45em;
+}
