@@ -75,12 +75,13 @@
   }
   function scoreMarkup(s){
     var mechanical=s.kind==='linear';
+    var lever='<div class="fc-mechanical-lever" aria-hidden="true"><i class="fc-mechanical-guide"></i><i class="fc-mechanical-ring"></i><i class="fc-mechanical-knob"></i></div>';
     var notation=mechanical?
-      '<div class="fc-score-notation fc-mechanical-notation"><img class="fc-score-frame" data-fc-score-frame src="'+mechanicalImage(15)+'" alt=""><div class="fc-scan-line" data-fc-line></div><div class="fc-scan-pulse" data-fc-pulse></div></div>':
+      '<div class="fc-score-notation fc-mechanical-notation"><img class="fc-score-frame" data-fc-score-frame src="'+mechanicalImage(15)+'" alt="">'+lever+'<div class="fc-scan-line" data-fc-line></div><div class="fc-scan-pulse" data-fc-pulse></div></div>':
       '<div class="fc-score-notation fc-fold-notation">'+foldMarkup(false)+
        '<div class="fc-radial-needles" aria-hidden="true"><i data-fc-needle="0"></i><i data-fc-needle="1"></i></div></div>';
     var shadow=mechanical?
-      '<div class="fc-shadow-scan"><img data-fc-score-shadow-img src="'+mechanicalImage(15)+'" alt=""><i data-fc-shadow-line></i></div>':
+      '<div class="fc-shadow-scan"><img data-fc-score-shadow-img src="'+mechanicalImage(15)+'" alt="">'+lever+'<i data-fc-shadow-line></i></div>':
       foldMarkup(true);
     return '<div class="fc-score-cluster fc-score-'+s.kind+'">'+
       '<div class="fc-score-shadow" data-fc-score-shadow aria-hidden="true">'+shadow+'</div>'+
@@ -207,6 +208,8 @@
       card.classList.toggle('is-magnet',Number(card.dataset.fcCard)===i);
     });
     root.querySelector('[data-fc-index-display]').textContent=pad(i+1);
+    var slider=root.querySelector('[data-fc-slider]');
+    if(slider && document.activeElement!==slider)slider.value=String(i);
     var scrub=root.querySelector('[data-fc-slider]');if(scrub)scrub.value=String(i);
     if(scroll)align(si,i,true);
     if(nearViewport(root))prioritizePreviews(si,i);
@@ -307,10 +310,9 @@
       function bad(){release(false);}
       v.addEventListener('loadedmetadata',meta);
       v.addEventListener('seeked',seek);
-      v.addEventListener('loadeddata',onData);
       v.addEventListener('error',bad);
       watchdog=window.setTimeout(function(){release(false);},15500);
-      v.preload='auto';
+      v.preload='metadata';
       v.muted=true;
       v.src=source(SERIES[task.si],task.index);
       v.load();
@@ -322,6 +324,15 @@
     var s=current(),ratio=clamp(absolute/s.endTime,0,1);
     if(s.kind==='linear'){
       var frame=sourceScoreFrame(ratio),frameURL=mechanicalImage(frame);
+      // Original Folly I two-stage mechanism: small knob moves first,
+      // then the large ring engages after frame 07/08. Film runs 15 -> 01.
+      var mechanical=1-ratio, split=6/14;
+      var engaged=mechanical<=split?0:clamp((mechanical-split)/(1-split),0,1);
+      overlay.querySelectorAll('.fc-mechanical-lever').forEach(function(lever){
+        lever.style.setProperty('--fc-mech-knob',(85-70*mechanical).toFixed(2)+'%');
+        lever.style.setProperty('--fc-mech-ring',(55-40*engaged).toFixed(2)+'%');
+        lever.style.setProperty('--fc-mech-engage',engaged.toFixed(3));
+      });
       overlay.querySelectorAll('[data-fc-score-frame],[data-fc-score-shadow-img]').forEach(function(img){
         if(img.dataset.frame!==String(frame)){img.src=frameURL;img.dataset.frame=String(frame);}
       });
@@ -393,6 +404,7 @@
     var overlay=activeOverlay();
     overlay.hidden=false;
     scene.classList.add('is-projected');
+    block(si)?.querySelector('[data-fc-card="'+selection.index+'"]')?.classList.add('is-playing');
     document.body.classList.add('fc-modal-open');
     scene.querySelectorAll('.fc-page-heading,.fc-scroll-content').forEach(function(node){node.inert=true;});
     focusCard(si,index,true);
@@ -436,7 +448,10 @@
       }
       return;
     }
+    var currentBlock=block(selection.series);
+    currentBlock?.querySelectorAll('.fc-card.is-playing').forEach(function(card){card.classList.remove('is-playing');});
     selection.index=n;
+    currentBlock?.querySelector('[data-fc-card="'+n+'"]')?.classList.add('is-playing');
     focusCard(selection.series,n,true);
     loadSelected();
   }
@@ -461,6 +476,7 @@
     overlay.querySelector('.fc-score-cluster')?.classList.remove('is-magnetic');
     selection.open=false;selection.scoreInspect=false;
     scene.classList.remove('is-projected');
+    scene.querySelectorAll('.fc-card.is-playing').forEach(function(card){card.classList.remove('is-playing');});
     document.body.classList.remove('fc-modal-open');
     scene.querySelectorAll('.fc-page-heading,.fc-scroll-content').forEach(function(node){node.inert=false;});
     if(lastTrigger?.isConnected)lastTrigger.focus({preventScroll:true});
@@ -516,7 +532,11 @@
       if(drag.moved){
         rail.dataset.fcJustDragged='1';
         setTimeout(function(){if(rail.isConnected)delete rail.dataset.fcJustDragged;},100);
-        // Release mouse drag into native proximity snap; never lock the page.
+        // One gentle magnetic settle after mouse release. Touch and trackpad
+        // never receive JS recentering while native momentum is in progress.
+        requestAnimationFrame(function(){
+          if(rail.isConnected)align(si,nearest(si),true);
+        });
       }
     }
     rail.addEventListener('pointerup',function(event){
