@@ -95,17 +95,18 @@
   var FILES_I=Array.from({length:15},function(_,i){return ARCHIVE+'attachments/effluent-sedimentation/score-1-'+(i+1)+'.webp';});
   var FILES_I_MOBILE=Array.from({length:15},function(_,i){return ARCHIVE+'assets/mobile-score/effluent-sedimentation/score-1-'+(i+1)+'.webp';});
   var FOLD_BASE=ARCHIVE+'attachments/aether-scorched-earth/';
-  var selection={series:0,index:0,focus:[0,0],open:false,muted:true,paused:false,scoreInspect:false,scoreZoom:1,scorePanX:0,scorePanY:0,folds:[0,0,0],lastTime:0,manualFrame:null};
+  var selection={series:0,index:0,focus:[0,0],open:false,muted:true,paused:false,scoreInspect:false,scoreZoom:1,scorePanX:0,scorePanY:0,folds:[0,0,0],lastTime:0,manualFrame:null,instrument:false};
   var scene=null,player=null,serial=0,queue=[],previewInFlight=0,previewComplete=new Set(),mountedToken=0;
   // Only one in-card film is allowed to play. The still-image extraction uses
   // a different off-screen video so hovering cannot disturb decoding.
-  var hoverFilm={card:null,video:null,si:-1,index:-1,timer:0,request:0,active:false};
+  var hoverFilm={card:null,video:null,si:-1,index:-1,kind:'film',timer:0,request:0,active:false};
   function stopHoverFilm(){
     hoverFilm.request++;
     clearTimeout(hoverFilm.timer);
     hoverFilm.timer=0;
     if(hoverFilm.video){
       try{
+        hoverFilm.video.ontimeupdate=null;
         hoverFilm.video.pause();
         hoverFilm.video.removeAttribute('src');
         hoverFilm.video.load();
@@ -113,7 +114,7 @@
     }
     hoverFilm.card?.classList.remove('is-hovering','is-previewing');
     hoverFilm.card=null;hoverFilm.video=null;
-    hoverFilm.si=-1;hoverFilm.index=-1;hoverFilm.active=false;
+    hoverFilm.si=-1;hoverFilm.index=-1;hoverFilm.kind='film';hoverFilm.active=false;
   }
   function startHoverFilm(card,si,index,delay){
     if(!card?.isConnected||selection.open||!isLive())return;
@@ -122,7 +123,9 @@
     stopHoverFilm();
     var rail=railFor(si);
     if(!rail||rail.classList.contains('is-dragging'))return;
+    var isInstrument=card.hasAttribute('data-fc-instrument-card');
     hoverFilm.card=card;hoverFilm.si=si;hoverFilm.index=index;
+    hoverFilm.kind=isInstrument?'instrument':'film';
     card.classList.add('is-hovering');
     var ticket=hoverFilm.request;
     hoverFilm.timer=window.setTimeout(function(){
@@ -134,7 +137,15 @@
       film.loop=true;
       film.muted=true;
       film.preload='metadata';
-      film.src=source(SERIES[si],index);
+      film.src=isInstrument?SERIES[si].assets.film:source(SERIES[si],index);
+      film.ontimeupdate=function(){
+        if(hoverFilm.video!==film || selection.open)return;
+        var duration=Number.isFinite(film.duration)&&film.duration>0?film.duration:1;
+        var fraction=clamp(film.currentTime/duration,0,1);
+        var stage=SERIES[si].stages[index];
+        var t=isInstrument?SERIES[si].endTime*fraction:stage.start+(stage.end-stage.start)*fraction;
+        updateInlineScore(si,t);
+      };
       function begin(){
         if(ticket!==hoverFilm.request||selection.open||!card.isConnected)return;
         try{
@@ -164,7 +175,7 @@
     releaseUpcoming();
     if(!selection.open||!isLive())return;
     var next=selection.index+1;
-    if(next>=current().stages.length||navigator.connection?.saveData)return;
+    if(selection.instrument||next>=current().stages.length||navigator.connection?.saveData)return;
     // Range-cache just the next clip's metadata; no mass download or autoplay.
     var warm=document.createElement('video');
     warm.preload='metadata';
@@ -408,7 +419,8 @@
     // Only the current neighbourhood, not all thirteen videos at once.
     var n=SERIES[si].stages.length;
     var nearby=[index,index+1,index-1,index+2,index-2].filter(function(i){return i>=0&&i<n;});
-    var waiting=nearby.map(function(i){return {si:si,index:i,key:si+':'+i};})
+    var waiting=nearby.map(function(i){return {si:si,index:i,key:si+':'+i,kind:'film'};})
+      .concat([{si:si,index:0,key:si+':instrument',kind:'instrument'}])
       .filter(function(task){return !previewComplete.has(task.key) && !queue.some(function(q){return q.key===task.key;});});
     queue=waiting.concat(queue);
     processPreviews();
@@ -431,7 +443,9 @@
     while(previewInFlight<2&&queue.length){
       let task=queue.shift();
       if(previewComplete.has(task.key))continue;
-      let root=block(task.si),card=root?.querySelector('[data-fc-card="'+task.index+'"]');
+      let root=block(task.si),card=task.kind==='instrument'?
+        root?.querySelector('[data-fc-instrument-card]'):
+        root?.querySelector('[data-fc-card="'+task.index+'"]');
       if(!card)continue;
       let v=card.querySelector('video'),canvas=card.querySelector('.fc-preview-frame');
       let token=mountedToken,settled=false,usedFallback=false,watchdog=0;
@@ -473,7 +487,9 @@
       }
       function meta(){
         if(settled||token!==mountedToken)return;
-        applyVideoRatio(task.si,v);
+        if(task.kind==='instrument'){
+          card.style.setProperty('--fc-instrument-aspect',v.videoWidth+' / '+v.videoHeight);
+        }else applyVideoRatio(task.si,v);
         try{
           if(!Number.isFinite(v.duration)||v.duration<.15){release(false);return;}
           var target=Math.min(2,Math.max(.04,v.duration-.12));
@@ -492,7 +508,7 @@
       watchdog=window.setTimeout(function(){release(false);},15500);
       v.preload='metadata';
       v.muted=true;
-      v.src=source(SERIES[task.si],task.index);
+      v.src=task.kind==='instrument'?SERIES[task.si].assets.film:source(SERIES[task.si],task.index);
       v.load();
     }
   }
@@ -565,11 +581,11 @@
   function progress() {
     if(!isLive()||!player||!selection.open)return;
     var m=current().stages[selection.index];
-    var length=m.end-m.start;
+    var length=selection.instrument?current().endTime:m.end-m.start;
     var fraction=Number.isFinite(player.duration)&&player.duration>0
       ?clamp((Number(player.currentTime)||0)/player.duration,0,1)
       :0;
-    selection.lastTime=m.start+length*fraction;
+    selection.lastTime=(selection.instrument?0:m.start)+length*fraction;
     updateScore(selection.lastTime);
     if(selection.scoreInspect)updateInspect();
   }
@@ -580,25 +596,32 @@
       btn.setAttribute('aria-label',i18n(selection.paused?'play':'pause'));
     });
   }
-  function select(si,index) {
+  function select(si,index,isInstrument) {
     if(!isLive())return;
     if(selection.open)closeProjection();
     lastTrigger=document.activeElement;
     // Continue from the real currentTime of the in-card film when applicable.
     var resume=(hoverFilm.active&&hoverFilm.si===si&&hoverFilm.index===index&&
+      (hoverFilm.kind==='instrument')===Boolean(isInstrument)&&
       hoverFilm.video&&Number.isFinite(hoverFilm.video.currentTime))
       ?hoverFilm.video.currentTime:0;
     stopHoverFilm();
     selection.series=si;
-    selection.open=true;selection.index=clamp(index,0,SERIES[si].stages.length-1);
+    selection.open=true;selection.instrument=Boolean(isInstrument);selection.index=clamp(index,0,SERIES[si].stages.length-1);
     selection.paused=false;selection.scoreInspect=false;
     var overlay=activeOverlay();
     overlay.hidden=false;
     scene.classList.add('is-projected');
-    block(si)?.querySelector('[data-fc-card="'+selection.index+'"]')?.classList.add('is-playing');
+    if(!selection.instrument)block(si)?.querySelector('[data-fc-card="'+selection.index+'"]')?.classList.add('is-playing');
+    else block(si)?.querySelector('[data-fc-instrument-card]')?.classList.add('is-playing');
     document.body.classList.add('fc-modal-open');
     scene.querySelectorAll('.fc-page-heading,.fc-scroll-content').forEach(function(node){node.inert=true;});
-    focusCard(si,index,false);
+    if(!selection.instrument)focusCard(si,index,false);
+    else {
+      overlay.querySelector('[data-fc-now-title]').textContent=term('moving');
+      overlay.querySelector('[data-fc-time-index]').textContent='01 / 01';
+      overlay.querySelector('[data-fc-projection-count]').textContent='INSTRUMENT / 01';
+    }
     overlay.querySelector('[data-fc-action="close"]:not(.fc-projection-scrim)')?.focus({preventScroll:true});
     loadSelected(resume);
   }
@@ -611,10 +634,10 @@
     var frame=overlay.querySelector('.fc-film-wrap');
     frame.classList.remove('has-error','has-started');
     status.textContent=i18n('loading');
-    selection.lastTime=s.stages[i].start;
+    selection.lastTime=selection.instrument?0:s.stages[i].start;
     selection.paused=false;syncPlayButton();updateScore(selection.lastTime);
     player.muted=selection.muted;player.loop=false;player.removeAttribute('poster');
-    player.src=source(s,i);player.load();
+    player.src=selection.instrument?s.assets.film:source(s,i);player.load();
     var initialTime=clamp(Number(startAt)||0,0,1e7);
     function play(){
       if(token!==serial||!isLive()||!selection.open)return;
@@ -644,6 +667,11 @@
   }
   function nextStage(dir) {
     if(!isLive()||!selection.open)return;
+    if(selection.instrument){
+      selection.paused=true;syncPlayButton();
+      activeOverlay()?.querySelector('[data-fc-film-status]')?.replaceChildren(document.createTextNode(i18n('allEnd')));
+      return;
+    }
     var n=selection.index+dir,s=current();
     if(n<0||n>=s.stages.length){
       if(dir>0){
@@ -680,7 +708,7 @@
     overlay.querySelector('[data-fc-inspection]').hidden=true;
     overlay.hidden=true;
     overlay.querySelector('.fc-score-cluster')?.classList.remove('is-magnetic');
-    selection.open=false;selection.scoreInspect=false;
+    selection.open=false;selection.instrument=false;selection.scoreInspect=false;
     scene.classList.remove('is-projected');
     scene.querySelectorAll('.fc-card.is-playing').forEach(function(card){card.classList.remove('is-playing');});
     document.body.classList.remove('fc-modal-open');
@@ -907,6 +935,9 @@
       if(action==='select'){
         select(Number(node.dataset.fcSeries),Number(node.dataset.fcIndex));return;
       }
+      if(action==='instrument'){
+        select(Number(node.dataset.fcSeries),0,true);return;
+      }
       if(action==='close'){closeProjection();return;}
       if(action==='inspect'){setInspect(true);return;}
       if(action==='stop-inspect'){setInspect(false);return;}
@@ -950,7 +981,7 @@
     document.body.classList.remove('fc-modal-open');
     scene=next;player=null;
     if(!scene)return;
-    selection.open=false;selection.scoreInspect=false;selection.focus=[0,0];
+    selection.open=false;selection.instrument=false;selection.scoreInspect=false;selection.focus=[0,0];
     wireEvents();
     SERIES.forEach(function(_,si){focusCard(si,0,false);});
     if('IntersectionObserver' in window) {
