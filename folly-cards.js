@@ -170,7 +170,7 @@
   function cardMarkup(stage,index,s){
     return '<li class="fc-card" data-fc-card="'+index+'" data-fc-series="'+SERIES.indexOf(s)+'">'+
       '<button class="fc-card-button" type="button" data-fc-action="select" data-fc-index="'+index+'" data-fc-series="'+SERIES.indexOf(s)+'" aria-label="'+esc(i18n('open')+': '+label(stage))+'">'+
-        '<span class="fc-frame"><img class="fc-poster" alt="" src="'+esc(s.poster)+'" decoding="async" loading="'+(index<3?'eager':'lazy')+'">'+
+        '<span class="fc-frame">'+
           '<canvas class="fc-preview-frame" aria-hidden="true"></canvas>'+
           '<video class="fc-preview" playsinline webkit-playsinline preload="none" muted aria-hidden="true"></video>'+
           '<video class="fc-hover-video" playsinline webkit-playsinline preload="none" muted loop aria-hidden="true"></video>'+
@@ -516,7 +516,7 @@
     status.textContent=i18n('loading');
     selection.lastTime=s.stages[i].start;
     selection.paused=false;syncPlayButton();updateScore(selection.lastTime);
-    player.muted=selection.muted;player.loop=false;player.poster=s.poster;
+    player.muted=selection.muted;player.loop=false;player.removeAttribute('poster');
     player.src=source(s,i);player.load();
     var initialTime=clamp(Number(startAt)||0,0,1e7);
     function play(){
