@@ -145,13 +145,8 @@
       '<div class="fc-gallery-area"><div class="fc-rail" data-fc-rail="'+si+'" tabindex="0" aria-label="'+esc(i18n('seek')+' / '+label(s.title))+'">'+
         '<ol class="fc-strip">'+s.stages.map(function(stage,index){return cardMarkup(stage,index,s);}).join('')+'</ol>'+
       '</div></div>'+
-      '<div class="fc-navigation">'+
-        '<div class="fc-rail-index"><strong data-fc-index-display>01</strong><span> / '+pad(s.stages.length)+'</span></div>'+
-        '<button type="button" data-fc-action="previous" data-fc-series="'+si+'" class="fc-nudge" aria-label="'+esc(i18n('prev'))+'">←</button>'+
-        '<input class="fc-slider" data-fc-slider="'+si+'" type="range" min="0" max="'+(s.stages.length-1)+'" step="1" value="0" aria-label="'+esc(i18n('seek'))+' / '+label(s.title)+'">'+
-        '<button type="button" data-fc-action="next" data-fc-series="'+si+'" class="fc-nudge" aria-label="'+esc(i18n('next'))+'">→</button>'+
-        '<p class="fc-rail-caption">'+esc(label(s.title))+' <span>'+s.roman+'</span></p>'+
-      '</div>'+
+      '<div class="fc-navigation"><div class="fc-rail-index"><strong data-fc-index-display>01</strong><span> / '+pad(s.stages.length)+'</span></div>'+
+        '<span class="fc-sideways-hint">'+(state.lang==='zh'?'左右滑动浏览':state.lang==='ja'?'横にスワイプ':'SWIPE SIDEWAYS')+' ↔</span></div>'+
       '<div class="fc-series-breath" aria-hidden="true"></div>'+
     '</section>';
   }
@@ -164,13 +159,13 @@
         '<div class="fc-page-heading"><div class="fc-heading-primary">'+
           '<p>'+esc(i18n('group'))+'</p><h1>'+esc(localised(item.title))+'</h1></div>'+
           '<p class="fc-instruction">'+esc(i18n('instruction'))+'<span>'+esc(i18n('selection'))+'</span></p></div>'+
-        '<main class="fc-scroll-content">'+SERIES.map(sectionMarkup).join('')+
+        '<div class="fc-scroll-content">'+SERIES.map(sectionMarkup).join('')+
           '<section class="fc-essay" aria-label="Folly notes"><div class="fc-essay-rule"></div>'+
             '<p class="fc-essay-index">FOLLY / '+(state.lang==='zh'?'关于作品':state.lang==='ja'?'作品について':'NOTES')+'</p>'+
             '<p class="fc-essay-intro">'+esc(intro)+'</p>'+
             '<div class="fc-essay-space" aria-hidden="true"></div>'+
           '</section>'+
-        '</main>'+
+        '</div>'+
         SERIES.map(projectionMarkup).join('')+
       '</div></section>';
   }
@@ -209,15 +204,20 @@
       card.classList.toggle('is-magnet',Number(card.dataset.fcCard)===i);
     });
     root.querySelector('[data-fc-index-display]').textContent=pad(i+1);
-    root.querySelector('[data-fc-slider]').value=String(i);
+    var scrub=root.querySelector('[data-fc-slider]');if(scrub)scrub.value=String(i);
     if(scroll)align(si,i,true);
-    prioritizePreviews(si,i);
+    if(nearViewport(root))prioritizePreviews(si,i);
     if(selection.open&&selection.series===si){
       var overlay=activeOverlay();
       overlay.querySelector('[data-fc-now-title]').textContent=label(s.stages[i]);
       overlay.querySelector('[data-fc-time-index]').textContent=pad(i+1)+' / '+pad(s.stages.length);
       overlay.querySelector('[data-fc-projection-count]').textContent=pad(i+1)+' / '+pad(s.stages.length);
     }
+  }
+  function nearViewport(element) {
+    if(!element)return false;
+    var box=element.getBoundingClientRect();
+    return box.bottom>-300 && box.top<window.innerHeight+420;
   }
   function prioritizePreviews(si,index) {
     if(!isLive())return;
@@ -443,36 +443,13 @@
       if(physics.timer){clearTimeout(physics.timer);physics.timer=0;}
       rail.classList.remove('is-wheel-active');
     }
-    function snap(){
-      stopPhysics();
-      align(si,nearest(si),true);
-    }
-    function animateWheel(){
-      physics.raf=0;
-      if(!rail.isConnected)return;
-      var diff=physics.target-rail.scrollLeft;
-      rail.scrollLeft+=diff*.24;
-      if(Math.abs(diff)>.45)physics.raf=requestAnimationFrame(animateWheel);
-      else rail.scrollLeft=physics.target;
-    }
+    // Keep the ordinary vertical mouse wheel for page scrolling.
+    // Shift+wheel is an optional horizontal alternative to drag/swipe.
     rail.addEventListener('wheel',function(event){
-      if(selection.open)return;
-      var dx=event.deltaX,dy=event.deltaY;
-      // Trackpad horizontal pan is native (including Safari momentum).
-      if(Math.abs(dx)>=Math.abs(dy)*.8) return;
-      if(!dy)return;
-      var scale=event.deltaMode===1?22:event.deltaMode===2?rail.clientWidth:1;
-      var move=dy*scale,atEnd=rail.scrollLeft>=rail.scrollWidth-rail.clientWidth-2;
-      var atStart=rail.scrollLeft<=2;
-      // At ends the wheel belongs to vertical page scrolling again.
-      if((move>0&&atEnd)||(move<0&&atStart))return;
+      if(selection.open || !event.shiftKey)return;
+      if(Math.abs(event.deltaX)>Math.abs(event.deltaY))return;
       event.preventDefault();
-      if(!physics.raf)physics.target=rail.scrollLeft;
-      rail.classList.add('is-wheel-active');
-      physics.target=clamp(physics.target+move*.94,0,Math.max(0,rail.scrollWidth-rail.clientWidth));
-      if(!physics.raf)physics.raf=requestAnimationFrame(animateWheel);
-      clearTimeout(physics.timer);
-      physics.timer=setTimeout(snap,190);
+      rail.scrollLeft+=event.deltaY*(event.deltaMode===1?22:1);
     },{passive:false});
     // Native touch inertia owns all touch gestures. Mouse drag is distinct.
     rail.addEventListener('pointerdown',function(event){
@@ -498,8 +475,7 @@
       if(drag.moved){
         rail.dataset.fcJustDragged='1';
         setTimeout(function(){if(rail.isConnected)delete rail.dataset.fcJustDragged;},100);
-        // A single spring-like settle, never repeated centring during a touch.
-        align(si,nearest(si),true);
+        // Release mouse drag into native proximity snap; never lock the page.
       }
     }
     rail.addEventListener('pointerup',function(event){
@@ -514,26 +490,16 @@
     rail.addEventListener('click',function(e){
       if(rail.dataset.fcJustDragged){e.preventDefault();e.stopPropagation();}
     },true);
-    var scrollTimer=0, railScrollFrame=0;
+    var railScrollFrame=0;
     rail.addEventListener('scroll',function(){
-      if(!railScrollFrame)railScrollFrame=requestAnimationFrame(function(){
+      if(railScrollFrame)return;
+      railScrollFrame=requestAnimationFrame(function(){
         railScrollFrame=0;
         var n=nearest(si);
         if(n!==selection.focus[si])focusCard(si,n,false);
       });
-      clearTimeout(scrollTimer);
-      if(!physics.raf&&!physics.drag&&!physics.touchActive){
-        // Only native trackpad/touch input settles after it has stopped.
-        scrollTimer=setTimeout(function(){
-          if(!selection.open&&!physics.raf&&!physics.drag&&!physics.touchActive&&!rail.classList.contains('is-wheel-active')){
-            align(si,nearest(si),true);
-          }
-        },210);
-      }
+      // Never call scrollTo while momentum scrolling or a touch is active.
     },{passive:true});
-    root.querySelector('[data-fc-slider]').addEventListener('input',function(event){
-      focusCard(si,Number(event.target.value),true);
-    });
     rail.addEventListener('keydown',function(event){
       if(event.key==='ArrowRight'){focusCard(si,selection.focus[si]+1,true);event.preventDefault();}
       else if(event.key==='ArrowLeft'){focusCard(si,selection.focus[si]-1,true);event.preventDefault();}
@@ -668,11 +634,19 @@
     selection.open=false;selection.scoreInspect=false;selection.focus=[0,0];
     wireEvents();
     SERIES.forEach(function(_,si){focusCard(si,0,false);});
-    requestAnimationFrame(function(){
-      if(isLive()){
-        SERIES.forEach(function(_,si){prioritizePreviews(si,0);});
-      }
-    });
+    if('IntersectionObserver' in window) {
+      io=new IntersectionObserver(function(entries){
+        entries.forEach(function(entry){
+          if(entry.isIntersecting){
+            var si=Number(entry.target.dataset.fcSeriesBlock);
+            prioritizePreviews(si,selection.focus[si]);
+          }
+        });
+      },{rootMargin:'420px 0px'});
+      SERIES.forEach(function(_,si){io.observe(block(si));});
+    } else {
+      prioritizePreviews(0,0);
+    }
   }
   var app=document.getElementById('app');
   if(app&&'MutationObserver' in window){new MutationObserver(mount).observe(app,{childList:true,subtree:false});}
