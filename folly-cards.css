@@ -1538,3 +1538,35 @@ body.fc-score-expanded{overflow:hidden!important;}
 @media(prefers-reduced-motion:reduce){
   .fc-inline-score .fc-score-hud,.fc-inline-score .fc-score-shadow {transition:none!important;}
 }
+
+
+/* Score inspection controls and independent hand interaction. */
+.fc-inline-score-actions button[data-fc-action="score-zoom-in"],
+.fc-inline-score-actions button[data-fc-action="score-zoom-out"]{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-width:26px;
+  min-height:27px;
+  padding:0 5px;
+  border:1px solid rgba(36,41,37,.19);
+  font-size:17px;
+  line-height:1;
+}
+.fc-inline-score.is-expanded .fc-inline-score-device {touch-action:none;}
+.fc-inline-score.is-expanded .fc-inline-score-top{
+  position:relative;
+  z-index:3;
+}
+.fc-inline-score.is-expanded .fc-inline-score-top button{
+  padding:8px 11px;
+  border:1px solid rgba(36,41,37,.25);
+}
+.fc-inline-score.is-expanded .fc-inline-score-foot {
+  max-width:1500px;
+  margin-left:auto;
+  margin-right:auto;
+}
+.fc-inline-score.is-expanded .fc-score-shadow{
+  opacity:.75;
+}
