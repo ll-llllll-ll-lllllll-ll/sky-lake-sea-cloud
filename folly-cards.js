@@ -50,6 +50,62 @@
   var FOLD_BASE=ARCHIVE+'attachments/aether-scorched-earth/';
   var selection={series:0,index:0,focus:[0,0],open:false,muted:true,paused:false,scoreInspect:false,scoreZoom:1,scorePanX:0,scorePanY:0,folds:[0,0,0],lastTime:0,manualFrame:null};
   var scene=null,player=null,serial=0,queue=[],previewInFlight=0,previewComplete=new Set(),mountedToken=0;
+  // Only one in-card film is allowed to play. The still-image extraction uses
+  // a different off-screen video so hovering cannot disturb decoding.
+  var hoverFilm={card:null,video:null,si:-1,index:-1,timer:0,request:0,active:false};
+  function stopHoverFilm(){
+    hoverFilm.request++;
+    clearTimeout(hoverFilm.timer);
+    hoverFilm.timer=0;
+    if(hoverFilm.video){
+      try{
+        hoverFilm.video.pause();
+        hoverFilm.video.removeAttribute('src');
+        hoverFilm.video.load();
+      }catch(_){}
+    }
+    hoverFilm.card?.classList.remove('is-hovering','is-previewing');
+    hoverFilm.card=null;hoverFilm.video=null;
+    hoverFilm.si=-1;hoverFilm.index=-1;hoverFilm.active=false;
+  }
+  function startHoverFilm(card,si,index,delay){
+    if(!card?.isConnected||selection.open||!isLive())return;
+    if(window.matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+    if(hoverFilm.card===card&&(hoverFilm.active||hoverFilm.timer))return;
+    stopHoverFilm();
+    var rail=railFor(si);
+    if(!rail||rail.classList.contains('is-dragging'))return;
+    hoverFilm.card=card;hoverFilm.si=si;hoverFilm.index=index;
+    card.classList.add('is-hovering');
+    var ticket=hoverFilm.request;
+    hoverFilm.timer=window.setTimeout(function(){
+      hoverFilm.timer=0;
+      if(ticket!==hoverFilm.request||selection.open||!card.isConnected)return;
+      var film=card.querySelector('.fc-hover-video');
+      if(!film)return;
+      hoverFilm.video=film;
+      film.loop=true;
+      film.muted=true;
+      film.preload='metadata';
+      film.src=source(SERIES[si],index);
+      function begin(){
+        if(ticket!==hoverFilm.request||selection.open||!card.isConnected)return;
+        try{
+          var target=Math.min(2,Math.max(0,film.duration-.3));
+          film.currentTime=target;
+        }catch(_){}
+        var promise=film.play();
+        if(promise?.then)promise.then(function(){
+          if(ticket!==hoverFilm.request){film.pause();return;}
+          hoverFilm.active=true;
+          card.classList.add('is-previewing');
+        }).catch(function(){/* autoplay may be blocked by a browser */});
+      }
+      if(film.readyState>=1)begin();
+      else film.addEventListener('loadedmetadata',begin,{once:true});
+      film.load();
+    },delay);
+  }
   var io=null,scrollFrame=0,playRaf=0,hoverRAF=0,lastTrigger=null,resizeTimer=0;
   var upcomingVideo=null;
   function releaseUpcoming(){
@@ -117,6 +173,7 @@
         '<span class="fc-frame"><img class="fc-poster" alt="" src="'+esc(s.poster)+'" decoding="async" loading="'+(index<3?'eager':'lazy')+'">'+
           '<canvas class="fc-preview-frame" aria-hidden="true"></canvas>'+
           '<video class="fc-preview" playsinline webkit-playsinline preload="none" muted aria-hidden="true"></video>'+
+          '<video class="fc-hover-video" playsinline webkit-playsinline preload="none" muted loop aria-hidden="true"></video>'+
           '<span class="fc-card-filmwash" aria-hidden="true"></span><span class="fc-card-open-sign">↗</span></span>'+
         '<span class="fc-card-copy"><span class="fc-card-count">'+pad(index+1)+' <small>/ '+pad(s.stages.length)+'</small></span>'+
         '<span class="fc-card-name">'+esc(label(stage))+'</span></span>'+
@@ -167,7 +224,7 @@
         '<ol class="fc-strip">'+s.stages.map(function(stage,index){return cardMarkup(stage,index,s);}).join('')+'</ol>'+
       '</div></div>'+
       '<div class="fc-navigation"><div class="fc-rail-index"><strong data-fc-index-display>01</strong><span> / '+pad(s.stages.length)+'</span></div>'+
-        '<input class="fc-slider" data-fc-slider="'+si+'" type="range" min="0" max="'+(s.stages.length-1)+'" value="0" step="1" aria-label="'+esc(i18n('seek')+' / '+label(s.title))+'">'+
+        '<input class="fc-slider" data-fc-slider="'+si+'" type="range" min="0" max="1000" value="0" step="1" aria-label="'+esc(i18n('seek')+' / '+label(s.title))+'">'+
         '<span class="fc-sideways-hint">'+(state.lang==='zh'?'左右滑动浏览':state.lang==='ja'?'横にスワイプ':'SWIPE SIDEWAYS')+' ↔</span></div>'+
       '<div class="fc-series-breath" aria-hidden="true"></div>'+
     '</section>';
@@ -204,6 +261,7 @@
     if(playRaf){cancelAnimationFrame(playRaf);playRaf=0;}
   }
   function clearPreviews(){
+    stopHoverFilm();
     mountedToken++;queue=[];previewComplete=new Set();previewInFlight=0;
     if(io){io.disconnect();io=null;}
     if(scene)scene.querySelectorAll('.fc-preview').forEach(function(v){
@@ -213,8 +271,13 @@
   function align(si,index,smooth) {
     var rail=railFor(si),card=block(si)?.querySelector('[data-fc-card="'+index+'"]');
     if(!rail||!card)return;
-    var x=card.offsetLeft+card.offsetWidth/2-rail.clientWidth/2;
-    rail.scrollTo({left:x,behavior:smooth&&!window.matchMedia('(prefers-reduced-motion:reduce)').matches?'smooth':'auto'});
+    // Explicit keyboard/next-stage navigation only: bring an off-screen
+    // card into view, without aligning its centre to a magnetic point.
+    var viewport=rail.getBoundingClientRect(),r=card.getBoundingClientRect();
+    var inset=24,delta=0;
+    if(r.left<viewport.left+inset)delta=r.left-viewport.left-inset;
+    else if(r.right>viewport.right-inset)delta=r.right-viewport.right+inset;
+    if(delta)rail.scrollBy({left:delta,behavior:smooth?'smooth':'auto'});
   }
   function focusCard(si,index,scroll) {
     if(!isLive())return;
@@ -222,13 +285,13 @@
     if(!root)return;
     selection.focus[si]=i;
     if(!selection.open){selection.series=si;selection.index=i;}
-    root.querySelectorAll('[data-fc-card]').forEach(function(card){
-      card.classList.toggle('is-magnet',Number(card.dataset.fcCard)===i);
-    });
+    // Record the nearest stage for the counter only. No selected/magnetic
+    // class, implicit scrolling or forced rest position.
     root.querySelector('[data-fc-index-display]').textContent=pad(i+1);
     var slider=root.querySelector('[data-fc-slider]');
-    if(slider && document.activeElement!==slider)slider.value=String(i);
-    var scrub=root.querySelector('[data-fc-slider]');if(scrub)scrub.value=String(i);
+    var rail=railFor(si);
+    var max=rail?Math.max(0,rail.scrollWidth-rail.clientWidth):0;
+    if(slider&&document.activeElement!==slider)slider.value=String(max?Math.round(rail.scrollLeft/max*1000):0);
     if(scroll)align(si,i,true);
     if(nearViewport(root))prioritizePreviews(si,i);
     if(selection.open&&selection.series===si){
@@ -263,7 +326,7 @@
       root.style.setProperty('--fc-ratio-number',String(ratio));
     }
   }
-  // Decode a single real MP4 frame at ~1s into a light canvas still.
+  // Decode a genuine film frame near 2 seconds into a light canvas still.
   // Once captured, detach the 25MB source from the preview video.
   // Each MP4 is only prepared as its series approaches the viewport.
   function processPreviews() {
@@ -316,7 +379,7 @@
         applyVideoRatio(task.si,v);
         try{
           if(!Number.isFinite(v.duration)||v.duration<.15){release(false);return;}
-          var target=Math.min(1,Math.max(.04,v.duration-.08));
+          var target=Math.min(2,Math.max(.04,v.duration-.12));
           v.currentTime=target;
         }catch(_){release(false);}
       }
@@ -424,6 +487,11 @@
     if(!isLive())return;
     if(selection.open)closeProjection();
     lastTrigger=document.activeElement;
+    // Continue from the real currentTime of the in-card film when applicable.
+    var resume=(hoverFilm.active&&hoverFilm.si===si&&hoverFilm.index===index&&
+      hoverFilm.video&&Number.isFinite(hoverFilm.video.currentTime))
+      ?hoverFilm.video.currentTime:0;
+    stopHoverFilm();
     selection.series=si;
     selection.open=true;selection.index=clamp(index,0,SERIES[si].stages.length-1);
     selection.paused=false;selection.scoreInspect=false;
@@ -433,11 +501,11 @@
     block(si)?.querySelector('[data-fc-card="'+selection.index+'"]')?.classList.add('is-playing');
     document.body.classList.add('fc-modal-open');
     scene.querySelectorAll('.fc-page-heading,.fc-scroll-content').forEach(function(node){node.inert=true;});
-    focusCard(si,index,true);
+    focusCard(si,index,false);
     overlay.querySelector('[data-fc-action="close"]:not(.fc-projection-scrim)')?.focus({preventScroll:true});
-    loadSelected();
+    loadSelected(resume);
   }
-  function loadSelected(){
+  function loadSelected(startAt){
     if(!isLive()||!selection.open)return;
     stopMedia();
     var token=serial,s=current(),i=selection.index,overlay=activeOverlay();
@@ -450,6 +518,7 @@
     selection.paused=false;syncPlayButton();updateScore(selection.lastTime);
     player.muted=selection.muted;player.loop=false;player.poster=s.poster;
     player.src=source(s,i);player.load();
+    var initialTime=clamp(Number(startAt)||0,0,1e7);
     function play(){
       if(token!==serial||!isLive()||!selection.open)return;
       var p=player.play();
@@ -461,8 +530,20 @@
         if(token===serial){status.textContent=i18n('play')+' ▶';selection.paused=true;syncPlayButton();}
       });
     }
-    if(player.readyState>=2)play();
-    else player.addEventListener('canplay',play,{once:true});
+    function prepare(){
+      if(token!==serial||!isLive()||!selection.open)return;
+      if(initialTime>.08 && Number.isFinite(player.duration)&&player.duration>.3){
+        var seekTo=Math.min(initialTime,Math.max(0,player.duration-.18));
+        try{
+          player.currentTime=seekTo;
+          // Wait for the actual seek before revealing/playing the film.
+          player.addEventListener('seeked',play,{once:true});
+        }catch(_){play();}
+      }else if(player.readyState>=2)play();
+      else player.addEventListener('canplay',play,{once:true});
+    }
+    if(player.readyState>=1)prepare();
+    else player.addEventListener('loadedmetadata',prepare,{once:true});
   }
   function nextStage(dir) {
     if(!isLive()||!selection.open)return;
@@ -496,6 +577,7 @@
   function closeProjection() {
     if(!selection.open||!isLive())return;
     stopMedia();
+    stopHoverFilm();
     releaseUpcoming();
     var overlay=activeOverlay();
     overlay.querySelector('[data-fc-inspection]').hidden=true;
@@ -726,7 +808,7 @@
   function mount(){
     var next=document.querySelector('[data-fc-scene]');
     if(scene===next)return;
-    if(scene){stopMedia();clearPreviews();}
+    if(scene){stopHoverFilm();stopMedia();clearPreviews();}
     releaseUpcoming();
     document.body.classList.remove('fc-modal-open');
     scene=next;player=null;
