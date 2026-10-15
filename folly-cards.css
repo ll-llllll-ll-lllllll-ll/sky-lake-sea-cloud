@@ -869,3 +869,168 @@ body.fc-modal-open {overflow:hidden;}
 @media(prefers-reduced-motion:reduce){
   .fc-rail {scroll-behavior:auto;}
 }
+
+
+/* v4 · Local 1-second MP4 contact sheets and score apparatus */
+.fc-frame .fc-preview-frame {
+  display:block;
+  position:absolute;
+  z-index:1;
+  inset:0;
+  width:100%;
+  height:100%;
+  opacity:0;
+  object-fit:contain;
+  transition:opacity .65s ease,filter .7s ease;
+  filter:brightness(.97);
+  pointer-events:none;
+}
+.fc-card.has-frame .fc-preview-frame {opacity:1;}
+.fc-frame .fc-preview {
+  position:absolute;
+  z-index:0;
+  top:0;
+  left:0;
+  width:1px;
+  height:1px;
+  opacity:0!important;
+  pointer-events:none;
+}
+.fc-frame .fc-poster {
+  z-index:0;
+  transition:opacity .6s ease, filter .7s ease;
+}
+.fc-card.has-frame .fc-poster {opacity:0;}
+.fc-frame .fc-card-filmwash {z-index:2;}
+.fc-frame .fc-card-open-sign {z-index:3;}
+.fc-card.is-playing .fc-preview-frame,
+.fc-card.is-playing .fc-poster {
+  filter:brightness(.42) saturate(.55);
+}
+.fc-page.is-projected .fc-scroll-content {
+  filter:brightness(.63);
+  transition:filter .62s ease;
+}
+.fc-page.is-projected .fc-page-heading {
+  filter:brightness(.72);
+  transition:filter .62s ease;
+}
+.fc-rail:not(.is-dragging) {
+  scroll-snap-type:x proximity;
+}
+.fc-card.is-magnet .fc-frame {
+  box-shadow:0 13px 35px rgba(12,14,12,.09);
+  transition:box-shadow .38s ease,border-color .38s ease;
+}
+.fc-navigation {
+  gap:clamp(19px,3vw,54px);
+}
+.fc-navigation .fc-slider {
+  display:block;
+  flex:1 1 240px;
+  min-width:80px;
+  max-width:640px;
+  height:30px;
+  margin:0;
+  padding:0;
+  background:transparent;
+  border:0;
+  appearance:none;
+  -webkit-appearance:none;
+  cursor:ew-resize;
+}
+.fc-navigation .fc-slider::-webkit-slider-runnable-track{
+  height:1px;
+  background:linear-gradient(90deg,rgba(39,42,38,.5),rgba(39,42,38,.20));
+}
+.fc-navigation .fc-slider::-moz-range-track{
+  height:1px;
+  background:linear-gradient(90deg,rgba(39,42,38,.5),rgba(39,42,38,.20));
+}
+.fc-navigation .fc-slider::-webkit-slider-thumb{
+  width:11px;height:11px;
+  border:1px solid #373b37;
+  border-radius:50%;
+  margin-top:-5px;
+  background:#e9e8e1;
+  box-shadow:0 0 0 3px rgba(36,41,37,.07);
+  -webkit-appearance:none;
+}
+.fc-navigation .fc-slider::-moz-range-thumb{
+  width:11px;height:11px;
+  border:1px solid #373b37;
+  border-radius:50%;
+  background:#e9e8e1;
+  box-shadow:0 0 0 3px rgba(36,41,37,.07);
+}
+.fc-sideways-hint{
+  margin-left:0;
+  white-space:nowrap;
+}
+.fc-mechanical-notation,
+.fc-shadow-scan {isolation:isolate;}
+.fc-mechanical-lever {
+  --fc-mech-knob:15%;
+  --fc-mech-ring:15%;
+  --fc-mech-engage:1;
+  position:absolute;
+  z-index:5;
+  top:36%;
+  left:36%;
+  width:28%;
+  height:49%;
+  pointer-events:none;
+}
+.fc-mechanical-guide {
+  position:absolute;
+  display:block;
+  top:8%;bottom:8%;left:50%;
+  width:1px;
+  background:rgba(214,222,219,.28);
+  transform:translateX(-50%);
+}
+.fc-mechanical-knob {
+  display:block;
+  position:absolute;
+  top:var(--fc-mech-knob);
+  left:50%;
+  transform:translate(-50%,-50%);
+  width:8px;height:8px;
+  background:#f3f3eb;
+  border:1px solid rgba(24,25,23,.45);
+  border-radius:50%;
+  box-shadow:0 0 7px rgba(241,245,231,.65);
+}
+.fc-mechanical-ring {
+  position:absolute;
+  display:block;
+  top:var(--fc-mech-ring);
+  left:50%;
+  width:clamp(13px,1.5vw,22px);
+  aspect-ratio:1;
+  transform:translate(-50%,-50%);
+  border:1px solid rgba(233,231,213,.89);
+  border-radius:50%;
+  opacity:calc(.26 + .74 * var(--fc-mech-engage));
+  box-shadow:0 0 9px rgba(220,219,201,.25);
+}
+.fc-shadow-scan .fc-mechanical-lever{opacity:.58;}
+.fc-score-cluster.is-magnetic .fc-score-hud {
+  box-shadow:0 0 0 1px rgba(229,224,210,.28),0 6px 35px rgba(0,0,0,.45);
+}
+.fc-projection[hidden]{display:none!important;}
+@media (max-width:700px){
+  .fc-navigation{gap:12px;}
+  .fc-navigation .fc-slider{min-width:78px;max-width:none;}
+  .fc-sideways-hint{font-size:9px;}
+  .fc-mechanical-knob{width:5px;height:5px;}
+  .fc-mechanical-ring{width:12px;}
+}
+@media (prefers-reduced-motion:reduce){
+  .fc-frame .fc-preview-frame,
+  .fc-frame .fc-poster,
+  .fc-page.is-projected .fc-scroll-content,
+  .fc-page.is-projected .fc-page-heading{
+    transition:none;
+  }
+}
