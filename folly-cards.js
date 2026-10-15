@@ -7,10 +7,11 @@
   if (typeof renderRoom !== 'function' || typeof state === 'undefined') return;
 
   var ARCHIVE = 'https://ruin-archive.site/';
+  var LOCAL_VIDEO = './works/ruin-garden/';
   var PHOTOS = ARCHIVE + 'thumbnails/garden-128/';
   var SERIES = [
     {id:'folly-1',roman:'I',title:{zh:'沉墟心室',en:'Effluent Sedimentation',ja:'沈墟の心室'},
-     media:'attachments/effluent-sedimentation/folly-1/',poster:PHOTOS+'effluent-sedimentation.webp',
+     media:LOCAL_VIDEO+'folly-1/',poster:PHOTOS+'effluent-sedimentation.webp',
      kind:'linear',endTime:150,
      stages:[
        {start:0, end:20, zh:'滞岸之壳',en:'Stranded shell',ja:'岸に留まる殻'},
@@ -21,7 +22,7 @@
        {start:124,end:150,zh:'崩塌余响',en:'After the collapse',ja:'崩落の余韻'}
      ]},
     {id:'folly-2',roman:'II',title:{zh:'朽塔焦土',en:'Aether Scorched-Earth',ja:'朽塔の焦土'},
-     media:'attachments/aether-scorched-earth/folly-2/',poster:PHOTOS+'aether-scorched-earth.webp',
+     media:LOCAL_VIDEO+'folly-2/',poster:PHOTOS+'aether-scorched-earth.webp',
      kind:'radial',endTime:255,
      stages:[
        {start:0,end:28,zh:'并和狭间',en:'The interval',ja:'並存の狭間'},
@@ -43,7 +44,7 @@
   var esc=function(v){return escapeHtml(v == null?'':String(v));};
   var pad=function(n){return String(n).padStart(2,'0');};
   var clamp=function(x,min,max){return Math.max(min,Math.min(max,Number(x)||0));};
-  var source=function(s,i){return ARCHIVE+s.media+String(i+1)+'.mp4';};
+  var source=function(s,i){return s.media+String(i+1)+'.mp4';};
   var FILES_I=Array.from({length:15},function(_,i){return ARCHIVE+'attachments/effluent-sedimentation/score-1-'+(i+1)+'.webp';});
   var FILES_I_MOBILE=Array.from({length:15},function(_,i){return ARCHIVE+'assets/mobile-score/effluent-sedimentation/score-1-'+(i+1)+'.webp';});
   var FOLD_BASE=ARCHIVE+'attachments/aether-scorched-earth/';
@@ -95,6 +96,7 @@
     return '<li class="fc-card" data-fc-card="'+index+'" data-fc-series="'+SERIES.indexOf(s)+'">'+
       '<button class="fc-card-button" type="button" data-fc-action="select" data-fc-index="'+index+'" data-fc-series="'+SERIES.indexOf(s)+'" aria-label="'+esc(i18n('open')+': '+label(stage))+'">'+
         '<span class="fc-frame"><img class="fc-poster" alt="" src="'+esc(s.poster)+'" decoding="async" loading="'+(index<3?'eager':'lazy')+'">'+
+          '<canvas class="fc-preview-frame" aria-hidden="true"></canvas>'+
           '<video class="fc-preview" playsinline webkit-playsinline preload="none" muted aria-hidden="true"></video>'+
           '<span class="fc-card-filmwash" aria-hidden="true"></span><span class="fc-card-open-sign">↗</span></span>'+
         '<span class="fc-card-copy"><span class="fc-card-count">'+pad(index+1)+' <small>/ '+pad(s.stages.length)+'</small></span>'+
@@ -146,6 +148,7 @@
         '<ol class="fc-strip">'+s.stages.map(function(stage,index){return cardMarkup(stage,index,s);}).join('')+'</ol>'+
       '</div></div>'+
       '<div class="fc-navigation"><div class="fc-rail-index"><strong data-fc-index-display>01</strong><span> / '+pad(s.stages.length)+'</span></div>'+
+        '<input class="fc-slider" data-fc-slider="'+si+'" type="range" min="0" max="'+(s.stages.length-1)+'" value="0" step="1" aria-label="'+esc(i18n('seek')+' / '+label(s.title))+'">'+
         '<span class="fc-sideways-hint">'+(state.lang==='zh'?'左右滑动浏览':state.lang==='ja'?'横にスワイプ':'SWIPE SIDEWAYS')+' ↔</span></div>'+
       '<div class="fc-series-breath" aria-hidden="true"></div>'+
     '</section>';
@@ -239,6 +242,9 @@
       root.style.setProperty('--fc-ratio-number',String(ratio));
     }
   }
+  // Decode a single real MP4 frame at ~1s into a light canvas still.
+  // Once captured, detach the 25MB source from the preview video.
+  // Each MP4 is only prepared as its series approaches the viewport.
   function processPreviews() {
     if(!isLive())return;
     while(previewInFlight<2&&queue.length){
@@ -246,38 +252,68 @@
       if(previewComplete.has(task.key))continue;
       let root=block(task.si),card=root?.querySelector('[data-fc-card="'+task.index+'"]');
       if(!card)continue;
-      let v=card.querySelector('video'),token=mountedToken,settled=false;
-      previewComplete.add(task.key);previewInFlight++;
-      let watchdog=window.setTimeout(function(){release(false);},12000);
-      function release(ok) {
-        if(settled)return;settled=true;
+      let v=card.querySelector('video'),canvas=card.querySelector('.fc-preview-frame');
+      let token=mountedToken,settled=false,usedFallback=false,watchdog=0;
+      previewComplete.add(task.key);
+      previewInFlight++;
+      function dropVideo(){
+        try{v.pause();v.removeAttribute('src');v.load();}catch(_){}
+      }
+      function release(ok){
+        if(settled)return;
+        settled=true;
         clearTimeout(watchdog);
         v.removeEventListener('loadedmetadata',meta);
         v.removeEventListener('seeked',seek);
+        v.removeEventListener('loadeddata',onData);
         v.removeEventListener('error',bad);
+        dropVideo();
         if(token!==mountedToken)return;
-        if(ok)card.classList.add('has-frame');
-        else {
+        if(ok){
+          card.classList.add('has-frame');
+          card.classList.remove('has-poster-fallback');
+        }else{
           card.classList.add('has-poster-fallback');
-          try{v.removeAttribute('src');v.load();}catch(_){}
+          card.title=i18n('missing');
         }
-        previewInFlight=Math.max(0,previewInFlight-1);processPreviews();
+        previewInFlight=Math.max(0,previewInFlight-1);
+        processPreviews();
+      }
+      function capture(){
+        if(settled||token!==mountedToken)return;
+        if(v.readyState<2||!v.videoWidth||!v.videoHeight)return;
+        try{
+          var w=Math.min(780,v.videoWidth);
+          var h=Math.max(1,Math.round(w*v.videoHeight/v.videoWidth));
+          canvas.width=w;canvas.height=h;
+          canvas.getContext('2d',{alpha:false}).drawImage(v,0,0,w,h);
+          release(true);
+        }catch(error){release(false);}
       }
       function meta(){
-        if(token!==mountedToken)return;
+        if(settled||token!==mountedToken)return;
         applyVideoRatio(task.si,v);
-        try {
-          if(!Number.isFinite(v.duration)||v.duration<.2){release(false);return;}
-          // Stop-frame: one second after THIS stage began, no continuous preview playback.
-          v.currentTime=Math.min(1,Math.max(.01,v.duration-.08));
+        try{
+          if(!Number.isFinite(v.duration)||v.duration<.15){release(false);return;}
+          var target=Math.min(1,Math.max(.04,v.duration-.08));
+          v.currentTime=target;
         }catch(_){release(false);}
       }
-      function seek(){v.pause();release(true);}
+      function seek(){
+        if(v.readyState>=2){capture();}
+        else v.addEventListener('loadeddata',onData,{once:true});
+      }
+      function onData(){capture();}
       function bad(){release(false);}
       v.addEventListener('loadedmetadata',meta);
       v.addEventListener('seeked',seek);
+      v.addEventListener('loadeddata',onData);
       v.addEventListener('error',bad);
-      v.preload='metadata';v.muted=true;v.src=source(SERIES[task.si],task.index);v.load();
+      watchdog=window.setTimeout(function(){release(false);},15500);
+      v.preload='auto';
+      v.muted=true;
+      v.src=source(SERIES[task.si],task.index);
+      v.load();
     }
   }
   function updateScore(absolute) {
@@ -332,7 +368,11 @@
   function progress() {
     if(!isLive()||!player||!selection.open)return;
     var m=current().stages[selection.index];
-    selection.lastTime=m.start+(Number(player.currentTime)||0);
+    var length=m.end-m.start;
+    var fraction=Number.isFinite(player.duration)&&player.duration>0
+      ?clamp((Number(player.currentTime)||0)/player.duration,0,1)
+      :0;
+    selection.lastTime=m.start+length*fraction;
     updateScore(selection.lastTime);
     if(selection.scoreInspect)updateInspect();
   }
@@ -501,6 +541,16 @@
       });
       // Never call scrollTo while momentum scrolling or a touch is active.
     },{passive:true});
+    var slider=root.querySelector('[data-fc-slider]');
+    if(slider){
+      slider.addEventListener('input',function(ev){
+        var n=Number(ev.target.value);
+        focusCard(si,n,true);
+      });
+      slider.addEventListener('change',function(ev){
+        focusCard(si,Number(ev.target.value),true);
+      });
+    }
     rail.addEventListener('keydown',function(event){
       if(event.key==='ArrowRight'){focusCard(si,selection.focus[si]+1,true);event.preventDefault();}
       else if(event.key==='ArrowLeft'){focusCard(si,selection.focus[si]-1,true);event.preventDefault();}
