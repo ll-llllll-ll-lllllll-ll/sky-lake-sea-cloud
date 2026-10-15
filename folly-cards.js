@@ -603,88 +603,126 @@
   function wireRail(si){
     var rail=railFor(si),root=block(si);
     if(!rail||!root)return;
-    var physics={target:0,raf:0,timer:0,drag:null,touchActive:false};
-    function stopPhysics(){
-      if(physics.raf){cancelAnimationFrame(physics.raf);physics.raf=0;}
-      if(physics.timer){clearTimeout(physics.timer);physics.timer=0;}
-      rail.classList.remove('is-wheel-active');
+    var drag=null,scrollRaf=0,idleTimer=0,touched=false;
+    var slider=root.querySelector('[data-fc-slider]');
+    function syncRange(){
+      if(!slider||document.activeElement===slider)return;
+      var max=Math.max(0,rail.scrollWidth-rail.clientWidth);
+      slider.value=String(max?Math.round(1000*rail.scrollLeft/max):0);
     }
-    // Keep the ordinary vertical mouse wheel for page scrolling.
-    // Shift+wheel is an optional horizontal alternative to drag/swipe.
+    function idlePreview(){
+      idleTimer=0;
+      if(selection.open||!isLive()||document.hidden||drag||hoverFilm.card||!nearViewport(root))return;
+      // After someone horizontally explores, a resting tableau comes alive.
+      // Never initiate this when the pointer is outside the rail unless a
+      // touch gesture brought the visitor here.
+      var pointed=(typeof rail.matches==='function'&&rail.matches(':hover'));
+      if(!pointed&&!touched)return;
+      var index=nearest(si),card=root.querySelector('[data-fc-card="'+index+'"]');
+      if(!card)return;
+      var bounds=card.getBoundingClientRect(),r=rail.getBoundingClientRect();
+      if(bounds.right>r.left+50&&bounds.left<r.right-50)
+        startHoverFilm(card,si,index,0);
+      touched=false;
+    }
+    // Trackpad horizontal deltas and touch swipes belong entirely to the
+    // browser's native inertial scroller. Vertical mouse wheel stays vertical.
     rail.addEventListener('wheel',function(event){
-      if(selection.open || !event.shiftKey)return;
-      if(Math.abs(event.deltaX)>Math.abs(event.deltaY))return;
+      if(selection.open||!event.shiftKey||Math.abs(event.deltaX)>Math.abs(event.deltaY))return;
       event.preventDefault();
-      rail.scrollLeft+=event.deltaY*(event.deltaMode===1?22:1);
+      rail.scrollLeft+=event.deltaY*(event.deltaMode===1?22:event.deltaMode===2?rail.clientWidth:1);
     },{passive:false});
-    // Native touch inertia owns all touch gestures. Mouse drag is distinct.
+    // Mouse drag is a free pixel-wise translation, with no release centring.
     rail.addEventListener('pointerdown',function(event){
-      if(event.pointerType==='touch'||event.pointerType==='pen'){physics.touchActive=true;stopPhysics();return;}
+      if(event.pointerType==='touch'||event.pointerType==='pen'){
+        touched=true;
+        clearTimeout(idleTimer);
+        if(hoverFilm.card?.closest('.fc-rail')===rail)stopHoverFilm();
+        return;
+      }
       if(event.pointerType!=='mouse'||event.button!==0)return;
-      stopPhysics();
-      physics.drag={id:event.pointerId,x:event.clientX,left:rail.scrollLeft,moved:false};
+      clearTimeout(idleTimer);
+      if(hoverFilm.card?.closest('.fc-rail')===rail)stopHoverFilm();
+      drag={pointerId:event.pointerId,x:event.clientX,left:rail.scrollLeft,moved:false};
     });
     rail.addEventListener('pointermove',function(event){
-      var drag=physics.drag;
-      if(!drag||drag.id!==event.pointerId)return;
-      var delta=event.clientX-drag.x;
-      if(Math.abs(delta)>7&&!drag.moved){
+      if(!drag||drag.pointerId!==event.pointerId)return;
+      var dx=event.clientX-drag.x;
+      if(Math.abs(dx)>6&&!drag.moved){
         drag.moved=true;
         rail.classList.add('is-dragging');
-        try{rail.setPointerCapture?.(event.pointerId);}catch(_){}
+        try{rail.setPointerCapture(event.pointerId);}catch(_){}
       }
-      if(drag.moved)rail.scrollLeft=drag.left-delta;
-    });
-    function finishDrag(){
-      var drag=physics.drag;if(!drag)return;
-      physics.drag=null;rail.classList.remove('is-dragging');
       if(drag.moved){
-        rail.dataset.fcJustDragged='1';
-        setTimeout(function(){if(rail.isConnected)delete rail.dataset.fcJustDragged;},100);
-        // One gentle magnetic settle after mouse release. Touch and trackpad
-        // never receive JS recentering while native momentum is in progress.
-        requestAnimationFrame(function(){
-          if(rail.isConnected)align(si,nearest(si),true);
-        });
+        rail.scrollLeft=drag.left-dx;
+        event.preventDefault();
       }
+    });
+    function finishDrag(event){
+      if(!drag||(event?.pointerId!=null&&event.pointerId!==drag.pointerId))return;
+      var wasMoved=drag.moved;
+      drag=null;
+      rail.classList.remove('is-dragging');
+      if(wasMoved){
+        rail.dataset.fcJustDragged='1';
+        window.setTimeout(function(){
+          if(rail.isConnected)delete rail.dataset.fcJustDragged;
+        },170);
+      }
+      // Intentionally no scrollTo, scroll-snap or alignment on release.
     }
-    rail.addEventListener('pointerup',function(event){
-      if(event.pointerType==='touch'||event.pointerType==='pen'){physics.touchActive=false;return;}
-      finishDrag();
-    });
-    rail.addEventListener('pointercancel',function(event){
-      if(event.pointerType==='touch'||event.pointerType==='pen'){physics.touchActive=false;return;}
-      finishDrag();
-    });
+    rail.addEventListener('pointerup',finishDrag);
+    rail.addEventListener('pointercancel',finishDrag);
     rail.addEventListener('lostpointercapture',finishDrag);
-    rail.addEventListener('click',function(e){
-      if(rail.dataset.fcJustDragged){e.preventDefault();e.stopPropagation();}
+    rail.addEventListener('click',function(event){
+      if(rail.dataset.fcJustDragged){event.preventDefault();event.stopPropagation();}
     },true);
-    var railScrollFrame=0;
+    // Hover can magnify/play a single card after a short, deliberate rest.
+    root.querySelectorAll('.fc-card').forEach(function(card){
+      var index=Number(card.dataset.fcCard);
+      card.addEventListener('pointerenter',function(event){
+        if(event.pointerType!=='mouse'||drag||selection.open)return;
+        clearTimeout(idleTimer);
+        startHoverFilm(card,si,index,460);
+      });
+      card.addEventListener('pointerleave',function(){
+        if(hoverFilm.card===card)stopHoverFilm();
+      });
+      card.addEventListener('focusin',function(event){
+        if(event.target.matches('.fc-card-button'))startHoverFilm(card,si,index,850);
+      });
+      card.addEventListener('focusout',function(){
+        if(hoverFilm.card===card)stopHoverFilm();
+      });
+    });
     rail.addEventListener('scroll',function(){
-      if(railScrollFrame)return;
-      railScrollFrame=requestAnimationFrame(function(){
-        railScrollFrame=0;
-        var n=nearest(si);
-        if(n!==selection.focus[si])focusCard(si,n,false);
+      if(hoverFilm.card?.closest('.fc-rail')===rail)stopHoverFilm();
+      if(!scrollRaf)scrollRaf=requestAnimationFrame(function(){
+        scrollRaf=0;
+        syncRange();
+        var closest=nearest(si);
+        if(selection.focus[si]!==closest)focusCard(si,closest,false);
       });
-      // Never call scrollTo while momentum scrolling or a touch is active.
+      clearTimeout(idleTimer);
+      // A still card begins a muted miniature preview only AFTER scrolling
+      // actually stops. This timer never changes the scroll position.
+      idleTimer=setTimeout(idlePreview,1450);
     },{passive:true});
-    var slider=root.querySelector('[data-fc-slider]');
     if(slider){
-      slider.addEventListener('input',function(ev){
-        var n=Number(ev.target.value);
-        focusCard(si,n,true);
+      slider.addEventListener('input',function(event){
+        clearTimeout(idleTimer);
+        if(hoverFilm.card?.closest('.fc-rail')===rail)stopHoverFilm();
+        var max=Math.max(0,rail.scrollWidth-rail.clientWidth);
+        rail.scrollLeft=max*Number(event.target.value)/1000;
       });
-      slider.addEventListener('change',function(ev){
-        focusCard(si,Number(ev.target.value),true);
-      });
+      slider.addEventListener('change',function(){syncRange();});
     }
     rail.addEventListener('keydown',function(event){
       if(event.key==='ArrowRight'){focusCard(si,selection.focus[si]+1,true);event.preventDefault();}
       else if(event.key==='ArrowLeft'){focusCard(si,selection.focus[si]-1,true);event.preventDefault();}
       else if(event.key==='Enter'){select(si,selection.focus[si]);event.preventDefault();}
     });
+    syncRange();
   }
   function wireOverlay(si) {
     var overlay=scene.querySelector('[data-fc-projection="'+si+'"]');
