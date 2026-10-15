@@ -1034,3 +1034,40 @@ body.fc-modal-open {overflow:hidden;}
     transition:none;
   }
 }
+
+
+/* Folly II: the four-panel score belongs to the SHADOW, not the live glass.
+   The live overlay only calibrates the two moving needles. */
+.fc-score-radial .fc-score-shadow {
+  opacity:.78;
+  filter:grayscale(.12) contrast(1.06);
+  background:rgba(232,232,220,.045);
+  transform:translate(10px,12px) scale(.96);
+}
+.fc-score-radial .fc-score-shadow .fc-fold-stage {opacity:1;}
+.fc-score-radial .fc-score-hud {
+  background:rgba(15,19,18,.18);
+  backdrop-filter:blur(5px);
+  -webkit-backdrop-filter:blur(5px);
+  transition:opacity .55s ease,transform .17s ease,border-color .26s,background .26s;
+}
+.fc-score-radial .fc-score-hud .fc-fold-stage {
+  opacity:0;
+  pointer-events:none;
+}
+.fc-score-radial .fc-score-hud .fc-radial-needles{
+  position:absolute;
+  z-index:9;
+}
+.fc-score-radial.is-hud-awaiting .fc-score-hud {
+  opacity:0;
+  pointer-events:none;
+}
+.fc-score-radial.is-hud-awaiting .fc-score-expand {
+  opacity:0;
+  pointer-events:none;
+}
+.fc-score-radial.is-magnetic .fc-score-shadow{
+  transform:translate(1px,2px) scale(.99);
+  opacity:.9;
+}
