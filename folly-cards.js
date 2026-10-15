@@ -51,6 +51,24 @@
   var selection={series:0,index:0,focus:[0,0],open:false,muted:true,paused:false,scoreInspect:false,scoreZoom:1,scorePanX:0,scorePanY:0,folds:[0,0,0],lastTime:0,manualFrame:null};
   var scene=null,player=null,serial=0,queue=[],previewInFlight=0,previewComplete=new Set(),mountedToken=0;
   var io=null,scrollFrame=0,playRaf=0,hoverRAF=0,lastTrigger=null,resizeTimer=0;
+  var upcomingVideo=null;
+  function releaseUpcoming(){
+    if(!upcomingVideo)return;
+    try{upcomingVideo.pause();upcomingVideo.removeAttribute('src');upcomingVideo.load();}catch(_){}
+    upcomingVideo=null;
+  }
+  function warmFollowing(){
+    releaseUpcoming();
+    if(!selection.open||!isLive())return;
+    var next=selection.index+1;
+    if(next>=current().stages.length||navigator.connection?.saveData)return;
+    // Range-cache just the next clip's metadata; no mass download or autoplay.
+    var warm=document.createElement('video');
+    warm.preload='metadata';
+    warm.muted=true;
+    warm.src=source(current(),next);
+    try{warm.load();upcomingVideo=warm;}catch(_){}
+  }
 
   function current(){return SERIES[selection.series];}
   function sourceScoreFrame(fraction){
@@ -438,7 +456,7 @@
       if(p&&p.then)p.then(function(){
         if(token!==serial)return;
         frame.classList.add('has-started');
-        status.textContent='';selection.paused=false;syncPlayButton();
+        status.textContent='';selection.paused=false;syncPlayButton();warmFollowing();
       }).catch(function(){
         if(token===serial){status.textContent=i18n('play')+' ▶';selection.paused=true;syncPlayButton();}
       });
@@ -478,6 +496,7 @@
   function closeProjection() {
     if(!selection.open||!isLive())return;
     stopMedia();
+    releaseUpcoming();
     var overlay=activeOverlay();
     overlay.querySelector('[data-fc-inspection]').hidden=true;
     overlay.hidden=true;
@@ -708,6 +727,7 @@
     var next=document.querySelector('[data-fc-scene]');
     if(scene===next)return;
     if(scene){stopMedia();clearPreviews();}
+    releaseUpcoming();
     document.body.classList.remove('fc-modal-open');
     scene=next;player=null;
     if(!scene)return;
