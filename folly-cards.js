@@ -353,7 +353,7 @@
     var overlay=activeOverlay();
     overlay.hidden=false;
     scene.classList.add('is-projected');
-    scene.style.overflow='hidden';
+    document.body.classList.add('fc-modal-open');
     scene.querySelectorAll('.fc-page-heading,.fc-scroll-content').forEach(function(node){node.inert=true;});
     focusCard(si,index,true);
     overlay.querySelector('[data-fc-action="close"]:not(.fc-projection-scrim)')?.focus({preventScroll:true});
@@ -420,7 +420,8 @@
     overlay.hidden=true;
     overlay.querySelector('.fc-score-cluster')?.classList.remove('is-magnetic');
     selection.open=false;selection.scoreInspect=false;
-    scene.classList.remove('is-projected');scene.style.removeProperty('overflow');
+    scene.classList.remove('is-projected');
+    document.body.classList.remove('fc-modal-open');
     scene.querySelectorAll('.fc-page-heading,.fc-scroll-content').forEach(function(node){node.inert=false;});
     if(lastTrigger?.isConnected)lastTrigger.focus({preventScroll:true});
     else block(selection.series)?.querySelector('[data-fc-card="'+selection.index+'"] button')?.focus({preventScroll:true});
@@ -629,6 +630,7 @@
     var next=document.querySelector('[data-fc-scene]');
     if(scene===next)return;
     if(scene){stopMedia();clearPreviews();}
+    document.body.classList.remove('fc-modal-open');
     scene=next;player=null;
     if(!scene)return;
     selection.open=false;selection.scoreInspect=false;selection.focus=[0,0];
