@@ -642,7 +642,8 @@
       }
       if(event.pointerType!=='mouse'||event.button!==0)return;
       clearTimeout(idleTimer);
-      if(hoverFilm.card?.closest('.fc-rail')===rail)stopHoverFilm();
+      // A mere click must preserve the playing hover video's timestamp.
+      // Stop its preview only once the gesture becomes a genuine drag.
       drag={pointerId:event.pointerId,x:event.clientX,left:rail.scrollLeft,moved:false};
     });
     rail.addEventListener('pointermove',function(event){
@@ -650,6 +651,7 @@
       var dx=event.clientX-drag.x;
       if(Math.abs(dx)>6&&!drag.moved){
         drag.moved=true;
+        if(hoverFilm.card?.closest('.fc-rail')===rail)stopHoverFilm();
         rail.classList.add('is-dragging');
         try{rail.setPointerCapture(event.pointerId);}catch(_){}
       }
