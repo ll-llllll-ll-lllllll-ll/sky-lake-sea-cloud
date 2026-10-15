@@ -273,6 +273,8 @@
       '</div><div class="fc-inline-score-text"><p>'+esc(essay(si,'score'))+'</p>'+
         '<span data-fc-score-state>01 / '+pad(s.stages.length)+'</span>'+
         '<div class="fc-inline-score-actions">'+
+          '<button type="button" data-fc-action="score-zoom-out" data-fc-series="'+si+'" aria-label="Zoom out">−</button>'+
+          '<button type="button" data-fc-action="score-zoom-in" data-fc-series="'+si+'" aria-label="Zoom in">+</button>'+
           '<button type="button" data-fc-action="score-reset" data-fc-series="'+si+'">'+esc(term('scoreReset'))+' ↺</button>'+
           '<button type="button" data-fc-action="score-expand" data-fc-series="'+si+'">'+esc(term('scoreOpen'))+' ↗</button>'+
         '</div>'+
@@ -562,7 +564,7 @@
       });
     }
   }
-  var inlineTime=[0,0],manualWings=[null,null],expandedScore=-1;
+  var inlineTime=[0,0],manualWings=[null,null],expandedScore=-1,scoreScale=[1,1],scorePan=[[0,0],[0,0]];
   function stageByTime(s,t){
     var value=clamp(t,0,s.endTime),idx=0;
     for(var i=0;i<s.stages.length;i++){
@@ -578,6 +580,8 @@
     var score=root.querySelector('[data-fc-inline-score]');
     if(!score)return;
     paintScore(score,s,at,si);
+    var cluster=score.querySelector('.fc-score-cluster');
+    if(cluster)cluster.style.transform='translate('+scorePan[si][0]+'px,'+scorePan[si][1]+'px) scale('+scoreScale[si]+')';
     var i=stageByTime(s,at);
     var state=score.querySelector('[data-fc-score-state]');
     if(state)state.textContent=pad(i+1)+' / '+pad(s.stages.length)+' — '+label(s.stages[i]);
@@ -607,11 +611,19 @@
       expandedScore=si;
       score.classList.add('is-expanded');
       document.body.classList.add('fc-score-expanded');
+      score.querySelectorAll('[data-fc-action="score-expand"]').forEach(function(b){
+        b.setAttribute('aria-expanded','true');
+        b.textContent=term('scoreClose')+' ×';
+      });
       score.querySelector('[data-fc-action="score-expand"]')?.focus({preventScroll:true});
     }else{
       expandedScore=-1;
       score.classList.remove('is-expanded');
       document.body.classList.remove('fc-score-expanded');
+      score.querySelectorAll('[data-fc-action="score-expand"]').forEach(function(b){
+        b.setAttribute('aria-expanded','false');
+        b.textContent=term('scoreOpen')+' ↗';
+      });
       score.querySelector('[data-fc-action="score-expand"]')?.focus({preventScroll:true});
     }
   }
@@ -1024,6 +1036,32 @@
         cluster.style.setProperty('--fc-magnet-y',(((ev.clientY-box.top)/box.height-.5)*9).toFixed(2)+'px');
       },{passive:true});
     }
+    // The expanded score inherits viewer-style zoom and gentle hand panning.
+    var device=score.querySelector('.fc-inline-score-device'),panGesture=null;
+    device.addEventListener('wheel',function(event){
+      if(expandedScore!==si)return;
+      if(!event.ctrlKey && !event.metaKey)return;
+      event.preventDefault();
+      scoreScale[si]=clamp(scoreScale[si]*(event.deltaY<0?1.10:1/1.10),.72,3.6);
+      updateInlineScore(si,inlineTime[si]);
+    },{passive:false});
+    device.addEventListener('pointerdown',function(event){
+      if(expandedScore!==si)return;
+      if(event.pointerType==='mouse'&&event.button!==0)return;
+      if(event.target.closest('button,.fc-mechanical-lever,[data-fc-drag-wing]'))return;
+      panGesture={id:event.pointerId,x:event.clientX,y:event.clientY,px:scorePan[si][0],py:scorePan[si][1]};
+      try{device.setPointerCapture(event.pointerId);}catch(_){}
+    });
+    device.addEventListener('pointermove',function(event){
+      if(!panGesture||panGesture.id!==event.pointerId)return;
+      scorePan[si]=[
+        clamp(panGesture.px+event.clientX-panGesture.x,-290,290),
+        clamp(panGesture.py+event.clientY-panGesture.y,-240,240)
+      ];
+      updateInlineScore(si,inlineTime[si]);
+    });
+    device.addEventListener('pointerup',function(){panGesture=null;});
+    device.addEventListener('pointercancel',function(){panGesture=null;});
     // Folly I: drag the small knob along its guide; the authored fifteen
     // frames and two-stage large ring then follow the same rail timeline.
     var lever=score.querySelector('.fc-mechanical-notation .fc-mechanical-lever');
@@ -1105,9 +1143,15 @@
         setScoreExpanded(which,expandedScore!==which);return;
       }
       if(action==='score-fold'){foldInlineScore(Number(node.dataset.fcSeries));return;}
+      if(action==='score-zoom-in'||action==='score-zoom-out'){
+        var si=Number(node.dataset.fcSeries);
+        scoreScale[si]=clamp(scoreScale[si]*(action==='score-zoom-in'?1.20:1/1.20),.72,3.6);
+        updateInlineScore(si,inlineTime[si]);return;
+      }
       if(action==='score-reset'){
         var which=Number(node.dataset.fcSeries);
         manualWings[which]=null;
+        scoreScale[which]=1;scorePan[which]=[0,0];
         scoreFromRail(which);
         return;
       }
@@ -1156,6 +1200,7 @@
     wireEvents();
     SERIES.forEach(function(_,si){focusCard(si,0,false);});
     manualWings=[null,null];inlineTime=[0,0];expandedScore=-1;
+    scoreScale=[1,1];scorePan=[[0,0],[0,0]];
     SERIES.forEach(function(_,si){updateInlineScore(si,0);});
     if('IntersectionObserver' in window) {
       io=new IntersectionObserver(function(entries){
