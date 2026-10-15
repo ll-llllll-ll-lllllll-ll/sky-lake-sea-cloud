@@ -1166,3 +1166,24 @@ body.fc-modal-open {overflow:hidden;}
   .fc-room .fc-card .fc-hover-video,
   .fc-room .fc-card .fc-frame {transition:none !important;}
 }
+
+
+/* No photographic fallback: pure black until a real decoded film frame exists.
+   This applies to the card strip and the selected film's loading state. */
+.fc-room .fc-card .fc-frame {
+  background:#000;
+}
+.fc-room .fc-card:not(.has-frame) .fc-preview-frame {
+  opacity:0;
+}
+.fc-room .fc-film-wrap,
+.fc-room .fc-film {
+  background:#000;
+}
+.fc-room .fc-film-wrap:not(.has-started) .fc-film {
+  opacity:0;
+}
+.fc-room .fc-film-wrap.has-started .fc-film {
+  opacity:1;
+  transition:opacity .32s ease;
+}
