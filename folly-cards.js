@@ -12,6 +12,7 @@
   var SERIES = [
     {id:'folly-1',roman:'I',title:{zh:'沉墟心室',en:'Effluent Sedimentation',ja:'沈墟の心室'},
      media:LOCAL_VIDEO+'folly-1/',poster:PHOTOS+'effluent-sedimentation.webp',
+     assets:{full:LOCAL_VIDEO+'folly-1-assets/folly-1-full.jpg',back:LOCAL_VIDEO+'folly-1-assets/folly-1-back.jpg',instrument:LOCAL_VIDEO+'folly-1-assets/folly-1-instrument.jpg',body:LOCAL_VIDEO+'folly-1-assets/folly-1-body.jpg',film:LOCAL_VIDEO+'folly-1-assets/instrument-1.mp4'},
      kind:'linear',endTime:150,
      stages:[
        {start:0, end:20, zh:'滞岸之壳',en:'Stranded shell',ja:'岸に留まる殻'},
@@ -23,6 +24,7 @@
      ]},
     {id:'folly-2',roman:'II',title:{zh:'朽塔焦土',en:'Aether Scorched-Earth',ja:'朽塔の焦土'},
      media:LOCAL_VIDEO+'folly-2/',poster:PHOTOS+'aether-scorched-earth.webp',
+     assets:{full:LOCAL_VIDEO+'folly-2-assets/folly-2-full.jpeg',back:LOCAL_VIDEO+'folly-2-assets/folly-2-back.jpeg',instrument:LOCAL_VIDEO+'folly-2-assets/folly-2-instrument.jpeg',body:LOCAL_VIDEO+'folly-2-assets/folly-2-body.jpeg',film:LOCAL_VIDEO+'folly-2-assets/instrument-2.mp4'},
      kind:'radial',endTime:255,
      stages:[
        {start:0,end:28,zh:'并和狭间',en:'The interval',ja:'並存の狭間'},
@@ -39,6 +41,51 @@
     en:{group:'FOLLY / TABLEAUX',instruction:'Move right through scattered moments.',selection:'Select a tableau to enter its brief transformation.',seek:'Move through stages',open:'Open this moment',close:'Return to the tableaux',prev:'Previous stage',next:'Next stage',sound:'Sound on',mute:'Mute',play:'Resume',pause:'Pause',score:'Inspect the score',reset:'Reset',loading:'Preparing the moving image',missing:'This fragment is not available yet',allEnd:'The sequence has ended',hintI:'Score runs in reverse · Hover to calibrate',hintII:'Three folding wings · Hover to calibrate',loadingPoster:'',zoom:'Zoom'},
     ja:{group:'フォリー / 風景の断片',instruction:'右へ進み、散らばった瞬間をたどる。',selection:'一枚を選び、その短い変化に入る。',seek:'段階を移動',open:'この瞬間を見る',close:'風景に戻る',prev:'前の段階',next:'次の段階',sound:'音声オン',mute:'消音',play:'再開',pause:'一時停止',score:'楽譜を検視',reset:'リセット',loading:'映像を準備中',missing:'この断片はまだありません',allEnd:'この巻は終わりました',hintI:'楽譜は逆行 · ホバーで校正',hintII:'三つの翼を折る · ホバーで校正',loadingPoster:'',zoom:'拡大'}
   };
+  // Short interim captions stay close to the physical artefacts. They can be
+  // replaced with the artist's full Chinese/English/Japanese texts later.
+  var SERIES_COPY=[
+    {
+      structure:{
+        zh:'主体结构在正面与背面之间显露出不同的构件关系。影像开始之前，先让它作为一件静止的构造被观看。',
+        en:'Seen from the front and back, the structure reveals different relationships among its parts. Before the film begins, it remains here as a still construction.',
+        ja:'表裏から見ると、構造体の各部材は異なる関係を見せる。映像が始まる前に、まず静止した構築物として見る。'
+      },
+      instrument:{
+        zh:'仪器与主体的局部构造并置于此。下方的影像记录了仪器在运行中逐渐发生的变化。',
+        en:'The instrument and the body are set side by side. The moving fragment below records the instrument as it begins to change.',
+        ja:'器械と本体の細部を並べて示す。下の映像は、器械が動きのなかで少しずつ変化する様子を記録する。'
+      },
+      score:{
+        zh:'图谱与横向排列的影像共享同一段时间。滑动切片或移动下方滑轨，十五帧记谱便沿原有的机械顺序逆向更替。',
+        en:'The notation shares its timeline with the film strip. Move the cards or the rail below; the fifteen score frames advance in the reverse mechanical order.',
+        ja:'この譜面は横に並ぶ映像と同じ時間軸を共有する。カードや下のスライダーを動かすと、十五の譜面が機構の逆順に入れ替わる。'
+      }
+    },
+    {
+      structure:{
+        zh:'主体与背面的两幅图像保留了结构各自的面貌。它们在运动之前，已将构造的重心、连接与空隙呈现出来。',
+        en:'The two views retain the structure from either side. Even at rest, its weight, connections and openings become visible.',
+        ja:'二つの視点から、構造体の表と裏を記録する。動き始める前から、重み、接合、空隙が見えている。'
+      },
+      instrument:{
+        zh:'仪器的局部与主体细节在此分开陈列；接下来的短片让这些静止的部分进入时间。',
+        en:'Details of the instrument and body are displayed separately; the following moving image returns these still parts to time.',
+        ja:'器械と本体の細部を分けて並べる。次の短い映像では、静止した各部が時間の中に戻される。'
+      },
+      score:{
+        zh:'折翼图谱与同步指针保留在影像下方。横向滑动时，图谱和双指针随影片阶段改变；亦可独立折叠、校准与展开检视。',
+        en:'The folding score and paired needles remain below the images. They follow each fragment of the film and can also be folded, calibrated and inspected on their own.',
+        ja:'折り畳み譜と二本の指針を映像の下に置く。映像の段階に連動しながら、独立して折ることも、位置を合わせて確かめることもできる。'
+      }
+    }
+  ];
+  var SECTION_TERMS={
+    zh:{front:'正面 / 全貌',back:'背面',instrument:'仪器',body:'主体细部',moving:'仪器动态记录',movement:'运动切片',score:'运动图谱',scoreOpen:'展开图谱',scoreClose:'返回图谱',scoreFold:'折叠 / 展开',scoreReset:'复位',frame:'记谱帧'},
+    en:{front:'Full view',back:'Back view',instrument:'Instrument',body:'Body detail',moving:'Instrument in motion',movement:'Film fragments',score:'Graphic score',scoreOpen:'Enlarge score',scoreClose:'Return to score',scoreFold:'Fold / unfold',scoreReset:'Reset',frame:'Score frame'},
+    ja:{front:'全景',back:'背面',instrument:'器械',body:'本体細部',moving:'器械の動き',movement:'映像断片',score:'動きの譜面',scoreOpen:'譜面を拡大',scoreClose:'譜面に戻る',scoreFold:'折る / 開く',scoreReset:'リセット',frame:'譜面フレーム'}
+  };
+  function term(key){return (SECTION_TERMS[state.lang]||SECTION_TERMS.zh)[key];}
+  function essay(si,key){return label(SERIES_COPY[si][key]);}
   var i18n=function(k){return (COPY[state.lang]||COPY.zh)[k]||'';};
   var label=function(obj){return obj[state.lang]||obj.zh||'';};
   var esc=function(v){return escapeHtml(v == null?'':String(v));};
@@ -180,6 +227,49 @@
       '</button></li>';
   }
 
+
+  function assetPairMarkup(s,si,kind){
+    var front=kind==='structure',items=front?['full','back']:['instrument','body'];
+    return '<div class="fc-asset-pair fc-asset-pair-'+kind+'">'+items.map(function(k){
+      return '<figure class="fc-artifact fc-artifact-'+k+'"><div class="fc-artifact-image">'+
+        '<img src="'+esc(s.assets[k])+'" loading="lazy" decoding="async" alt="'+esc(label(s.title)+' — '+term(k==='full'?'front':k))+'"></div>'+
+        '<figcaption><span>'+term(k==='full'?'front':k)+'</span><small>FOLLY '+s.roman+' / '+k.toUpperCase()+'</small></figcaption></figure>';
+    }).join('')+'</div>';
+  }
+  function instrumentMarkup(s,si){
+    return '<div class="fc-instrument-wrap">'+
+      '<div class="fc-subchapter"><span>0'+(si+1)+' / A</span><h3>'+esc(term('moving'))+'</h3></div>'+
+      '<div class="fc-instrument-card" data-fc-instrument-card data-fc-series="'+si+'">'+
+        '<button class="fc-card-button" type="button" data-fc-action="instrument" data-fc-series="'+si+'" aria-label="'+esc(term('moving'))+'">'+
+          '<span class="fc-frame"><canvas class="fc-preview-frame" aria-hidden="true"></canvas>'+
+          '<video class="fc-preview" playsinline webkit-playsinline preload="none" muted aria-hidden="true"></video>'+
+          '<video class="fc-hover-video" playsinline webkit-playsinline preload="none" muted loop aria-hidden="true"></video>'+
+          '<span class="fc-card-open-sign">↗</span></span>'+
+          '<span class="fc-card-copy"><span class="fc-card-count">01 <small>/ 01</small></span>'+
+          '<span class="fc-card-name">'+esc(term('moving'))+'</span></span>'+
+        '</button></div>'+
+      '<p class="fc-instrument-description">'+esc(essay(si,'instrument'))+'</p>'+
+    '</div>';
+  }
+  function inlineScoreMarkup(s,si){
+    return '<section class="fc-inline-score" data-fc-inline-score="'+si+'">'+
+      '<div class="fc-inline-score-top"><div><p>FOLLY '+s.roman+' / NOTATION</p><h3>'+esc(term('score'))+'</h3></div>'+
+      '<button type="button" class="fc-inline-expand" data-fc-action="score-expand" data-fc-series="'+si+'" aria-label="'+esc(term('scoreOpen'))+'">'+
+      esc(term('scoreOpen'))+' ↗</button></div>'+
+      '<div class="fc-inline-score-main"><div class="fc-inline-score-device">'+scoreMarkup(s)+
+        '<button type="button" class="fc-inline-score-fold" data-fc-action="score-fold" data-fc-series="'+si+'" '+
+        (s.kind==='linear'?'hidden':'')+'>'+esc(term('scoreFold'))+' △</button>'+
+      '</div><div class="fc-inline-score-text"><p>'+esc(essay(si,'score'))+'</p>'+
+        '<span data-fc-score-state>01 / '+pad(s.stages.length)+'</span>'+
+        '<div class="fc-inline-score-actions">'+
+          '<button type="button" data-fc-action="score-reset" data-fc-series="'+si+'">'+esc(term('scoreReset'))+' ↺</button>'+
+          '<button type="button" data-fc-action="score-expand" data-fc-series="'+si+'">'+esc(term('scoreOpen'))+' ↗</button>'+
+        '</div>'+
+      '</div></div>'+
+      '<div class="fc-inline-score-foot"><span>FOLLY '+s.roman+' / SCORE</span>'+
+        '<span data-fc-score-frame-label>'+esc(term('frame'))+' '+(s.kind==='linear'?'15':'—')+'</span></div>'+
+    '</section>';
+  }
   // Each film is laid out independently; neither is hidden by a series tab.
   function projectionMarkup(s, si) {
     return '<div class="fc-projection" data-fc-projection="'+si+'" hidden role="dialog" aria-modal="true" aria-label="'+esc(i18n('open'))+'">'+
@@ -218,15 +308,22 @@
     return '<section class="fc-series-block" data-fc-series-block="'+si+'" style="--fc-video-aspect:16 / 9;--fc-ratio-number:1.77778">'+
       '<div class="fc-series-heading">'+
         '<div class="fc-series-number">'+s.roman+' <span>/ 0'+(si+1)+'</span></div>'+
-        '<div class="fc-series-title"><h2>'+esc(label(s.title))+'</h2><p>FOLLY '+s.roman+' <span>—</span> '+pad(s.stages.length)+' '+(state.lang==='zh'?'个瞬间':state.lang==='ja'?'の瞬間':'MOMENTS')+'</p></div>'+
+        '<div class="fc-series-title"><h2>'+esc(label(s.title))+'</h2>'+
+        '<p>FOLLY '+s.roman+' — '+pad(s.stages.length)+' '+(state.lang==='zh'?'个瞬间':state.lang==='ja'?'の瞬間':'MOMENTS')+'</p></div>'+
       '</div>'+
+      '<div class="fc-series-composition">'+assetPairMarkup(s,si,'structure')+
+        '<p class="fc-structure-description">'+esc(essay(si,'structure'))+'</p>'+
+        assetPairMarkup(s,si,'detail')+
+        instrumentMarkup(s,si)+
+      '</div>'+
+      '<div class="fc-subchapter fc-main-subchapter"><span>0'+(si+1)+' / B</span><h3>'+esc(term('movement'))+'</h3></div>'+
       '<div class="fc-gallery-area"><div class="fc-rail" data-fc-rail="'+si+'" tabindex="0" aria-label="'+esc(i18n('seek')+' / '+label(s.title))+'">'+
         '<ol class="fc-strip">'+s.stages.map(function(stage,index){return cardMarkup(stage,index,s);}).join('')+'</ol>'+
       '</div></div>'+
       '<div class="fc-navigation"><div class="fc-rail-index"><strong data-fc-index-display>01</strong><span> / '+pad(s.stages.length)+'</span></div>'+
         '<input class="fc-slider" data-fc-slider="'+si+'" type="range" min="0" max="1000" value="0" step="1" aria-label="'+esc(i18n('seek')+' / '+label(s.title))+'">'+
         '<span class="fc-sideways-hint">'+(state.lang==='zh'?'左右滑动浏览':state.lang==='ja'?'横にスワイプ':'SWIPE SIDEWAYS')+' ↔</span></div>'+
-      '<div class="fc-series-breath" aria-hidden="true"></div>'+
+      inlineScoreMarkup(s,si)+
     '</section>';
   }
   function pageMarkup(item) {
