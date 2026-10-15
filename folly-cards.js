@@ -988,9 +988,101 @@
     body.addEventListener('pointerup',function(){pan=null;});
     body.addEventListener('pointercancel',function(){pan=null;});
   }
+  function wireInstrument(si){
+    var card=block(si)?.querySelector('[data-fc-instrument-card]');
+    if(!card)return;
+    card.addEventListener('pointerenter',function(event){
+      if(event.pointerType==='mouse'&&!selection.open)startHoverFilm(card,si,0,550);
+    });
+    card.addEventListener('pointerleave',function(){
+      if(hoverFilm.card===card)stopHoverFilm();
+    });
+    card.addEventListener('focusin',function(){
+      if(!selection.open)startHoverFilm(card,si,0,850);
+    });
+    card.addEventListener('focusout',function(){
+      if(hoverFilm.card===card)stopHoverFilm();
+    });
+  }
+  function wireInlineScore(si){
+    var score=block(si)?.querySelector('[data-fc-inline-score]');
+    if(!score)return;
+    var cluster=score.querySelector('.fc-score-cluster');
+    if(cluster){
+      cluster.addEventListener('pointerenter',function(ev){
+        if(window.matchMedia('(hover:hover)').matches)cluster.classList.add('is-magnetic');
+      });
+      cluster.addEventListener('pointerleave',function(){
+        cluster.classList.remove('is-magnetic');
+        cluster.style.setProperty('--fc-magnet-x','0px');
+        cluster.style.setProperty('--fc-magnet-y','0px');
+      });
+      cluster.addEventListener('pointermove',function(ev){
+        if(!cluster.classList.contains('is-magnetic'))return;
+        var box=cluster.getBoundingClientRect();
+        cluster.style.setProperty('--fc-magnet-x',(((ev.clientX-box.left)/box.width-.5)*10).toFixed(2)+'px');
+        cluster.style.setProperty('--fc-magnet-y',(((ev.clientY-box.top)/box.height-.5)*9).toFixed(2)+'px');
+      },{passive:true});
+    }
+    // Folly I: drag the small knob along its guide; the authored fifteen
+    // frames and two-stage large ring then follow the same rail timeline.
+    var lever=score.querySelector('.fc-mechanical-notation .fc-mechanical-lever');
+    if(lever){
+      var dragging=-1;
+      var seekLever=function(event){
+        var rect=lever.getBoundingClientRect();
+        var y=(event.clientY-rect.top)/Math.max(1,rect.height);
+        var ratio=clamp((y-.15)/.70,0,1);
+        var rail=railFor(si);
+        if(rail)rail.scrollLeft=Math.max(0,rail.scrollWidth-rail.clientWidth)*ratio;
+        updateInlineScore(si,SERIES[si].endTime*ratio);
+      };
+      lever.addEventListener('pointerdown',function(event){
+        if(event.pointerType==='mouse'&&event.button!==0)return;
+        dragging=event.pointerId;
+        try{lever.setPointerCapture(event.pointerId);}catch(_){}
+        seekLever(event);event.preventDefault();
+      });
+      lever.addEventListener('pointermove',function(event){
+        if(dragging!==event.pointerId)return;
+        seekLever(event);event.preventDefault();
+      });
+      var end=function(event){if(dragging===event.pointerId)dragging=-1;};
+      lever.addEventListener('pointerup',end);
+      lever.addEventListener('pointercancel',end);
+      lever.addEventListener('lostpointercapture',function(){dragging=-1;});
+    }
+    // Folly II: three authored hinged wings remain independently draggable.
+    score.querySelectorAll('.fc-score-shadow [data-fc-drag-wing]').forEach(function(wing){
+      var wi=Number(wing.dataset.fcDragWing),gesture=null;
+      wing.addEventListener('pointerdown',function(event){
+        if(event.pointerType==='mouse'&&event.button!==0)return;
+        var angles=manualWings[si] || [0,0,0];
+        gesture={id:event.pointerId,startY:event.clientY,startX:event.clientX,start:angles[wi]};
+        manualWings[si]=angles.slice();
+        try{wing.setPointerCapture(event.pointerId);}catch(_){}
+        event.preventDefault();
+      });
+      wing.addEventListener('pointermove',function(event){
+        if(!gesture||gesture.id!==event.pointerId)return;
+        var displacement=(gesture.startY-event.clientY)*.78+(event.clientX-gesture.startX)*.32;
+        manualWings[si][wi]=clamp(gesture.start+displacement,0,180);
+        updateInlineScore(si,inlineTime[si]);
+        event.preventDefault();
+      });
+      var finish=function(event){
+        if(!gesture||gesture.id!==event.pointerId)return;
+        manualWings[si][wi]=manualWings[si][wi]>92?180:0;
+        gesture=null;
+        updateInlineScore(si,inlineTime[si]);
+      };
+      wing.addEventListener('pointerup',finish);
+      wing.addEventListener('pointercancel',finish);
+    });
+  }
   function wireEvents(){
     if(!isLive())return;
-    SERIES.forEach(function(_,i){wireRail(i);wireOverlay(i);});
+    SERIES.forEach(function(_,i){wireRail(i);wireInstrument(i);wireInlineScore(i);wireOverlay(i);});
     scene.addEventListener('click',function(event){
       var node=event.target.closest('[data-fc-action]');
       if(!node)return;
