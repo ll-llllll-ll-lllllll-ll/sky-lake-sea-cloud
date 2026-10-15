@@ -512,10 +512,9 @@
       v.load();
     }
   }
-  function updateScore(absolute) {
-    var overlay=activeOverlay();
+  function paintScore(overlay,s,absolute,si) {
     if(!overlay)return;
-    var s=current(),ratio=clamp(absolute/s.endTime,0,1);
+    var ratio=clamp(absolute/s.endTime,0,1);
     if(s.kind==='linear'){
       var frame=sourceScoreFrame(ratio),frameURL=mechanicalImage(frame);
       // Original Folly I two-stage mechanism: small knob moves first,
@@ -550,6 +549,9 @@
         var p=clamp((absolute-(2.5+rank*.432))/.720,0,1);
         wings[wi]=180*(p*p*(3-2*p));
       });
+      // Hand folding takes precedence only while the visitor explicitly
+      // manipulates the graphic score. Returning to the film rail restores sync.
+      if(si!==undefined && manualWings[si])wings=manualWings[si].slice();
       var cluster=overlay.querySelector('.fc-score-cluster');
       if(cluster)cluster.classList.toggle('is-hud-awaiting',absolute<5.1);
       overlay.querySelectorAll('.fc-score-cluster [data-fc-wing]').forEach(function(el){
@@ -559,6 +561,66 @@
         el.classList.toggle('is-folded',wings.every(function(a){return a>=174;}));
       });
     }
+  }
+  var inlineTime=[0,0],manualWings=[null,null],expandedScore=-1;
+  function stageByTime(s,t){
+    var value=clamp(t,0,s.endTime),idx=0;
+    for(var i=0;i<s.stages.length;i++){
+      if(value>=s.stages[i].start)idx=i;
+    }
+    return idx;
+  }
+  function updateInlineScore(si,absolute) {
+    var root=block(si),s=SERIES[si];
+    if(!root||!s)return;
+    var at=clamp(absolute,0,s.endTime);
+    inlineTime[si]=at;
+    var score=root.querySelector('[data-fc-inline-score]');
+    if(!score)return;
+    paintScore(score,s,at,si);
+    var i=stageByTime(s,at);
+    var state=score.querySelector('[data-fc-score-state]');
+    if(state)state.textContent=pad(i+1)+' / '+pad(s.stages.length)+' — '+label(s.stages[i]);
+    var frameLabel=score.querySelector('[data-fc-score-frame-label]');
+    if(frameLabel)frameLabel.textContent=s.kind==='linear'?
+      term('frame')+' '+pad(sourceScoreFrame(at/s.endTime))+' / 15':
+      'SYNC '+String(Math.round(at/s.endTime*100)).padStart(2,'0')+'%';
+  }
+  function updateScore(absolute) {
+    paintScore(activeOverlay(),current(),absolute);
+    updateInlineScore(selection.series,absolute);
+  }
+  function scoreFromRail(si){
+    var rail=railFor(si),s=SERIES[si];
+    if(!rail||!s)return;
+    var max=Math.max(1,rail.scrollWidth-rail.clientWidth);
+    var ratio=clamp(rail.scrollLeft/max,0,1);
+    manualWings[si]=null;
+    updateInlineScore(si,s.endTime*ratio);
+  }
+  function setScoreExpanded(si,open){
+    if(!isLive())return;
+    var root=block(si),score=root?.querySelector('[data-fc-inline-score]');
+    if(!score)return;
+    if(open){
+      if(expandedScore!==-1&&expandedScore!==si)setScoreExpanded(expandedScore,false);
+      expandedScore=si;
+      score.classList.add('is-expanded');
+      document.body.classList.add('fc-score-expanded');
+      score.querySelector('[data-fc-action="score-expand"]')?.focus({preventScroll:true});
+    }else{
+      expandedScore=-1;
+      score.classList.remove('is-expanded');
+      document.body.classList.remove('fc-score-expanded');
+      score.querySelector('[data-fc-action="score-expand"]')?.focus({preventScroll:true});
+    }
+  }
+  function foldInlineScore(si){
+    var s=SERIES[si];
+    if(!s||s.kind!=='radial')return;
+    var opened=manualWings[si] && manualWings[si].every(function(v){return v>170;});
+    manualWings[si]=opened?[0,0,0]:[180,180,180];
+    updateInlineScore(si,inlineTime[si]);
   }
   function updateInspect() {
     var overlay=activeOverlay();if(!overlay)return;
@@ -829,6 +891,7 @@
         syncRange();
         var closest=nearest(si);
         if(selection.focus[si]!==closest)focusCard(si,closest,false);
+        scoreFromRail(si);
       });
       clearTimeout(idleTimer);
       // A still card begins a muted miniature preview only AFTER scrolling
@@ -841,6 +904,7 @@
         if(hoverFilm.card?.closest('.fc-rail')===rail)stopHoverFilm();
         var max=Math.max(0,rail.scrollWidth-rail.clientWidth);
         rail.scrollLeft=max*Number(event.target.value)/1000;
+        scoreFromRail(si);
       });
       slider.addEventListener('change',function(){syncRange();});
     }
@@ -939,7 +1003,22 @@
         select(Number(node.dataset.fcSeries),0,true);return;
       }
       if(action==='close'){closeProjection();return;}
-      if(action==='inspect'){setInspect(true);return;}
+      if(action==='inspect'){
+        var inline=node.closest('[data-fc-inline-score]');
+        if(inline){setScoreExpanded(Number(inline.dataset.fcInlineScore),true);return;}
+        setInspect(true);return;
+      }
+      if(action==='score-expand'){
+        var which=Number(node.dataset.fcSeries);
+        setScoreExpanded(which,expandedScore!==which);return;
+      }
+      if(action==='score-fold'){foldInlineScore(Number(node.dataset.fcSeries));return;}
+      if(action==='score-reset'){
+        var which=Number(node.dataset.fcSeries);
+        manualWings[which]=null;
+        scoreFromRail(which);
+        return;
+      }
       if(action==='stop-inspect'){setInspect(false);return;}
       if(action==='previous'||action==='next'){
         var dir=action==='next'?1:-1;
@@ -978,12 +1057,14 @@
     if(scene===next)return;
     if(scene){stopHoverFilm();stopMedia();clearPreviews();}
     releaseUpcoming();
-    document.body.classList.remove('fc-modal-open');
+    document.body.classList.remove('fc-modal-open','fc-score-expanded');
     scene=next;player=null;
     if(!scene)return;
     selection.open=false;selection.instrument=false;selection.scoreInspect=false;selection.focus=[0,0];
     wireEvents();
     SERIES.forEach(function(_,si){focusCard(si,0,false);});
+    manualWings=[null,null];inlineTime=[0,0];expandedScore=-1;
+    SERIES.forEach(function(_,si){updateInlineScore(si,0);});
     if('IntersectionObserver' in window) {
       io=new IntersectionObserver(function(entries){
         entries.forEach(function(entry){
@@ -1003,6 +1084,7 @@
   document.addEventListener('keydown',function(event){
     if(!isLive())return;
     if(event.key==='Escape'){
+      if(expandedScore!==-1){setScoreExpanded(expandedScore,false);event.preventDefault();event.stopImmediatePropagation();return;}
       if(selection.scoreInspect){setInspect(false);event.preventDefault();event.stopImmediatePropagation();return;}
       if(selection.open){closeProjection();event.preventDefault();event.stopImmediatePropagation();return;}
     }
