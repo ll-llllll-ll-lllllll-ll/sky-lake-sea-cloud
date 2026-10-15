@@ -349,7 +349,15 @@
     }else{
       overlay.querySelector('[data-fc-needle="0"]')?.style.setProperty('transform','rotate('+(-65+95*ratio)+'deg)');
       overlay.querySelector('[data-fc-needle="1"]')?.style.setProperty('transform','rotate('+(-55+129*Math.min(1,ratio*1.2))+'deg)');
-      var wings=[clamp((ratio-.12)*260,0,180),clamp((ratio-.37)*275,0,180),clamp((ratio-.69)*440,0,180)];
+      // Mirror folly-archive's authored 2.5s wait, 720ms hinges,
+      // overlapping 432ms apart, and fold order 3 → 2 → 1.
+      var wings=[0,0,0];
+      [2,1,0].forEach(function(wi,rank){
+        var p=clamp((absolute-(2.5+rank*.432))/.720,0,1);
+        wings[wi]=180*(p*p*(3-2*p));
+      });
+      var cluster=overlay.querySelector('.fc-score-cluster');
+      if(cluster)cluster.classList.toggle('is-hud-awaiting',absolute<5.1);
       overlay.querySelectorAll('.fc-score-cluster [data-fc-wing]').forEach(function(el){
         el.style.setProperty('--fc-fold-angle',wings[Number(el.dataset.fcWing)]+'deg');
       });
