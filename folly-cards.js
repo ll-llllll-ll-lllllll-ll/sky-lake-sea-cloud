@@ -250,7 +250,7 @@
   function instrumentMarkup(s,si){
     return '<div class="fc-instrument-wrap">'+
       '<div class="fc-subchapter"><span>0'+(si+1)+' / A</span><h3>'+esc(term('moving'))+'</h3></div>'+
-      '<div class="fc-instrument-card" data-fc-instrument-card data-fc-series="'+si+'">'+
+      '<div class="fc-instrument-card fc-card" data-fc-instrument-card data-fc-series="'+si+'">'+
         '<button class="fc-card-button" type="button" data-fc-action="instrument" data-fc-series="'+si+'" aria-label="'+esc(term('moving'))+'">'+
           '<span class="fc-frame"><canvas class="fc-preview-frame" aria-hidden="true"></canvas>'+
           '<video class="fc-preview" playsinline webkit-playsinline preload="none" muted aria-hidden="true"></video>'+
