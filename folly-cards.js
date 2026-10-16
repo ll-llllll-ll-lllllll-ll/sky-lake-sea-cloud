@@ -1953,8 +1953,10 @@
       var checkpoint=center()-d*49;
       coast={dir:d,base:checkpoint,last:now()};
       labelFor(d);
-      moveTo(checkpoint);
-      annotate(.28,false);
+      // Even a fast one-flick inertial crossing stretches a little before
+      // returning: never a rigid invisible snap at the seam.
+      moveTo(checkpoint+d*20);
+      annotate(.60,false);
       function settle(){
         if(!coast)return;
         var base=coast.base;
@@ -1984,7 +1986,7 @@
       if(now()-lastWheelAt<100)return;
       if(coast){
         if(d===coast.dir){
-          moveTo(coast.base);
+          moveTo(coast.base+coast.dir*20);
           clearTimeout(coastTimer);
           coastTimer=window.setTimeout(function(){
             if(coast){var base=coast.base;coast=null;spring(scrollY(),base);}
