@@ -1347,6 +1347,77 @@
     },7000);
   }
   // First let the old caption recede; only then reveal the matching note.
+  // Match a caption to the PAINTED photograph, not the larger 16:9
+  // container. object-fit: contain can leave vacant space at its right edge.
+  var photoReadingCleanup=null;
+  function contentBoundsForContainedImage(img){
+    var box=img.getBoundingClientRect();
+    var width=box.width,height=box.height;
+    var actualWidth=width,actualHeight=height;
+    if(img.naturalWidth>0&&img.naturalHeight>0&&width>0&&height>0){
+      var ratio=Math.min(width/img.naturalWidth,height/img.naturalHeight);
+      actualWidth=img.naturalWidth*ratio;
+      actualHeight=img.naturalHeight*ratio;
+    }
+    return {right:box.left+actualWidth,bottom:box.top+(height-actualHeight)/2+actualHeight};
+  }
+  function alignPhotoAside(root){
+    if(!root)return;
+    if(window.innerWidth<=1200){
+      ['--fc-caption-left','--fc-caption-top','--fc-photo-min-height'].forEach(function(k){root.style.removeProperty(k);});
+      return;
+    }
+    var frame=root.querySelector('[data-fc-swap-face="'+root.dataset.fcActive+'"] img');
+    var aside=root.querySelector('.fc-asset-aside');
+    var photoColumn=root.querySelector('.fc-photo-column');
+    if(!frame||!aside||!photoColumn)return;
+    var box=root.getBoundingClientRect(),painted=contentBoundsForContainedImage(frame);
+    var left=Math.max(0,painted.right-box.left+50);
+    var top=Math.max(0,painted.bottom-box.top+35);
+    root.style.setProperty('--fc-caption-left',left.toFixed(1)+'px');
+    root.style.setProperty('--fc-caption-top',top.toFixed(1)+'px');
+    root.style.setProperty('--fc-photo-min-height',Math.ceil(Math.max(photoColumn.offsetHeight,top+aside.scrollHeight+20))+'px');
+  }
+  function alignInstrumentAside(layout){
+    if(!layout)return;
+    if(window.innerWidth<=1200){
+      ['--fc-instrument-caption-left','--fc-instrument-caption-top','--fc-instrument-min-height'].forEach(function(k){layout.style.removeProperty(k);});
+      return;
+    }
+    var frame=layout.querySelector('.fc-instrument-card .fc-frame');
+    var card=layout.querySelector('.fc-instrument-card');
+    var aside=layout.querySelector('.fc-instrument-description');
+    if(!frame||!card||!aside)return;
+    var box=layout.getBoundingClientRect(),image=frame.getBoundingClientRect();
+    var left=Math.max(0,image.right-box.left+50),top=Math.max(0,image.bottom-box.top+35);
+    layout.style.setProperty('--fc-instrument-caption-left',left.toFixed(1)+'px');
+    layout.style.setProperty('--fc-instrument-caption-top',top.toFixed(1)+'px');
+    layout.style.setProperty('--fc-instrument-min-height',Math.ceil(Math.max(card.offsetHeight,top+aside.scrollHeight+20))+'px');
+  }
+  function setupPhotoReadingLayout(){
+    if(photoReadingCleanup){photoReadingCleanup();photoReadingCleanup=null;}
+    if(!isLive())return;
+    var photos=Array.from(scene.querySelectorAll('[data-fc-swap]'));
+    var instruments=Array.from(scene.querySelectorAll('.fc-instrument-layout'));
+    var images=photos.flatMap(function(root){return Array.from(root.querySelectorAll('.fc-artifact-image img'));});
+    var frame=0;
+    function update(){
+      frame=0;
+      if(!isLive())return;
+      photos.forEach(alignPhotoAside);
+      instruments.forEach(alignInstrumentAside);
+    }
+    function schedule(){if(!frame)frame=requestAnimationFrame(update);}
+    images.forEach(function(img){img.addEventListener('load',schedule);});
+    window.addEventListener('resize',schedule,{passive:true});
+    if(document.fonts&&document.fonts.ready)document.fonts.ready.then(schedule);
+    photoReadingCleanup=function(){
+      if(frame)cancelAnimationFrame(frame);
+      images.forEach(function(img){img.removeEventListener('load',schedule);});
+      window.removeEventListener('resize',schedule);
+    };
+    schedule();
+  }
   function crossfadeImageCopy(state,next){
     var panels=Array.from(state.root.querySelectorAll('[data-fc-meta-face],[data-fc-aside-face]'));
     clearTimeout(state.copyTimer);
@@ -1365,6 +1436,8 @@
         panel.classList.toggle('is-copy-entering',selected);
       });
       alignPhotoAside(state.root);
+      // Force the 0-opacity entry state to be laid out before animating in.
+      panels.forEach(function(panel){if(!panel.hidden)void panel.offsetHeight;});
       state.copyFrame=requestAnimationFrame(function(){
         state.copyFrame=0;
         panels.forEach(function(panel){
@@ -1595,6 +1668,7 @@
     var next=document.querySelector('[data-fc-scene]');
     if(scene===next)return;
     if(gateDirectionCleanup){gateDirectionCleanup();gateDirectionCleanup=null;}
+    if(photoReadingCleanup){photoReadingCleanup();photoReadingCleanup=null;}
     if(scene){clearImageSwaps();stopHoverFilm();stopMedia();clearPreviews();}
     releaseUpcoming();
     document.body.classList.remove('fc-modal-open','fc-score-expanded');
@@ -1604,6 +1678,7 @@
     wireEvents();
     wireChapterGate();
     initializeImageSwaps();
+    setupPhotoReadingLayout();
     SERIES.forEach(function(_,si){focusCard(si,0,false);});
     manualWings=[null,null];inlineTime=[0,0];expandedScore=-1;
     scoreScale=[1,1];scorePan=[[0,0],[0,0]];railOriginLocks=[false,false];
