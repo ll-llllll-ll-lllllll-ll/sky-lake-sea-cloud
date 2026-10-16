@@ -240,24 +240,22 @@
 
 
   function assetPairMarkup(s,si,kind){
-    var front=kind==='structure',items=front?['full','back']:['instrument','body'];
-    var order=items.map(function(k,index){
-      var title=term(k==='full'?'front':k);
-      return '<figure class="fc-artifact fc-swap-face fc-artifact-'+k+(index===0?' is-current':'')+'" data-fc-swap-face="'+index+'" aria-hidden="'+(index===0?'false':'true')+'">'+
-        '<div class="fc-artifact-image"><img src="'+esc(s.assets[k])+'" loading="lazy" decoding="async" alt="'+esc(label(s.title)+' — '+title)+'"></div>'+
-        '<figcaption><span>'+esc(title)+'</span><small>FOLLY '+s.roman+' / '+k.toUpperCase()+'</small></figcaption>'+
+    var items=kind==='structure'?['full','back']:['instrument','body'];
+    var names=items.map(function(k){return term(k==='full'?'front':k);});
+    var faces=items.map(function(k,index){
+      return '<figure class="fc-artifact fc-swap-face'+(index===0?' is-current':'')+'" data-fc-swap-face="'+index+'" aria-hidden="'+(index===0?'false':'true')+'">'+
+        '<div class="fc-artifact-image"><img src="'+esc(s.assets[k])+'" loading="lazy" decoding="async" alt="'+esc(label(s.title)+' — '+names[index])+'"></div>'+
       '</figure>';
     }).join('');
-    var first=term(items[0]==='full'?'front':items[0]),second=term(items[1]);
-    return '<div class="fc-asset-pair fc-asset-pair-'+kind+'" data-fc-swap data-fc-series="'+si+'" data-fc-active="0" aria-label="'+esc(first+' / '+second)+'">'+
-      '<div class="fc-swap-shell"><div class="fc-swap-stage">'+order+'</div>'+
-        '<span class="fc-swap-fold" aria-hidden="true"><img data-fc-swap-fold-thumb src="'+esc(s.assets[items[1]])+'" alt="" decoding="async" loading="lazy"><span class="fc-swap-fold-line"></span></span></div>'+
-      '<div class="fc-swap-controls">'+
-        '<span class="fc-swap-counter" data-fc-swap-counter>01 <small>/ 02</small></span>'+
-        '<div class="fc-swap-controls-right"><span class="fc-swap-up-next" data-fc-swap-up-next>'+esc(second)+'</span>'+
-          '<button type="button" data-fc-action="swap-image" data-fc-direction="-1" aria-label="'+esc(first+' / '+second)+'">←</button>'+
-          '<button type="button" data-fc-action="swap-image" data-fc-direction="1" aria-label="'+esc(first+' / '+second)+'">→</button>'+
-        '</div>'+
+    var dots=items.map(function(k,index){
+      return '<button type="button" class="fc-swap-dot'+(index===0?' is-active':'')+'" data-fc-action="swap-dot" data-fc-index="'+index+'" aria-pressed="'+(index===0?'true':'false')+'" aria-label="'+esc(names[index])+'"><span></span></button>';
+    }).join('');
+    return '<div class="fc-asset-pair fc-asset-pair-'+kind+'" data-fc-swap data-fc-series="'+si+'" data-fc-active="0" aria-label="'+esc(names.join(' / '))+'">'+
+      '<div class="fc-swap-stage">'+faces+'</div>'+
+      '<div class="fc-swap-controls" role="group" aria-label="'+esc(names.join(' / '))+'">'+
+        '<button type="button" class="fc-swap-arrow" data-fc-action="swap-image" data-fc-direction="-1" aria-label="'+esc(i18n('prev'))+'">←</button>'+
+        '<div class="fc-swap-dots">'+dots+'</div>'+
+        '<button type="button" class="fc-swap-arrow" data-fc-action="swap-image" data-fc-direction="1" aria-label="'+esc(i18n('next'))+'">→</button>'+
       '</div>'+
     '</div>';
   }
@@ -1148,13 +1146,12 @@
   function advanceSwap(state,step){
     if(!state || !state.root.isConnected)return;
     var next=(state.active+step+2)%2;
+    if(next===state.active){resetSwapTimer(state);return;}
     var oldFace=state.root.querySelector('[data-fc-swap-face="'+state.active+'"]');
     var nextFace=state.root.querySelector('[data-fc-swap-face="'+next+'"]');
-    if(!oldFace || !nextFace)return;
+    if(!oldFace||!nextFace)return;
     clearTimeout(state.fade);
-    [oldFace,nextFace].forEach(function(face){
-      face.classList.remove('is-fading');
-    });
+    [oldFace,nextFace].forEach(function(face){face.classList.remove('is-fading');});
     oldFace.classList.add('is-fading');
     oldFace.classList.remove('is-current');
     oldFace.setAttribute('aria-hidden','true');
@@ -1162,14 +1159,11 @@
     nextFace.setAttribute('aria-hidden','false');
     state.active=next;
     state.root.dataset.fcActive=String(next);
-    var index=state.root.querySelector('[data-fc-swap-counter]');
-    if(index)index.innerHTML=(next===0?'01':'02')+' <small>/ 02</small>';
-    var labels=state.root.querySelectorAll('.fc-swap-face figcaption span');
-    var following=state.root.querySelector('[data-fc-swap-up-next]');
-    if(following&&labels.length===2)following.textContent=labels[(next+1)%2].textContent;
-    var img=state.root.querySelector('[data-fc-swap-fold-thumb]');
-    var nextSrc=state.root.querySelector('[data-fc-swap-face="'+((next+1)%2)+'"] img')?.getAttribute('src');
-    if(img&&nextSrc)img.setAttribute('src',nextSrc);
+    state.root.querySelectorAll('.fc-swap-dot').forEach(function(dot,index){
+      var active=index===next;
+      dot.classList.toggle('is-active',active);
+      dot.setAttribute('aria-pressed',String(active));
+    });
     state.fade=window.setTimeout(function(){
       oldFace.classList.remove('is-fading');
       state.fade=0;
@@ -1248,10 +1242,15 @@
       if(action==='instrument'){
         select(Number(node.dataset.fcSeries),0,true);return;
       }
-      if(action==='swap-image'){
+      if(action==='swap-image'||action==='swap-dot'){
         var frame=node.closest('[data-fc-swap]');
         var controller=imageSwapStates.get(frame);
-        if(controller)advanceSwap(controller,Number(node.dataset.fcDirection)||1);
+        if(controller){
+          var change=action==='swap-dot'
+            ?Number(node.dataset.fcIndex)-controller.active
+            :Number(node.dataset.fcDirection)||1;
+          advanceSwap(controller,change);
+        }
         return;
       }
       if(action==='close'){closeProjection();return;}
