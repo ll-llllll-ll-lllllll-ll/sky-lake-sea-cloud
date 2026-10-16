@@ -1792,7 +1792,7 @@
     function inRange(d,y){
       var distance=d*(center()-y);
       // Arm before the centre of the small gap, in both directions.
-      return distance<160&&distance>-110;
+      return distance<80&&distance>-110;
     }
     function approaching(d,amount,y){
       if(d!==1&&d!==-1)return false;
