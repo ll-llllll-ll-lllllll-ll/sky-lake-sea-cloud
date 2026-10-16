@@ -3607,3 +3607,80 @@ body.fc-score-expanded{overflow:hidden!important;}
 @media(prefers-reduced-motion:reduce){
   .fc-mechanical-v2 .fc-mechanical-v2-knob {transition:none;}
 }
+
+
+/* v24 · One shared timeline BETWEEN Folly film fragments and Ruin Score.
+   90% applies to films only; the four full/back/instrument/body photographs
+   retain their established sizes and their caption geometry. */
+.fc-room .fc-series-block {
+  /* Original desktop clamp(240px,34vw,510px) × .90. */
+  --fc-film-card-width:clamp(216px,30.6vw,459px);
+}
+.fc-room .fc-gallery-area .fc-strip {
+  gap:clamp(13px,2.7vw,46px);
+}
+.fc-room .fc-gallery-area .fc-card {
+  box-sizing:border-box;
+  flex:0 0 var(--fc-film-card-width);
+  width:var(--fc-film-card-width);
+  min-width:var(--fc-film-card-width);
+  max-width:var(--fc-film-card-width);
+}
+.fc-room .fc-instrument-layout {
+  grid-template-columns:minmax(0,var(--fc-film-card-width)) minmax(0,1fr);
+}
+.fc-room .fc-instrument-card.fc-card {
+  box-sizing:border-box;
+  width:var(--fc-film-card-width)!important;
+  min-width:0!important;
+  max-width:var(--fc-film-card-width)!important;
+}
+/* After the film strip's labels, before the score heading. */
+.fc-room .fc-navigation {
+  margin:clamp(14px,2.3vw,29px) clamp(23px,6vw,100px) 0 var(--fc-film-left);
+  padding:0;
+  height:24px;
+  min-height:24px;
+  border:0;
+  background:transparent;
+}
+.fc-room .fc-navigation .fc-slider {
+  width:100%;
+  height:24px;
+  min-height:24px;
+  background:transparent;
+}
+.fc-room .fc-inline-score {
+  margin-top:clamp(23px,3.3vw,42px);
+}
+/* The score now has no independent playback indicator or range control.
+   Keep only the small pointer/fold controls beneath its actual artwork. */
+.fc-room .fc-inline-score .fc-score-controls-bottom {
+  margin:clamp(12px,2vw,26px) 0 0;
+  width:100%;
+  justify-content:flex-end;
+}
+@media(max-width:700px){
+  .fc-room .fc-series-block {
+    /* Original mobile clamp(235px,76vw,360px) × .90. */
+    --fc-film-card-width:clamp(211.5px,68.4vw,324px);
+  }
+  .fc-room .fc-gallery-area .fc-strip {
+    gap:20px;
+  }
+  .fc-room .fc-navigation {
+    margin:15px 22px 0 var(--fc-film-left);
+    height:24px;
+    min-height:24px;
+  }
+  .fc-room .fc-navigation .fc-slider {
+    height:24px;
+    min-height:24px;
+  }
+  .fc-room .fc-inline-score {
+    margin-top:22px;
+  }
+  .fc-room .fc-inline-score .fc-score-controls-bottom {
+    margin-top:13px;
+  }
+}
