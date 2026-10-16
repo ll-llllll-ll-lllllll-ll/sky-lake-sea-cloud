@@ -1546,125 +1546,199 @@
     var button=gate.querySelector('[data-fc-action="chapter-goto"]');
     var word=gate.querySelector('.fc-gate-word');
     var arrow=gate.querySelector('.fc-gate-arrow');
-    var pull=0,passed=false,lastTime=0,releaseTimer=0,gesture=null;
-    var direction=1,oldScrollY=window.scrollY||0;
-    var WHEEL_LIMIT=105,TOUCH_LIMIT=70;
+    var direction=1,passed=false,pull=0,elastic=0,gesture=null,lastWheel=0;
+    var releaseTimer=0,springFrame=0,impulseFrame=0,adjusting=false;
+    var oldScrollY=window.scrollY||window.pageYOffset||0;
+    var WHEEL_LIMIT=150,TOUCH_LIMIT=86,MAX_ELASTIC=32;
+    var prefersReduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    function shiftViewport(amount){
+      if(Math.abs(amount)<.03)return;
+      adjusting=true;
+      window.scrollBy(0,amount);
+      // Any scroll event triggered by our own small rubber-band motion
+      // must never be mistaken for the reader changing direction.
+      requestAnimationFrame(function(){adjusting=false;});
+    }
+    function show(value,active){
+      var amount=clamp(value,0,1);
+      gate.style.setProperty('--fc-gate-pull',amount.toFixed(3));
+      gate.classList.toggle('is-pulling',Boolean(active)&&amount>0);
+    }
+    function cancelSpring(){
+      if(springFrame){cancelAnimationFrame(springFrame);springFrame=0;}
+    }
+    function cancelImpulse(){
+      if(impulseFrame){cancelAnimationFrame(impulseFrame);impulseFrame=0;}
+    }
+    function setElastic(next,active){
+      pull=clamp(next,0,10000);
+      var limit=active==='touch'?TOUCH_LIMIT:WHEEL_LIMIT;
+      // Most travel stays in the browser, but the last few pixels move
+      // with a much lower ratio than the finger/wheel: REAL resistance.
+      var desired=MAX_ELASTIC*Math.pow(clamp(pull/limit,0,1),.85);
+      var delta=desired-elastic;
+      elastic=desired;
+      show(desired/MAX_ELASTIC,true);
+      shiftViewport(direction*delta);
+    }
+    function springBack(){
+      clearTimeout(releaseTimer);releaseTimer=0;
+      cancelSpring();
+      if(elastic<.1){elastic=0;pull=0;show(0,false);return;}
+      // A short spring back of <= 32 px, without moving a chapter or
+      // replacing the DOM. Users can interrupt it with their next gesture.
+      var origin=elastic,start=performance.now(),sign=direction;
+      gate.classList.remove('is-pulling');
+      function frame(now){
+        var t=clamp((now-start)/300,0,1),remaining=origin*Math.pow(1-t,3);
+        var step=remaining-elastic;
+        elastic=remaining;
+        shiftViewport(sign*step);
+        show(remaining/MAX_ELASTIC,false);
+        if(t<1)springFrame=requestAnimationFrame(frame);
+        else{springFrame=0;elastic=0;pull=0;show(0,false);}
+      }
+      springFrame=requestAnimationFrame(frame);
+    }
+    function enterNativeFlow(){
+      clearTimeout(releaseTimer);releaseTimer=0;
+      cancelSpring();
+      // The actual document has already followed the finger by up to
+      // 32px. Keep that displacement: undoing it would cause the "jump".
+      elastic=0;pull=0;passed=true;show(0,false);
+    }
     function setDirection(d){
       if(d!==1&&d!==-1)return;
       if(direction===d)return;
-      direction=d;pull=0;
+      if(elastic>.01)springBack();
+      direction=d;
+      passed=false;
       gate.dataset.fcDirection=d>0?'down':'up';
-      var target=d>0?1:0;
-      var textValue=gate.getAttribute(d>0?'data-fc-word-down':'data-fc-word-up');
-      gate.dataset.fcTarget=String(target);
-      if(button){button.dataset.fcChapter=String(target);button.setAttribute('aria-label',textValue);}
-      if(word)word.textContent=textValue;
+      var to=d>0?1:0;
+      var value=gate.getAttribute(d>0?'data-fc-word-down':'data-fc-word-up');
+      gate.dataset.fcTarget=String(to);
+      if(button){button.dataset.fcChapter=String(to);button.setAttribute('aria-label',value);}
+      if(word)word.textContent=value;
       if(arrow)arrow.textContent=d>0?'↓':'↑';
-      release();
     }
     function nearSeam(){
-      if(!isLive()||selection.open)return false;
-      var box=gate.getBoundingClientRect(),h=window.innerHeight||1;
-      if(box.bottom<=0||box.top>=h)return false;
-      // Intercept only within this brief mid-viewport seam. At all other
-      // points, including the entire film viewer, scrolling is untouched.
-      return box.top<=h*.68&&box.bottom>=h*.32;
-    }
-    function tension(value){
-      var amount=clamp(value,0,1);
-      gate.style.setProperty('--fc-gate-pull',amount.toFixed(3));
-      gate.classList.toggle('is-pulling',amount>0);
-    }
-    function release(){
-      clearTimeout(releaseTimer);
-      pull=0;
-      tension(0);
-    }
-    function passSeam(){
-      passed=true;
-      release();
-      // Do NOT scroll to a new page, relocate the viewport, replace DOM,
-      // or autoplay a camera movement. Native scrolling simply continues.
+      if(!isLive()||selection.open||prefersReduced)return false;
+      var r=gate.getBoundingClientRect(),h=window.innerHeight||1;
+      // Previous narrow mid-screen test was skipped by quick mobile flicks.
+      // Detect when the actual seam occupies the middle reading band.
+      return r.bottom>h*.13 && r.top<h*.87;
     }
     function wheel(event){
-      if(!event.cancelable||selection.open||!isLive())return;
-      var d=Math.sign(event.deltaY);
-      if(!d)return;
-      if(!nearSeam()){if(pull)release();return;}
-      setDirection(d);
-      if(passed)return;
+      if(!event.cancelable||!isLive()||selection.open||prefersReduced)return;
+      var d=Math.sign(event.deltaY);if(!d)return;
+      if(!nearSeam()){if(elastic>.01)springBack();return;}
       if(event.target?.closest?.('input,textarea,select,[data-fc-rail]'))return;
+      if(d!==direction){
+        setDirection(d);
+        // Reversing across the seam is never trapped or snapped.
+        return;
+      }
+      if(passed)return;
+      cancelSpring();cancelImpulse();
       var t=performance.now();
-      if(t-lastTime>490)pull=0;
-      lastTime=t;
+      if(t-lastWheel>550&&elastic<.1)pull=0;
+      lastWheel=t;
       clearTimeout(releaseTimer);
       var factor=event.deltaMode===1?18:event.deltaMode===2?window.innerHeight:1;
-      var step=Math.min(Math.abs(event.deltaY)*factor,82);
+      var step=Math.min(Math.abs(event.deltaY)*factor,90);
       if(pull+step>=WHEEL_LIMIT){
-        passSeam();
-        return; // Let the crossing event scroll natively, no jump.
+        event.preventDefault();
+        setElastic(WHEEL_LIMIT,'wheel');
+        enterNativeFlow();
+        // A small onward movement makes the release perceptible, while the
+        // next wheel events remain entirely native and uninterrupted.
+        shiftViewport(d*Math.min(step*.35,26));
+        return;
       }
       event.preventDefault();
-      pull+=step;
-      tension(pull/WHEEL_LIMIT);
-      releaseTimer=window.setTimeout(release,340);
+      setElastic(pull+step,'wheel');
+      releaseTimer=window.setTimeout(springBack,360);
     }
     function touchstart(event){
       if(event.touches.length!==1||selection.open)return;
-      if(event.target?.closest?.('button,a,input,textarea,select,[data-fc-rail]')){gesture=null;return;}
-      gesture={y:event.touches[0].clientY,active:false,following:false,lastMove:0,velocity:0};
+      if(event.target?.closest?.('button,a,input,textarea,select,[data-fc-rail]')){
+        gesture=null;return;
+      }
+      cancelImpulse();
+      gesture={y:event.touches[0].clientY,x:event.touches[0].clientX,
+        active:false,following:false,velocity:0};
     }
     function touchmove(event){
-      if(!gesture||event.touches.length!==1)return;
-      var current=event.touches[0].clientY;
-      var delta=gesture.y-current; // >0 = scroll down
-      gesture.y=current;
+      if(!gesture||event.touches.length!==1||prefersReduced)return;
+      var x=event.touches[0].clientX,y=event.touches[0].clientY;
+      var delta=gesture.y-y;gesture.y=y;
       if(!delta)return;
       if(gesture.following){
-        // The native DOM stays continuous. Once the elastic ridge gives
-        // way, follow the finger's exact motion rather than jumping to a
-        // replacement chapter or arbitrary scroll anchor.
         if(event.cancelable)event.preventDefault();
-        window.scrollBy(0,delta);
+        shiftViewport(delta);
         gesture.velocity=gesture.velocity*.55+delta*.45;
         return;
       }
-      if(passed)return;
-      if(!nearSeam())return;
-      setDirection(Math.sign(delta));
-      if(!gesture.active){gesture.active=true;pull=0;return;}
-      if(pull+Math.abs(delta)>=TOUCH_LIMIT){
-        // Do not count the travelled distance again: the perceived elastic
-        // stretch gives way to the original continuous document.
-        passSeam();
-        gesture.following=true;
-        gesture.velocity=delta;
-        if(event.cancelable)event.preventDefault();
+      if(!gesture.active){
+        if(!nearSeam())return;
+        if(Math.abs(x-gesture.x)>Math.abs(delta)*1.5)return;
+        if(Math.sign(delta)!==direction){
+          setDirection(Math.sign(delta));
+          // The first reverse movement remains under native scrolling.
+          return;
+        }
+        if(passed)return;
+        cancelSpring();
+        gesture.active=true;
+        pull=0;
+      }
+      if(!event.cancelable)return;
+      event.preventDefault();
+      if(Math.sign(delta)!==direction){
+        // Pushing back before the threshold actually unwinds the stretch.
+        setElastic(Math.max(0,pull-Math.abs(delta)*1.4),'touch');
         return;
       }
-      if(event.cancelable)event.preventDefault();
-      pull+=Math.abs(delta);
-      tension(pull/TOUCH_LIMIT);
+      if(pull+Math.abs(delta)>=TOUCH_LIMIT){
+        setElastic(TOUCH_LIMIT,'touch');
+        enterNativeFlow();
+        gesture.following=true;
+        gesture.velocity=delta;
+        shiftViewport(direction*Math.min(Math.abs(delta)*.25,22));
+        return;
+      }
+      setElastic(pull+Math.abs(delta),'touch');
     }
     function touchend(){
-      if(gesture?.following){
-        var v=gesture.velocity;
-        // A restrained continuation prevents the released finger from
-        // meeting a dead stop on browsers which suppressed native momentum.
-        if(Math.abs(v)>3 && !window.matchMedia('(prefers-reduced-motion: reduce)').matches)
-          window.scrollBy({top:clamp(v*1.9,-70,70),behavior:'smooth'});
+      if(!gesture)return;
+      if(gesture.following){
+        // Only a little continuation; don't synthesize another page move.
+        var velocity=gesture.velocity,distance=clamp(velocity*1.8,-54,54);
+        if(Math.abs(distance)>5&&!prefersReduced){
+          cancelImpulse();
+          var start=performance.now(),previous=0;
+          function momentum(now){
+            var t=clamp((now-start)/240,0,1);
+            var advanced=distance*(1-Math.pow(1-t,3));
+            shiftViewport(advanced-previous);previous=advanced;
+            if(t<1)impulseFrame=requestAnimationFrame(momentum);
+            else impulseFrame=0;
+          }
+          impulseFrame=requestAnimationFrame(momentum);
+        }
+      }else if(gesture.active){
+        springBack();
       }
       gesture=null;
-      release();
     }
     function onScroll(){
-      var now=window.scrollY||window.pageYOffset||0,delta=now-oldScrollY;
-      oldScrollY=now;
-      if(Math.abs(delta)>5&&nearSeam()&&!gesture?.active)setDirection(Math.sign(delta));
+      var y=window.scrollY||window.pageYOffset||0;
+      var dy=y-oldScrollY;oldScrollY=y;
+      if(adjusting||gesture?.active||elastic>.01)return;
       if(!nearSeam()){
-        passed=false;
-        if(pull)release();
+        passed=false;return;
       }
+      if(Math.abs(dy)>4&&Math.sign(dy)!==direction)setDirection(Math.sign(dy));
     }
     window.addEventListener('scroll',onScroll,{passive:true});
     window.addEventListener('wheel',wheel,{capture:true,passive:false});
@@ -1674,6 +1748,7 @@
     window.addEventListener('touchcancel',touchend,{capture:true,passive:true});
     gateDirectionCleanup=function(){
       clearTimeout(releaseTimer);
+      cancelSpring();cancelImpulse();
       window.removeEventListener('scroll',onScroll);
       window.removeEventListener('wheel',wheel,true);
       window.removeEventListener('touchstart',touchstart,true);
