@@ -253,9 +253,8 @@
     return '<div class="fc-asset-pair fc-asset-pair-'+kind+'" data-fc-swap data-fc-series="'+si+'" data-fc-active="0" aria-label="'+esc(names.join(' / '))+'">'+
       '<div class="fc-swap-stage">'+faces+'</div>'+
       '<div class="fc-swap-controls" role="group" aria-label="'+esc(names.join(' / '))+'">'+
-        '<button type="button" class="fc-swap-arrow" data-fc-action="swap-image" data-fc-direction="-1" aria-label="'+esc(i18n('prev'))+'">←</button>'+
         '<div class="fc-swap-dots">'+dots+'</div>'+
-        '<button type="button" class="fc-swap-arrow" data-fc-action="swap-image" data-fc-direction="1" aria-label="'+esc(i18n('next'))+'">→</button>'+
+        '<button type="button" class="fc-swap-arrow" data-fc-action="swap-image" data-fc-direction="1" aria-label="'+esc(i18n('next'))+'">&gt;</button>'+
       '</div>'+
     '</div>';
   }
