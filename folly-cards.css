@@ -3363,3 +3363,240 @@ body.fc-score-expanded{overflow:hidden!important;}
 @media(prefers-reduced-motion:reduce){
   .fc-room .fc-chapter-gate .fc-gate-continue{will-change:auto;transform:none!important;}
 }
+
+
+/* v22 · Folly I / Ruin Archive mechanical score.
+   The sheet itself is the uploaded 15-frame stop-motion drawing; the
+   temporary canvas and shared image cache do not invent intermediary frames.
+   Only the calibrated lever is interactive. The score stays on the page. */
+.fc-room .fc-inline-score-device>.fc-score-cluster.fc-mechanical-v2 {
+  display:block;
+  position:relative;
+  box-sizing:border-box;
+  height:min(92%,455px);
+  width:auto;
+  aspect-ratio:1337 / 2048;
+  min-height:0;
+  min-width:0;
+  max-width:95%;
+  background:transparent;
+  border:0;
+  overflow:visible;
+}
+.fc-room .fc-inline-score.is-expanded .fc-inline-score-device>.fc-score-cluster.fc-mechanical-v2 {
+  height:min(93%,660px);
+  width:auto;
+  max-width:92%;
+  aspect-ratio:1337 / 2048;
+}
+.fc-mechanical-v2 .fc-score-shadow {
+  position:absolute;
+  inset:0;
+  z-index:1;
+  opacity:1;
+  display:block;
+  background:transparent;
+  border:0;
+  overflow:visible;
+}
+.fc-room .fc-inline-score .fc-mechanical-v2 .fc-score-shadow{
+  filter:drop-shadow(4px 8px 11px rgba(31,34,30,.17));
+}
+.fc-mechanical-v2 .fc-mechanical-v2-sheet,
+.fc-room .fc-inline-score .fc-mechanical-v2 .fc-mechanical-v2-sheet {
+  position:absolute;
+  inset:0;
+  display:block;
+  width:100%;
+  height:100%;
+  padding:0;
+  margin:0;
+  box-sizing:border-box;
+  overflow:visible;
+  touch-action:pan-y;
+  background:transparent;
+}
+.fc-mechanical-v2 .fc-mechanical-v2-sheet>img,
+.fc-room .fc-inline-score .fc-mechanical-v2 .fc-mechanical-v2-sheet>img {
+  display:block;
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  object-fit:contain;
+  filter:none;
+  opacity:1;
+  padding:0;
+  margin:0;
+  pointer-events:none;
+  user-select:none;
+  -webkit-user-drag:none;
+}
+.fc-mechanical-v2.is-mechanical-decoded .fc-mechanical-v2-sheet>img {
+  opacity:0;
+}
+.fc-mechanical-v2 .fc-mechanical-v2-canvas {
+  position:absolute;
+  inset:0;
+  display:block;
+  width:100%;
+  height:100%;
+  background:transparent;
+  pointer-events:none;
+  opacity:0;
+}
+.fc-mechanical-v2.is-mechanical-decoded .fc-mechanical-v2-canvas {
+  opacity:1;
+}
+/* Original mechanical calibration:
+   center 49.85%, upper/lower knob 6.80% / 14.55%,
+   large ring 9.70% / 14.35%; frames 01–07 precede ring coupling. */
+.fc-mechanical-v2 .fc-mechanical-v2-lever {
+  --fc-m2-knob:6.8%;
+  --fc-m2-ring:9.7%;
+  --fc-m2-engage:1;
+  position:absolute;
+  inset:0;
+  z-index:4;
+  display:block;
+  pointer-events:none;
+}
+.fc-mechanical-v2 .fc-mechanical-v2-guide {
+  position:absolute;
+  top:6.45%;
+  left:49.85%;
+  height:9.15%;
+  border-left:1px solid rgba(27,26,24,.36);
+  opacity:.65;
+  transform:translateX(-50%);
+  pointer-events:none;
+}
+.fc-mechanical-v2 .fc-mechanical-v2-ring {
+  position:absolute;
+  top:var(--fc-m2-ring);
+  left:49.85%;
+  width:11.2%;
+  aspect-ratio:1;
+  box-sizing:border-box;
+  border:1px solid rgba(28,26,22,.55);
+  border-radius:50%;
+  opacity:calc(.3 + var(--fc-m2-engage) * .47);
+  transform:translate(-50%,-50%);
+  pointer-events:none;
+}
+.fc-mechanical-v2 .fc-mechanical-v2-knob {
+  position:absolute;
+  top:var(--fc-m2-knob);
+  left:49.85%;
+  display:block;
+  width:max(13px,3.5%);
+  aspect-ratio:1;
+  min-height:13px;
+  padding:0;
+  margin:0;
+  box-sizing:border-box;
+  background:rgba(255,255,249,.7);
+  border:1.2px solid rgba(25,24,20,.78);
+  border-radius:50%;
+  box-shadow:0 0 0 2px rgba(255,255,249,.30),0 1px 5px rgba(0,0,0,.18);
+  transform:translate(-50%,-50%);
+  cursor:ns-resize;
+  touch-action:none;
+  pointer-events:auto;
+  transition:box-shadow .15s ease,border-color .15s ease;
+}
+.fc-mechanical-v2 .fc-mechanical-v2-knob::after {
+  content:"";
+  position:absolute;
+  inset:-13px;
+  border-radius:50%;
+}
+.fc-mechanical-v2 .fc-mechanical-v2-knob.is-dragging,
+.fc-mechanical-v2 .fc-mechanical-v2-knob:hover {
+  box-shadow:0 0 0 3px rgba(255,255,249,.4),0 2px 8px rgba(0,0,0,.27);
+}
+.fc-projection .fc-mechanical-v2 .fc-mechanical-v2-knob {
+  pointer-events:none;
+}
+.fc-mechanical-v2 .fc-score-hud {
+  position:absolute;
+  inset:0;
+  z-index:5;
+  background:transparent;
+  border:0;
+  box-shadow:none;
+  backdrop-filter:none;
+  -webkit-backdrop-filter:none;
+  pointer-events:none;
+}
+.fc-mechanical-v2 .fc-mechanical-v2-graphics {
+  position:absolute;
+  inset:0;
+  display:block;
+  pointer-events:none;
+  overflow:visible;
+}
+.fc-mechanical-v2 .fc-scan-line {
+  position:absolute;
+  top:72%;
+  height:22%;
+  width:1.5px;
+  left:12%;
+  background:rgba(130,66,37,.62);
+  box-shadow:0 0 6px rgba(180,96,49,.38);
+  pointer-events:none;
+}
+.fc-mechanical-v2 .fc-scan-pulse {
+  position:absolute;
+  top:94%;
+  left:12%;
+  width:8px;
+  height:8px;
+  border-radius:50%;
+  background:rgba(142,55,21,.91);
+  box-shadow:0 0 8px rgba(161,58,26,.67);
+  pointer-events:none;
+}
+.fc-mechanical-v2 .fc-mechanical-v2-arcs {
+  display:block;
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  overflow:visible;
+  pointer-events:none;
+}
+.fc-mechanical-v2 .fc-mechanical-v2-arcs g {
+  transform-origin:calc(41.5%) calc(23.75%);
+}
+.fc-mechanical-v2 .fc-mechanical-v2-arcs path {
+  fill:none;
+  stroke:rgba(103,51,29,.60);
+  stroke-width:1.3px;
+  stroke-linecap:round;
+  vector-effect:non-scaling-stroke;
+}
+/* Source art is always present, independent of whether the optional
+   scanning/HUD pointer layer is enabled. */
+.fc-room .fc-inline-score[data-fc-pointers="off"] .fc-mechanical-v2>.fc-score-hud {
+  opacity:0!important;
+  visibility:hidden!important;
+}
+.fc-room .fc-inline-score[data-fc-pointers="on"] .fc-mechanical-v2>.fc-score-hud {
+  opacity:1!important;
+  visibility:visible!important;
+}
+/* Keep this Folly-specific detail isolated from the radial Folly II score. */
+@media(max-width:700px){
+  .fc-room .fc-inline-score-device>.fc-score-cluster.fc-mechanical-v2{
+    height:min(91%,315px);
+    width:auto;
+    aspect-ratio:1337 / 2048;
+    min-height:0;
+    max-width:90%;
+  }
+  .fc-mechanical-v2 .fc-mechanical-v2-knob {width:max(17px,4%);min-height:17px;}
+}
+@media(prefers-reduced-motion:reduce){
+  .fc-mechanical-v2 .fc-mechanical-v2-knob {transition:none;}
+}
