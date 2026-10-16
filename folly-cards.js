@@ -1799,33 +1799,20 @@
     if(scene===next)return;
     if(gateDirectionCleanup){gateDirectionCleanup();gateDirectionCleanup=null;}
     if(photoReadingCleanup){photoReadingCleanup();photoReadingCleanup=null;}
-    if(scene){clearImageSwaps();stopHoverFilm();stopMedia();clearPreviews();}
+    if(scene){clearImageSwaps();clearPreviews();stopMedia();}
     releaseUpcoming();
     document.body.classList.remove('fc-modal-open','fc-score-expanded');
     scene=next;player=null;
+    chapterChanging=false;activeChapter=0;
     if(!scene)return;
-    selection.open=false;selection.instrument=false;selection.scoreInspect=false;selection.focus=[0,0];
-    wireEvents();
-    wireChapterGate();
-    initializeImageSwaps();
-    setupPhotoReadingLayout();
-    SERIES.forEach(function(_,si){focusCard(si,0,false);});
+    selection.open=false;selection.instrument=false;selection.scoreInspect=false;
+    selection.series=0;selection.index=0;selection.focus=[0,0];
     manualWings=[null,null];inlineTime=[0,0];expandedScore=-1;
     scoreScale=[1,1];scorePan=[[0,0],[0,0]];railOriginLocks=[false,false];
-    SERIES.forEach(function(_,si){updateInlineScore(si,0);});
-    if('IntersectionObserver' in window) {
-      io=new IntersectionObserver(function(entries){
-        entries.forEach(function(entry){
-          if(entry.isIntersecting){
-            var si=Number(entry.target.dataset.fcSeriesBlock);
-            prioritizePreviews(si,selection.focus[si]);
-          }
-        });
-      },{rootMargin:'420px 0px'});
-      SERIES.forEach(function(_,si){io.observe(block(si));});
-    } else {
-      prioritizePreviews(0,0);
-    }
+    // The first chapter alone exists. Wire direct handlers only for mounted
+    // nodes; the delegated action listener remains alive across swaps.
+    wireEvents();
+    setupFollyChapter();
   }
   var app=document.getElementById('app');
   if(app&&'MutationObserver' in window){new MutationObserver(mount).observe(app,{childList:true,subtree:false});}
