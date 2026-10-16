@@ -283,6 +283,29 @@
     });
     return mechanicalReady;
   }
+  var mechanicalCanvasObserver=null;
+  function watchMechanicalScoreSizes(){
+    if(mechanicalCanvasObserver){mechanicalCanvasObserver.disconnect();mechanicalCanvasObserver=null;}
+    if(!scene||!('ResizeObserver' in window))return;
+    mechanicalCanvasObserver=new ResizeObserver(function(entries){
+      entries.forEach(function(entry){
+        var cluster=entry.target.closest('.fc-mechanical-v2');
+        if(!cluster||!cluster.isConnected)return;
+        var frame=Number(cluster.dataset.fcFrame)||15;
+        paintMechanicalCanvas(cluster,frame);
+      });
+    });
+    scene.querySelectorAll('[data-fc-mechanical-canvas]').forEach(function(canvas){
+      mechanicalCanvasObserver.observe(canvas);
+    });
+  }
+  function releaseMechanicalScoreAssets(){
+    if(mechanicalCanvasObserver){mechanicalCanvasObserver.disconnect();mechanicalCanvasObserver=null;}
+    // Keep the decoded score only while the visitor is within this page.
+    mechanicalDecodeToken++;
+    mechanicalFrames=[];
+    mechanicalReady=null;
+  }
   function mechanicalLeverMarkup(interactive){
     return '<div class="fc-mechanical-v2-lever" data-fc-stage="1" '+
       'style="--fc-m2-knob:6.8%;--fc-m2-ring:9.7%;--fc-m2-engage:1">'+
@@ -1337,11 +1360,11 @@
         knob.addEventListener('pointercancel',endKnob);
         knob.addEventListener('lostpointercapture',function(){activePointer=null;dragBounds=null;knob.classList.remove('is-dragging');});
         knob.addEventListener('keydown',function(ev){
-          var delta={ArrowUp:-1,ArrowRight:-1,ArrowDown:1,ArrowLeft:1}[ev.key];
+          var delta={ArrowUp:1,ArrowRight:1,ArrowDown:-1,ArrowLeft:-1}[ev.key];
           var frame=sourceScoreFrame(inlineTime[0]/SERIES[0].endTime);
           if(delta!=null)frame=clamp(frame+delta,1,15);
-          else if(ev.key==='Home')frame=15;
-          else if(ev.key==='End')frame=1;
+          else if(ev.key==='Home')frame=1;
+          else if(ev.key==='End')frame=15;
           else return;
           seekFilmFromScore(0,SERIES[0].endTime*(15-frame)/14);
           ev.preventDefault();ev.stopPropagation();
@@ -1966,6 +1989,7 @@
     wireChapterGate();
     initializeImageSwaps();
     setupPhotoReadingLayout();
+    watchMechanicalScoreSizes();
     // Existing 2-second MP4 stills and instrument videos remain deferred;
     // no new HTTP request is issued until a particular chapter is nearby.
     if('IntersectionObserver' in window){
@@ -2081,7 +2105,7 @@
     if(scene===next)return;
     if(gateDirectionCleanup){gateDirectionCleanup();gateDirectionCleanup=null;}
     if(photoReadingCleanup){photoReadingCleanup();photoReadingCleanup=null;}
-    if(scene){clearImageSwaps();clearPreviews();stopMedia();}
+    if(scene){clearImageSwaps();clearPreviews();stopMedia();releaseMechanicalScoreAssets();}
     releaseUpcoming();
     document.body.classList.remove('fc-modal-open','fc-score-expanded');
     scene=next;player=null;
