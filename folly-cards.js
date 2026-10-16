@@ -274,24 +274,29 @@
     '</div>';
   }
   function inlineScoreMarkup(s,si){
-    return '<section class="fc-inline-score" data-fc-inline-score="'+si+'">'+
-      '<div class="fc-inline-score-top"><div><p>FOLLY '+s.roman+' / NOTATION</p><h3>'+esc(term('score'))+'</h3></div>'+
-      '<button type="button" class="fc-inline-expand" data-fc-action="score-expand" data-fc-series="'+si+'" aria-label="'+esc(term('scoreOpen'))+'">'+
-      esc(term('scoreOpen'))+' ↗</button></div>'+
-      '<div class="fc-inline-score-main"><div class="fc-inline-score-device">'+scoreMarkup(s)+
-        '<button type="button" class="fc-inline-score-fold" data-fc-action="score-fold" data-fc-series="'+si+'" '+
-        (s.kind==='linear'?'hidden':'')+'>'+esc(term('scoreFold'))+' △</button>'+
-      '</div><div class="fc-inline-score-text"><p>'+esc(essay(si,'score'))+'</p>'+
-        '<span data-fc-score-state>01 / '+pad(s.stages.length)+'</span>'+
-        '<div class="fc-inline-score-actions">'+
-          '<button type="button" data-fc-action="score-zoom-out" data-fc-series="'+si+'" aria-label="Zoom out">−</button>'+
-          '<button type="button" data-fc-action="score-zoom-in" data-fc-series="'+si+'" aria-label="Zoom in">+</button>'+
-          '<button type="button" data-fc-action="score-reset" data-fc-series="'+si+'">'+esc(term('scoreReset'))+' ↺</button>'+
-          '<button type="button" data-fc-action="score-expand" data-fc-series="'+si+'">'+esc(term('scoreOpen'))+' ↗</button>'+
+    var pointerLabel={
+      zh:['显示指针','隐藏指针'],en:['Show pointers','Hide pointers'],
+      ja:['指針を表示','指針を非表示']
+    }[state.lang]||['显示指针','隐藏指针'];
+    return '<section class="fc-inline-score" data-fc-inline-score="'+si+'" data-fc-pointers="off">'+
+      '<div class="fc-inline-score-top">'+
+        '<span>FOLLY '+s.roman+' / SCORE</span>'+
+        '<button type="button" class="fc-pointer-switch" data-fc-action="score-pointer" data-fc-series="'+si+'" role="switch" aria-checked="false" data-fc-label-off="'+esc(pointerLabel[0])+'" data-fc-label-on="'+esc(pointerLabel[1])+'">'+
+          '<span class="fc-pointer-switch-track" aria-hidden="true"><i></i></span>'+
+          '<span class="fc-pointer-switch-text">'+esc(pointerLabel[0])+'</span>'+
+        '</button>'+
+      '</div>'+
+      '<div class="fc-inline-score-main">'+
+        '<div class="fc-inline-score-device">'+scoreMarkup(s)+'</div>'+
+        '<div class="fc-inline-score-detail">'+
+          '<span data-fc-score-state>01 / '+pad(s.stages.length)+'</span>'+
+          '<input class="fc-score-timeline" data-fc-score-timeline="'+si+'" type="range" min="0" max="1000" step="1" value="0" aria-label="'+esc(term('score')+' / '+i18n('seek'))+'">'+
+          '<div class="fc-score-minimal-actions">'+
+            '<span data-fc-score-frame-label>'+esc(term('frame'))+' '+(s.kind==='linear'?'15':'—')+'</span>'+
+            (s.kind==='radial'?'<button type="button" data-fc-action="score-fold" data-fc-series="'+si+'">'+esc(term('scoreFold'))+' ↕</button>':'')+
+          '</div>'+
         '</div>'+
-      '</div></div>'+
-      '<div class="fc-inline-score-foot"><span>FOLLY '+s.roman+' / SCORE</span>'+
-        '<span data-fc-score-frame-label>'+esc(term('frame'))+' '+(s.kind==='linear'?'15':'—')+'</span></div>'+
+      '</div>'+
     '</section>';
   }
   // Each film is laid out independently; neither is hidden by a series tab.
@@ -575,7 +580,7 @@
       });
     }
   }
-  var inlineTime=[0,0],manualWings=[null,null],expandedScore=-1,scoreScale=[1,1],scorePan=[[0,0],[0,0]];
+  var inlineTime=[0,0],manualWings=[null,null],expandedScore=-1,scoreScale=[1,1],scorePan=[[0,0],[0,0]],railOriginLocks=[false,false];
   function stageByTime(s,t){
     var value=clamp(t,0,s.endTime),idx=0;
     for(var i=0;i<s.stages.length;i++){
@@ -600,18 +605,40 @@
     if(frameLabel)frameLabel.textContent=s.kind==='linear'?
       term('frame')+' '+pad(sourceScoreFrame(at/s.endTime))+' / 15':
       'SYNC '+String(Math.round(at/s.endTime*100)).padStart(2,'0')+'%';
+    var timeline=score.querySelector('[data-fc-score-timeline]');
+    if(timeline&&document.activeElement!==timeline){
+      timeline.value=String(Math.round(1000*at/s.endTime));
+    }
   }
   function updateScore(absolute) {
     paintScore(activeOverlay(),current(),absolute);
     updateInlineScore(selection.series,absolute);
   }
   function scoreFromRail(si){
+    if(railOriginLocks[si])return;
     var rail=railFor(si),s=SERIES[si];
     if(!rail||!s)return;
     var max=Math.max(1,rail.scrollWidth-rail.clientWidth);
     var ratio=clamp(rail.scrollLeft/max,0,1);
     manualWings[si]=null;
     updateInlineScore(si,s.endTime*ratio);
+  }
+  function seekFilmFromScore(si,absolute,opts){
+    var s=SERIES[si],rail=railFor(si);
+    if(!s||!rail)return;
+    var at=clamp(absolute,0,s.endTime),ratio=at/s.endTime;
+    // This suppresses the scroll -> score feedback during a score-originated
+    // gesture, while retaining the browser's free, unsnapped film strip.
+    railOriginLocks[si]=true;
+    if(!(opts&&opts.keepWings))manualWings[si]=null;
+    if(hoverFilm.card && hoverFilm.si===si)stopHoverFilm();
+    rail.scrollLeft=Math.max(0,rail.scrollWidth-rail.clientWidth)*ratio;
+    var filmSlider=block(si)?.querySelector('[data-fc-slider]');
+    if(filmSlider)filmSlider.value=String(Math.round(ratio*1000));
+    focusCard(si,stageByTime(s,at),false);
+    updateInlineScore(si,at);
+    var release=function(){requestAnimationFrame(function(){railOriginLocks[si]=false;});};
+    requestAnimationFrame(release);
   }
   function setScoreExpanded(si,open){
     if(!isLive())return;
@@ -643,7 +670,9 @@
     if(!s||s.kind!=='radial')return;
     var opened=manualWings[si] && manualWings[si].every(function(v){return v>170;});
     manualWings[si]=opened?[0,0,0]:[180,180,180];
-    updateInlineScore(si,inlineTime[si]);
+    // The fold gesture also selects its authored early movement position.
+    // The full film sequence remains addressable by the continuous timeline.
+    seekFilmFromScore(si,opened?0:4.2,{keepWings:true});
   }
   function updateInspect() {
     var overlay=activeOverlay();if(!overlay)return;
@@ -1262,6 +1291,16 @@
         var which=Number(node.dataset.fcSeries);
         setScoreExpanded(which,expandedScore!==which);return;
       }
+      if(action==='score-pointer'){
+        var score=block(Number(node.dataset.fcSeries))?.querySelector('[data-fc-inline-score]');
+        if(!score)return;
+        var on=score.dataset.fcPointers!=='on';
+        score.dataset.fcPointers=on?'on':'off';
+        node.setAttribute('aria-checked',String(on));
+        var caption=node.querySelector('.fc-pointer-switch-text');
+        if(caption)caption.textContent=node.getAttribute(on?'data-fc-label-on':'data-fc-label-off');
+        return;
+      }
       if(action==='score-fold'){foldInlineScore(Number(node.dataset.fcSeries));return;}
       if(action==='score-zoom-in'||action==='score-zoom-out'){
         var si=Number(node.dataset.fcSeries);
@@ -1321,7 +1360,7 @@
     initializeImageSwaps();
     SERIES.forEach(function(_,si){focusCard(si,0,false);});
     manualWings=[null,null];inlineTime=[0,0];expandedScore=-1;
-    scoreScale=[1,1];scorePan=[[0,0],[0,0]];
+    scoreScale=[1,1];scorePan=[[0,0],[0,0]];railOriginLocks=[false,false];
     SERIES.forEach(function(_,si){updateInlineScore(si,0);});
     if('IntersectionObserver' in window) {
       io=new IntersectionObserver(function(entries){
