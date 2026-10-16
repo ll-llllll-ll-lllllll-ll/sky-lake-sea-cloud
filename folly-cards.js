@@ -256,15 +256,16 @@
       return '<button type="button" class="fc-swap-option'+(index===0?' is-active':'')+'" data-fc-action="swap-option" data-fc-index="'+index+'" aria-pressed="'+(index===0?'true':'false')+'">'+esc(names[index])+'</button>';
     }).join('<span class="fc-swap-separator" aria-hidden="true">/</span>');
     return '<div class="fc-asset-pair fc-asset-pair-'+kind+'" data-fc-swap data-fc-series="'+si+'" data-fc-active="0" aria-label="'+esc(names.join(' / '))+'">'+
-      '<div class="fc-swap-stage">'+faces+'</div>'+
-      '<div class="fc-swap-controls" role="group" aria-label="'+esc(names.join(' / '))+'">'+
-        '<div class="fc-swap-options">'+options+'</div>'+
+      '<div class="fc-swap-stage">'+faces+
+        '<div class="fc-swap-controls" role="group" aria-label="'+esc(names.join(' / '))+'">'+
+          '<div class="fc-swap-options">'+options+'</div>'+
+        '</div>'+
       '</div>'+
     '</div>';
   }
   function instrumentMarkup(s,si){
     return '<div class="fc-instrument-wrap">'+
-      '<div class="fc-subchapter"><span>0'+(si+1)+' / A</span><h3>'+esc(term('moving'))+'</h3></div>'+
+      '<div class="fc-subchapter"><h3>'+esc(term('moving'))+'</h3></div>'+
       '<div class="fc-instrument-card fc-card" data-fc-instrument-card data-fc-series="'+si+'">'+
         '<button class="fc-card-button" type="button" data-fc-action="instrument" data-fc-series="'+si+'" aria-label="'+esc(term('moving'))+'">'+
           '<span class="fc-frame"><canvas class="fc-preview-frame" aria-hidden="true"></canvas>'+
@@ -284,7 +285,6 @@
     }[state.lang]||['显示指针','隐藏指针'];
     return '<section class="fc-inline-score" data-fc-inline-score="'+si+'" data-fc-pointers="off">'+
       '<div class="fc-inline-score-top">'+
-        '<span>FOLLY '+s.roman+' / SCORE</span>'+
         '<button type="button" class="fc-pointer-switch" data-fc-action="score-pointer" data-fc-series="'+si+'" role="switch" aria-checked="false" data-fc-label-off="'+esc(pointerLabel[0])+'" data-fc-label-on="'+esc(pointerLabel[1])+'">'+
           '<span class="fc-pointer-switch-track" aria-hidden="true"><i></i></span>'+
           '<span class="fc-pointer-switch-text">'+esc(pointerLabel[0])+'</span>'+
@@ -295,10 +295,7 @@
         '<div class="fc-inline-score-detail">'+
           '<span data-fc-score-state>01 / '+pad(s.stages.length)+'</span>'+
           '<input class="fc-score-timeline" data-fc-score-timeline="'+si+'" type="range" min="0" max="1000" step="1" value="0" aria-label="'+esc(term('score')+' / '+i18n('seek'))+'">'+
-          '<div class="fc-score-minimal-actions">'+
-            '<span data-fc-score-frame-label>'+esc(term('frame'))+' '+(s.kind==='linear'?'15':'—')+'</span>'+
-            (s.kind==='radial'?'<button type="button" data-fc-action="score-fold" data-fc-series="'+si+'">'+esc(term('scoreFold'))+' ↕</button>':'')+
-          '</div>'+
+          (s.kind==='radial'?'<div class="fc-score-minimal-actions"><button type="button" data-fc-action="score-fold" data-fc-series="'+si+'">'+esc(term('scoreFold'))+' ↕</button></div>':'')+
         '</div>'+
       '</div>'+
     '</section>';
@@ -337,25 +334,52 @@
         '</div>'+
       '</div></div>';
   }
+  function chapterPart(si){
+    return ({
+      zh:['其一','其二'],en:['Part One','Part Two'],ja:['其の一','其の二']
+    }[state.lang]||['其一','其二'])[si];
+  }
+  function chapterGateMarkup(){
+    var next=SERIES[1],prev=SERIES[0];
+    var messages={
+      zh:['继续阅读废墟园林·其二','阅读废墟园林·其一'],
+      en:['Continue reading Folly · Part Two','Return to Folly · Part One'],
+      ja:['フォリー・其の二を続けて読む','フォリー・其の一を読む']
+    }[state.lang]||['继续阅读废墟园林·其二','阅读废墟园林·其一'];
+    var view=function(s,index,phrase){
+      return '<div class="fc-gate-view fc-gate-view-'+(index===1?'down':'up')+'" data-fc-gate-view="'+index+'" aria-hidden="'+(index===1?'false':'true')+'">'+
+        '<div class="fc-gate-visual">'+
+          '<h2>'+esc(chapterPart(index))+' <span>'+esc(label(s.title))+'</span></h2>'+
+          '<div class="fc-gate-preview"><img src="'+esc(s.assets.full)+'" loading="lazy" decoding="async" alt=""></div>'+
+        '</div>'+
+        '<button type="button" class="fc-gate-continue" data-fc-action="chapter-goto" data-fc-chapter="'+index+'">'+
+          esc(phrase)+' <span aria-hidden="true">'+(index===1?'↓':'↑')+'</span></button>'+
+      '</div>';
+    };
+    return '<section class="fc-chapter-gate" data-fc-chapter-gate data-fc-direction="down" aria-label="'+esc(chapterPart(0)+' / '+chapterPart(1))+'">'+
+      '<div class="fc-gate-sticky">'+view(next,1,messages[0])+view(prev,0,messages[1])+'</div>'+
+    '</section>';
+  }
   function sectionMarkup(s, si) {
-    return '<section class="fc-series-block" data-fc-series-block="'+si+'" style="--fc-video-aspect:16 / 9;--fc-ratio-number:1.77778">'+
+    return '<section class="fc-series-block" data-fc-series-block="'+si+'" id="fc-chapter-'+(si+1)+'" style="--fc-video-aspect:16 / 9;--fc-ratio-number:1.77778">'+
       '<div class="fc-series-heading">'+
-        '<div class="fc-series-number">'+s.roman+' <span>/ 0'+(si+1)+'</span></div>'+
-        '<div class="fc-series-title"><h2>'+esc(label(s.title))+'</h2>'+
-        '<p>FOLLY '+s.roman+' — '+pad(s.stages.length)+' '+(state.lang==='zh'?'个瞬间':state.lang==='ja'?'の瞬間':'MOMENTS')+'</p></div>'+
+        '<h2>'+esc(chapterPart(si))+'</h2>'+
+        '<p>'+esc(label(s.title))+'</p>'+
       '</div>'+
       '<div class="fc-series-composition">'+assetPairMarkup(s,si,'structure')+
         '<p class="fc-structure-description">'+esc(essay(si,'structure'))+'</p>'+
         assetPairMarkup(s,si,'detail')+
         instrumentMarkup(s,si)+
       '</div>'+
-      '<div class="fc-subchapter fc-main-subchapter"><span>0'+(si+1)+' / B</span><h3>'+esc(term('movement'))+'</h3></div>'+
+      '<div class="fc-film-head">'+
+        '<h3>'+esc(term('movement'))+'</h3>'+
+        '<p class="fc-instruction">'+esc(i18n('instruction'))+'<span>'+esc(i18n('selection'))+'</span></p>'+
+      '</div>'+
+      '<div class="fc-navigation"><div class="fc-rail-index"><strong data-fc-index-display>01</strong><span> / '+pad(s.stages.length)+'</span></div>'+
+        '<input class="fc-slider" data-fc-slider="'+si+'" type="range" min="0" max="1000" value="0" step="1" aria-label="'+esc(i18n('seek')+' / '+label(s.title))+'"></div>'+
       '<div class="fc-gallery-area"><div class="fc-rail" data-fc-rail="'+si+'" tabindex="0" aria-label="'+esc(i18n('seek')+' / '+label(s.title))+'">'+
         '<ol class="fc-strip">'+s.stages.map(function(stage,index){return cardMarkup(stage,index,s);}).join('')+'</ol>'+
       '</div></div>'+
-      '<div class="fc-navigation"><div class="fc-rail-index"><strong data-fc-index-display>01</strong><span> / '+pad(s.stages.length)+'</span></div>'+
-        '<input class="fc-slider" data-fc-slider="'+si+'" type="range" min="0" max="1000" value="0" step="1" aria-label="'+esc(i18n('seek')+' / '+label(s.title))+'">'+
-        '<span class="fc-sideways-hint">'+(state.lang==='zh'?'左右滑动浏览':state.lang==='ja'?'横にスワイプ':'SWIPE SIDEWAYS')+' ↔</span></div>'+
       inlineScoreMarkup(s,si)+
     '</section>';
   }
@@ -366,11 +390,9 @@
       '<p>'+esc(labels[state.lang].works)+' / '+esc(localised(item.title))+'</p>'+languageSwitch()+'</header>'+
       '<div class="fc-page" data-fc-scene>'+
         '<div class="fc-page-heading"><div class="fc-heading-primary">'+
-          '<p>'+esc(i18n('group'))+'</p><h1>'+esc(localised(item.title))+'</h1></div>'+
-          '<p class="fc-instruction">'+esc(i18n('instruction'))+'<span>'+esc(i18n('selection'))+'</span></p></div>'+
-        '<div class="fc-scroll-content">'+SERIES.map(sectionMarkup).join('')+
+          '<h1>'+esc(localised(item.title))+'</h1></div></div>'+
+        '<div class="fc-scroll-content">'+sectionMarkup(SERIES[0],0)+chapterGateMarkup()+sectionMarkup(SERIES[1],1)+
           '<section class="fc-essay" aria-label="Folly notes"><div class="fc-essay-rule"></div>'+
-            '<p class="fc-essay-index">FOLLY / '+(state.lang==='zh'?'关于作品':state.lang==='ja'?'作品について':'NOTES')+'</p>'+
             '<p class="fc-essay-intro">'+esc(intro)+'</p>'+
             '<div class="fc-essay-space" aria-hidden="true"></div>'+
           '</section>'+
@@ -604,7 +626,7 @@
     if(cluster)cluster.style.transform='translate('+scorePan[si][0]+'px,'+scorePan[si][1]+'px) scale('+scoreScale[si]+')';
     var i=stageByTime(s,at);
     var state=score.querySelector('[data-fc-score-state]');
-    if(state)state.textContent=pad(i+1)+' / '+pad(s.stages.length)+' — '+label(s.stages[i]);
+    if(state)state.textContent=pad(i+1)+' / '+pad(s.stages.length);
     var frameLabel=score.querySelector('[data-fc-score-frame-label]');
     if(frameLabel)frameLabel.textContent=s.kind==='linear'?
       term('frame')+' '+pad(sourceScoreFrame(at/s.endTime))+' / 15':
@@ -1266,7 +1288,7 @@
     state.fade=window.setTimeout(function(){
       oldFace.classList.remove('is-fading');
       state.fade=0;
-    },2350);
+    },1650);
     resetSwapTimer(state);
   }
   function setSwapVisible(state,visible){
