@@ -80,9 +80,9 @@
     }
   ];
   var SECTION_TERMS={
-    zh:{front:'正面 / 全貌',back:'背面',instrument:'仪器',body:'主体细部',moving:'仪器动态记录',movement:'运动切片',score:'运动图谱',scoreOpen:'展开图谱',scoreClose:'返回图谱',scoreFold:'折叠 / 展开',scoreReset:'复位',frame:'记谱帧'},
-    en:{front:'Full view',back:'Back view',instrument:'Instrument',body:'Body detail',moving:'Instrument in motion',movement:'Film fragments',score:'Graphic score',scoreOpen:'Enlarge score',scoreClose:'Return to score',scoreFold:'Fold / unfold',scoreReset:'Reset',frame:'Score frame'},
-    ja:{front:'全景',back:'背面',instrument:'器械',body:'本体細部',moving:'器械の動き',movement:'映像断片',score:'動きの譜面',scoreOpen:'譜面を拡大',scoreClose:'譜面に戻る',scoreFold:'折る / 開く',scoreReset:'リセット',frame:'譜面フレーム'}
+    zh:{front:'正面 / 全貌',back:'背面',instrument:'仪器',body:'主体细部',moving:'仪器动态记录',movement:'废墟剧场',score:'废墟乐谱',scoreOpen:'展开图谱',scoreClose:'返回图谱',scoreFold:'折叠 / 展开',scoreReset:'复位',frame:'记谱帧'},
+    en:{front:'Full view',back:'Back view',instrument:'Instrument',body:'Body detail',moving:'Instrument in motion',movement:'Ruin Theatre',score:'Ruin Score',scoreOpen:'Enlarge score',scoreClose:'Return to score',scoreFold:'Fold / unfold',scoreReset:'Reset',frame:'Score frame'},
+    ja:{front:'全景',back:'背面',instrument:'器械',body:'本体細部',moving:'器械の動き',movement:'廃墟劇場',score:'廃墟の楽譜',scoreOpen:'譜面を拡大',scoreClose:'譜面に戻る',scoreFold:'折る / 開く',scoreReset:'リセット',frame:'譜面フレーム'}
   };
   function term(key){return (SECTION_TERMS[state.lang]||SECTION_TERMS.zh)[key];}
   function essay(si,key){return label(SERIES_COPY[si][key]);}
@@ -362,18 +362,19 @@
       ja:['指針を表示','指針を非表示']
     }[state.lang]||['显示指针','隐藏指针'];
     return '<section class="fc-inline-score" data-fc-inline-score="'+si+'" data-fc-pointers="off">'+
-      '<div class="fc-inline-score-top">'+
-        '<button type="button" class="fc-pointer-switch" data-fc-action="score-pointer" data-fc-series="'+si+'" role="switch" aria-checked="false" data-fc-label-off="'+esc(pointerLabel[0])+'" data-fc-label-on="'+esc(pointerLabel[1])+'">'+
-          '<span class="fc-pointer-switch-track" aria-hidden="true"><i></i></span>'+
-          '<span class="fc-pointer-switch-text">'+esc(pointerLabel[0])+'</span>'+
-        '</button>'+
-      '</div>'+
+      '<div class="fc-inline-score-top"><h3>'+esc(term('score'))+'</h3></div>'+
       '<div class="fc-inline-score-main">'+
         '<div class="fc-inline-score-device">'+scoreMarkup(s)+'</div>'+
         '<div class="fc-inline-score-detail">'+
           '<span data-fc-score-state>01 / '+pad(s.stages.length)+'</span>'+
           '<input class="fc-score-timeline" data-fc-score-timeline="'+si+'" type="range" min="0" max="1000" step="1" value="0" aria-label="'+esc(term('score')+' / '+i18n('seek'))+'">'+
-          (s.kind==='radial'?'<div class="fc-score-minimal-actions"><button type="button" data-fc-action="score-fold" data-fc-series="'+si+'">'+esc(term('scoreFold'))+' ↕</button></div>':'')+
+          '<div class="fc-score-controls-bottom">'+
+            (s.kind==='radial'?'<div class="fc-score-minimal-actions"><button type="button" data-fc-action="score-fold" data-fc-series="'+si+'">'+esc(term('scoreFold'))+' ↕</button></div>':'')+
+            '<button type="button" class="fc-pointer-switch" data-fc-action="score-pointer" data-fc-series="'+si+'" role="switch" aria-checked="false" data-fc-label-off="'+esc(pointerLabel[0])+'" data-fc-label-on="'+esc(pointerLabel[1])+'">'+
+              '<span class="fc-pointer-switch-track" aria-hidden="true"><i></i></span>'+
+              '<span class="fc-pointer-switch-text">'+esc(pointerLabel[0])+'</span>'+
+            '</button>'+
+          '</div>'+
         '</div>'+
       '</div>'+
     '</section>';
@@ -453,7 +454,7 @@
         '<h3>'+esc(term('movement'))+'</h3>'+
         '<p class="fc-instruction">'+esc(i18n('instruction'))+'<span>'+esc(i18n('selection'))+'</span></p>'+
       '</div>'+
-      '<div class="fc-navigation"><div class="fc-rail-index"><strong data-fc-index-display>01</strong><span> / '+pad(s.stages.length)+'</span></div>'+
+      '<div class="fc-navigation">'+
         '<input class="fc-slider" data-fc-slider="'+si+'" type="range" min="0" max="1000" value="0" step="1" aria-label="'+esc(i18n('seek')+' / '+label(s.title))+'"></div>'+
       '<div class="fc-gallery-area"><div class="fc-rail" data-fc-rail="'+si+'" tabindex="0" aria-label="'+esc(i18n('seek')+' / '+label(s.title))+'">'+
         '<ol class="fc-strip">'+s.stages.map(function(stage,index){return cardMarkup(stage,index,s);}).join('')+'</ol>'+
@@ -517,7 +518,8 @@
     if(!selection.open){selection.series=si;selection.index=i;}
     // Record the nearest stage for the counter only. No selected/magnetic
     // class, implicit scrolling or forced rest position.
-    root.querySelector('[data-fc-index-display]').textContent=pad(i+1);
+    var counter=root.querySelector('[data-fc-index-display]');
+    if(counter)counter.textContent=pad(i+1);
     var slider=root.querySelector('[data-fc-slider]');
     var rail=railFor(si);
     var max=rail?Math.max(0,rail.scrollWidth-rail.clientWidth):0;
