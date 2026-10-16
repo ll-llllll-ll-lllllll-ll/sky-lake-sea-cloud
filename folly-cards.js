@@ -92,8 +92,11 @@
   var pad=function(n){return String(n).padStart(2,'0');};
   var clamp=function(x,min,max){return Math.max(min,Math.min(max,Number(x)||0));};
   var source=function(s,i){return s.media+String(i+1)+'.mp4';};
-  var FILES_I=Array.from({length:15},function(_,i){return ARCHIVE+'attachments/effluent-sedimentation/score-1-'+(i+1)+'.webp';});
-  var FILES_I_MOBILE=Array.from({length:15},function(_,i){return ARCHIVE+'assets/mobile-score/effluent-sedimentation/score-1-'+(i+1)+'.webp';});
+  // Artist's newly uploaded fifteen-frame Folly I stop-motion score.
+  // Use the real local frames on both desktop and mobile until a distinct
+  // authored mobile sequence exists; do not silently fall back to Ruin Archive.
+  var FILES_I=Array.from({length:15},function(_,i){return LOCAL_VIDEO+'score-1/score-1-'+(i+1)+'.webp';});
+  var FILES_I_MOBILE=FILES_I;
   var FOLD_BASE=ARCHIVE+'attachments/aether-scorched-earth/';
   var selection={series:0,index:0,focus:[0,0],open:false,muted:true,paused:false,scoreInspect:false,scoreZoom:1,scorePanX:0,scorePanY:0,folds:[0,0,0],lastTime:0,manualFrame:null,instrument:false};
   var scene=null,player=null,serial=0,queue=[],previewInFlight=0,previewComplete=new Set(),mountedToken=0;
