@@ -3709,3 +3709,39 @@ body.fc-score-expanded{overflow:hidden!important;}
     margin-top:10px;
   }
 }
+
+
+/* v26 · A short article-reading threshold, not a separate page.
+   Leave just enough quiet space to register the physical spring. */
+.fc-room .fc-chapter-gate,
+.fc-room .fc-chapter-gate[data-fc-direction="up"],
+.fc-room .fc-chapter-gate[data-fc-direction="down"] {
+  height:clamp(165px,27svh,250px);
+  min-height:0;
+  scroll-snap-align:none!important;
+  overscroll-behavior-y:auto;
+}
+.fc-room .fc-chapter-gate .fc-gate-continue {
+  transform:translate3d(0,calc(var(--fc-gate-pull) * -13px),0);
+  transition:transform .34s cubic-bezier(.19,1.28,.35,1),
+             opacity .32s ease,color .25s ease;
+}
+.fc-room .fc-chapter-gate[data-fc-direction="up"] .fc-gate-continue {
+  transform:translate3d(0,calc(var(--fc-gate-pull) * 13px),0);
+}
+.fc-room .fc-chapter-gate.is-pulling .fc-gate-continue{
+  transition:none;
+}
+@media(max-width:700px){
+  .fc-room .fc-chapter-gate,
+  .fc-room .fc-chapter-gate[data-fc-direction="up"],
+  .fc-room .fc-chapter-gate[data-fc-direction="down"] {
+    height:clamp(155px,25svh,212px);
+  }
+}
+@media(prefers-reduced-motion:reduce){
+  .fc-room .fc-chapter-gate .fc-gate-continue {
+    transform:none!important;
+    transition:none!important;
+  }
+}
