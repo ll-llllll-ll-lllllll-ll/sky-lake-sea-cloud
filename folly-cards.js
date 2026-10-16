@@ -1102,6 +1102,43 @@
     });
     device.addEventListener('pointerup',function(){panGesture=null;});
     device.addEventListener('pointercancel',function(){panGesture=null;});
+    // A light timeline below the bare notation acts in both directions:
+    // dragging it moves the film strip and its own original stage scrollbar.
+    var scoreSlider=score.querySelector('[data-fc-score-timeline]');
+    if(scoreSlider){
+      scoreSlider.addEventListener('input',function(ev){
+        seekFilmFromScore(si,SERIES[si].endTime*(Number(ev.target.value)/1000));
+      });
+      scoreSlider.addEventListener('change',function(ev){
+        seekFilmFromScore(si,SERIES[si].endTime*(Number(ev.target.value)/1000));
+      });
+    }
+    // The entire mechanical score is a tactile fifteen-frame index even with
+    // the HUD pointer switched off. Drag downward to advance the Folly film.
+    var notationSurface=score.querySelector('.fc-score-shadow .fc-shadow-scan');
+    if(notationSurface){
+      var scoreGesture=null;
+      function scrubArtwork(ev){
+        var rect=notationSurface.getBoundingClientRect();
+        var y=clamp((ev.clientY-rect.top)/Math.max(1,rect.height),0,1);
+        var ratio=clamp((y-.12)/.76,0,1);
+        seekFilmFromScore(si,SERIES[si].endTime*ratio);
+      }
+      notationSurface.addEventListener('pointerdown',function(ev){
+        if(ev.pointerType==='mouse'&&ev.button!==0)return;
+        scoreGesture=ev.pointerId;
+        try{notationSurface.setPointerCapture(ev.pointerId);}catch(_){}
+        scrubArtwork(ev);ev.preventDefault();
+      });
+      notationSurface.addEventListener('pointermove',function(ev){
+        if(scoreGesture!==ev.pointerId)return;
+        scrubArtwork(ev);ev.preventDefault();
+      });
+      var releaseArtwork=function(ev){if(ev.pointerId===scoreGesture)scoreGesture=null;};
+      notationSurface.addEventListener('pointerup',releaseArtwork);
+      notationSurface.addEventListener('pointercancel',releaseArtwork);
+      notationSurface.addEventListener('lostpointercapture',function(){scoreGesture=null;});
+    }
     // Folly I: drag the small knob along its guide; the authored fifteen
     // frames and two-stage large ring then follow the same rail timeline.
     var lever=score.querySelector('.fc-mechanical-notation .fc-mechanical-lever');
@@ -1111,9 +1148,7 @@
         var rect=lever.getBoundingClientRect();
         var y=(event.clientY-rect.top)/Math.max(1,rect.height);
         var ratio=clamp((y-.15)/.70,0,1);
-        var rail=railFor(si);
-        if(rail)rail.scrollLeft=Math.max(0,rail.scrollWidth-rail.clientWidth)*ratio;
-        updateInlineScore(si,SERIES[si].endTime*ratio);
+        seekFilmFromScore(si,SERIES[si].endTime*ratio);
       };
       lever.addEventListener('pointerdown',function(event){
         if(event.pointerType==='mouse'&&event.button!==0)return;
@@ -1145,14 +1180,20 @@
         if(!gesture||gesture.id!==event.pointerId)return;
         var displacement=(gesture.startY-event.clientY)*.78+(event.clientX-gesture.startX)*.32;
         manualWings[si][wi]=clamp(gesture.start+displacement,0,180);
-        updateInlineScore(si,inlineTime[si]);
+        // Use the original score's hinge schedule to return to the same
+        // point in film time, not a fabricated stage interpretation.
+        var rank=[2,1,0].indexOf(wi);
+        var t=2.5+rank*.432+(manualWings[si][wi]/180)*.720;
+        seekFilmFromScore(si,t,{keepWings:true});
         event.preventDefault();
       });
       var finish=function(event){
         if(!gesture||gesture.id!==event.pointerId)return;
         manualWings[si][wi]=manualWings[si][wi]>92?180:0;
+        var rank=[2,1,0].indexOf(wi);
+        var t=2.5+rank*.432+(manualWings[si][wi]/180)*.720;
         gesture=null;
-        updateInlineScore(si,inlineTime[si]);
+        seekFilmFromScore(si,t,{keepWings:true});
       };
       wing.addEventListener('pointerup',finish);
       wing.addEventListener('pointercancel',finish);
