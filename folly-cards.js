@@ -432,9 +432,11 @@
     };
     var words=(phrases[state.lang]||phrases.zh)[from];
     var arrow=target===1?'↓':'↑';
-    return '<section class="fc-chapter-gate" data-fc-chapter-gate data-fc-target="'+target+'" data-fc-direction="'+(target===1?'down':'up')+'">'+
-      '<button type="button" class="fc-gate-continue" data-fc-action="chapter-goto" data-fc-chapter="'+target+'" aria-label="'+esc(words)+'">'+
-        '<span>'+esc(words)+'</span><span class="fc-gate-arrow" aria-hidden="true">'+arrow+'</span>'+
+    var ups=(phrases[state.lang]||phrases.zh)[1];
+    return '<section class="fc-chapter-gate" data-fc-chapter-gate data-fc-target="'+target+'" data-fc-direction="down" '+
+        'data-fc-word-down="'+esc(words)+'" data-fc-word-up="'+esc(ups)+'">'+
+      '<button type="button" class="fc-gate-continue" data-fc-action="chapter-goto" data-fc-chapter="1" aria-label="'+esc(words)+'">'+
+        '<span class="fc-gate-word">'+esc(words)+'</span><span class="fc-gate-arrow" aria-hidden="true">'+arrow+'</span>'+
       '</button>'+
     '</section>';
   }
@@ -1541,202 +1543,187 @@
     if(gateDirectionCleanup){gateDirectionCleanup();gateDirectionCleanup=null;}
     var gate=scene?.querySelector('[data-fc-chapter-gate]');
     if(!gate)return;
-    var target=Number(gate.dataset.fcTarget),direction=target===1?1:-1;
-    var pull=0,touch=null,mouse=null,lastWheel=0,releaseTimer=0,threshold=0;
-    // A small elastic ridge at the edge of a chapter. The page remains a
-    // normal vertical document until its text-only boundary is reached.
-    var touchLimit=94,wheelLimit=150,mouseLimit=108;
-    function ready(){
-      if(!isLive()||chapterChanging||selection.open)return false;
-      var r=gate.getBoundingClientRect(),h=window.innerHeight||1;
-      if(r.bottom<=0||r.top>=h)return false;
-      // The lower edge of I and the upper edge of II mirror each other.
-      return direction===1?r.top<=h*.68:r.bottom>=h*.32;
+    var button=gate.querySelector('[data-fc-action="chapter-goto"]');
+    var word=gate.querySelector('.fc-gate-word');
+    var arrow=gate.querySelector('.fc-gate-arrow');
+    var pull=0,passed=false,lastTime=0,releaseTimer=0,gesture=null;
+    var direction=1,oldScrollY=window.scrollY||0;
+    var WHEEL_LIMIT=105,TOUCH_LIMIT=70;
+    function setDirection(d){
+      if(d!==1&&d!==-1)return;
+      if(direction===d)return;
+      direction=d;pull=0;
+      gate.dataset.fcDirection=d>0?'down':'up';
+      var target=d>0?1:0;
+      var textValue=gate.getAttribute(d>0?'data-fc-word-down':'data-fc-word-up');
+      gate.dataset.fcTarget=String(target);
+      if(button){button.dataset.fcChapter=String(target);button.setAttribute('aria-label',textValue);}
+      if(word)word.textContent=textValue;
+      if(arrow)arrow.textContent=d>0?'↓':'↑';
+      release();
     }
-    function show(amount,dragging){
-      var progress=clamp(amount,0,1);
-      gate.style.setProperty('--fc-gate-pull',progress.toFixed(3));
-      gate.classList.toggle('is-pulling',Boolean(dragging)&&progress>0);
+    function nearSeam(){
+      if(!isLive()||selection.open)return false;
+      var box=gate.getBoundingClientRect(),h=window.innerHeight||1;
+      if(box.bottom<=0||box.top>=h)return false;
+      // Intercept only within this brief mid-viewport seam. At all other
+      // points, including the entire film viewer, scrolling is untouched.
+      return box.top<=h*.68&&box.bottom>=h*.32;
+    }
+    function tension(value){
+      var amount=clamp(value,0,1);
+      gate.style.setProperty('--fc-gate-pull',amount.toFixed(3));
+      gate.classList.toggle('is-pulling',amount>0);
     }
     function release(){
       clearTimeout(releaseTimer);
-      pull=0;show(0,false);
+      pull=0;
+      tension(0);
     }
-    function cross(){
-      if(!ready())return;
-      clearTimeout(releaseTimer);
-      show(1,false);
-      switchFollyChapter(target);
+    function passSeam(){
+      passed=true;
+      release();
+      // Do NOT scroll to a new page, relocate the viewport, replace DOM,
+      // or autoplay a camera movement. Native scrolling simply continues.
     }
-    // Mouse-wheel/trackpad delta gets lighter resistance near the rim.
-    // Reverse scrolling remains completely native.
     function wheel(event){
-      if(!ready()||!event.cancelable)return;
-      var delta=event.deltaY*direction;
-      if(delta<=0){release();return;}
-      if(event.target.closest&&event.target.closest('input,textarea,select,[data-fc-rail]'))return;
-      event.preventDefault();
-      clearTimeout(releaseTimer);
+      if(!event.cancelable||selection.open||!isLive())return;
+      var d=Math.sign(event.deltaY);
+      if(!d)return;
+      if(!nearSeam()){if(pull)release();return;}
+      setDirection(d);
+      if(passed)return;
+      if(event.target?.closest?.('input,textarea,select,[data-fc-rail]'))return;
       var t=performance.now();
-      if(t-lastWheel>550)pull=0;
-      lastWheel=t;
-      var unit=event.deltaMode===1?17:event.deltaMode===2?window.innerHeight:1;
-      pull+=Math.min(delta*unit,75);
-      show(pull/wheelLimit,true);
-      if(pull>=wheelLimit)cross();
-      else releaseTimer=window.setTimeout(release,280);
+      if(t-lastTime>490)pull=0;
+      lastTime=t;
+      clearTimeout(releaseTimer);
+      var factor=event.deltaMode===1?18:event.deltaMode===2?window.innerHeight:1;
+      var step=Math.min(Math.abs(event.deltaY)*factor,82);
+      if(pull+step>=WHEEL_LIMIT){
+        passSeam();
+        return; // Let the crossing event scroll natively, no jump.
+      }
+      event.preventDefault();
+      pull+=step;
+      tension(pull/WHEEL_LIMIT);
+      releaseTimer=window.setTimeout(release,340);
     }
     function touchstart(event){
-      if(event.touches.length!==1)return;
-      var el=event.target;
-      if(el.closest&&el.closest('button,a,input,textarea,select,[data-fc-rail]')){
-        touch=null;return;
-      }
-      touch={y:event.touches[0].clientY,last:event.touches[0].clientY,active:false};
+      if(event.touches.length!==1||selection.open)return;
+      if(event.target?.closest?.('button,a,input,textarea,select,[data-fc-rail]')){gesture=null;return;}
+      gesture={y:event.touches[0].clientY,active:false,following:false,lastMove:0,velocity:0};
     }
     function touchmove(event){
-      if(!touch||event.touches.length!==1)return;
-      var y=event.touches[0].clientY,delta=(touch.last-y)*direction;
-      touch.last=y;
-      if(!touch.active){
-        if(!ready()||delta<=0)return;
-        touch.active=true;touch.y=y;pull=0;
-      }
-      if(!ready()){release();touch=null;return;}
-      if(delta<=0){
-        pull=Math.max(0,pull+delta*1.25);
+      if(!gesture||event.touches.length!==1)return;
+      var current=event.touches[0].clientY;
+      var delta=gesture.y-current; // >0 = scroll down
+      gesture.y=current;
+      if(!delta)return;
+      if(gesture.following){
+        // The native DOM stays continuous. Once the elastic ridge gives
+        // way, follow the finger's exact motion rather than jumping to a
+        // replacement chapter or arbitrary scroll anchor.
         if(event.cancelable)event.preventDefault();
-        show(pull/touchLimit,true);
+        window.scrollBy(0,delta);
+        gesture.velocity=gesture.velocity*.55+delta*.45;
+        return;
+      }
+      if(passed)return;
+      if(!nearSeam())return;
+      setDirection(Math.sign(delta));
+      if(!gesture.active){gesture.active=true;pull=0;return;}
+      if(pull+Math.abs(delta)>=TOUCH_LIMIT){
+        // Do not count the travelled distance again: the perceived elastic
+        // stretch gives way to the original continuous document.
+        passSeam();
+        gesture.following=true;
+        gesture.velocity=delta;
+        if(event.cancelable)event.preventDefault();
         return;
       }
       if(event.cancelable)event.preventDefault();
-      pull+=delta;
-      show(pull/touchLimit,true);
-      if(pull>=touchLimit){touch=null;cross();}
+      pull+=Math.abs(delta);
+      tension(pull/TOUCH_LIMIT);
     }
-    function touchend(){touch=null;release();}
-    function mousedown(event){
-      if(event.button!==0||!ready())return;
-      if(event.target.closest&&event.target.closest('button,a,input,textarea,select,[data-fc-rail]'))return;
-      mouse={y:event.clientY};
-      pull=0;
+    function touchend(){
+      if(gesture?.following){
+        var v=gesture.velocity;
+        // A restrained continuation prevents the released finger from
+        // meeting a dead stop on browsers which suppressed native momentum.
+        if(Math.abs(v)>3 && !window.matchMedia('(prefers-reduced-motion: reduce)').matches)
+          window.scrollBy({top:clamp(v*1.9,-70,70),behavior:'smooth'});
+      }
+      gesture=null;
+      release();
     }
-    function mousemove(event){
-      if(!mouse||!ready())return;
-      pull=Math.max(0,(mouse.y-event.clientY)*direction);
-      show(pull/mouseLimit,true);
-      if(pull>=mouseLimit){mouse=null;cross();}
+    function onScroll(){
+      var now=window.scrollY||window.pageYOffset||0,delta=now-oldScrollY;
+      oldScrollY=now;
+      if(Math.abs(delta)>5&&nearSeam()&&!gesture?.active)setDirection(Math.sign(delta));
+      if(!nearSeam()){
+        passed=false;
+        if(pull)release();
+      }
     }
-    function mouseup(){mouse=null;release();}
-    // Capture gestures even if they began over the preceding work rather
-    // than directly on the small interchapter caption.
-    window.addEventListener('wheel',wheel,{passive:false,capture:true});
-    window.addEventListener('touchstart',touchstart,{passive:true,capture:true});
-    window.addEventListener('touchmove',touchmove,{passive:false,capture:true});
-    window.addEventListener('touchend',touchend,{passive:true,capture:true});
-    window.addEventListener('touchcancel',touchend,{passive:true,capture:true});
-    gate.addEventListener('mousedown',mousedown);
-    window.addEventListener('mousemove',mousemove,{passive:true});
-    window.addEventListener('mouseup',mouseup,{passive:true});
+    window.addEventListener('scroll',onScroll,{passive:true});
+    window.addEventListener('wheel',wheel,{capture:true,passive:false});
+    window.addEventListener('touchstart',touchstart,{capture:true,passive:true});
+    window.addEventListener('touchmove',touchmove,{capture:true,passive:false});
+    window.addEventListener('touchend',touchend,{capture:true,passive:true});
+    window.addEventListener('touchcancel',touchend,{capture:true,passive:true});
     gateDirectionCleanup=function(){
       clearTimeout(releaseTimer);
+      window.removeEventListener('scroll',onScroll);
       window.removeEventListener('wheel',wheel,true);
       window.removeEventListener('touchstart',touchstart,true);
       window.removeEventListener('touchmove',touchmove,true);
       window.removeEventListener('touchend',touchend,true);
       window.removeEventListener('touchcancel',touchend,true);
-      gate.removeEventListener('mousedown',mousedown);
-      window.removeEventListener('mousemove',mousemove);
-      window.removeEventListener('mouseup',mouseup);
       gate.classList.remove('is-pulling');
     };
   }
-  function setupFollyChapter(){
-    var si=activeChapter;
-    wireRail(si);
-    wireInstrument(si);
-    wireInlineScore(si);
-    wireOverlay(si);
+  // Click navigation is optional; crossing the elastic seam never invokes
+  // this function. Both Folly chapters are already present in the same page.
+  function switchFollyChapter(target){
+    if(!isLive()||target<0||target>1)return;
+    var destination=block(target);
+    if(!destination)return;
+    activeChapter=target;
+    destination.scrollIntoView({
+      behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',
+      block:'start'
+    });
+  }
+  function setupFollyChapters(){
+    SERIES.forEach(function(_,si){
+      wireRail(si);
+      wireInstrument(si);
+      wireInlineScore(si);
+      wireOverlay(si);
+      focusCard(si,0,false);
+      updateInlineScore(si,0);
+    });
     wireChapterGate();
     initializeImageSwaps();
     setupPhotoReadingLayout();
-    focusCard(si,0,false);
-    updateInlineScore(si,0);
+    // Existing 2-second MP4 stills and instrument videos remain deferred;
+    // no new HTTP request is issued until a particular chapter is nearby.
     if('IntersectionObserver' in window){
       io=new IntersectionObserver(function(entries){
         entries.forEach(function(entry){
-          if(entry.isIntersecting){
-            var i=Number(entry.target.dataset.fcSeriesBlock);
-            prioritizePreviews(i,selection.focus[i]);
-          }
+          if(!entry.isIntersecting)return;
+          var si=Number(entry.target.dataset.fcSeriesBlock);
+          prioritizePreviews(si,selection.focus[si]);
         });
-      },{rootMargin:'420px 0px'});
-      var currentBlock=block(si);
-      if(currentBlock)io.observe(currentBlock);
-    }else{
-      prioritizePreviews(si,0);
-    }
-  }
-  function switchFollyChapter(target){
-    if(chapterChanging||!isLive()||target===activeChapter||target<0||target>1)return;
-    var content=scene.querySelector('[data-fc-chapter-body]');
-    var projectionSlot=scene.querySelector('[data-fc-projection-slot]');
-    if(!content||!projectionSlot)return;
-    chapterChanging=true;
-    // Release all decoded media, in-card posters, attached events, observers
-    // and clocks before dropping the actual source chapter from the DOM.
-    if(gateDirectionCleanup){gateDirectionCleanup();gateDirectionCleanup=null;}
-    if(photoReadingCleanup){photoReadingCleanup();photoReadingCleanup=null;}
-    clearImageSwaps();clearPreviews();stopMedia();releaseUpcoming();
-    document.body.classList.remove('fc-modal-open','fc-score-expanded');
-    player=null;
-    selection.open=false;
-    selection.instrument=false;
-    selection.scoreInspect=false;
-    selection.focus=[0,0];
-    selection.series=target;
-    selection.index=0;
-    manualWings=[null,null];
-    inlineTime=[0,0];
-    scoreScale=[1,1];scorePan=[[0,0],[0,0]];
-    railOriginLocks=[false,false];expandedScore=-1;
-    // No second-chapter cards or film nodes exist before this assignment.
-    // The old chapter and its frame canvases are no longer in the document.
-    content.replaceChildren();
-    projectionSlot.replaceChildren();
-    activeChapter=target;
-    content.classList.remove('is-chapter-settled');
-    content.classList.add('is-chapter-arriving');
-    content.dataset.fcArrival=target===1?'down':'up';
-    content.innerHTML=chapterBodyMarkup(target);
-    projectionSlot.innerHTML=projectionMarkup(SERIES[target],target);
-    setupFollyChapter();
-    requestAnimationFrame(function(){
-      if(!isLive()||activeChapter!==target){chapterChanging=false;return;}
-      var dest=target===1?block(1):scene.querySelector('[data-fc-chapter-gate]');
-      if(dest){
-        var y=(window.scrollY||window.pageYOffset||0)+dest.getBoundingClientRect().top;
-        // The new chapter receives the same visual direction of travel.
-        // A small onward drift replaces the old abrupt full-screen jump.
-        if(target===0)y-=window.innerHeight*.65;
-        else y-=Math.min(105,window.innerHeight*.13);
-        window.scrollTo({top:Math.max(0,y),behavior:'auto'});
-      }
-      requestAnimationFrame(function(){
-        if(!isLive()||activeChapter!==target)return;
-        content.classList.add('is-chapter-settled');
-        chapterChanging=false;
-        if(!window.matchMedia('(prefers-reduced-motion: reduce)').matches){
-          window.scrollBy({top:target===1?38:-38,behavior:'smooth'});
-        }
-        window.setTimeout(function(){
-          if(content.isConnected){
-            content.classList.remove('is-chapter-arriving','is-chapter-settled');
-          }
-        },720);
-        prioritizePreviews(target,0);
+      },{rootMargin:'320px 0px'});
+      SERIES.forEach(function(_,si){
+        var el=block(si);
+        if(el)io.observe(el);
       });
-    });
+    }else{
+      prioritizePreviews(0,0);
+    }
   }
   function wireEvents(){
     if(!isLive())return;
@@ -1843,10 +1830,10 @@
     selection.series=0;selection.index=0;selection.focus=[0,0];
     manualWings=[null,null];inlineTime=[0,0];expandedScore=-1;
     scoreScale=[1,1];scorePan=[[0,0],[0,0]];railOriginLocks=[false,false];
-    // The first chapter alone exists. Wire direct handlers only for mounted
-    // nodes; the delegated action listener remains alive across swaps.
+    // A stable two-chapter document: no node replacement during scrolling.
+    // The delegated action listener survives all intra-page movement.
     wireEvents();
-    setupFollyChapter();
+    setupFollyChapters();
   }
   var app=document.getElementById('app');
   if(app&&'MutationObserver' in window){new MutationObserver(mount).observe(app,{childList:true,subtree:false});}
