@@ -1541,99 +1541,114 @@
     if(gateDirectionCleanup){gateDirectionCleanup();gateDirectionCleanup=null;}
     var gate=scene?.querySelector('[data-fc-chapter-gate]');
     if(!gate)return;
-    var target=Number(gate.dataset.fcTarget);
-    var direction=target===1?1:-1;
-    var touchStart=null,mouseStart=null,accumulated=0,wheelReset=0;
-    var touchThreshold=170,mouseThreshold=225,wheelThreshold=390;
+    var target=Number(gate.dataset.fcTarget),direction=target===1?1:-1;
+    var pull=0,touch=null,mouse=null,lastWheel=0,releaseTimer=0,threshold=0;
+    // A small elastic ridge at the edge of a chapter. The page remains a
+    // normal vertical document until its text-only boundary is reached.
+    var touchLimit=94,wheelLimit=150,mouseLimit=108;
     function ready(){
       if(!isLive()||chapterChanging||selection.open)return false;
-      var r=gate.getBoundingClientRect(),h=window.innerHeight;
-      // iOS Safari's 100svh can be shorter than innerHeight. Measure the
-      // VISIBLE share of this boundary rather than its absolute top edge.
-      var visible=Math.max(0,Math.min(h,r.bottom)-Math.max(0,r.top));
-      return visible>=Math.min(h,r.height)*.92;
+      var r=gate.getBoundingClientRect(),h=window.innerHeight||1;
+      if(r.bottom<=0||r.top>=h)return false;
+      // The lower edge of I and the upper edge of II mirror each other.
+      return direction===1?r.top<=h*.78:r.bottom>=h*.22;
     }
-    function tension(value){
-      var progress=clamp(value,0,1);
-      gate.style.setProperty('--fc-gate-pull',String(progress));
-      gate.classList.toggle('is-pulling',progress>0);
+    function show(amount,dragging){
+      var progress=clamp(amount,0,1);
+      gate.style.setProperty('--fc-gate-pull',progress.toFixed(3));
+      gate.classList.toggle('is-pulling',Boolean(dragging)&&progress>0);
     }
-    function commit(){
+    function release(){
+      clearTimeout(releaseTimer);
+      pull=0;show(0,false);
+    }
+    function cross(){
       if(!ready())return;
-      tension(1);
+      clearTimeout(releaseTimer);
+      show(1,false);
       switchFollyChapter(target);
     }
-    function onWheel(event){
-      if(!ready() || !event.cancelable)return;
+    // Mouse-wheel/trackpad delta gets lighter resistance near the rim.
+    // Reverse scrolling remains completely native.
+    function wheel(event){
+      if(!ready()||!event.cancelable)return;
       var delta=event.deltaY*direction;
-      if(delta<=0){
-        if(accumulated){accumulated=0;tension(0);}
-        return; // Return freely toward the chapter being read.
-      }
+      if(delta<=0){release();return;}
+      if(event.target.closest&&event.target.closest('input,textarea,select,[data-fc-rail]'))return;
       event.preventDefault();
-      clearTimeout(wheelReset);
-      var unit=event.deltaMode===1?18:event.deltaMode===2?window.innerHeight:1;
-      // One large inertial trackpad event cannot skip the reading threshold.
-      accumulated+=Math.min(delta*unit,125);
-      tension(accumulated/wheelThreshold);
-      if(accumulated>=wheelThreshold)commit();
-      else wheelReset=window.setTimeout(function(){
-        accumulated=0;tension(0);
-      },850);
+      clearTimeout(releaseTimer);
+      var t=performance.now();
+      if(t-lastWheel>550)pull=0;
+      lastWheel=t;
+      var unit=event.deltaMode===1?17:event.deltaMode===2?window.innerHeight:1;
+      pull+=Math.min(delta*unit,75);
+      show(pull/wheelLimit,true);
+      if(pull>=wheelLimit)cross();
+      else releaseTimer=window.setTimeout(release,280);
     }
-    function onTouchStart(event){
-      if(event.touches.length!==1 || !ready())return;
-      touchStart=event.touches[0].clientY;
+    function touchstart(event){
+      if(event.touches.length!==1)return;
+      var el=event.target;
+      if(el.closest&&el.closest('button,a,input,textarea,select,[data-fc-rail]')){
+        touch=null;return;
+      }
+      touch={y:event.touches[0].clientY,last:event.touches[0].clientY,active:false};
     }
-    function onTouchMove(event){
-      if(touchStart===null||event.touches.length!==1 || !ready())return;
-      var pull=(touchStart-event.touches[0].clientY)*direction;
-      if(pull<=0){tension(0);return;}
+    function touchmove(event){
+      if(!touch||event.touches.length!==1)return;
+      var y=event.touches[0].clientY,delta=(touch.last-y)*direction;
+      touch.last=y;
+      if(!touch.active){
+        if(!ready()||delta<=0)return;
+        touch.active=true;touch.y=y;pull=0;
+      }
+      if(!ready()){release();touch=null;return;}
+      if(delta<=0){
+        pull=Math.max(0,pull+delta*1.25);
+        if(event.cancelable)event.preventDefault();
+        show(pull/touchLimit,true);
+        return;
+      }
       if(event.cancelable)event.preventDefault();
-      tension(pull/touchThreshold);
-      if(pull>=touchThreshold){touchStart=null;commit();}
+      pull+=delta;
+      show(pull/touchLimit,true);
+      if(pull>=touchLimit){touch=null;cross();}
     }
-    function onTouchEnd(){touchStart=null;tension(0);}
-    function onMouseDown(event){
-      if(event.button!==0||!ready()||event.target.closest('button'))return;
-      mouseStart=event.clientY;
+    function touchend(){touch=null;release();}
+    function mousedown(event){
+      if(event.button!==0||!ready())return;
+      if(event.target.closest&&event.target.closest('button,a,input,textarea,select,[data-fc-rail]'))return;
+      mouse={y:event.clientY};
+      pull=0;
     }
-    function onMouseMove(event){
-      if(mouseStart===null||!ready())return;
-      var pull=(mouseStart-event.clientY)*direction;
-      if(pull<=0){tension(0);return;}
-      tension(pull/mouseThreshold);
-      if(pull>=mouseThreshold){mouseStart=null;commit();}
+    function mousemove(event){
+      if(!mouse||!ready())return;
+      pull=Math.max(0,(mouse.y-event.clientY)*direction);
+      show(pull/mouseLimit,true);
+      if(pull>=mouseLimit){mouse=null;cross();}
     }
-    function onMouseUp(){mouseStart=null;tension(0);}
-    function onGateClick(event){
-      if(event.target.closest('[data-fc-action="chapter-goto"]'))return;
-      // Tapping the empty threshold also counts as an explicit choice;
-      // the 92% visibility condition applies only to scroll gestures.
-      switchFollyChapter(target);
-    }
-    gate.addEventListener('wheel',onWheel,{passive:false});
-    gate.addEventListener('touchstart',onTouchStart,{passive:true});
-    gate.addEventListener('touchmove',onTouchMove,{passive:false});
-    gate.addEventListener('touchend',onTouchEnd,{passive:true});
-    gate.addEventListener('touchcancel',onTouchEnd,{passive:true});
-    gate.addEventListener('mousedown',onMouseDown);
-    gate.addEventListener('mousemove',onMouseMove);
-    gate.addEventListener('mouseup',onMouseUp);
-    gate.addEventListener('mouseleave',onMouseUp);
-    gate.addEventListener('click',onGateClick);
+    function mouseup(){mouse=null;release();}
+    // Capture gestures even if they began over the preceding work rather
+    // than directly on the small interchapter caption.
+    window.addEventListener('wheel',wheel,{passive:false,capture:true});
+    window.addEventListener('touchstart',touchstart,{passive:true,capture:true});
+    window.addEventListener('touchmove',touchmove,{passive:false,capture:true});
+    window.addEventListener('touchend',touchend,{passive:true,capture:true});
+    window.addEventListener('touchcancel',touchend,{passive:true,capture:true});
+    gate.addEventListener('mousedown',mousedown);
+    window.addEventListener('mousemove',mousemove,{passive:true});
+    window.addEventListener('mouseup',mouseup,{passive:true});
     gateDirectionCleanup=function(){
-      clearTimeout(wheelReset);
-      gate.removeEventListener('wheel',onWheel);
-      gate.removeEventListener('touchstart',onTouchStart);
-      gate.removeEventListener('touchmove',onTouchMove);
-      gate.removeEventListener('touchend',onTouchEnd);
-      gate.removeEventListener('touchcancel',onTouchEnd);
-      gate.removeEventListener('mousedown',onMouseDown);
-      gate.removeEventListener('mousemove',onMouseMove);
-      gate.removeEventListener('mouseup',onMouseUp);
-      gate.removeEventListener('mouseleave',onMouseUp);
-      gate.removeEventListener('click',onGateClick);
+      clearTimeout(releaseTimer);
+      window.removeEventListener('wheel',wheel,true);
+      window.removeEventListener('touchstart',touchstart,true);
+      window.removeEventListener('touchmove',touchmove,true);
+      window.removeEventListener('touchend',touchend,true);
+      window.removeEventListener('touchcancel',touchend,true);
+      gate.removeEventListener('mousedown',mousedown);
+      window.removeEventListener('mousemove',mousemove);
+      window.removeEventListener('mouseup',mouseup);
+      gate.classList.remove('is-pulling');
     };
   }
   function setupFollyChapter(){
