@@ -1400,18 +1400,19 @@
     var photos=Array.from(scene.querySelectorAll('[data-fc-swap]'));
     var instruments=Array.from(scene.querySelectorAll('.fc-instrument-layout'));
     var images=photos.flatMap(function(root){return Array.from(root.querySelectorAll('.fc-artifact-image img'));});
-    var frame=0;
+    var frame=0,disposed=false;
     function update(){
       frame=0;
-      if(!isLive())return;
+      if(disposed||!isLive())return;
       photos.forEach(alignPhotoAside);
       instruments.forEach(alignInstrumentAside);
     }
-    function schedule(){if(!frame)frame=requestAnimationFrame(update);}
+    function schedule(){if(!disposed&&!frame)frame=requestAnimationFrame(update);}
     images.forEach(function(img){img.addEventListener('load',schedule);});
     window.addEventListener('resize',schedule,{passive:true});
     if(document.fonts&&document.fonts.ready)document.fonts.ready.then(schedule);
     photoReadingCleanup=function(){
+      disposed=true;
       if(frame)cancelAnimationFrame(frame);
       images.forEach(function(img){img.removeEventListener('load',schedule);});
       window.removeEventListener('resize',schedule);
@@ -1444,7 +1445,7 @@
           if(!panel.hidden)panel.classList.remove('is-copy-entering');
         });
       });
-    },330);
+    },window.matchMedia('(prefers-reduced-motion: reduce)').matches?0:330);
   }
   function advanceSwap(state,step){
     if(!state || !state.root.isConnected)return;
