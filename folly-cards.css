@@ -3465,7 +3465,10 @@ body.fc-score-expanded{overflow:hidden!important;}
   position:absolute;
   top:6.45%;
   left:49.85%;
+  width:0;
   height:9.15%;
+  background:transparent;
+  box-shadow:none;
   border-left:1px solid rgba(27,26,24,.36);
   opacity:.65;
   transform:translateX(-50%);
@@ -3476,7 +3479,10 @@ body.fc-score-expanded{overflow:hidden!important;}
   top:var(--fc-m2-ring);
   left:49.85%;
   width:11.2%;
-  aspect-ratio:1;
+  height:auto;
+  aspect-ratio:1 / 1;
+  background:transparent;
+  box-shadow:none;
   box-sizing:border-box;
   border:1px solid rgba(28,26,22,.55);
   border-radius:50%;
@@ -3490,7 +3496,8 @@ body.fc-score-expanded{overflow:hidden!important;}
   left:49.85%;
   display:block;
   width:max(13px,3.5%);
-  aspect-ratio:1;
+  height:auto;
+  aspect-ratio:1 / 1;
   min-height:13px;
   padding:0;
   margin:0;
