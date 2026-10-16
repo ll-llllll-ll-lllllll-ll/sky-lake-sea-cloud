@@ -1886,6 +1886,8 @@
       clearMomentum();
       // A fresh touch can deliberately push past an inertial hold.
       if(coast){clearTimeout(coastTimer);coast=null;}
+      clearSpring();
+      annotate(0,false);
       drag={y:event.touches[0].clientY,x:event.touches[0].clientX,
         started:now(),item:null,following:false,velocity:0};
     }
@@ -1953,10 +1955,12 @@
       var checkpoint=center()-d*49;
       coast={dir:d,base:checkpoint,last:now()};
       labelFor(d);
-      // Even a fast one-flick inertial crossing stretches a little before
-      // returning: never a rigid invisible snap at the seam.
-      moveTo(checkpoint+d*20);
-      annotate(.60,false);
+      // A rapid flick may overshoot the seam by more than a frame.
+      // Never yank the viewport back 100–200px in a single paint: brake
+      // by <=24px, then recover the remaining distance as a spring.
+      var target=checkpoint+d*20;
+      moveTo(scrollY()+clamp(target-scrollY(),-24,24));
+      spring(scrollY(),target);
       function settle(){
         if(!coast)return;
         var base=coast.base;
@@ -1986,7 +1990,9 @@
       if(now()-lastWheelAt<100)return;
       if(coast){
         if(d===coast.dir){
-          moveTo(coast.base+coast.dir*20);
+          var target=coast.base+coast.dir*20;
+          moveTo(scrollY()+clamp(target-scrollY(),-24,24));
+          spring(scrollY(),target);
           clearTimeout(coastTimer);
           coastTimer=window.setTimeout(function(){
             if(coast){var base=coast.base;coast=null;spring(scrollY(),base);}
