@@ -2185,3 +2185,353 @@ body.fc-score-expanded{overflow:hidden!important;}
     margin-top:8px;
   }
 }
+
+
+/* ==============================================================
+   v15 · Folly chapters, image-edge typographic tabs, quiet divider.
+   Three reading movements: a picture, film fragments, and notation.
+   ============================================================== */
+.fc-room .fc-page-heading {
+  padding-bottom:clamp(28px,4vh,54px);
+}
+.fc-room .fc-page-heading .fc-heading-primary>p{display:none;}
+.fc-room .fc-series-heading {
+  display:flex;
+  align-items:baseline;
+  gap:clamp(18px,3.2vw,52px);
+  padding:0 clamp(24px,7vw,120px) clamp(28px,5vw,55px);
+}
+.fc-room .fc-series-heading h2 {
+  margin:0;
+  font:400 clamp(34px,4.4vw,64px)/1.25 var(--serif),serif;
+  letter-spacing:.045em;
+  color:#2e352e;
+}
+.fc-room .fc-series-heading p {
+  margin:0;
+  font:400 clamp(16px,1.55vw,24px)/1.5 var(--serif),serif;
+  letter-spacing:.035em;
+  color:rgba(43,49,43,.62);
+}
+.fc-room .fc-artifact-reading {
+  display:block;
+  width:min(100%,calc(var(--fc-card-width) * 1.5));
+  margin:0;
+  padding:0;
+}
+.fc-room .fc-artifact-reading+.fc-artifact-reading{
+  margin-top:clamp(58px,9vw,135px);
+}
+.fc-room .fc-artifact-reading .fc-asset-pair {
+  width:100%;
+  margin-left:0;
+  margin-right:0;
+}
+.fc-room .fc-artifact-reading .fc-structure-description {
+  width:min(580px,78%);
+  max-width:100%;
+  margin-left:auto;
+  margin-right:0;
+  text-align:left;
+}
+/* The switchers occupy the image's own left-bottom corner.
+   No external pager, block, mat or extra frame is added. */
+.fc-room .fc-swap-stage {
+  position:relative;
+  overflow:hidden;
+  border:0;
+  background:transparent;
+  box-shadow:none;
+}
+.fc-room .fc-swap-face {transition:opacity 1.65s cubic-bezier(.35,.03,.72,1);}
+.fc-room .fc-swap-face.is-fading{transition:opacity 1.65s cubic-bezier(.35,.03,.72,1);}
+.fc-room .fc-swap-controls {
+  position:absolute;
+  z-index:8;
+  left:clamp(10px,1.55vw,22px);
+  right:auto;
+  bottom:clamp(12px,1.8vw,27px);
+  width:auto;
+  min-height:0;
+  padding:0;
+  margin:0;
+  justify-content:flex-start;
+  background:transparent;
+  border:0;
+  box-shadow:none;
+  pointer-events:auto;
+}
+.fc-room .fc-swap-options {
+  justify-content:flex-start;
+  align-items:baseline;
+  gap:clamp(10px,1.6vw,20px);
+  text-shadow:0 1px 8px rgba(237,238,231,.55);
+}
+.fc-room .fc-swap-option {
+  display:inline-block;
+  width:auto;
+  height:auto;
+  padding:5px 0;
+  margin:0;
+  font:400 clamp(15px,1.55vw,22px)/1.5 var(--serif),serif;
+  color:rgba(41,45,41,.65);
+  text-align:left;
+  letter-spacing:.018em;
+  text-shadow:inherit;
+}
+.fc-room .fc-swap-option.is-active {
+  color:#2b342d;
+  font-weight:500;
+  text-shadow:0 0 .22px currentColor,0 1px 8px rgba(244,244,239,.7);
+}
+.fc-room .fc-swap-separator {
+  font:400 clamp(14px,1.3vw,19px)/1.5 var(--serif),serif;
+  color:rgba(41,45,41,.43);
+  text-shadow:inherit;
+}
+.fc-room .fc-instrument-wrap {
+  padding-top:0;
+  border-top:0;
+}
+.fc-room .fc-instrument-description {
+  width:min(460px,var(--fc-card-width));
+  max-width:var(--fc-card-width);
+  margin-right:auto;
+  margin-left:0;
+  text-align:left;
+}
+/* Film notes move to the upper-right corner of the film section. */
+.fc-room .fc-film-head{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:clamp(25px,6vw,100px);
+  padding:0 clamp(23px,6vw,100px) 0 var(--fc-film-left);
+  margin:clamp(28px,5vw,66px) 0 clamp(14px,2.2vw,29px);
+}
+.fc-room .fc-film-head h3{
+  flex:0 0 auto;
+  margin:0;
+  color:#293128;
+  font:400 clamp(22px,2vw,32px)/1.45 var(--serif),serif;
+  letter-spacing:.025em;
+}
+.fc-room .fc-film-head .fc-instruction{
+  display:block;
+  flex:0 1 400px;
+  max-width:400px;
+  margin:0;
+  text-align:right;
+  font:400 clamp(12px,1vw,15px)/1.8 var(--serif),serif;
+  color:rgba(40,46,41,.7);
+}
+.fc-room .fc-film-head .fc-instruction span{
+  display:block;
+  color:rgba(40,46,41,.50);
+}
+/* Film's continuous range is ABOVE the images, sharing their left edge. */
+.fc-room .fc-navigation{
+  display:flex;
+  align-items:center;
+  justify-content:flex-start;
+  gap:clamp(15px,2.2vw,34px);
+  margin:0 clamp(23px,6vw,100px) clamp(15px,1.9vw,27px) var(--fc-film-left);
+  padding:9px 0 0;
+  border-top:1px solid rgba(37,44,39,.14);
+  min-height:32px;
+  height:auto;
+}
+.fc-room .fc-navigation .fc-rail-index {
+  flex:0 0 auto;
+  min-width:67px;
+}
+.fc-room .fc-navigation .fc-rail-index strong {
+  font-size:20px;
+}
+.fc-room .fc-navigation .fc-slider {
+  max-width:750px;
+  flex:1 1 240px;
+  height:28px;
+}
+/* Remove old smaller subhead markers without touching the works themselves. */
+.fc-room .fc-instrument-wrap .fc-subchapter {
+  margin-bottom:clamp(19px,2.7vw,40px);
+}
+.fc-room .fc-instrument-wrap .fc-subchapter>span,
+.fc-room .fc-main-subchapter,
+.fc-room .fc-sideways-hint,
+.fc-room .fc-series-number,
+.fc-room .fc-series-title>p,
+.fc-room .fc-essay-index {display:none!important;}
+.fc-room .fc-inline-score-top {
+  justify-content:flex-end;
+  margin-bottom:clamp(12px,2vw,24px);
+}
+.fc-room .fc-inline-score-top>span{display:none;}
+.fc-room .fc-score-minimal-actions [data-fc-score-frame-label]{display:none;}
+.fc-room .fc-inline-score-detail [data-fc-score-state]{
+  font-size:12px;
+  letter-spacing:0;
+}
+.fc-room .fc-series-block[data-fc-series-block="1"] {background:#e7e6e0;}
+.fc-room .fc-series-block[data-fc-series-block="0"] {background:transparent;}
+/* A scroll-length, sticky reading threshold makes both directions linger
+   on only a title and a cropped portion of the neighbouring construction.
+   Scroll remains native, including on touch: no blocking wheel handler. */
+.fc-room .fc-chapter-gate {
+  display:block;
+  position:relative;
+  height:clamp(850px,142vh,1650px);
+  padding:0;
+  margin:0;
+  background:linear-gradient(180deg,#ebeae5 0%,#e8e7e1 60%,#e7e6e0 100%);
+  overflow:clip;
+  isolation:isolate;
+}
+.fc-room .fc-gate-sticky {
+  display:grid;
+  position:sticky;
+  top:clamp(38px,9vh,105px);
+  width:100%;
+  height:clamp(490px,76vh,800px);
+  align-items:center;
+  justify-items:center;
+  isolation:isolate;
+}
+.fc-room .fc-gate-view {
+  position:absolute;
+  inset:0;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:clamp(27px,5.5vh,66px);
+  opacity:0;
+  pointer-events:none;
+  transition:opacity .75s ease;
+}
+.fc-room .fc-chapter-gate[data-fc-direction="down"] .fc-gate-view-down,
+.fc-room .fc-chapter-gate[data-fc-direction="up"] .fc-gate-view-up {
+  opacity:1;
+  pointer-events:auto;
+}
+.fc-room .fc-gate-visual {
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:clamp(18px,3vw,40px);
+}
+.fc-room .fc-gate-visual h2 {
+  display:flex;
+  align-items:baseline;
+  justify-content:center;
+  gap:clamp(11px,2vw,30px);
+  margin:0;
+  color:#2d352e;
+  font:400 clamp(25px,3.4vw,49px)/1.35 var(--serif),serif;
+  letter-spacing:.035em;
+}
+.fc-room .fc-gate-visual h2 span {
+  color:rgba(42,48,42,.64);
+  font:400 clamp(15px,1.65vw,24px)/1.6 var(--serif),serif;
+}
+.fc-room .fc-gate-preview {
+  position:relative;
+  display:block;
+  width:min(660px,67vw);
+  height:clamp(132px,20vw,248px);
+  overflow:hidden;
+  background:transparent;
+  border:0;
+  mask-image:linear-gradient(180deg,#000 77%,transparent 100%);
+  -webkit-mask-image:linear-gradient(180deg,#000 77%,transparent 100%);
+}
+.fc-room .fc-gate-preview img {
+  display:block;
+  width:100%;
+  height:auto;
+  min-height:100%;
+  object-fit:cover;
+  object-position:center top;
+  filter:saturate(.86) contrast(.98);
+  pointer-events:none;
+}
+.fc-room .fc-gate-continue {
+  display:inline-flex;
+  gap:clamp(12px,2vw,30px);
+  align-items:baseline;
+  justify-content:center;
+  color:rgba(36,43,37,.79);
+  border:0;
+  background:none;
+  padding:9px 8px;
+  font:400 clamp(12px,1.1vw,16px)/1.7 var(--serif),serif;
+  letter-spacing:.035em;
+  cursor:pointer;
+  transition:color .25s;
+}
+.fc-room .fc-gate-continue:hover {color:#151d17;}
+.fc-room .fc-gate-continue span {font:400 20px/1 var(--serif),serif;}
+.fc-room .fc-gate-continue:focus-visible {
+  outline:1px solid rgba(39,45,40,.58);
+  outline-offset:3px;
+}
+@media(max-width:700px){
+  .fc-room .fc-series-heading {
+    padding:0 22px 30px;
+    gap:13px;
+  }
+  .fc-room .fc-series-heading h2 {font-size:32px;}
+  .fc-room .fc-series-heading p {font-size:16px;}
+  .fc-room .fc-artifact-reading {width:100%;}
+  .fc-room .fc-artifact-reading .fc-structure-description{
+    width:min(88%,390px);
+    margin-right:0;
+    margin-left:auto;
+  }
+  .fc-room .fc-swap-controls {bottom:9px;left:11px;}
+  .fc-room .fc-swap-options {gap:10px;}
+  .fc-room .fc-swap-option {font-size:14px;}
+  .fc-room .fc-swap-separator {font-size:13px;}
+  .fc-room .fc-film-head {
+    gap:20px;
+    align-items:flex-start;
+    padding:0 22px 0 var(--fc-film-left);
+    margin:28px 0 18px;
+  }
+  .fc-room .fc-film-head h3 {font-size:18px;min-width:0;}
+  .fc-room .fc-film-head .fc-instruction {
+    flex:0 1 230px;
+    max-width:230px;
+    font-size:11px;
+    line-height:1.65;
+    text-align:right;
+  }
+  .fc-room .fc-navigation {
+    margin:0 22px 13px var(--fc-film-left);
+    padding:7px 0 0;
+    gap:13px;
+  }
+  .fc-room .fc-navigation .fc-rail-index {min-width:52px;}
+  .fc-room .fc-navigation .fc-rail-index strong {font-size:17px;}
+  .fc-room .fc-navigation .fc-slider {min-width:48px;}
+  .fc-room .fc-chapter-gate {height:126vh;min-height:690px;}
+  .fc-room .fc-gate-sticky {
+    top:8vh;
+    height:77vh;
+    min-height:420px;
+  }
+  .fc-room .fc-gate-visual{gap:17px;}
+  .fc-room .fc-gate-visual h2 {gap:10px;font-size:28px;}
+  .fc-room .fc-gate-visual h2 span {font-size:15px;}
+  .fc-room .fc-gate-preview {
+    width:min(80vw,440px);
+    height:clamp(120px,35vw,195px);
+  }
+  .fc-room .fc-gate-continue {font-size:12px;padding:9px 18px;text-align:center;}
+}
+@media(prefers-reduced-motion:reduce) {
+  .fc-room .fc-gate-view,
+  .fc-room .fc-swap-face,
+  .fc-room .fc-swap-face.is-fading {transition:none!important;}
+}
