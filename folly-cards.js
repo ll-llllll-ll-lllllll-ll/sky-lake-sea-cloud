@@ -1165,6 +1165,32 @@
       lever.addEventListener('pointercancel',end);
       lever.addEventListener('lostpointercapture',function(){dragging=-1;});
     }
+    // With the HUD switched on, its paired pointers can also scrub the film
+    // from within the score itself. The underlying folded artwork stays put.
+    var needles=score.querySelector('.fc-score-hud .fc-radial-needles');
+    if(needles){
+      var needleGesture=null;
+      function seekNeedle(ev){
+        var rect=needles.getBoundingClientRect();
+        var ratio=clamp((ev.clientX-rect.left)/Math.max(1,rect.width),0,1);
+        seekFilmFromScore(si,SERIES[si].endTime*ratio);
+      }
+      needles.addEventListener('pointerdown',function(ev){
+        if(score.dataset.fcPointers!=='on')return;
+        if(ev.pointerType==='mouse'&&ev.button!==0)return;
+        needleGesture=ev.pointerId;
+        try{needles.setPointerCapture(ev.pointerId);}catch(_){}
+        seekNeedle(ev);ev.preventDefault();
+      });
+      needles.addEventListener('pointermove',function(ev){
+        if(needleGesture!==ev.pointerId)return;
+        seekNeedle(ev);ev.preventDefault();
+      });
+      var endNeedle=function(ev){if(needleGesture===ev.pointerId)needleGesture=null;};
+      needles.addEventListener('pointerup',endNeedle);
+      needles.addEventListener('pointercancel',endNeedle);
+      needles.addEventListener('lostpointercapture',function(){needleGesture=null;});
+    }
     // Folly II: three authored hinged wings remain independently draggable.
     score.querySelectorAll('.fc-score-shadow [data-fc-drag-wing]').forEach(function(wing){
       var wi=Number(wing.dataset.fcDragWing),gesture=null;
