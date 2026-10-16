@@ -2535,3 +2535,32 @@ body.fc-score-expanded{overflow:hidden!important;}
   .fc-room .fc-swap-face,
   .fc-room .fc-swap-face.is-fading {transition:none!important;}
 }
+
+
+/* A caption begins at the right side of its associated physical work.
+   Its right edge coincides with the photo or film, not the wider page. */
+.fc-room .fc-artifact-reading .fc-structure-description {
+  margin-top:clamp(28px,4vw,64px);
+  margin-bottom:0;
+}
+.fc-room .fc-instrument-wrap {
+  width:min(100%,var(--fc-card-width));
+}
+.fc-room .fc-instrument-description {
+  width:78%;
+  max-width:100%;
+  margin-left:auto;
+  margin-right:0;
+}
+@media(max-width:700px){
+  .fc-room .fc-artifact-reading .fc-structure-description {
+    margin-top:28px;
+    margin-bottom:0;
+  }
+  .fc-room .fc-instrument-wrap {width:min(100%,var(--fc-card-width));}
+  .fc-room .fc-instrument-description {
+    width:88%;
+    margin-left:auto;
+    margin-right:0;
+  }
+}
