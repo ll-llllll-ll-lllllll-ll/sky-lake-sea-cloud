@@ -537,7 +537,7 @@
     }
   }
   function nearViewport(element) {
-    if(!element)return false;
+    if(!element||!element.isConnected)return false;
     var box=element.getBoundingClientRect();
     return box.bottom>-300 && box.top<window.innerHeight+420;
   }
@@ -1548,9 +1548,10 @@
     function ready(){
       if(!isLive()||chapterChanging||selection.open)return false;
       var r=gate.getBoundingClientRect(),h=window.innerHeight;
-      // Wait until the text-only threshold has almost filled the viewport.
-      // Before that, native scrolling is never intercepted.
-      return r.top<=h*.14&&r.bottom>=h*.79;
+      // iOS Safari's 100svh can be shorter than innerHeight. Measure the
+      // VISIBLE share of this boundary rather than its absolute top edge.
+      var visible=Math.max(0,Math.min(h,r.bottom)-Math.max(0,r.top));
+      return visible>=Math.min(h,r.height)*.92;
     }
     function tension(value){
       var progress=clamp(value,0,1);
