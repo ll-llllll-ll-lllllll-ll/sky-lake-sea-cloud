@@ -1843,6 +1843,7 @@
     }
     function wheel(event){
       if(reduceMotion||!isLive()||selection.open||!event.cancelable)return;
+      if(Number(gate.dataset.fcBypassUntil||0)>now())return;
       if(event.target?.closest?.('input,textarea,select,[data-fc-rail]'))return;
       var delta=event.deltaY*(event.deltaMode===1?16:event.deltaMode===2?window.innerHeight:1);
       if(Math.abs(delta)<.1)return;
@@ -1880,6 +1881,7 @@
     }
     function touchStart(event){
       if(reduceMotion||event.touches.length!==1||selection.open)return;
+      if(Number(gate.dataset.fcBypassUntil||0)>now())return;
       if(event.target?.closest?.('button,a,input,textarea,select,[data-fc-rail]'))return;
       clearMomentum();
       // A fresh touch can deliberately push past an inertial hold.
@@ -1965,6 +1967,7 @@
       var y=scrollY(),dy=y-previousY,old=previousY;
       previousY=y;
       if(reduceMotion||!isLive()||selection.open)return;
+      if(Number(gate.dataset.fcBypassUntil||0)>now())return;
       // Safari can emit an asynchronous compositor scroll during the
       // 66ms after our correction. Ignore only the scroll we actually set,
       // never genuine remaining inertia that is still pushing the page.
@@ -2022,6 +2025,9 @@
     var destination=block(target);
     if(!destination)return;
     activeChapter=target;
+    // Explicit reading navigation bypasses the gesture-only resistance.
+    var gate=scene.querySelector('[data-fc-chapter-gate]');
+    if(gate)gate.dataset.fcBypassUntil=String(performance.now()+1800);
     destination.scrollIntoView({
       behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',
       // Clicking "its first part" should return to the seam near the
