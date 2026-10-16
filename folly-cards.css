@@ -3229,7 +3229,7 @@ body.fc-score-expanded{overflow:hidden!important;}
   justify-content:center;
   align-items:center;
   width:100%;
-  height:clamp(180px,30svh,320px);
+  height:clamp(210px,40svh,400px);
   min-height:0;
   max-height:none;
   padding:0 22px;
@@ -3283,7 +3283,7 @@ body.fc-score-expanded{overflow:hidden!important;}
   .fc-room .fc-chapter-gate,
   .fc-room .fc-chapter-gate[data-fc-direction="up"],
   .fc-room .fc-chapter-gate[data-fc-direction="down"]{
-    height:clamp(155px,28svh,260px);
+    height:clamp(190px,38svh,340px);
     min-height:0;
     padding:0 18px;
   }
