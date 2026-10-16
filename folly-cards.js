@@ -1692,7 +1692,9 @@
     activeChapter=target;
     destination.scrollIntoView({
       behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',
-      block:'start'
+      // Clicking "its first part" should return to the seam near the
+      // chapter's end, not unexpectedly travel to the site's beginning.
+      block:target===0?'end':'start'
     });
   }
   function setupFollyChapters(){
