@@ -499,16 +499,12 @@
       '<div class="fc-inline-score-top"><h3>'+esc(term('score'))+'</h3></div>'+
       '<div class="fc-inline-score-main">'+
         '<div class="fc-inline-score-device">'+scoreMarkup(s)+'</div>'+
-        '<div class="fc-inline-score-detail">'+
-          '<span data-fc-score-state>01 / '+pad(s.stages.length)+'</span>'+
-          '<input class="fc-score-timeline" data-fc-score-timeline="'+si+'" type="range" min="0" max="1000" step="1" value="0" aria-label="'+esc(term('score')+' / '+i18n('seek'))+'">'+
-          '<div class="fc-score-controls-bottom">'+
-            (s.kind==='radial'?'<div class="fc-score-minimal-actions"><button type="button" data-fc-action="score-fold" data-fc-series="'+si+'">'+esc(term('scoreFold'))+' ↕</button></div>':'')+
-            '<button type="button" class="fc-pointer-switch" data-fc-action="score-pointer" data-fc-series="'+si+'" role="switch" aria-checked="false" data-fc-label-off="'+esc(pointerLabel[0])+'" data-fc-label-on="'+esc(pointerLabel[1])+'">'+
-              '<span class="fc-pointer-switch-track" aria-hidden="true"><i></i></span>'+
-              '<span class="fc-pointer-switch-text">'+esc(pointerLabel[0])+'</span>'+
-            '</button>'+
-          '</div>'+
+        '<div class="fc-score-controls-bottom">'+
+          (s.kind==='radial'?'<div class="fc-score-minimal-actions"><button type="button" data-fc-action="score-fold" data-fc-series="'+si+'">'+esc(term('scoreFold'))+' ↕</button></div>':'')+
+          '<button type="button" class="fc-pointer-switch" data-fc-action="score-pointer" data-fc-series="'+si+'" role="switch" aria-checked="false" data-fc-label-off="'+esc(pointerLabel[0])+'" data-fc-label-on="'+esc(pointerLabel[1])+'">'+
+            '<span class="fc-pointer-switch-track" aria-hidden="true"><i></i></span>'+
+            '<span class="fc-pointer-switch-text">'+esc(pointerLabel[0])+'</span>'+
+          '</button>'+
         '</div>'+
       '</div>'+
     '</section>';
@@ -596,11 +592,11 @@
         '<h3>'+esc(term('movement'))+'</h3>'+
         '<p class="fc-instruction">'+esc(i18n('instruction'))+'<span>'+esc(i18n('selection'))+'</span></p>'+
       '</div>'+
-      '<div class="fc-navigation">'+
-        '<input class="fc-slider" data-fc-slider="'+si+'" type="range" min="0" max="1000" value="0" step="1" aria-label="'+esc(i18n('seek')+' / '+label(s.title))+'"></div>'+
       '<div class="fc-gallery-area"><div class="fc-rail" data-fc-rail="'+si+'" tabindex="0" aria-label="'+esc(i18n('seek')+' / '+label(s.title))+'">'+
         '<ol class="fc-strip">'+s.stages.map(function(stage,index){return cardMarkup(stage,index,s);}).join('')+'</ol>'+
       '</div></div>'+
+      '<div class="fc-navigation">'+
+        '<input class="fc-slider" data-fc-slider="'+si+'" type="range" min="0" max="1000" value="0" step="1" aria-label="'+esc(i18n('seek')+' / '+label(s.title))+'"></div>'+
       inlineScoreMarkup(s,si)+
     '</section>';
   }
@@ -857,17 +853,8 @@
     paintScore(score,s,at,si);
     var cluster=score.querySelector('.fc-score-cluster');
     if(cluster)cluster.style.transform='translate('+scorePan[si][0]+'px,'+scorePan[si][1]+'px) scale('+scoreScale[si]+')';
-    var i=stageByTime(s,at);
-    var state=score.querySelector('[data-fc-score-state]');
-    if(state)state.textContent=pad(i+1)+' / '+pad(s.stages.length);
-    var frameLabel=score.querySelector('[data-fc-score-frame-label]');
-    if(frameLabel)frameLabel.textContent=s.kind==='linear'?
-      term('frame')+' '+pad(sourceScoreFrame(at/s.endTime))+' / 15':
-      'SYNC '+String(Math.round(at/s.endTime*100)).padStart(2,'0')+'%';
-    var timeline=score.querySelector('[data-fc-score-timeline]');
-    if(timeline&&document.activeElement!==timeline){
-      timeline.value=String(Math.round(1000*at/s.endTime));
-    }
+    // The single progress slider is now positioned between the films and
+    // the score. Its state is maintained by the rail and score seek handlers.
   }
   function updateScore(absolute) {
     paintScore(activeOverlay(),current(),absolute);
@@ -1414,17 +1401,6 @@
     });
     device.addEventListener('pointerup',function(){panGesture=null;});
     device.addEventListener('pointercancel',function(){panGesture=null;});
-    // A light timeline below the bare notation acts in both directions:
-    // dragging it moves the film strip and its own original stage scrollbar.
-    var scoreSlider=score.querySelector('[data-fc-score-timeline]');
-    if(scoreSlider){
-      scoreSlider.addEventListener('input',function(ev){
-        seekFilmFromScore(si,SERIES[si].endTime*(Number(ev.target.value)/1000));
-      });
-      scoreSlider.addEventListener('change',function(ev){
-        seekFilmFromScore(si,SERIES[si].endTime*(Number(ev.target.value)/1000));
-      });
-    }
     // The entire mechanical score is a tactile fifteen-frame index even with
     // the HUD pointer switched off. Drag downward to advance the Folly film.
     // In Folly I the small central ring is the authored input, as in
