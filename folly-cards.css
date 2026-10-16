@@ -3300,3 +3300,46 @@ body.fc-score-expanded{overflow:hidden!important;}
     transition:none!important;
   }
 }
+
+
+/* v20 · Both Folly works are one continuous document.
+   The reading seam is short; the browser owns the scroll position.
+   Only its caption bends gently and springs back before the threshold. */
+.fc-room .fc-chapter-gate,
+.fc-room .fc-chapter-gate[data-fc-direction="down"],
+.fc-room .fc-chapter-gate[data-fc-direction="up"] {
+  height:clamp(130px,23svh,235px);
+  min-height:0;
+  padding-top:0;
+  padding-bottom:0;
+  scroll-snap-align:none!important;
+  scroll-snap-stop:normal;
+  overscroll-behavior-y:auto;
+}
+.fc-room .fc-chapter-gate .fc-gate-continue {
+  transform:translateY(calc(var(--fc-gate-pull) * -10px));
+  transition:transform .47s cubic-bezier(.2,1.26,.36,1),
+             opacity .38s ease,color .25s ease;
+}
+.fc-room .fc-chapter-gate[data-fc-direction="up"] .fc-gate-continue {
+  transform:translateY(calc(var(--fc-gate-pull) * 10px));
+}
+.fc-room .fc-chapter-gate.is-pulling .fc-gate-continue {transition:none;}
+.fc-room .fc-scroll-content {
+  scroll-behavior:auto;
+  scroll-snap-type:none;
+}
+.fc-room .fc-chapter-gate+.fc-series-block{
+  scroll-margin-top:clamp(24px,5vh,64px);
+}
+@media(max-width:700px){
+  .fc-room .fc-chapter-gate,
+  .fc-room .fc-chapter-gate[data-fc-direction="down"],
+  .fc-room .fc-chapter-gate[data-fc-direction="up"]{
+    height:clamp(118px,22svh,210px);
+    min-height:0;
+  }
+}
+@media(prefers-reduced-motion:reduce){
+  .fc-room .fc-chapter-gate .fc-gate-continue{transition:none!important;}
+}
