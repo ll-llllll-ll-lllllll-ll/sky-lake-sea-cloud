@@ -420,26 +420,32 @@
       zh:['其一','其二'],en:['Part One','Part Two'],ja:['其の一','其の二']
     }[state.lang]||['其一','其二'])[si];
   }
-  function chapterGateMarkup(){
-    var next=SERIES[1],prev=SERIES[0];
-    var messages={
+  // Chapter II is deliberately not constructed until the reader crosses
+  // this boundary. No photograph, mask or teaser asset belongs here.
+  var activeChapter=0,lastFollyIntro='',chapterChanging=false;
+  function chapterGateMarkup(from){
+    var target=from===0?1:0;
+    var phrases={
       zh:['继续阅读废墟园林·其二','阅读废墟园林·其一'],
       en:['Continue reading Folly · Part Two','Return to Folly · Part One'],
       ja:['フォリー・其の二を続けて読む','フォリー・其の一を読む']
-    }[state.lang]||['继续阅读废墟园林·其二','阅读废墟园林·其一'];
-    var view=function(s,index,phrase){
-      return '<div class="fc-gate-view fc-gate-view-'+(index===1?'down':'up')+'" data-fc-gate-view="'+index+'" aria-hidden="'+(index===1?'false':'true')+'" '+(index===1?'':'inert')+'>'+
-        '<div class="fc-gate-visual">'+
-          '<h2>'+esc(chapterPart(index))+' <span>'+esc(label(s.title))+'</span></h2>'+
-          '<div class="fc-gate-preview"><img src="'+esc(s.assets.full)+'" loading="lazy" decoding="async" alt=""></div>'+
-        '</div>'+
-        '<button type="button" class="fc-gate-continue" data-fc-action="chapter-goto" data-fc-chapter="'+index+'">'+
-          esc(phrase)+' <span aria-hidden="true">'+(index===1?'↓':'↑')+'</span></button>'+
-      '</div>';
     };
-    return '<section class="fc-chapter-gate" data-fc-chapter-gate data-fc-direction="down" aria-label="'+esc(chapterPart(0)+' / '+chapterPart(1))+'">'+
-      '<div class="fc-gate-sticky">'+view(next,1,messages[0])+view(prev,0,messages[1])+'</div>'+
+    var words=(phrases[state.lang]||phrases.zh)[from];
+    var arrow=target===1?'↓':'↑';
+    return '<section class="fc-chapter-gate" data-fc-chapter-gate data-fc-target="'+target+'" data-fc-direction="'+(target===1?'down':'up')+'">'+
+      '<button type="button" class="fc-gate-continue" data-fc-action="chapter-goto" data-fc-chapter="'+target+'" aria-label="'+esc(words)+'">'+
+        '<span>'+esc(words)+'</span><span class="fc-gate-arrow" aria-hidden="true">'+arrow+'</span>'+
+      '</button>'+
     '</section>';
+  }
+  function chapterBodyMarkup(si){
+    return (si===1?chapterGateMarkup(1):'')+
+      sectionMarkup(SERIES[si],si)+
+      (si===0?chapterGateMarkup(0):
+        '<section class="fc-essay" aria-label="Folly notes"><div class="fc-essay-rule"></div>'+
+          '<p class="fc-essay-intro">'+esc(lastFollyIntro)+'</p>'+
+          '<div class="fc-essay-space" aria-hidden="true"></div>'+
+        '</section>');
   }
   function sectionMarkup(s, si) {
     return '<section class="fc-series-block" data-fc-series-block="'+si+'" id="fc-chapter-'+(si+1)+'" style="--fc-video-aspect:16 / 9;--fc-ratio-number:1.77778">'+
@@ -465,20 +471,15 @@
     '</section>';
   }
   function pageMarkup(item) {
-    var intro=localised(item.intro);
+    lastFollyIntro=localised(item.intro);
     return '<section class="room-view fc-room"><header class="room-head">'+
       '<button type="button" data-action="home" class="room-back">← '+esc(labels[state.lang].back)+'</button>'+
       '<p>'+esc(labels[state.lang].works)+' / '+esc(localised(item.title))+'</p>'+languageSwitch()+'</header>'+
       '<div class="fc-page" data-fc-scene>'+
         '<div class="fc-page-heading"><div class="fc-heading-primary">'+
           '<h1>'+esc(localised(item.title))+'</h1></div></div>'+
-        '<div class="fc-scroll-content">'+sectionMarkup(SERIES[0],0)+chapterGateMarkup()+sectionMarkup(SERIES[1],1)+
-          '<section class="fc-essay" aria-label="Folly notes"><div class="fc-essay-rule"></div>'+
-            '<p class="fc-essay-intro">'+esc(intro)+'</p>'+
-            '<div class="fc-essay-space" aria-hidden="true"></div>'+
-          '</section>'+
-        '</div>'+
-        SERIES.map(projectionMarkup).join('')+
+        '<div class="fc-scroll-content" data-fc-chapter-body>'+chapterBodyMarkup(0)+'</div>'+
+        '<div data-fc-projection-slot>'+projectionMarkup(SERIES[0],0)+'</div>'+
       '</div></section>';
   }
   var originalRoom=renderRoom;
