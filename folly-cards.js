@@ -1705,6 +1705,9 @@
     content.replaceChildren();
     projectionSlot.replaceChildren();
     activeChapter=target;
+    content.classList.remove('is-chapter-settled');
+    content.classList.add('is-chapter-arriving');
+    content.dataset.fcArrival=target===1?'down':'up';
     content.innerHTML=chapterBodyMarkup(target);
     projectionSlot.innerHTML=projectionMarkup(SERIES[target],target);
     setupFollyChapter();
@@ -1713,13 +1716,26 @@
       var dest=target===1?block(1):scene.querySelector('[data-fc-chapter-gate]');
       if(dest){
         var y=(window.scrollY||window.pageYOffset||0)+dest.getBoundingClientRect().top;
-        // Return to the end of Part One, ready to read back upwards.
-        if(target===0)y-=window.innerHeight*.83;
-        else y-=Math.min(72,window.innerHeight*.07);
+        // The new chapter receives the same visual direction of travel.
+        // A small onward drift replaces the old abrupt full-screen jump.
+        if(target===0)y-=window.innerHeight*.65;
+        else y-=Math.min(105,window.innerHeight*.13);
         window.scrollTo({top:Math.max(0,y),behavior:'auto'});
       }
-      chapterChanging=false;
-      prioritizePreviews(target,0);
+      requestAnimationFrame(function(){
+        if(!isLive()||activeChapter!==target)return;
+        content.classList.add('is-chapter-settled');
+        chapterChanging=false;
+        if(!window.matchMedia('(prefers-reduced-motion: reduce)').matches){
+          window.scrollBy({top:target===1?38:-38,behavior:'smooth'});
+        }
+        window.setTimeout(function(){
+          if(content.isConnected){
+            content.classList.remove('is-chapter-arriving','is-chapter-settled');
+          }
+        },720);
+        prioritizePreviews(target,0);
+      });
     });
   }
   function wireEvents(){
