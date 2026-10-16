@@ -2000,7 +2000,8 @@
       // between compositor scroll frames.
       var at=center(),checkpoint=at-d*49;
       if(d*(old-checkpoint)<0 && d*(y-checkpoint)>=0)holdInertia(d);
-      else if(inRange(d,y)&&Math.abs(dy)>54)holdInertia(d);
+      else if(Math.abs(dy)>54&&
+        (Math.abs(old-at)<245||Math.abs(y-at)<245))holdInertia(d);
     }
     window.addEventListener('wheel',wheel,{capture:true,passive:false});
     window.addEventListener('touchstart',touchStart,{capture:true,passive:true});
