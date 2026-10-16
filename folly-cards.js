@@ -496,9 +496,9 @@
       ja:['指針を表示','指針を非表示']
     }[state.lang]||['显示指针','隐藏指针'];
     return '<section class="fc-inline-score" data-fc-inline-score="'+si+'" data-fc-pointers="off">'+
-      '<div class="fc-inline-score-top"><h3>'+esc(term('score'))+'</h3></div>'+
       '<div class="fc-inline-score-main">'+
         '<div class="fc-inline-score-device">'+scoreMarkup(s)+'</div>'+
+        '<h3 class="fc-score-caption">'+esc(term('score'))+'</h3>'+
         '<div class="fc-score-controls-bottom">'+
           (s.kind==='radial'?'<div class="fc-score-minimal-actions"><button type="button" data-fc-action="score-fold" data-fc-series="'+si+'">'+esc(term('scoreFold'))+' ↕</button></div>':'')+
           '<button type="button" class="fc-pointer-switch" data-fc-action="score-pointer" data-fc-series="'+si+'" role="switch" aria-checked="false" data-fc-label-off="'+esc(pointerLabel[0])+'" data-fc-label-on="'+esc(pointerLabel[1])+'">'+
