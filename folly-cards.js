@@ -241,19 +241,24 @@
 
   function assetPairMarkup(s,si,kind){
     var items=kind==='structure'?['full','back']:['instrument','body'];
-    var names=items.map(function(k){return term(k==='full'?'front':k);});
+    var switchNames={
+      zh:{structure:['建立','坍塌'],detail:['废墟乐器','废墟园林']},
+      en:{structure:['Construction','Collapse'],detail:['Ruin Instrument','Folly']},
+      ja:{structure:['構築','崩壊'],detail:['廃墟の楽器','フォリー']}
+    };
+    var names=(switchNames[state.lang]||switchNames.zh)[kind];
     var faces=items.map(function(k,index){
       return '<figure class="fc-artifact fc-swap-face'+(index===0?' is-current':'')+'" data-fc-swap-face="'+index+'" aria-hidden="'+(index===0?'false':'true')+'">'+
         '<div class="fc-artifact-image"><img src="'+esc(s.assets[k])+'" loading="lazy" decoding="async" alt="'+esc(label(s.title)+' — '+names[index])+'"></div>'+
       '</figure>';
     }).join('');
-    var dots=items.map(function(k,index){
-      return '<button type="button" class="fc-swap-dot'+(index===0?' is-active':'')+'" data-fc-action="swap-dot" data-fc-index="'+index+'" aria-pressed="'+(index===0?'true':'false')+'" aria-label="'+esc(names[index])+'"><span></span></button>';
-    }).join('');
+    var options=items.map(function(k,index){
+      return '<button type="button" class="fc-swap-option'+(index===0?' is-active':'')+'" data-fc-action="swap-option" data-fc-index="'+index+'" aria-pressed="'+(index===0?'true':'false')+'">'+esc(names[index])+'</button>';
+    }).join('<span class="fc-swap-separator" aria-hidden="true">/</span>');
     return '<div class="fc-asset-pair fc-asset-pair-'+kind+'" data-fc-swap data-fc-series="'+si+'" data-fc-active="0" aria-label="'+esc(names.join(' / '))+'">'+
       '<div class="fc-swap-stage">'+faces+'</div>'+
       '<div class="fc-swap-controls" role="group" aria-label="'+esc(names.join(' / '))+'">'+
-        '<div class="fc-swap-dots">'+dots+'</div>'+
+        '<div class="fc-swap-options">'+options+'</div>'+
         '<button type="button" class="fc-swap-arrow" data-fc-action="swap-image" data-fc-direction="1" aria-label="'+esc(i18n('next'))+'">&gt;</button>'+
       '</div>'+
     '</div>';
@@ -1254,7 +1259,7 @@
     nextFace.setAttribute('aria-hidden','false');
     state.active=next;
     state.root.dataset.fcActive=String(next);
-    state.root.querySelectorAll('.fc-swap-dot').forEach(function(dot,index){
+    state.root.querySelectorAll('.fc-swap-option').forEach(function(dot,index){
       var active=index===next;
       dot.classList.toggle('is-active',active);
       dot.setAttribute('aria-pressed',String(active));
@@ -1337,11 +1342,11 @@
       if(action==='instrument'){
         select(Number(node.dataset.fcSeries),0,true);return;
       }
-      if(action==='swap-image'||action==='swap-dot'){
+      if(action==='swap-image'||action==='swap-option'){
         var frame=node.closest('[data-fc-swap]');
         var controller=imageSwapStates.get(frame);
         if(controller){
-          var change=action==='swap-dot'
+          var change=action==='swap-option'
             ?Number(node.dataset.fcIndex)-controller.active
             :Number(node.dataset.fcDirection)||1;
           advanceSwap(controller,change);
