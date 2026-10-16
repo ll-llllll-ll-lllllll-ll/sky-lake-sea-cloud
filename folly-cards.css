@@ -2981,3 +2981,127 @@ body.fc-score-expanded{overflow:hidden!important;}
     margin:clamp(20px,3vw,36px) 0 0;
   }
 }
+
+
+/* v17 · Active photo title grows like a fragment index (01 / 06):
+   the other title stays quietly smaller, with no shadow or underline. */
+.fc-room .fc-photo-column .fc-swap-options{
+  display:inline-flex;
+  gap:clamp(10px,1.5vw,19px);
+  align-items:baseline;
+  justify-content:flex-start;
+  min-height:clamp(34px,3vw,43px);
+}
+.fc-room .fc-photo-column .fc-swap-option {
+  display:inline-block;
+  flex:0 0 auto;
+  font:400 clamp(12px,.87vw,14px)/1.4 var(--serif),serif;
+  color:rgba(46,52,46,.39);
+  text-shadow:none!important;
+  filter:none;
+  transform:none;
+  padding:0;
+  vertical-align:baseline;
+  transition:font-size .48s cubic-bezier(.22,.78,.26,1),
+             color .38s ease,font-weight .38s ease;
+}
+.fc-room .fc-photo-column .fc-swap-option.is-active {
+  font-size:clamp(22px,1.8vw,29px);
+  font-weight:500;
+  color:#30382f;
+  text-shadow:none!important;
+}
+.fc-room .fc-photo-column .fc-swap-separator{
+  font-size:clamp(11px,1vw,16px);
+  color:rgba(45,51,45,.34);
+  text-shadow:none!important;
+}
+/* Old words first fade OUT. The matching date/place and longer paragraph
+   subsequently fade IN, rather than cutting from one set to the next. */
+.fc-room .fc-photo-meta-panel,
+.fc-room .fc-aside-panel{
+  opacity:1;
+  transition:opacity .52s ease;
+}
+.fc-room .fc-photo-meta-panel.is-copy-leaving,
+.fc-room .fc-aside-panel.is-copy-leaving{
+  opacity:0;
+  transition:opacity .33s ease;
+}
+.fc-room .fc-photo-meta-panel.is-copy-entering,
+.fc-room .fc-aside-panel.is-copy-entering{
+  opacity:0;
+  transition:none!important;
+}
+/* Align caption to the *painted* object-fit image, not its empty frame.
+   The JavaScript geometry sets these measurements on image load / resize. */
+@media(min-width:1201px) {
+  .fc-room .fc-series-composition .fc-asset-pair {
+    display:block;
+    position:relative;
+    width:100%;
+    min-height:var(--fc-photo-min-height,auto);
+    overflow:visible;
+    isolation:isolate;
+  }
+  .fc-room .fc-asset-pair .fc-photo-column {
+    width:min(100%,calc(var(--fc-card-width) * 1.5));
+    max-width:none;
+    margin:0;
+  }
+  .fc-room .fc-asset-pair .fc-asset-aside {
+    position:absolute;
+    align-self:auto;
+    top:var(--fc-caption-top,calc(var(--fc-card-width) * .92 + 35px));
+    left:var(--fc-caption-left,calc(var(--fc-card-width) * 1.5 + 50px));
+    width:calc(100% - var(--fc-caption-left,calc(var(--fc-card-width) * 1.5 + 50px)));
+    max-width:none;
+    min-width:0;
+    margin:0;
+    padding:0;
+    transform:none;
+  }
+  .fc-room .fc-instrument-layout{
+    position:relative;
+    display:block;
+    min-height:var(--fc-instrument-min-height,auto);
+    overflow:visible;
+  }
+  .fc-room .fc-instrument-layout .fc-instrument-description{
+    position:absolute;
+    align-self:auto;
+    top:var(--fc-instrument-caption-top,calc(var(--fc-card-width) * .62 + 35px));
+    left:var(--fc-instrument-caption-left,calc(var(--fc-card-width) + 50px));
+    width:calc(100% - var(--fc-instrument-caption-left,calc(var(--fc-card-width) + 50px)));
+    max-width:none;
+    margin:0;
+    padding:0;
+    transform:none;
+  }
+}
+/* Smaller screens continue to read image, metadata, then prose without
+   squeezing the right-hand column into unreadably narrow measures. */
+@media(min-width:701px) and (max-width:1200px){
+  .fc-room .fc-series-composition .fc-asset-pair{display:block;width:100%;}
+  .fc-room .fc-photo-column{width:min(100%,calc(var(--fc-card-width)*1.5));}
+  .fc-room .fc-asset-aside{position:static;width:min(100%,590px);margin:26px 0 0;padding:0;}
+  .fc-room .fc-instrument-layout{display:block;}
+  .fc-room .fc-instrument-layout .fc-instrument-description{position:static;width:min(100%,590px);max-width:none;margin:26px 0 0;}
+}
+@media(max-width:700px){
+  .fc-room .fc-photo-column .fc-swap-option{
+    font-size:11px;
+  }
+  .fc-room .fc-photo-column .fc-swap-option.is-active{
+    font-size:clamp(19px,5.1vw,24px);
+  }
+  .fc-room .fc-photo-column .fc-swap-options{
+    min-height:34px;
+    gap:12px;
+  }
+}
+@media(prefers-reduced-motion:reduce){
+  .fc-room .fc-photo-column .fc-swap-option,
+  .fc-room .fc-photo-meta-panel,
+  .fc-room .fc-aside-panel{transition:none!important;}
+}
