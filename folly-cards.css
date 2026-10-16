@@ -3684,3 +3684,28 @@ body.fc-score-expanded{overflow:hidden!important;}
     margin-top:13px;
   }
 }
+
+
+/* v25 · Ruin Score title is a quiet caption below the score artwork. */
+.fc-room .fc-inline-score .fc-score-caption {
+  display:block;
+  width:100%;
+  margin:clamp(8px,1.25vw,19px) auto 0;
+  padding:0;
+  color:rgba(43,50,44,.60);
+  font:400 clamp(12px,.98vw,15px)/1.8 var(--serif),serif;
+  letter-spacing:.065em;
+  text-align:center;
+}
+.fc-room .fc-inline-score .fc-score-controls-bottom {
+  margin-top:clamp(9px,1.4vw,18px);
+}
+@media(max-width:700px){
+  .fc-room .fc-inline-score .fc-score-caption {
+    margin-top:9px;
+    font-size:12px;
+  }
+  .fc-room .fc-inline-score .fc-score-controls-bottom{
+    margin-top:10px;
+  }
+}
