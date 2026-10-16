@@ -1541,34 +1541,168 @@
     if(gateDirectionCleanup){gateDirectionCleanup();gateDirectionCleanup=null;}
     var gate=scene?.querySelector('[data-fc-chapter-gate]');
     if(!gate)return;
-    var lastY=window.scrollY||window.pageYOffset||0,frame=0,active='down';
-    function setDirection(dir){
-      if(dir===active)return;
-      active=dir;
-      gate.dataset.fcDirection=dir;
-      gate.querySelectorAll('[data-fc-gate-view]').forEach(function(view){
-        var show=Number(view.dataset.fcGateView)===(dir==='down'?1:0);
-        view.setAttribute('aria-hidden',String(!show));
-        view.inert=!show;
-      });
+    var target=Number(gate.dataset.fcTarget);
+    var direction=target===1?1:-1;
+    var touchStart=null,mouseStart=null,accumulated=0,wheelReset=0;
+    var touchThreshold=170,mouseThreshold=225,wheelThreshold=390;
+    function ready(){
+      if(!isLive()||chapterChanging||selection.open)return false;
+      var r=gate.getBoundingClientRect(),h=window.innerHeight;
+      // Wait until the text-only threshold has almost filled the viewport.
+      // Before that, native scrolling is never intercepted.
+      return r.top<=h*.14&&r.bottom>=h*.79;
     }
-    function onScroll(){
-      if(frame || selection.open)return;
-      frame=requestAnimationFrame(function(){
-        frame=0;
-        var y=window.scrollY||window.pageYOffset||0;
-        var dy=y-lastY;
-        if(Math.abs(dy)>3){
-          setDirection(dy>0?'down':'up');
-          lastY=y;
-        }
-      });
+    function tension(value){
+      var progress=clamp(value,0,1);
+      gate.style.setProperty('--fc-gate-pull',String(progress));
+      gate.classList.toggle('is-pulling',progress>0);
     }
-    window.addEventListener('scroll',onScroll,{passive:true});
+    function commit(){
+      if(!ready())return;
+      tension(1);
+      switchFollyChapter(target);
+    }
+    function onWheel(event){
+      if(!ready() || !event.cancelable)return;
+      var delta=event.deltaY*direction;
+      if(delta<=0){
+        if(accumulated){accumulated=0;tension(0);}
+        return; // Return freely toward the chapter being read.
+      }
+      event.preventDefault();
+      clearTimeout(wheelReset);
+      var unit=event.deltaMode===1?18:event.deltaMode===2?window.innerHeight:1;
+      // One large inertial trackpad event cannot skip the reading threshold.
+      accumulated+=Math.min(delta*unit,125);
+      tension(accumulated/wheelThreshold);
+      if(accumulated>=wheelThreshold)commit();
+      else wheelReset=window.setTimeout(function(){
+        accumulated=0;tension(0);
+      },850);
+    }
+    function onTouchStart(event){
+      if(event.touches.length!==1 || !ready())return;
+      touchStart=event.touches[0].clientY;
+    }
+    function onTouchMove(event){
+      if(touchStart===null||event.touches.length!==1 || !ready())return;
+      var pull=(touchStart-event.touches[0].clientY)*direction;
+      if(pull<=0){tension(0);return;}
+      if(event.cancelable)event.preventDefault();
+      tension(pull/touchThreshold);
+      if(pull>=touchThreshold){touchStart=null;commit();}
+    }
+    function onTouchEnd(){touchStart=null;tension(0);}
+    function onMouseDown(event){
+      if(event.button!==0||!ready()||event.target.closest('button'))return;
+      mouseStart=event.clientY;
+    }
+    function onMouseMove(event){
+      if(mouseStart===null||!ready())return;
+      var pull=(mouseStart-event.clientY)*direction;
+      if(pull<=0){tension(0);return;}
+      tension(pull/mouseThreshold);
+      if(pull>=mouseThreshold){mouseStart=null;commit();}
+    }
+    function onMouseUp(){mouseStart=null;tension(0);}
+    function onGateClick(event){
+      if(event.target.closest('[data-fc-action="chapter-goto"]'))return;
+      commit();
+    }
+    gate.addEventListener('wheel',onWheel,{passive:false});
+    gate.addEventListener('touchstart',onTouchStart,{passive:true});
+    gate.addEventListener('touchmove',onTouchMove,{passive:false});
+    gate.addEventListener('touchend',onTouchEnd,{passive:true});
+    gate.addEventListener('touchcancel',onTouchEnd,{passive:true});
+    gate.addEventListener('mousedown',onMouseDown);
+    gate.addEventListener('mousemove',onMouseMove);
+    gate.addEventListener('mouseup',onMouseUp);
+    gate.addEventListener('mouseleave',onMouseUp);
+    gate.addEventListener('click',onGateClick);
     gateDirectionCleanup=function(){
-      window.removeEventListener('scroll',onScroll);
-      if(frame)cancelAnimationFrame(frame);
+      clearTimeout(wheelReset);
+      gate.removeEventListener('wheel',onWheel);
+      gate.removeEventListener('touchstart',onTouchStart);
+      gate.removeEventListener('touchmove',onTouchMove);
+      gate.removeEventListener('touchend',onTouchEnd);
+      gate.removeEventListener('touchcancel',onTouchEnd);
+      gate.removeEventListener('mousedown',onMouseDown);
+      gate.removeEventListener('mousemove',onMouseMove);
+      gate.removeEventListener('mouseup',onMouseUp);
+      gate.removeEventListener('mouseleave',onMouseUp);
+      gate.removeEventListener('click',onGateClick);
     };
+  }
+  function setupFollyChapter(){
+    var si=activeChapter;
+    wireRail(si);
+    wireInstrument(si);
+    wireInlineScore(si);
+    wireOverlay(si);
+    wireChapterGate();
+    initializeImageSwaps();
+    setupPhotoReadingLayout();
+    focusCard(si,0,false);
+    updateInlineScore(si,0);
+    if('IntersectionObserver' in window){
+      io=new IntersectionObserver(function(entries){
+        entries.forEach(function(entry){
+          if(entry.isIntersecting){
+            var i=Number(entry.target.dataset.fcSeriesBlock);
+            prioritizePreviews(i,selection.focus[i]);
+          }
+        });
+      },{rootMargin:'420px 0px'});
+      var currentBlock=block(si);
+      if(currentBlock)io.observe(currentBlock);
+    }else{
+      prioritizePreviews(si,0);
+    }
+  }
+  function switchFollyChapter(target){
+    if(chapterChanging||!isLive()||target===activeChapter||target<0||target>1)return;
+    var content=scene.querySelector('[data-fc-chapter-body]');
+    var projectionSlot=scene.querySelector('[data-fc-projection-slot]');
+    if(!content||!projectionSlot)return;
+    chapterChanging=true;
+    // Release all decoded media, in-card posters, attached events, observers
+    // and clocks before dropping the actual source chapter from the DOM.
+    if(gateDirectionCleanup){gateDirectionCleanup();gateDirectionCleanup=null;}
+    if(photoReadingCleanup){photoReadingCleanup();photoReadingCleanup=null;}
+    clearImageSwaps();clearPreviews();stopMedia();releaseUpcoming();
+    document.body.classList.remove('fc-modal-open','fc-score-expanded');
+    player=null;
+    selection.open=false;
+    selection.instrument=false;
+    selection.scoreInspect=false;
+    selection.focus=[0,0];
+    selection.series=target;
+    selection.index=0;
+    manualWings=[null,null];
+    inlineTime=[0,0];
+    scoreScale=[1,1];scorePan=[[0,0],[0,0]];
+    railOriginLocks=[false,false];expandedScore=-1;
+    // No second-chapter cards or film nodes exist before this assignment.
+    // The old chapter and its frame canvases are no longer in the document.
+    content.replaceChildren();
+    projectionSlot.replaceChildren();
+    activeChapter=target;
+    content.innerHTML=chapterBodyMarkup(target);
+    projectionSlot.innerHTML=projectionMarkup(SERIES[target],target);
+    setupFollyChapter();
+    requestAnimationFrame(function(){
+      if(!isLive()||activeChapter!==target){chapterChanging=false;return;}
+      var dest=target===1?block(1):scene.querySelector('[data-fc-chapter-gate]');
+      if(dest){
+        var y=(window.scrollY||window.pageYOffset||0)+dest.getBoundingClientRect().top;
+        // Return to the end of Part One, ready to read back upwards.
+        if(target===0)y-=window.innerHeight*.83;
+        else y-=Math.min(72,window.innerHeight*.07);
+        window.scrollTo({top:Math.max(0,y),behavior:'auto'});
+      }
+      chapterChanging=false;
+      prioritizePreviews(target,0);
+    });
   }
   function wireEvents(){
     if(!isLive())return;
@@ -1579,13 +1713,7 @@
       var action=node.dataset.fcAction;
       var si=Number(node.dataset.fcSeries);
       if(action==='chapter-goto'){
-        var destination=block(Number(node.dataset.fcChapter));
-        if(destination){
-          destination.scrollIntoView({
-            behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',
-            block:Number(node.dataset.fcChapter)===0?'end':'start'
-          });
-        }
+        switchFollyChapter(Number(node.dataset.fcChapter));
         return;
       }
       if(action==='select'){
