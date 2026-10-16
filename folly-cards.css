@@ -3105,3 +3105,114 @@ body.fc-score-expanded{overflow:hidden!important;}
   .fc-room .fc-photo-meta-panel,
   .fc-room .fc-aside-panel{transition:none!important;}
 }
+
+
+/* v18 · Real chapter boundary, not a blurred preview or half-loaded page.
+   The previous chapter is removed before the next film nodes are created.
+   Native scrolling brings the reader here; the last transition needs
+   an intentional long pull, wheel resistance, or a click on this text. */
+.fc-room .fc-chapter-gate,
+.fc-room .fc-chapter-gate[data-fc-direction="up"],
+.fc-room .fc-chapter-gate[data-fc-direction="down"]{
+  --fc-gate-pull:0;
+  position:relative;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  width:100%;
+  height:100svh;
+  min-height:min(100svh,490px);
+  max-height:none;
+  overflow:visible;
+  padding:0 22px;
+  margin:0;
+  box-sizing:border-box;
+  border:0;
+  background:transparent;
+  background-image:none;
+  box-shadow:none;
+  isolation:auto;
+  overscroll-behavior-y:contain;
+}
+.fc-room .fc-chapter-gate .fc-gate-sticky,
+.fc-room .fc-chapter-gate .fc-gate-preview,
+.fc-room .fc-chapter-gate .fc-gate-visual,
+.fc-room .fc-chapter-gate .fc-gate-view {
+  display:none!important;
+}
+.fc-room .fc-chapter-gate .fc-gate-continue {
+  display:inline-flex;
+  flex:0 1 auto;
+  flex-direction:row;
+  justify-content:center;
+  align-items:baseline;
+  gap:clamp(13px,2vw,28px);
+  padding:16px 20px;
+  margin:0;
+  width:auto;
+  max-width:calc(100vw - 40px);
+  color:rgba(38,45,39,.78);
+  background:transparent;
+  border:0;
+  box-shadow:none;
+  font:400 clamp(14px,1.25vw,19px)/1.85 var(--serif),serif;
+  letter-spacing:.02em;
+  text-align:center;
+  cursor:pointer;
+  transition:opacity .28s ease,color .25s ease,
+             transform .26s cubic-bezier(.23,.72,.25,1);
+  transform:translateY(calc(var(--fc-gate-pull) * -13px));
+}
+.fc-room .fc-chapter-gate[data-fc-direction="up"] .fc-gate-continue{
+  transform:translateY(calc(var(--fc-gate-pull) * 13px));
+}
+.fc-room .fc-chapter-gate .fc-gate-continue>span:first-child {
+  font:inherit;
+  color:inherit;
+  white-space:normal;
+}
+.fc-room .fc-chapter-gate .fc-gate-continue .fc-gate-arrow {
+  display:inline-block;
+  flex:0 0 auto;
+  color:inherit;
+  font:400 clamp(19px,1.65vw,26px)/1.3 var(--serif),serif;
+  transform:translateY(calc(var(--fc-gate-pull) * -8px));
+  transition:transform .25s ease;
+}
+.fc-room .fc-chapter-gate[data-fc-direction="up"] .fc-gate-continue .fc-gate-arrow {
+  transform:translateY(calc(var(--fc-gate-pull) * 8px));
+}
+.fc-room .fc-chapter-gate .fc-gate-continue:hover,
+.fc-room .fc-chapter-gate.is-pulling .fc-gate-continue {
+  color:#222c24;
+}
+.fc-room .fc-chapter-gate .fc-gate-continue:focus-visible {
+  outline:1px solid rgba(35,45,38,.56);
+  outline-offset:5px;
+}
+@media(max-width:700px){
+  .fc-room .fc-chapter-gate,
+  .fc-room .fc-chapter-gate[data-fc-direction="up"],
+  .fc-room .fc-chapter-gate[data-fc-direction="down"] {
+    height:100svh;
+    min-height:0;
+    padding:0 20px;
+  }
+  .fc-room .fc-chapter-gate .fc-gate-continue{
+    gap:18px;
+    font-size:clamp(13px,3.4vw,17px);
+    line-height:1.8;
+    padding:18px 10px;
+  }
+  .fc-room .fc-chapter-gate .fc-gate-continue .fc-gate-arrow {
+    font-size:23px;
+  }
+}
+@media(prefers-reduced-motion:reduce) {
+  .fc-room .fc-chapter-gate .fc-gate-continue,
+  .fc-room .fc-chapter-gate .fc-gate-continue .fc-gate-arrow {
+    transition:none!important;
+    transform:none!important;
+  }
+}
