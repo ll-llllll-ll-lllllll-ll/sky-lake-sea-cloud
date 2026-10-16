@@ -239,6 +239,71 @@
   }
 
 
+  // Editable placeholders: one short archive caption and one longer note per
+  // photo. None of the date/place values are guessed from the folder name.
+  var PHOTO_INFORMATION={
+    zh:{
+      date:'拍摄日期待补',place:'拍摄地点待补',
+      short:[
+        {full:'建立状态的正面全貌；材质、尺寸及制作信息待补。',
+         back:'坍塌后的背面状态；残留构件与损耗记录待补。',
+         instrument:'废墟乐器的局部构造；材料与传动方式待补。',
+         body:'坍塌结构的连接细部；断裂与变形记录待补。'},
+        {full:'建立状态的正面全貌；支撑方式与材料信息待补。',
+         back:'背面与坍塌后的形态；现场变化记录待补。',
+         instrument:'废墟乐器的构件细节；制作与动作信息待补。',
+         body:'坍塌结构的残余形态；连接、折叠与变形记录待补。'}
+      ],
+      long:[
+        {full:'主体结构在正面与背面之间显露出不同的构件关系。影像开始之前，先让它作为一件静止的构造被观看。',
+         back:'从背面重新观看，原先完整的支撑关系开始松动；构件退入背景，坍塌后的形态仍留下建造时的痕迹。此处文字待进一步校订。',
+         instrument:'乐器的局部结构被单独取出：连接、承重和可能发声的部件暂时停止运动，等待影像继续展开。此处文字待进一步校订。',
+         body:'坍塌结构保留着局部连接与材料断裂的形状，这些细节将原本连续的动作停留在一个可以观察的瞬间。此处文字待进一步校订。'},
+        {full:'主体与背面的两幅图像保留了结构各自的面貌。它们在运动之前，已将构造的重心、连接与空隙呈现出来。',
+         back:'从背后观看结构，原先稳定的边界变得松散；失去支撑后的材料继续保留着形体和受力的方向。此处文字待进一步校订。',
+         instrument:'乐器的细节将运动的起点暂时固定下来。各部分之间的间隙、接合与牵引关系等待在影像中显现。此处文字待进一步校订。',
+         body:'在坍塌结构的局部，折叠和变形留下不同于完整状态的空间关系。此处文字待进一步校订。'}
+      ]
+    },
+    en:{
+      date:'Date to be added',place:'Location to be added',
+      short:[
+        {full:'Established structure; material and dimensions to be added.',back:'Collapsed rear view; condition notes to be added.',instrument:'Instrument detail; mechanism and materials to be added.',body:'Collapsed body; joints and fracture notes to be added.'},
+        {full:'Established structure; supports and materials to be added.',back:'Rear view after collapse; field notes to be added.',instrument:'Instrument details; construction notes to be added.',body:'Collapsed structure; folding and deformation notes to be added.'}
+      ],
+      long:[
+        {full:'Seen from the front and back, the structure reveals different relationships among its parts. Before the film begins, it remains here as a still construction.',
+         back:'Seen from behind, the supporting relationships begin to loosen. The remaining members still carry traces of their construction. Text awaiting revision.',
+         instrument:'The instrument is set apart for closer attention: connections, weight and possible sources of sound remain still until the moving image begins. Text awaiting revision.',
+         body:'Joints and fractures of the collapsed structure suspend its movement in a single observable moment. Text awaiting revision.'},
+        {full:'The two views retain the structure from either side. Even at rest, its weight, connections and openings become visible.',
+         back:'From the rear, the structure loses its stable outline while its materials retain the directions of their former loads. Text awaiting revision.',
+         instrument:'Details of the instrument hold movement at its point of departure; gaps, joints and points of tension await the moving image. Text awaiting revision.',
+         body:'Folding and deformation leave the collapsed structure with spatial relationships unlike its original form. Text awaiting revision.'}
+      ]
+    },
+    ja:{
+      date:'撮影日未記入',place:'撮影場所未記入',
+      short:[
+        {full:'構築時の正面全景。素材と寸法は追記予定。',back:'崩壊後の背面。残存部材の記録は追記予定。',instrument:'楽器の部分構造。素材と機構は追記予定。',body:'崩壊した本体の細部。接合と亀裂の記録は追記予定。'},
+        {full:'構築時の正面全景。支持構造の情報は追記予定。',back:'崩壊後の背面。現場記録は追記予定。',instrument:'楽器の構成部材。製作と動作の情報は追記予定。',body:'崩壊した構造の残余。変形の記録は追記予定。'}
+      ],
+      long:[
+        {full:'表裏から見ると、構造体の各部材は異なる関係を見せる。映像が始まる前に、まず静止した構築物として見る。',
+         back:'裏側から見ると、支えの関係が緩み始め、残った部材には建造時の痕跡が見える。文章は後日推敲予定。',
+         instrument:'器械の接合、荷重、音を発する可能性のある部材を静止した状態で見る。文章は後日推敲予定。',
+         body:'崩壊した構造の接合と亀裂が、連続する動きを観察可能な一瞬に留める。文章は後日推敲予定。'},
+        {full:'二つの視点から、構造体の表と裏を記録する。動き始める前から、重み、接合、空隙が見えている。',
+         back:'背面では輪郭が緩み、材料にはかつて受けた力の方向が残されている。文章は後日推敲予定。',
+         instrument:'器械の細部は動き始める直前を留め、空隙や接合、張力の関係を示す。文章は後日推敲予定。',
+         body:'折り畳みと変形が、元の姿とは異なる空間的関係を残す。文章は後日推敲予定。'}
+      ]
+    }
+  };
+  function photoNotes(si,key){
+    var copy=PHOTO_INFORMATION[state.lang]||PHOTO_INFORMATION.zh;
+    return {date:copy.date,place:copy.place,short:copy.short[si][key],long:copy.long[si][key]};
+  }
   function assetPairMarkup(s,si,kind){
     var items=kind==='structure'?['full','back']:['instrument','body'];
     var switchNames={
@@ -255,12 +320,25 @@
     var options=items.map(function(k,index){
       return '<button type="button" class="fc-swap-option'+(index===0?' is-active':'')+'" data-fc-action="swap-option" data-fc-index="'+index+'" aria-pressed="'+(index===0?'true':'false')+'">'+esc(names[index])+'</button>';
     }).join('<span class="fc-swap-separator" aria-hidden="true">/</span>');
+    var metadata=items.map(function(k,index){
+      var d=photoNotes(si,k);
+      return '<div class="fc-photo-meta-panel" data-fc-meta-face="'+index+'" '+(index?'hidden':'')+'>'+
+        '<p class="fc-photo-meta-fields"><span>'+esc(d.date)+'</span><span>'+esc(d.place)+'</span></p>'+
+        '<p class="fc-photo-meta-note">'+esc(d.short)+'</p>'+
+      '</div>';
+    }).join('');
+    var paragraphs=items.map(function(k,index){
+      return '<p class="fc-aside-panel" data-fc-aside-face="'+index+'" '+(index?'hidden':'')+'>'+esc(photoNotes(si,k).long)+'</p>';
+    }).join('');
     return '<div class="fc-asset-pair fc-asset-pair-'+kind+'" data-fc-swap data-fc-series="'+si+'" data-fc-active="0" aria-label="'+esc(names.join(' / '))+'">'+
-      '<div class="fc-swap-stage">'+faces+
+      '<div class="fc-photo-column">'+
+        '<div class="fc-swap-stage">'+faces+'</div>'+
         '<div class="fc-swap-controls" role="group" aria-label="'+esc(names.join(' / '))+'">'+
           '<div class="fc-swap-options">'+options+'</div>'+
         '</div>'+
+        '<div class="fc-photo-meta">'+metadata+'</div>'+
       '</div>'+
+      '<aside class="fc-asset-aside" aria-label="'+esc(names.join(' / '))+'">'+paragraphs+'</aside>'+
     '</div>';
   }
   function instrumentMarkup(s,si){
@@ -367,10 +445,8 @@
         '<p>'+esc(label(s.title))+'</p>'+
       '</div>'+
       '<div class="fc-series-composition">'+
-        '<div class="fc-artifact-reading">'+assetPairMarkup(s,si,'structure')+
-          '<p class="fc-structure-description">'+esc(essay(si,'structure'))+'</p>'+
-        '</div>'+
-        '<div class="fc-artifact-reading">'+assetPairMarkup(s,si,'detail')+'</div>'+
+        assetPairMarkup(s,si,'structure')+
+        assetPairMarkup(s,si,'detail')+
         instrumentMarkup(s,si)+
       '</div>'+
       '<div class="fc-film-head">'+
@@ -1286,6 +1362,12 @@
       var active=index===next;
       dot.classList.toggle('is-active',active);
       dot.setAttribute('aria-pressed',String(active));
+    });
+    state.root.querySelectorAll('[data-fc-meta-face]').forEach(function(panel){
+      panel.hidden=Number(panel.dataset.fcMetaFace)!==next;
+    });
+    state.root.querySelectorAll('[data-fc-aside-face]').forEach(function(panel){
+      panel.hidden=Number(panel.dataset.fcAsideFace)!==next;
     });
     state.fade=window.setTimeout(function(){
       oldFace.classList.remove('is-fading');
