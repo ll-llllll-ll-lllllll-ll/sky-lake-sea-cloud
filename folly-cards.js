@@ -1608,7 +1608,9 @@
     function onMouseUp(){mouseStart=null;tension(0);}
     function onGateClick(event){
       if(event.target.closest('[data-fc-action="chapter-goto"]'))return;
-      commit();
+      // Tapping the empty threshold also counts as an explicit choice;
+      // the 92% visibility condition applies only to scroll gestures.
+      switchFollyChapter(target);
     }
     gate.addEventListener('wheel',onWheel,{passive:false});
     gate.addEventListener('touchstart',onTouchStart,{passive:true});
