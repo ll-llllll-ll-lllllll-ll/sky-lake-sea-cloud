@@ -259,7 +259,6 @@
       '<div class="fc-swap-stage">'+faces+'</div>'+
       '<div class="fc-swap-controls" role="group" aria-label="'+esc(names.join(' / '))+'">'+
         '<div class="fc-swap-options">'+options+'</div>'+
-        '<button type="button" class="fc-swap-arrow" data-fc-action="swap-image" data-fc-direction="1" aria-label="'+esc(i18n('next'))+'">&gt;</button>'+
       '</div>'+
     '</div>';
   }
@@ -1342,15 +1341,10 @@
       if(action==='instrument'){
         select(Number(node.dataset.fcSeries),0,true);return;
       }
-      if(action==='swap-image'||action==='swap-option'){
+      if(action==='swap-option'){
         var frame=node.closest('[data-fc-swap]');
         var controller=imageSwapStates.get(frame);
-        if(controller){
-          var change=action==='swap-option'
-            ?Number(node.dataset.fcIndex)-controller.active
-            :Number(node.dataset.fcDirection)||1;
-          advanceSwap(controller,change);
-        }
+        if(controller)advanceSwap(controller,Number(node.dataset.fcIndex)-controller.active);
         return;
       }
       if(action==='close'){closeProjection();return;}
