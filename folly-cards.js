@@ -208,158 +208,129 @@
       '<div class="fc-fold-finish"><img src="'+FOLD_BASE+'score-final-replacement.png" alt="" draggable="false"></div>'+
       '</div>';
   }
+  /* Ruin Archive / Folly I · calibrated two-stage stop-motion apparatus.
+     Its static print is available at once; the 15 decoded frames share one
+     frame cache between inline notation and the projection score. */
+  var mechanicalFrames=[],mechanicalReady=null,mechanicalDecodeToken=0;
+  var MECHANICAL_CFG={
+    stage1Frames:7,knobBottom:14.55,knobTop:6.80,
+    ringBottom:14.35,ringTop:9.70,centerX:49.85,
+    guideTop:6.45,guideHeight:9.15,engageStart:.10,engageEnd:.95
+  };
+  function mechanicalStageForFilm(fraction){
+    var videoProgress=clamp(fraction,0,1),p=1-videoProgress;
+    var frameIndex=clamp(Math.round(p*14),0,14),split=6/14;
+    var stage2=p<=split?0:clamp((p-split)/(1-split),0,1);
+    var engagement=clamp((stage2-MECHANICAL_CFG.engageStart)/
+      (MECHANICAL_CFG.engageEnd-MECHANICAL_CFG.engageStart),0,1);
+    return {progress:p,frame:frameIndex+1,stage:frameIndex<7?1:2,
+      engagement:engagement,
+      knobTop:MECHANICAL_CFG.knobBottom+(MECHANICAL_CFG.knobTop-MECHANICAL_CFG.knobBottom)*p,
+      ringTop:MECHANICAL_CFG.ringBottom+(MECHANICAL_CFG.ringTop-MECHANICAL_CFG.ringBottom)*engagement};
+  }
+  function paintMechanicalCanvas(cluster,frame){
+    var canvas=cluster?.querySelector('[data-fc-mechanical-canvas]');
+    var image=mechanicalFrames[frame-1];
+    if(!canvas||!image||!image.naturalWidth||!image.naturalHeight)return false;
+    var w=canvas.clientWidth,h=canvas.clientHeight;
+    if(w<12||h<12)return false;
+    var dpr=Math.min(window.devicePixelRatio||1,window.innerWidth<=700?1.25:1.6);
+    var pw=Math.max(1,Math.round(w*dpr)),ph=Math.max(1,Math.round(h*dpr));
+    if(canvas.width!==pw)canvas.width=pw;
+    if(canvas.height!==ph)canvas.height=ph;
+    var ctx=canvas.getContext('2d',{alpha:true});
+    if(!ctx)return false;
+    var scale=Math.min(pw/image.naturalWidth,ph/image.naturalHeight);
+    var dw=image.naturalWidth*scale,dh=image.naturalHeight*scale;
+    ctx.clearRect(0,0,pw,ph);
+    ctx.drawImage(image,(pw-dw)/2,(ph-dh)/2,dw,dh);
+    cluster.classList.add('is-mechanical-decoded');
+    canvas.dataset.frame=String(frame);
+    return true;
+  }
+  function ensureMechanicalFrames(){
+    if(mechanicalReady)return mechanicalReady;
+    var token=++mechanicalDecodeToken,urls=FILES_I;
+    var frames=new Array(urls.length).fill(null),cursor=0;
+    function worker(){
+      if(cursor>=urls.length)return Promise.resolve();
+      var i=cursor++;
+      return new Promise(function(resolve){
+        var img=new Image();
+        img.decoding='async';
+        img.onload=function(){
+          Promise.resolve(img.decode?img.decode():null).catch(function(){}).then(function(){
+            frames[i]=img;resolve();
+          });
+        };
+        img.onerror=function(){resolve();};
+        img.src=urls[i];
+      }).then(worker);
+    }
+    var concurrency=window.innerWidth<=700?2:4;
+    mechanicalReady=Promise.all(Array.from({length:concurrency},worker)).then(function(){
+      if(token!==mechanicalDecodeToken)return false;
+      mechanicalFrames=frames;
+      if(scene?.isConnected){
+        scene.querySelectorAll('.fc-score-linear.fc-mechanical-v2').forEach(function(cluster){
+          var frame=Number(cluster.dataset.fcFrame)||15;
+          paintMechanicalCanvas(cluster,frame);
+        });
+      }
+      return frames.some(Boolean);
+    });
+    return mechanicalReady;
+  }
+  function mechanicalLeverMarkup(interactive){
+    return '<div class="fc-mechanical-v2-lever" data-fc-stage="1" '+
+      'style="--fc-m2-knob:6.8%;--fc-m2-ring:9.7%;--fc-m2-engage:1">'+
+      '<i class="fc-mechanical-v2-guide" aria-hidden="true"></i>'+
+      '<i class="fc-mechanical-v2-ring" aria-hidden="true"></i>'+
+      (interactive?
+        '<button type="button" class="fc-mechanical-v2-knob" role="slider" '+
+          'aria-label="Ruin Score · mechanical lever" aria-valuemin="1" aria-valuemax="15" aria-valuenow="15" '+
+          'aria-orientation="vertical" title="拖动中央圆环 · 15 / 01"></button>':
+        '<i class="fc-mechanical-v2-knob" aria-hidden="true"></i>')+
+      '</div>';
+  }
   function scoreMarkup(s){
     var mechanical=s.kind==='linear';
-    var lever='<div class="fc-mechanical-lever" aria-hidden="true"><i class="fc-mechanical-guide"></i><i class="fc-mechanical-ring"></i><i class="fc-mechanical-knob"></i></div>';
-    var notation=mechanical?
-      '<div class="fc-score-notation fc-mechanical-notation"><img class="fc-score-frame" data-fc-score-frame src="'+mechanicalImage(15)+'" alt="">'+lever+'<div class="fc-scan-line" data-fc-line></div><div class="fc-scan-pulse" data-fc-pulse></div></div>':
-      '<div class="fc-score-notation fc-fold-notation">'+foldMarkup(false)+
-       '<div class="fc-radial-needles" aria-hidden="true"><i data-fc-needle="0"></i><i data-fc-needle="1"></i></div></div>';
-    var shadow=mechanical?
-      '<div class="fc-shadow-scan"><img data-fc-score-shadow-img src="'+mechanicalImage(15)+'" alt="">'+lever+'<i data-fc-shadow-line></i></div>':
-      foldMarkup(true);
-    return '<div class="fc-score-cluster fc-score-'+s.kind+'">'+
-      '<div class="fc-score-shadow" data-fc-score-shadow aria-hidden="true">'+shadow+'</div>'+
+    if(mechanical){
+      var sheet='<div class="fc-shadow-scan fc-mechanical-v2-sheet" data-fc-mechanical-sheet>'+
+        '<img data-fc-score-shadow-img src="'+mechanicalImage(15)+'" loading="lazy" decoding="async" alt="">'+
+        '<canvas data-fc-mechanical-canvas class="fc-mechanical-v2-canvas" aria-hidden="true"></canvas>'+
+        mechanicalLeverMarkup(true)+'</div>';
+      var arcs='<svg class="fc-mechanical-v2-arcs" viewBox="-100 -100 200 200" aria-hidden="true" '+
+        'xmlns="http://www.w3.org/2000/svg"><g data-fc-arcs>'+
+        '<path transform="translate(-10,-50) rotate(160)" d="M -7.07,-7.07 A 10,10 0 0,1 7.07,-7.07"/>'+
+        '<path transform="translate(-15,-55) rotate(-150)" d="M -14.14,-14.14 A 20,20 0 0,1 14.14,-14.14"/>'+
+        '<path transform="translate(-10,-55) rotate(160)" d="M -21.21,-21.21 A 30,30 0 0,1 21.21,-21.21"/>'+
+        '</g></svg>';
+      return '<div class="fc-score-cluster fc-score-linear fc-mechanical-v2" data-fc-frame="15">'+
+        '<div class="fc-score-shadow" data-fc-score-shadow>'+sheet+'</div>'+
+        '<div class="fc-score-hud" data-fc-score-hud>'+
+          '<div class="fc-score-notation fc-mechanical-notation">'+
+            '<div class="fc-mechanical-v2-graphics">'+arcs+
+              '<i class="fc-scan-line" data-fc-line></i>'+
+              '<i class="fc-scan-pulse" data-fc-pulse></i>'+
+            '</div>'+
+          '</div>'+
+        '</div>'+
+        '<p class="fc-score-manual">'+esc(i18n('hintI'))+'</p>'+
+        '<button class="fc-score-expand" type="button" data-fc-action="inspect">'+esc(i18n('score'))+' ↗</button>'+
+      '</div>';
+    }
+    var notation='<div class="fc-score-notation fc-fold-notation">'+foldMarkup(false)+
+      '<div class="fc-radial-needles" aria-hidden="true"><i data-fc-needle="0"></i><i data-fc-needle="1"></i></div></div>';
+    return '<div class="fc-score-cluster fc-score-radial">'+
+      '<div class="fc-score-shadow" data-fc-score-shadow aria-hidden="true">'+foldMarkup(true)+'</div>'+
       '<div class="fc-score-hud" data-fc-score-hud>'+
         '<p class="fc-score-mark">SCORE / '+s.roman+'</p>'+notation+
         '<div class="fc-score-indicator"><i class="fc-score-light"></i><span>SYNC / '+s.roman+'</span></div>'+
       '</div>'+
-      '<p class="fc-score-manual">'+esc(i18n(mechanical?'hintI':'hintII'))+'</p>'+
+      '<p class="fc-score-manual">'+esc(i18n('hintII'))+'</p>'+
       '<button class="fc-score-expand" type="button" data-fc-action="inspect">'+esc(i18n('score'))+' ↗</button>'+
-      '</div>';
-  }
-  function cardMarkup(stage,index,s){
-    return '<li class="fc-card" data-fc-card="'+index+'" data-fc-series="'+SERIES.indexOf(s)+'">'+
-      '<button class="fc-card-button" type="button" data-fc-action="select" data-fc-index="'+index+'" data-fc-series="'+SERIES.indexOf(s)+'" aria-label="'+esc(i18n('open')+': '+label(stage))+'">'+
-        '<span class="fc-frame">'+
-          '<canvas class="fc-preview-frame" aria-hidden="true"></canvas>'+
-          '<video class="fc-preview" playsinline webkit-playsinline preload="none" muted aria-hidden="true"></video>'+
-          '<video class="fc-hover-video" playsinline webkit-playsinline preload="none" muted loop aria-hidden="true"></video>'+
-          '<span class="fc-card-filmwash" aria-hidden="true"></span><span class="fc-card-open-sign">↗</span></span>'+
-        '<span class="fc-card-copy"><span class="fc-card-count">'+pad(index+1)+' <small>/ '+pad(s.stages.length)+'</small></span>'+
-        '<span class="fc-card-name">'+esc(label(stage))+'</span></span>'+
-      '</button></li>';
-  }
-
-
-  // Editable placeholders: one short archive caption and one longer note per
-  // photo. None of the date/place values are guessed from the folder name.
-  var PHOTO_INFORMATION={
-    zh:{
-      date:'拍摄日期待补',place:'拍摄地点待补',
-      short:[
-        {full:'建立状态的正面全貌；材质、尺寸及制作信息待补。',
-         back:'坍塌后的背面状态；残留构件与损耗记录待补。',
-         instrument:'废墟乐器的局部构造；材料与传动方式待补。',
-         body:'坍塌结构的连接细部；断裂与变形记录待补。'},
-        {full:'建立状态的正面全貌；支撑方式与材料信息待补。',
-         back:'背面与坍塌后的形态；现场变化记录待补。',
-         instrument:'废墟乐器的构件细节；制作与动作信息待补。',
-         body:'坍塌结构的残余形态；连接、折叠与变形记录待补。'}
-      ],
-      long:[
-        {full:'主体结构在正面与背面之间显露出不同的构件关系。影像开始之前，先让它作为一件静止的构造被观看。',
-         back:'从背面重新观看，原先完整的支撑关系开始松动；构件退入背景，坍塌后的形态仍留下建造时的痕迹。此处文字待进一步校订。',
-         instrument:'乐器的局部结构被单独取出：连接、承重和可能发声的部件暂时停止运动，等待影像继续展开。此处文字待进一步校订。',
-         body:'坍塌结构保留着局部连接与材料断裂的形状，这些细节将原本连续的动作停留在一个可以观察的瞬间。此处文字待进一步校订。'},
-        {full:'主体与背面的两幅图像保留了结构各自的面貌。它们在运动之前，已将构造的重心、连接与空隙呈现出来。',
-         back:'从背后观看结构，原先稳定的边界变得松散；失去支撑后的材料继续保留着形体和受力的方向。此处文字待进一步校订。',
-         instrument:'乐器的细节将运动的起点暂时固定下来。各部分之间的间隙、接合与牵引关系等待在影像中显现。此处文字待进一步校订。',
-         body:'在坍塌结构的局部，折叠和变形留下不同于完整状态的空间关系。此处文字待进一步校订。'}
-      ]
-    },
-    en:{
-      date:'Date to be added',place:'Location to be added',
-      short:[
-        {full:'Established structure; material and dimensions to be added.',back:'Collapsed rear view; condition notes to be added.',instrument:'Instrument detail; mechanism and materials to be added.',body:'Collapsed body; joints and fracture notes to be added.'},
-        {full:'Established structure; supports and materials to be added.',back:'Rear view after collapse; field notes to be added.',instrument:'Instrument details; construction notes to be added.',body:'Collapsed structure; folding and deformation notes to be added.'}
-      ],
-      long:[
-        {full:'Seen from the front and back, the structure reveals different relationships among its parts. Before the film begins, it remains here as a still construction.',
-         back:'Seen from behind, the supporting relationships begin to loosen. The remaining members still carry traces of their construction. Text awaiting revision.',
-         instrument:'The instrument is set apart for closer attention: connections, weight and possible sources of sound remain still until the moving image begins. Text awaiting revision.',
-         body:'Joints and fractures of the collapsed structure suspend its movement in a single observable moment. Text awaiting revision.'},
-        {full:'The two views retain the structure from either side. Even at rest, its weight, connections and openings become visible.',
-         back:'From the rear, the structure loses its stable outline while its materials retain the directions of their former loads. Text awaiting revision.',
-         instrument:'Details of the instrument hold movement at its point of departure; gaps, joints and points of tension await the moving image. Text awaiting revision.',
-         body:'Folding and deformation leave the collapsed structure with spatial relationships unlike its original form. Text awaiting revision.'}
-      ]
-    },
-    ja:{
-      date:'撮影日未記入',place:'撮影場所未記入',
-      short:[
-        {full:'構築時の正面全景。素材と寸法は追記予定。',back:'崩壊後の背面。残存部材の記録は追記予定。',instrument:'楽器の部分構造。素材と機構は追記予定。',body:'崩壊した本体の細部。接合と亀裂の記録は追記予定。'},
-        {full:'構築時の正面全景。支持構造の情報は追記予定。',back:'崩壊後の背面。現場記録は追記予定。',instrument:'楽器の構成部材。製作と動作の情報は追記予定。',body:'崩壊した構造の残余。変形の記録は追記予定。'}
-      ],
-      long:[
-        {full:'表裏から見ると、構造体の各部材は異なる関係を見せる。映像が始まる前に、まず静止した構築物として見る。',
-         back:'裏側から見ると、支えの関係が緩み始め、残った部材には建造時の痕跡が見える。文章は後日推敲予定。',
-         instrument:'器械の接合、荷重、音を発する可能性のある部材を静止した状態で見る。文章は後日推敲予定。',
-         body:'崩壊した構造の接合と亀裂が、連続する動きを観察可能な一瞬に留める。文章は後日推敲予定。'},
-        {full:'二つの視点から、構造体の表と裏を記録する。動き始める前から、重み、接合、空隙が見えている。',
-         back:'背面では輪郭が緩み、材料にはかつて受けた力の方向が残されている。文章は後日推敲予定。',
-         instrument:'器械の細部は動き始める直前を留め、空隙や接合、張力の関係を示す。文章は後日推敲予定。',
-         body:'折り畳みと変形が、元の姿とは異なる空間的関係を残す。文章は後日推敲予定。'}
-      ]
-    }
-  };
-  function photoNotes(si,key){
-    var copy=PHOTO_INFORMATION[state.lang]||PHOTO_INFORMATION.zh;
-    return {date:copy.date,place:copy.place,short:copy.short[si][key],long:copy.long[si][key]};
-  }
-  function assetPairMarkup(s,si,kind){
-    var items=kind==='structure'?['full','back']:['instrument','body'];
-    var switchNames={
-      zh:{structure:['建立','坍塌'],detail:['废墟乐器','坍塌结构']},
-      en:{structure:['Construction','Collapse'],detail:['Ruin Instrument','Collapsed Structure']},
-      ja:{structure:['構築','崩壊'],detail:['廃墟の楽器','崩壊した構造']}
-    };
-    var names=(switchNames[state.lang]||switchNames.zh)[kind];
-    var faces=items.map(function(k,index){
-      return '<figure class="fc-artifact fc-swap-face'+(index===0?' is-current':'')+'" data-fc-swap-face="'+index+'" aria-hidden="'+(index===0?'false':'true')+'">'+
-        '<div class="fc-artifact-image"><img src="'+esc(s.assets[k])+'" loading="lazy" decoding="async" alt="'+esc(label(s.title)+' — '+names[index])+'"></div>'+
-      '</figure>';
-    }).join('');
-    var options=items.map(function(k,index){
-      return '<button type="button" class="fc-swap-option'+(index===0?' is-active':'')+'" data-fc-action="swap-option" data-fc-index="'+index+'" aria-pressed="'+(index===0?'true':'false')+'">'+esc(names[index])+'</button>';
-    }).join('<span class="fc-swap-separator" aria-hidden="true">/</span>');
-    var metadata=items.map(function(k,index){
-      var d=photoNotes(si,k);
-      return '<div class="fc-photo-meta-panel" data-fc-meta-face="'+index+'" '+(index?'hidden':'')+'>'+
-        '<p class="fc-photo-meta-fields"><span>'+esc(d.date)+'</span><span>'+esc(d.place)+'</span></p>'+
-        '<p class="fc-photo-meta-note">'+esc(d.short)+'</p>'+
-      '</div>';
-    }).join('');
-    var paragraphs=items.map(function(k,index){
-      return '<p class="fc-aside-panel" data-fc-aside-face="'+index+'" '+(index?'hidden':'')+'>'+esc(photoNotes(si,k).long)+'</p>';
-    }).join('');
-    return '<div class="fc-asset-pair fc-asset-pair-'+kind+'" data-fc-swap data-fc-series="'+si+'" data-fc-active="0" aria-label="'+esc(names.join(' / '))+'">'+
-      '<div class="fc-photo-column">'+
-        '<div class="fc-swap-stage">'+faces+'</div>'+
-        '<div class="fc-swap-controls" role="group" aria-label="'+esc(names.join(' / '))+'">'+
-          '<div class="fc-swap-options">'+options+'</div>'+
-        '</div>'+
-        '<div class="fc-photo-meta">'+metadata+'</div>'+
-      '</div>'+
-      '<aside class="fc-asset-aside" aria-label="'+esc(names.join(' / '))+'">'+paragraphs+'</aside>'+
     '</div>';
-  }
-  function instrumentMarkup(s,si){
-    return '<section class="fc-instrument-wrap">'+
-      '<div class="fc-subchapter"><h3>'+esc(term('moving'))+'</h3></div>'+
-      '<div class="fc-instrument-layout">'+
-        '<div class="fc-instrument-card fc-card" data-fc-instrument-card data-fc-series="'+si+'">'+
-          '<button class="fc-card-button" type="button" data-fc-action="instrument" data-fc-series="'+si+'" aria-label="'+esc(term('moving'))+'">'+
-            '<span class="fc-frame"><canvas class="fc-preview-frame" aria-hidden="true"></canvas>'+
-            '<video class="fc-preview" playsinline webkit-playsinline preload="none" muted aria-hidden="true"></video>'+
-            '<video class="fc-hover-video" playsinline webkit-playsinline preload="none" muted loop aria-hidden="true"></video>'+
-            '<span class="fc-card-open-sign">↗</span></span>'+
-            '<span class="fc-card-copy"><span class="fc-card-count">01 <small>/ 01</small></span>'+
-            '<span class="fc-card-name">'+esc(term('moving'))+'</span></span>'+
-          '</button></div>'+
-        '<p class="fc-instrument-description">'+esc(essay(si,'instrument'))+'</p>'+
-      '</div>'+
-    '</section>';
   }
   function inlineScoreMarkup(s,si){
     var pointerLabel={
