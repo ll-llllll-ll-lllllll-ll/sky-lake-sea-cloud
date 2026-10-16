@@ -236,6 +236,8 @@
     if(w<12||h<12)return false;
     var dpr=Math.min(window.devicePixelRatio||1,window.innerWidth<=700?1.25:1.6);
     var pw=Math.max(1,Math.round(w*dpr)),ph=Math.max(1,Math.round(h*dpr));
+    if(canvas.dataset.frame===String(frame)&&canvas.width===pw&&canvas.height===ph&&
+       cluster.classList.contains('is-mechanical-decoded'))return true;
     if(canvas.width!==pw)canvas.width=pw;
     if(canvas.height!==ph)canvas.height=ph;
     var ctx=canvas.getContext('2d',{alpha:true});
@@ -1269,7 +1271,10 @@
     }
     // The entire mechanical score is a tactile fifteen-frame index even with
     // the HUD pointer switched off. Drag downward to advance the Folly film.
-    var notationSurface=score.querySelector('.fc-score-shadow .fc-shadow-scan');
+    // In Folly I the small central ring is the authored input, as in
+    // Ruin Archive; the rest of the printed score does not act as a giant
+    // invisible scrub surface. Folly II keeps its existing interactions.
+    var notationSurface=si===0?null:score.querySelector('.fc-score-shadow .fc-shadow-scan');
     if(notationSurface){
       var scoreGesture=null;
       function scrubArtwork(ev){
