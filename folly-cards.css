@@ -2063,3 +2063,14 @@ body.fc-score-expanded{overflow:hidden!important;}
   .fc-room .fc-pointer-switch-track i,
   .fc-room .fc-inline-score .fc-score-hud {transition:none!important;}
 }
+
+
+/* Optional live needles can be dragged to seek the folio timeline. */
+.fc-room .fc-inline-score[data-fc-pointers="on"] .fc-score-hud .fc-radial-needles {
+  pointer-events:auto;
+  touch-action:none;
+  cursor:ew-resize;
+}
+.fc-room .fc-inline-score[data-fc-pointers="off"] .fc-score-hud .fc-radial-needles {
+  pointer-events:none;
+}
