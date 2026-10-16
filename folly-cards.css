@@ -2083,3 +2083,99 @@ body.fc-score-expanded{overflow:hidden!important;}
 .fc-room .fc-inline-score[data-fc-pointers="off"] .fc-score-hud .fc-radial-needles {
   pointer-events:none;
 }
+
+
+/* v14 — physical alignment with the first unsnapped Folly film fragment.
+   One shared left inset anchors the film, photographs and instrument clip.
+   The score is a smaller, closer piece of paper below the timeline. */
+.fc-room .fc-series-block {
+  --fc-film-left:clamp(205px,18vw,370px);
+}
+.fc-room .fc-strip {
+  padding-left:var(--fc-film-left);
+}
+.fc-room .fc-series-composition {
+  display:block;
+  width:calc(100% - var(--fc-film-left) - clamp(24px,7vw,120px));
+  max-width:none;
+  margin-left:var(--fc-film-left);
+  margin-right:0;
+}
+.fc-room .fc-series-composition .fc-asset-pair {
+  margin-left:0;
+  margin-right:0;
+}
+.fc-room .fc-instrument-wrap {
+  margin-left:0;
+  margin-right:0;
+}
+.fc-room .fc-instrument-card.fc-card {
+  margin-left:0;
+  margin-right:0;
+}
+.fc-room .fc-swap-controls {
+  gap:0;
+  justify-content:center;
+}
+/* Only the word tabs are controls: no auxiliary right-arrow button. */
+.fc-room .fc-inline-score {
+  width:min(calc(100% - 2 * clamp(24px,7vw,120px)),830px);
+  max-width:830px;
+  margin:clamp(32px,4vw,54px) auto 0;
+}
+.fc-room .fc-inline-score-top {
+  margin-bottom:clamp(10px,1.5vw,19px);
+}
+.fc-room .fc-inline-score-device {
+  height:clamp(300px,33vw,465px);
+}
+.fc-room .fc-inline-score-device>.fc-score-cluster {
+  width:min(75%,380px);
+  height:min(88%,405px);
+  min-width:0;
+  min-height:255px;
+}
+.fc-room .fc-inline-score-detail {
+  gap:13px;
+  margin-top:clamp(7px,1.7vw,18px);
+}
+@media(max-width:850px){
+  .fc-room .fc-inline-score-device {
+    height:clamp(300px,48vw,420px);
+  }
+}
+@media(max-width:700px){
+  .fc-room .fc-series-block {
+    --fc-film-left:clamp(34px,9vw,70px);
+  }
+  .fc-room .fc-strip {
+    padding-left:var(--fc-film-left);
+  }
+  .fc-room .fc-series-composition {
+    width:calc(100% - var(--fc-film-left) - 22px);
+    max-width:none;
+    margin-left:var(--fc-film-left);
+    margin-right:0;
+  }
+  .fc-room .fc-series-composition .fc-asset-pair {
+    margin-left:0;
+    margin-right:0;
+  }
+  .fc-room .fc-inline-score {
+    width:calc(100% - 44px);
+    margin:30px auto 0;
+  }
+  .fc-room .fc-inline-score-device {
+    height:clamp(270px,75vw,330px);
+  }
+  .fc-room .fc-inline-score-device>.fc-score-cluster {
+    width:min(76%,245px);
+    height:min(86%,280px);
+    min-height:0;
+    min-width:0;
+  }
+  .fc-room .fc-inline-score-detail {
+    gap:10px;
+    margin-top:8px;
+  }
+}
