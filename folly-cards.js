@@ -1551,7 +1551,7 @@
       var r=gate.getBoundingClientRect(),h=window.innerHeight||1;
       if(r.bottom<=0||r.top>=h)return false;
       // The lower edge of I and the upper edge of II mirror each other.
-      return direction===1?r.top<=h*.78:r.bottom>=h*.22;
+      return direction===1?r.top<=h*.68:r.bottom>=h*.32;
     }
     function show(amount,dragging){
       var progress=clamp(amount,0,1);
