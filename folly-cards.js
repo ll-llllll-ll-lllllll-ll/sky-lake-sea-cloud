@@ -1346,6 +1346,33 @@
       advanceSwap(state,1);
     },7000);
   }
+  // First let the old caption recede; only then reveal the matching note.
+  function crossfadeImageCopy(state,next){
+    var panels=Array.from(state.root.querySelectorAll('[data-fc-meta-face],[data-fc-aside-face]'));
+    clearTimeout(state.copyTimer);
+    if(state.copyFrame)cancelAnimationFrame(state.copyFrame);
+    state.copyTimer=0;state.copyFrame=0;
+    panels.forEach(function(panel){
+      panel.classList.remove('is-copy-entering');
+      if(!panel.hidden)panel.classList.add('is-copy-leaving');
+    });
+    state.copyTimer=window.setTimeout(function(){
+      state.copyTimer=0;
+      panels.forEach(function(panel){
+        var selected=Number(panel.dataset.fcMetaFace??panel.dataset.fcAsideFace)===next;
+        panel.hidden=!selected;
+        panel.classList.remove('is-copy-leaving');
+        panel.classList.toggle('is-copy-entering',selected);
+      });
+      alignPhotoAside(state.root);
+      state.copyFrame=requestAnimationFrame(function(){
+        state.copyFrame=0;
+        panels.forEach(function(panel){
+          if(!panel.hidden)panel.classList.remove('is-copy-entering');
+        });
+      });
+    },330);
+  }
   function advanceSwap(state,step){
     if(!state || !state.root.isConnected)return;
     var next=(state.active+step+2)%2;
@@ -1367,12 +1394,7 @@
       dot.classList.toggle('is-active',active);
       dot.setAttribute('aria-pressed',String(active));
     });
-    state.root.querySelectorAll('[data-fc-meta-face]').forEach(function(panel){
-      panel.hidden=Number(panel.dataset.fcMetaFace)!==next;
-    });
-    state.root.querySelectorAll('[data-fc-aside-face]').forEach(function(panel){
-      panel.hidden=Number(panel.dataset.fcAsideFace)!==next;
-    });
+    crossfadeImageCopy(state,next);
     state.fade=window.setTimeout(function(){
       oldFace.classList.remove('is-fading');
       state.fade=0;
@@ -1395,6 +1417,8 @@
     imageSwapStates.forEach(function(state){
       clearTimeout(state.timer);
       clearTimeout(state.fade);
+      clearTimeout(state.copyTimer);
+      if(state.copyFrame)cancelAnimationFrame(state.copyFrame);
     });
     imageSwapStates.clear();
     document.removeEventListener('visibilitychange',onImageSwapVisibility);
@@ -1411,7 +1435,7 @@
     if(!isLive())return;
     var frames=scene.querySelectorAll('[data-fc-swap]');
     frames.forEach(function(el){
-      imageSwapStates.set(el,{root:el,active:0,visible:false,timer:0,fade:0});
+      imageSwapStates.set(el,{root:el,active:0,visible:false,timer:0,fade:0,copyTimer:0,copyFrame:0});
     });
     if('IntersectionObserver' in window){
       imageSwapObserver=new IntersectionObserver(function(entries){
