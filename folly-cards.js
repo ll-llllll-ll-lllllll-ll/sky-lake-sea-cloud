@@ -1733,7 +1733,7 @@
     var previousY=window.scrollY||window.pageYOffset||0;
     var drag=null,wheelPull=null,passed=0,coast=null;
     var springId=0,coastTimer=0,wheelTimer=0,momentumId=0;
-    var programmaticUntil=0,lastWheelAt=0,direction=1;
+    var programmaticUntil=0,programmaticY=-1,lastWheelAt=0,direction=1;
     var reduceMotion=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     function now(){return performance.now();}
     function scrollY(){return window.scrollY||window.pageYOffset||0;}
@@ -1746,7 +1746,8 @@
       if(Math.abs(distance)<.1)return;
       programmaticUntil=now()+66;
       window.scrollTo(0,Math.max(0,y));
-      previousY=scrollY();
+      programmaticY=scrollY();
+      previousY=programmaticY;
     }
     function getDirection(value){return value>=0?1:-1;}
     function labelFor(d){
@@ -1958,13 +1959,17 @@
         coast=null;coastTimer=0;
         spring(scrollY(),base,function(){annotate(0,false);});
       }
-      coastTimer=window.setTimeout(settle,165);
+      coastTimer=window.setTimeout(settle,430);
     }
     function onScroll(){
       var y=scrollY(),dy=y-previousY,old=previousY;
       previousY=y;
       if(reduceMotion||!isLive()||selection.open)return;
-      if(now()<programmaticUntil || drag?.item || drag?.following || wheelPull)return;
+      // Safari can emit an asynchronous compositor scroll during the
+      // 66ms after our correction. Ignore only the scroll we actually set,
+      // never genuine remaining inertia that is still pushing the page.
+      if(now()<programmaticUntil&&Math.abs(y-programmaticY)<1.2)return;
+      if(drag?.item || drag?.following || wheelPull)return;
       var d=Math.sign(dy);
       if(!d)return;
       if(passed===d){
@@ -1980,7 +1985,7 @@
           clearTimeout(coastTimer);
           coastTimer=window.setTimeout(function(){
             if(coast){var base=coast.base;coast=null;spring(scrollY(),base);}
-          },165);
+          },430);
         }else{
           coast=null;clearTimeout(coastTimer);
         }
