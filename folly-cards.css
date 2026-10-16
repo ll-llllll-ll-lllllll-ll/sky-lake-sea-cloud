@@ -1730,3 +1730,336 @@ body.fc-score-expanded{overflow:hidden!important;}
   .fc-room .fc-swap-face,
   .fc-room .fc-swap-face.is-fading {transition:none!important;}
 }
+
+
+/* ================================================================
+   v12 / Score without its viewer.
+   The authored score floats on the page with only material shadow.
+   No dark stage, HUD glass, panel, modal zoom or surrounding frame.
+   The live pointer is strictly opt-in.  Score and film share time.
+   ================================================================ */
+.fc-room .fc-inline-score {
+  --fc-score-ink:rgba(36,42,37,.64);
+  width:min(calc(100% - 2 * clamp(24px,7vw,120px)),1050px);
+  max-width:1050px;
+  margin:clamp(76px,9vw,136px) auto 0;
+  padding:0;
+  border:0;
+  background:transparent;
+  isolation:isolate;
+  overflow:visible;
+}
+.fc-room .fc-inline-score-top{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:20px;
+  margin:0 0 clamp(20px,3vw,37px);
+  padding:0;
+  border:0;
+}
+.fc-room .fc-inline-score-top>span {
+  font:400 10px/1.6 var(--sans),sans-serif;
+  letter-spacing:.12em;
+  color:rgba(40,44,40,.45);
+}
+.fc-room .fc-inline-score-main {
+  display:block;
+  width:100%;
+  max-width:none;
+  background:transparent;
+  margin:0 auto;
+}
+.fc-room .fc-inline-score-device {
+  position:relative;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  isolation:isolate;
+  width:100%;
+  height:clamp(410px,45vw,620px);
+  min-height:0;
+  overflow:visible;
+  border:0;
+  background:none;
+  box-shadow:none;
+}
+.fc-room .fc-inline-score-device>.fc-score-cluster {
+  position:relative;
+  top:auto;right:auto;bottom:auto;left:auto;
+  display:block;
+  z-index:2;
+  width:min(75%,490px);
+  height:min(88%,540px);
+  min-height:330px;
+  min-width:210px;
+  flex:0 0 auto;
+  margin:0;
+  transform-origin:center center;
+  cursor:default;
+}
+.fc-room .fc-inline-score .fc-score-shadow {
+  inset:0;
+  border:0;
+  background:transparent;
+  overflow:visible;
+  opacity:1;
+  transform:none;
+  filter:drop-shadow(5px 9px 12px rgba(35,40,35,.18));
+  box-shadow:none;
+  pointer-events:auto;
+}
+.fc-room .fc-inline-score .fc-score-cluster.is-magnetic .fc-score-shadow{
+  inset:0;
+  border:0;
+  background:transparent;
+  opacity:1;
+  transform:none;
+  filter:drop-shadow(5px 9px 12px rgba(35,40,35,.18));
+}
+.fc-room .fc-inline-score .fc-score-hud{
+  display:block;
+  position:absolute;
+  inset:0;
+  z-index:4;
+  padding:0;
+  background:transparent;
+  border:0;
+  box-shadow:none;
+  backdrop-filter:none;
+  -webkit-backdrop-filter:none;
+  cursor:default;
+  pointer-events:none;
+  opacity:0;
+  visibility:hidden;
+  transform:none;
+  transition:opacity .36s ease,visibility .36s;
+}
+/* Show the floating pointer graphics, never the old opaque glass box. */
+.fc-room .fc-inline-score[data-fc-pointers="on"] .fc-score-hud,
+.fc-room .fc-inline-score[data-fc-pointers="on"] .fc-score-radial.is-hud-awaiting .fc-score-hud{
+  opacity:1;
+  visibility:visible;
+  pointer-events:none;
+}
+.fc-room .fc-inline-score .fc-score-cluster.is-magnetic .fc-score-hud{
+  background:transparent;
+  border:0;
+  box-shadow:none;
+  transform:none;
+}
+.fc-room .fc-inline-score .fc-score-hud .fc-score-notation {
+  display:block;
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  background:transparent;
+  overflow:visible;
+}
+.fc-room .fc-inline-score .fc-score-hud .fc-mechanical-notation>img,
+.fc-room .fc-inline-score .fc-score-hud .fc-fold-notation>.fc-fold-stage{
+  opacity:0;
+  pointer-events:none;
+}
+/* The image in the lower layer is the actual notation.
+   Source artwork, not the duplicated HUD image, stays visible. */
+.fc-room .fc-inline-score .fc-shadow-scan {
+  position:absolute;
+  inset:0;
+  touch-action:none;
+  cursor:ns-resize;
+  pointer-events:auto;
+}
+.fc-room .fc-inline-score .fc-shadow-scan img {
+  display:block;
+  width:100%;
+  height:100%;
+  object-fit:contain;
+  filter:grayscale(1) contrast(1.05);
+  pointer-events:none;
+  user-select:none;
+  -webkit-user-drag:none;
+}
+.fc-room .fc-inline-score .fc-score-shadow .fc-shadow-scan>i,
+.fc-room .fc-inline-score .fc-score-shadow .fc-mechanical-lever{
+  opacity:0;
+  pointer-events:none;
+}
+.fc-room .fc-inline-score .fc-score-shadow .fc-fold-stage {
+  width:100%;
+  opacity:1;
+  pointer-events:auto;
+}
+.fc-room .fc-inline-score .fc-score-radial .fc-score-shadow {
+  background:transparent;
+  opacity:1;
+}
+.fc-room .fc-inline-score .fc-score-radial .fc-score-shadow .fc-fold-wing{
+  pointer-events:auto;
+  cursor:grab;
+  touch-action:none;
+}
+.fc-room .fc-inline-score .fc-score-manual,
+.fc-room .fc-inline-score .fc-score-expand,
+.fc-room .fc-inline-score .fc-score-mark,
+.fc-room .fc-inline-score .fc-score-indicator{
+  display:none!important;
+}
+.fc-room .fc-inline-score .fc-radial-needles{
+  display:block;
+  position:absolute;
+  z-index:6;
+}
+/* Lightweight pointer switch, initially OFF for each Folly. */
+.fc-room .fc-pointer-switch {
+  display:inline-flex;
+  align-items:center;
+  gap:10px;
+  flex:0 0 auto;
+  padding:4px 0 4px 8px;
+  color:rgba(38,43,38,.66);
+  background:transparent;
+  border:0;
+  font:400 11px/1.6 var(--sans),sans-serif;
+  cursor:pointer;
+}
+.fc-room .fc-pointer-switch-track {
+  position:relative;
+  display:block;
+  flex:0 0 auto;
+  width:27px;height:15px;
+  border:1px solid rgba(39,46,41,.30);
+  border-radius:12px;
+  background:rgba(38,45,39,.065);
+  transition:background .3s,border-color .3s;
+}
+.fc-room .fc-pointer-switch-track i{
+  display:block;
+  position:absolute;
+  left:2px;top:2px;
+  width:9px;height:9px;
+  border-radius:50%;
+  background:rgba(41,47,42,.51);
+  transition:transform .3s,background .3s;
+}
+.fc-room .fc-inline-score[data-fc-pointers="on"] .fc-pointer-switch-track {
+  background:rgba(38,47,40,.20);
+  border-color:rgba(39,46,41,.58);
+}
+.fc-room .fc-inline-score[data-fc-pointers="on"] .fc-pointer-switch-track i{
+  transform:translateX(12px);
+  background:#29382f;
+}
+/* A continuous hairline locates the selected phase, without snapping cards. */
+.fc-room .fc-inline-score-detail{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:18px;
+  width:min(640px,100%);
+  margin:clamp(16px,3vw,34px) auto 0;
+  padding:0;
+  color:rgba(36,42,37,.62);
+  border:0;
+  background:transparent;
+}
+.fc-room .fc-inline-score-detail [data-fc-score-state]{
+  font:400 clamp(12px,1vw,15px)/1.7 var(--serif),serif;
+  letter-spacing:.01em;
+  color:rgba(36,42,37,.7);
+  text-align:center;
+}
+.fc-room .fc-score-timeline{
+  display:block;
+  width:100%;
+  height:22px;
+  min-height:22px;
+  margin:0;
+  padding:0;
+  background:transparent;
+  cursor:ew-resize;
+  -webkit-appearance:none;
+  appearance:none;
+}
+.fc-room .fc-score-timeline::-webkit-slider-runnable-track {
+  height:1px;
+  background:rgba(37,45,39,.34);
+}
+.fc-room .fc-score-timeline::-moz-range-track {
+  height:1px;
+  background:rgba(37,45,39,.34);
+}
+.fc-room .fc-score-timeline::-webkit-slider-thumb {
+  -webkit-appearance:none;
+  width:10px;height:10px;
+  margin-top:-4.5px;
+  border-radius:50%;
+  border:1px solid rgba(32,42,36,.69);
+  background:#e9e9e2;
+}
+.fc-room .fc-score-timeline::-moz-range-thumb {
+  width:10px;height:10px;
+  border-radius:50%;
+  border:1px solid rgba(32,42,36,.69);
+  background:#e9e9e2;
+}
+.fc-room .fc-score-minimal-actions{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:25px;
+  width:100%;
+  font:400 10px/1.5 var(--sans),sans-serif;
+  letter-spacing:.07em;
+  color:rgba(37,44,39,.46);
+}
+.fc-room .fc-score-minimal-actions button{
+  font:inherit;
+  letter-spacing:inherit;
+  color:inherit;
+  border:0;
+  background:transparent;
+  cursor:pointer;
+}
+.fc-room .fc-score-minimal-actions button:hover{color:#242b25;}
+.fc-room .fc-pointer-switch:focus-visible,
+.fc-room .fc-score-timeline:focus-visible,
+.fc-room .fc-score-minimal-actions button:focus-visible{
+  outline:1px solid rgba(39,47,41,.72);
+  outline-offset:3px;
+}
+@media(max-width:850px){
+  .fc-room .fc-inline-score-main{display:block;}
+  .fc-room .fc-inline-score-device{
+    height:clamp(375px,57vw,550px);
+  }
+}
+@media(max-width:700px){
+  .fc-room .fc-inline-score{
+    width:calc(100% - 44px);
+    margin:70px auto 0;
+  }
+  .fc-room .fc-inline-score-top{margin-bottom:15px;}
+  .fc-room .fc-inline-score-device{
+    height:clamp(310px,93vw,420px);
+  }
+  .fc-room .fc-inline-score-device>.fc-score-cluster {
+    width:min(80%,300px);
+    min-width:0;
+    height:min(88%,350px);
+    min-height:0;
+  }
+  .fc-room .fc-pointer-switch{font-size:10px;gap:7px;}
+  .fc-room .fc-inline-score-detail{
+    gap:12px;
+    margin-top:13px;
+  }
+  .fc-room .fc-score-minimal-actions{font-size:9px;}
+}
+@media(prefers-reduced-motion:reduce){
+  .fc-room .fc-pointer-switch-track,
+  .fc-room .fc-pointer-switch-track i,
+  .fc-room .fc-inline-score .fc-score-hud {transition:none!important;}
+}
