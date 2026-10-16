@@ -438,14 +438,14 @@
       '</button>'+
     '</section>';
   }
-  function chapterBodyMarkup(si){
-    return (si===1?chapterGateMarkup(1):'')+
-      sectionMarkup(SERIES[si],si)+
-      (si===0?chapterGateMarkup(0):
-        '<section class="fc-essay" aria-label="Folly notes"><div class="fc-essay-rule"></div>'+
-          '<p class="fc-essay-intro">'+esc(lastFollyIntro)+'</p>'+
-          '<div class="fc-essay-space" aria-hidden="true"></div>'+
-        '</section>');
+  function chapterBodyMarkup(){
+    // One uninterrupted document: both chapters have stable positions.
+    // Images and videos still load lazily only near the viewport.
+    return sectionMarkup(SERIES[0],0)+chapterGateMarkup(0)+sectionMarkup(SERIES[1],1)+
+      '<section class="fc-essay" aria-label="Folly notes"><div class="fc-essay-rule"></div>'+
+        '<p class="fc-essay-intro">'+esc(lastFollyIntro)+'</p>'+
+        '<div class="fc-essay-space" aria-hidden="true"></div>'+
+      '</section>';
   }
   function sectionMarkup(s, si) {
     return '<section class="fc-series-block" data-fc-series-block="'+si+'" id="fc-chapter-'+(si+1)+'" style="--fc-video-aspect:16 / 9;--fc-ratio-number:1.77778">'+
@@ -478,8 +478,8 @@
       '<div class="fc-page" data-fc-scene>'+
         '<div class="fc-page-heading"><div class="fc-heading-primary">'+
           '<h1>'+esc(localised(item.title))+'</h1></div></div>'+
-        '<div class="fc-scroll-content" data-fc-chapter-body>'+chapterBodyMarkup(0)+'</div>'+
-        '<div data-fc-projection-slot>'+projectionMarkup(SERIES[0],0)+'</div>'+
+        '<div class="fc-scroll-content" data-fc-chapter-body>'+chapterBodyMarkup()+'</div>'+
+        '<div data-fc-projection-slot>'+SERIES.map(projectionMarkup).join('')+'</div>'+
       '</div></section>';
   }
   var originalRoom=renderRoom;
