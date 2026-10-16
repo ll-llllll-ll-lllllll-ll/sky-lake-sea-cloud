@@ -619,28 +619,44 @@
     if(!overlay)return;
     var ratio=clamp(absolute/s.endTime,0,1);
     if(s.kind==='linear'){
-      var frame=sourceScoreFrame(ratio),frameURL=mechanicalImage(frame);
-      // Original Folly I two-stage mechanism: small knob moves first,
-      // then the large ring engages after frame 07/08. Film runs 15 -> 01.
-      var mechanical=1-ratio, split=6/14;
-      var engaged=mechanical<=split?0:clamp((mechanical-split)/(1-split),0,1);
-      overlay.querySelectorAll('.fc-mechanical-lever').forEach(function(lever){
-        lever.style.setProperty('--fc-mech-knob',(85-70*mechanical).toFixed(2)+'%');
-        lever.style.setProperty('--fc-mech-ring',(55-40*engaged).toFixed(2)+'%');
-        lever.style.setProperty('--fc-mech-engage',engaged.toFixed(3));
+      // Original Ruin Archive relation: moving image 0→100% corresponds to
+      // stop-motion 15→01, with the first seven score frames forming stage I.
+      var state=mechanicalStageForFilm(ratio);
+      overlay.querySelectorAll('.fc-mechanical-v2').forEach(function(cluster){
+        cluster.dataset.fcFrame=String(state.frame);
+        cluster.dataset.fcStage=String(state.stage);
+        cluster.querySelectorAll('.fc-mechanical-v2-lever').forEach(function(lever){
+          lever.dataset.fcStage=String(state.stage);
+          lever.style.setProperty('--fc-m2-knob',state.knobTop.toFixed(3)+'%');
+          lever.style.setProperty('--fc-m2-ring',state.ringTop.toFixed(3)+'%');
+          lever.style.setProperty('--fc-m2-engage',state.engagement.toFixed(4));
+        });
+        var knob=cluster.querySelector('.fc-mechanical-v2-knob');
+        if(knob)knob.setAttribute('aria-valuenow',String(state.frame));
+        // Once decoded, a single canvas draw replaces repeated img.src churn.
+        if(!paintMechanicalCanvas(cluster,state.frame)){
+          var fallback=cluster.querySelector('[data-fc-score-shadow-img]');
+          if(fallback && fallback.dataset.frame!==String(state.frame)){
+            fallback.dataset.frame=String(state.frame);
+            fallback.src=mechanicalImage(state.frame);
+          }
+        }
+        var arcs=cluster.querySelector('[data-fc-arcs]');
+        if(arcs)arcs.style.transform='scale('+(1+3.5*ratio).toFixed(3)+')';
       });
-      overlay.querySelectorAll('[data-fc-score-frame],[data-fc-score-shadow-img]').forEach(function(img){
-        if(img.dataset.frame!==String(frame)){img.src=frameURL;img.dataset.frame=String(frame);}
-      });
-      overlay.querySelectorAll('[data-fc-line],[data-fc-shadow-line]').forEach(function(line){
-        line.style.left=(12+76*ratio)+'%';
+      overlay.querySelectorAll('[data-fc-line]').forEach(function(line){
+        line.style.left=(12+76*ratio).toFixed(3)+'%';
       });
       var pulse=overlay.querySelector('[data-fc-pulse]');
-      if(pulse) {
-        pulse.style.opacity=absolute>=113?'0':'.9';
-        pulse.style.left=(12+76*ratio)+'%';
-        pulse.style.top=(89-18*ratio)+'%';
-        pulse.style.transform='scale('+(0.68+Math.abs(Math.sin(absolute*3.4))*.4)+')';
+      if(pulse){
+        // The pulse leaves after 1:53 of the authored Folly I moving image.
+        var x=12+76*ratio,y=94-22*ratio;
+        var freq=.8+2.2*ratio;
+        var beat=Math.sin(performance.now()*.001*freq*Math.PI);
+        pulse.style.left=x.toFixed(3)+'%';
+        pulse.style.top=y.toFixed(3)+'%';
+        pulse.style.opacity=absolute>=113?'0':(beat>0?'1':'.12');
+        pulse.style.transform='translate(-50%,-50%) scale('+(beat>0?(1-Math.pow(beat,2)*.4):1).toFixed(3)+')';
       }
     }else{
       overlay.querySelector('[data-fc-needle="0"]')?.style.setProperty('transform','rotate('+(-65+95*ratio)+'deg)');
