@@ -347,7 +347,7 @@
       ja:['フォリー・其の二を続けて読む','フォリー・其の一を読む']
     }[state.lang]||['继续阅读废墟园林·其二','阅读废墟园林·其一'];
     var view=function(s,index,phrase){
-      return '<div class="fc-gate-view fc-gate-view-'+(index===1?'down':'up')+'" data-fc-gate-view="'+index+'" aria-hidden="'+(index===1?'false':'true')+'">'+
+      return '<div class="fc-gate-view fc-gate-view-'+(index===1?'down':'up')+'" data-fc-gate-view="'+index+'" aria-hidden="'+(index===1?'false':'true')+'" '+(index===1?'':'inert')+'>'+
         '<div class="fc-gate-visual">'+
           '<h2>'+esc(chapterPart(index))+' <span>'+esc(label(s.title))+'</span></h2>'+
           '<div class="fc-gate-preview"><img src="'+esc(s.assets.full)+'" loading="lazy" decoding="async" alt=""></div>'+
@@ -1349,6 +1349,40 @@
     }
     document.addEventListener('visibilitychange',onImageSwapVisibility);
   }
+  var gateDirectionCleanup=null;
+  function wireChapterGate(){
+    if(gateDirectionCleanup){gateDirectionCleanup();gateDirectionCleanup=null;}
+    var gate=scene?.querySelector('[data-fc-chapter-gate]');
+    if(!gate)return;
+    var lastY=window.scrollY||window.pageYOffset||0,frame=0,active='down';
+    function setDirection(dir){
+      if(dir===active)return;
+      active=dir;
+      gate.dataset.fcDirection=dir;
+      gate.querySelectorAll('[data-fc-gate-view]').forEach(function(view){
+        var show=Number(view.dataset.fcGateView)===(dir==='down'?1:0);
+        view.setAttribute('aria-hidden',String(!show));
+        view.inert=!show;
+      });
+    }
+    function onScroll(){
+      if(frame || selection.open)return;
+      frame=requestAnimationFrame(function(){
+        frame=0;
+        var y=window.scrollY||window.pageYOffset||0;
+        var dy=y-lastY;
+        if(Math.abs(dy)>3){
+          setDirection(dy>0?'down':'up');
+          lastY=y;
+        }
+      });
+    }
+    window.addEventListener('scroll',onScroll,{passive:true});
+    gateDirectionCleanup=function(){
+      window.removeEventListener('scroll',onScroll);
+      if(frame)cancelAnimationFrame(frame);
+    };
+  }
   function wireEvents(){
     if(!isLive())return;
     SERIES.forEach(function(_,i){wireRail(i);wireInstrument(i);wireInlineScore(i);wireOverlay(i);});
@@ -1357,6 +1391,16 @@
       if(!node)return;
       var action=node.dataset.fcAction;
       var si=Number(node.dataset.fcSeries);
+      if(action==='chapter-goto'){
+        var destination=block(Number(node.dataset.fcChapter));
+        if(destination){
+          destination.scrollIntoView({
+            behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',
+            block:Number(node.dataset.fcChapter)===0?'end':'start'
+          });
+        }
+        return;
+      }
       if(action==='select'){
         select(Number(node.dataset.fcSeries),Number(node.dataset.fcIndex));return;
       }
@@ -1438,6 +1482,7 @@
   function mount(){
     var next=document.querySelector('[data-fc-scene]');
     if(scene===next)return;
+    if(gateDirectionCleanup){gateDirectionCleanup();gateDirectionCleanup=null;}
     if(scene){clearImageSwaps();stopHoverFilm();stopMedia();clearPreviews();}
     releaseUpcoming();
     document.body.classList.remove('fc-modal-open','fc-score-expanded');
@@ -1445,6 +1490,7 @@
     if(!scene)return;
     selection.open=false;selection.instrument=false;selection.scoreInspect=false;selection.focus=[0,0];
     wireEvents();
+    wireChapterGate();
     initializeImageSwaps();
     SERIES.forEach(function(_,si){focusCard(si,0,false);});
     manualWings=[null,null];inlineTime=[0,0];expandedScore=-1;
