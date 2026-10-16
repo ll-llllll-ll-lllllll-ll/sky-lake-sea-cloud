@@ -2564,3 +2564,396 @@ body.fc-score-expanded{overflow:hidden!important;}
     margin-right:0;
   }
 }
+
+
+/* ==============================================================
+   v16 · Quiet illustrated archive.
+   The photo is at left; its own changing archive slip stays below;
+   a longer changing note occupies the right-bottom reading field.
+   No overlay captions, no switch shadows, no fabricated location/date.
+   ============================================================== */
+.fc-room .fc-series-heading {
+  align-items:baseline;
+  gap:clamp(18px,2.2vw,37px);
+  padding-bottom:clamp(34px,4.6vw,68px);
+}
+.fc-room .fc-series-heading h2,
+.fc-room .fc-series-heading p {
+  font:400 clamp(18px,1.65vw,27px)/1.55 var(--serif),serif;
+  letter-spacing:.035em;
+  margin:0;
+}
+.fc-room .fc-series-heading h2 {color:#2d352e;}
+.fc-room .fc-series-heading p {color:rgba(43,49,43,.68);}
+/* Each complete pair occupies the width of the available reading area.
+   The first grid column remains exactly the photograph's former width. */
+.fc-room .fc-series-composition {
+  display:block;
+}
+.fc-room .fc-series-composition .fc-asset-pair {
+  display:grid;
+  grid-template-columns:minmax(0,min(100%,calc(var(--fc-card-width) * 1.5))) minmax(0,1fr);
+  align-items:stretch;
+  column-gap:clamp(26px,3.5vw,75px);
+  width:100%;
+  max-width:none;
+  margin:clamp(18px,2vw,32px) 0 0;
+  padding:0;
+}
+.fc-room .fc-series-composition .fc-asset-pair+.fc-asset-pair {
+  margin-top:clamp(74px,11vw,150px);
+}
+.fc-room .fc-photo-column {
+  display:block;
+  min-width:0;
+  width:100%;
+}
+.fc-room .fc-photo-column .fc-swap-stage {
+  display:block;
+  position:relative;
+  width:100%;
+  max-width:100%;
+  overflow:hidden;
+  box-shadow:none;
+  background:transparent;
+  border:0;
+}
+.fc-room .fc-photo-column .fc-swap-controls {
+  position:relative;
+  inset:auto;
+  left:auto;
+  right:auto;
+  top:auto;
+  bottom:auto;
+  z-index:5;
+  display:flex;
+  align-items:baseline;
+  justify-content:flex-start;
+  width:100%;
+  min-height:0;
+  gap:0;
+  padding:clamp(9px,1.4vw,17px) 0 0;
+  margin:0;
+  text-shadow:none;
+  box-shadow:none;
+  background:none;
+}
+.fc-room .fc-photo-column .fc-swap-options {
+  justify-content:flex-start;
+  align-items:baseline;
+  gap:clamp(10px,1.8vw,22px);
+  text-shadow:none;
+  filter:none;
+}
+.fc-room .fc-photo-column .fc-swap-option {
+  font:400 clamp(18px,1.65vw,26px)/1.45 var(--serif),serif;
+  color:rgba(43,48,43,.5);
+  padding:1px 0;
+  margin:0;
+  text-shadow:none;
+  filter:none;
+  transition:color .26s ease;
+}
+.fc-room .fc-photo-column .fc-swap-option.is-active {
+  color:#303830;
+  font-weight:500;
+  text-shadow:none;
+}
+.fc-room .fc-photo-column .fc-swap-separator {
+  font:400 clamp(12px,1.25vw,18px)/1.5 var(--serif),serif;
+  color:rgba(43,48,43,.35);
+  text-shadow:none;
+  filter:none;
+}
+.fc-room .fc-photo-meta {
+  width:100%;
+  min-height:0;
+  margin:clamp(17px,2.35vw,31px) 0 0;
+  padding:0;
+  border:0;
+  color:rgba(42,48,42,.6);
+}
+.fc-room .fc-photo-meta-panel[hidden],
+.fc-room .fc-aside-panel[hidden] {
+  display:none!important;
+}
+.fc-room .fc-photo-meta-fields {
+  display:flex;
+  align-items:baseline;
+  flex-wrap:wrap;
+  gap:clamp(15px,2vw,32px);
+  padding:0;
+  margin:0;
+  color:rgba(45,51,45,.50);
+  font:400 clamp(10px,.83vw,12px)/1.8 var(--sans),sans-serif;
+  letter-spacing:.03em;
+}
+.fc-room .fc-photo-meta-note {
+  margin:clamp(5px,.8vw,12px) 0 0;
+  max-width:min(100%,580px);
+  font:400 clamp(12px,1vw,15px)/2 var(--serif),serif;
+  color:rgba(45,51,45,.68);
+  letter-spacing:.012em;
+}
+.fc-room .fc-asset-aside {
+  align-self:end;
+  min-width:0;
+  max-width:100%;
+  margin:0;
+  padding:0 0 clamp(17px,2.7vw,46px);
+  background:none;
+  border:0;
+  box-shadow:none;
+}
+.fc-room .fc-aside-panel {
+  display:block;
+  max-width:100%;
+  margin:0;
+  padding:0;
+  font:400 clamp(14px,1.12vw,18px)/2.15 var(--serif),serif;
+  letter-spacing:.012em;
+  color:rgba(44,49,44,.7);
+  text-align:left;
+  overflow-wrap:anywhere;
+}
+/* Instrument film remains exactly one Folly movie card wide. Its longer
+   description uses the same right-hand reading field as the photographs. */
+.fc-room .fc-instrument-wrap {
+  width:100%;
+  max-width:none;
+  margin:clamp(78px,12vw,168px) 0 clamp(70px,10vw,128px);
+  border:0;
+}
+.fc-room .fc-instrument-layout {
+  display:grid;
+  grid-template-columns:minmax(0,var(--fc-card-width)) minmax(0,1fr);
+  align-items:end;
+  gap:clamp(26px,3.5vw,75px);
+  width:100%;
+}
+.fc-room .fc-instrument-card.fc-card {
+  width:var(--fc-card-width)!important;
+  min-width:0!important;
+  max-width:100%!important;
+  margin:0;
+}
+.fc-room .fc-instrument-layout .fc-instrument-description {
+  align-self:end;
+  width:auto;
+  max-width:560px;
+  margin:0 0 clamp(11px,1.6vw,23px);
+  padding:0;
+  color:rgba(44,49,44,.70);
+  font:400 clamp(14px,1.12vw,18px)/2.15 var(--serif),serif;
+  letter-spacing:.012em;
+  text-align:left;
+}
+/* In the theatre the title and two-line invitation sit together at left. */
+.fc-room .fc-film-head {
+  display:flex;
+  flex-direction:column;
+  align-items:flex-start;
+  justify-content:flex-start;
+  gap:clamp(6px,.8vw,12px);
+  padding-right:clamp(23px,6vw,100px);
+  margin-bottom:clamp(22px,2.8vw,42px);
+}
+.fc-room .fc-film-head h3 {
+  margin:0;
+  font:400 clamp(25px,2.2vw,35px)/1.45 var(--serif),serif;
+  letter-spacing:.035em;
+}
+.fc-room .fc-film-head .fc-instruction {
+  flex:none;
+  width:auto;
+  max-width:500px;
+  margin:0;
+  padding:0;
+  font:400 clamp(12px,1.02vw,15px)/1.95 var(--serif),serif;
+  color:rgba(42,48,42,.67);
+  text-align:left;
+}
+.fc-room .fc-film-head .fc-instruction span {
+  color:rgba(42,48,42,.53);
+}
+.fc-room .fc-navigation {
+  position:relative;
+  display:block;
+  margin:0 clamp(23px,6vw,100px) clamp(20px,2.6vw,34px) var(--fc-film-left);
+  padding:0;
+  width:auto;
+  height:22px;
+  min-height:22px;
+  border:0;
+  background:none;
+}
+.fc-room .fc-navigation .fc-rail-index {
+  display:none!important;
+}
+.fc-room .fc-navigation .fc-slider {
+  display:block;
+  width:100%;
+  max-width:none;
+  min-width:0;
+  flex:none;
+  height:22px;
+  margin:0;
+  padding:0;
+  border:0;
+  background:transparent;
+  appearance:none;
+  -webkit-appearance:none;
+}
+.fc-room .fc-navigation .fc-slider::-webkit-slider-runnable-track {
+  height:1px;
+  background:rgba(40,47,41,.31);
+  box-shadow:none;
+}
+.fc-room .fc-navigation .fc-slider::-moz-range-track {
+  height:1px;
+  background:rgba(40,47,41,.31);
+  box-shadow:none;
+}
+/* The score has its own small title. The optional pointer lives below
+   the notation and timeline and stays switched off initially. */
+.fc-room .fc-inline-score-top {
+  display:flex;
+  justify-content:flex-start;
+  align-items:baseline;
+  margin:0 0 clamp(14px,2vw,27px);
+  padding:0;
+}
+.fc-room .fc-inline-score-top h3 {
+  display:block;
+  margin:0;
+  padding:0;
+  color:#293329;
+  font:400 clamp(24px,2.1vw,34px)/1.45 var(--serif),serif;
+  letter-spacing:.035em;
+}
+.fc-room .fc-score-controls-bottom {
+  display:flex;
+  justify-content:flex-end;
+  align-items:center;
+  flex-wrap:wrap;
+  gap:clamp(12px,2.5vw,32px);
+  width:100%;
+  margin:clamp(10px,1.6vw,21px) 0 0;
+  padding:0;
+}
+.fc-room .fc-score-controls-bottom .fc-pointer-switch{
+  margin:0;
+  padding:3px 0;
+}
+.fc-room .fc-score-controls-bottom .fc-score-minimal-actions{
+  display:flex;
+  align-items:center;
+  justify-content:flex-start;
+  gap:0;
+  width:auto;
+  margin-right:auto;
+}
+@media(max-width:850px){
+  .fc-room .fc-series-composition .fc-asset-pair {
+    grid-template-columns:minmax(0,min(100%,calc(var(--fc-card-width) * 1.5))) minmax(0,1fr);
+    gap:clamp(18px,3vw,35px);
+  }
+}
+@media(max-width:700px){
+  .fc-room .fc-series-heading h2,
+  .fc-room .fc-series-heading p{
+    font-size:clamp(17px,4.3vw,23px);
+  }
+  .fc-room .fc-series-composition .fc-asset-pair {
+    display:block;
+    width:100%;
+    margin:14px 0 0;
+  }
+  .fc-room .fc-series-composition .fc-asset-pair+.fc-asset-pair {
+    margin-top:clamp(58px,10vw,100px);
+  }
+  .fc-room .fc-photo-column{width:100%;}
+  .fc-room .fc-photo-column .fc-swap-controls{
+    padding:10px 0 0;
+  }
+  .fc-room .fc-photo-column .fc-swap-options {gap:12px;}
+  .fc-room .fc-photo-column .fc-swap-option {
+    font-size:clamp(17px,4.35vw,21px);
+  }
+  .fc-room .fc-photo-meta {
+    margin-top:18px;
+  }
+  .fc-room .fc-photo-meta-fields{
+    gap:14px;
+    font-size:10px;
+  }
+  .fc-room .fc-photo-meta-note{
+    font-size:12px;
+    line-height:1.9;
+  }
+  .fc-room .fc-asset-aside{
+    width:100%;
+    margin:24px 0 0;
+    padding:0;
+  }
+  .fc-room .fc-aside-panel {
+    font-size:13px;
+    line-height:2;
+  }
+  .fc-room .fc-instrument-wrap {
+    width:100%;
+    margin:69px 0 74px;
+  }
+  .fc-room .fc-instrument-layout {
+    display:block;
+  }
+  .fc-room .fc-instrument-card.fc-card {
+    width:var(--fc-card-width)!important;
+    min-width:0!important;
+    max-width:100%!important;
+  }
+  .fc-room .fc-instrument-layout .fc-instrument-description{
+    margin:24px 0 0;
+    width:100%;
+    max-width:100%;
+    font-size:13px;
+    line-height:2;
+  }
+  .fc-room .fc-film-head {
+    gap:7px;
+    padding:0 22px 0 var(--fc-film-left);
+    margin:22px 0 23px;
+  }
+  .fc-room .fc-film-head h3 {
+    font-size:clamp(23px,5vw,29px);
+  }
+  .fc-room .fc-film-head .fc-instruction {
+    flex:none;
+    max-width:100%;
+    font-size:11px;
+    text-align:left;
+  }
+  .fc-room .fc-navigation {
+    margin:0 22px 18px var(--fc-film-left);
+    height:20px;
+    min-height:20px;
+    border:0;
+    padding:0;
+  }
+  .fc-room .fc-navigation .fc-slider{
+    width:100%;
+    min-width:0;
+    height:20px;
+  }
+  .fc-room .fc-inline-score-top {
+    margin-bottom:15px;
+  }
+  .fc-room .fc-inline-score-top h3 {
+    font-size:24px;
+  }
+  .fc-room .fc-score-controls-bottom{
+    justify-content:flex-end;
+    gap:11px;
+    margin-top:12px;
+  }
+}
