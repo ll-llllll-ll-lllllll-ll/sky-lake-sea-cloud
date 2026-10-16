@@ -342,19 +342,21 @@
     '</div>';
   }
   function instrumentMarkup(s,si){
-    return '<div class="fc-instrument-wrap">'+
+    return '<section class="fc-instrument-wrap">'+
       '<div class="fc-subchapter"><h3>'+esc(term('moving'))+'</h3></div>'+
-      '<div class="fc-instrument-card fc-card" data-fc-instrument-card data-fc-series="'+si+'">'+
-        '<button class="fc-card-button" type="button" data-fc-action="instrument" data-fc-series="'+si+'" aria-label="'+esc(term('moving'))+'">'+
-          '<span class="fc-frame"><canvas class="fc-preview-frame" aria-hidden="true"></canvas>'+
-          '<video class="fc-preview" playsinline webkit-playsinline preload="none" muted aria-hidden="true"></video>'+
-          '<video class="fc-hover-video" playsinline webkit-playsinline preload="none" muted loop aria-hidden="true"></video>'+
-          '<span class="fc-card-open-sign">↗</span></span>'+
-          '<span class="fc-card-copy"><span class="fc-card-count">01 <small>/ 01</small></span>'+
-          '<span class="fc-card-name">'+esc(term('moving'))+'</span></span>'+
-        '</button></div>'+
-      '<p class="fc-instrument-description">'+esc(essay(si,'instrument'))+'</p>'+
-    '</div>';
+      '<div class="fc-instrument-layout">'+
+        '<div class="fc-instrument-card fc-card" data-fc-instrument-card data-fc-series="'+si+'">'+
+          '<button class="fc-card-button" type="button" data-fc-action="instrument" data-fc-series="'+si+'" aria-label="'+esc(term('moving'))+'">'+
+            '<span class="fc-frame"><canvas class="fc-preview-frame" aria-hidden="true"></canvas>'+
+            '<video class="fc-preview" playsinline webkit-playsinline preload="none" muted aria-hidden="true"></video>'+
+            '<video class="fc-hover-video" playsinline webkit-playsinline preload="none" muted loop aria-hidden="true"></video>'+
+            '<span class="fc-card-open-sign">↗</span></span>'+
+            '<span class="fc-card-copy"><span class="fc-card-count">01 <small>/ 01</small></span>'+
+            '<span class="fc-card-name">'+esc(term('moving'))+'</span></span>'+
+          '</button></div>'+
+        '<p class="fc-instrument-description">'+esc(essay(si,'instrument'))+'</p>'+
+      '</div>'+
+    '</section>';
   }
   function inlineScoreMarkup(s,si){
     var pointerLabel={
