@@ -1160,6 +1160,59 @@
   function wireInlineScore(si){
     var score=block(si)?.querySelector('[data-fc-inline-score]');
     if(!score)return;
+    if(si===0){
+      var knob=score.querySelector('.fc-mechanical-v2-knob');
+      var sheet=score.querySelector('[data-fc-mechanical-sheet]');
+      if(knob&&sheet){
+        var activePointer=null,dragBounds=null,pendingY=null,dragFrame=0;
+        var syncKnob=function(y){
+          if(!dragBounds)return;
+          // Geometry matches Ruin Archive's authored 14.55%→6.80%,
+          // with the film mapped in reverse (frame 15→frame 01).
+          var bottom=dragBounds.top+dragBounds.height*MECHANICAL_CFG.knobBottom/100;
+          var top=dragBounds.top+dragBounds.height*MECHANICAL_CFG.knobTop/100;
+          var stageProgress=clamp((bottom-y)/Math.max(1,bottom-top),0,1);
+          seekFilmFromScore(0,SERIES[0].endTime*(1-stageProgress));
+        };
+        var flushKnob=function(){dragFrame=0;if(pendingY!==null){syncKnob(pendingY);pendingY=null;}};
+        knob.addEventListener('pointerdown',function(ev){
+          if(ev.pointerType==='mouse'&&ev.button!==0)return;
+          activePointer=ev.pointerId;
+          dragBounds=sheet.getBoundingClientRect();
+          pendingY=ev.clientY;
+          try{knob.setPointerCapture(ev.pointerId);}catch(_){}
+          knob.classList.add('is-dragging');
+          flushKnob();ev.preventDefault();ev.stopPropagation();
+        });
+        knob.addEventListener('pointermove',function(ev){
+          if(ev.pointerId!==activePointer)return;
+          pendingY=ev.clientY;
+          if(!dragFrame)dragFrame=requestAnimationFrame(flushKnob);
+          ev.preventDefault();ev.stopPropagation();
+        });
+        var endKnob=function(ev){
+          if(ev.pointerId!==activePointer)return;
+          if(dragFrame){cancelAnimationFrame(dragFrame);dragFrame=0;}
+          flushKnob();
+          activePointer=null;dragBounds=null;
+          knob.classList.remove('is-dragging');
+          ev.stopPropagation();
+        };
+        knob.addEventListener('pointerup',endKnob);
+        knob.addEventListener('pointercancel',endKnob);
+        knob.addEventListener('lostpointercapture',function(){activePointer=null;dragBounds=null;knob.classList.remove('is-dragging');});
+        knob.addEventListener('keydown',function(ev){
+          var delta={ArrowUp:-1,ArrowRight:-1,ArrowDown:1,ArrowLeft:1}[ev.key];
+          var frame=sourceScoreFrame(inlineTime[0]/SERIES[0].endTime);
+          if(delta!=null)frame=clamp(frame+delta,1,15);
+          else if(ev.key==='Home')frame=15;
+          else if(ev.key==='End')frame=1;
+          else return;
+          seekFilmFromScore(0,SERIES[0].endTime*(15-frame)/14);
+          ev.preventDefault();ev.stopPropagation();
+        });
+      }
+    }
     var cluster=score.querySelector('.fc-score-cluster');
     if(cluster){
       cluster.addEventListener('pointerenter',function(ev){
@@ -1226,6 +1279,7 @@
         seekFilmFromScore(si,SERIES[si].endTime*ratio);
       }
       notationSurface.addEventListener('pointerdown',function(ev){
+        if(ev.target.closest('.fc-mechanical-v2-knob'))return;
         if(ev.pointerType==='mouse'&&ev.button!==0)return;
         scoreGesture=ev.pointerId;
         try{notationSurface.setPointerCapture(ev.pointerId);}catch(_){}
@@ -1782,6 +1836,7 @@
           if(!entry.isIntersecting)return;
           var si=Number(entry.target.dataset.fcSeriesBlock);
           prioritizePreviews(si,selection.focus[si]);
+          if(si===0)ensureMechanicalFrames();
         });
       },{rootMargin:'320px 0px'});
       SERIES.forEach(function(_,si){
@@ -1790,6 +1845,7 @@
       });
     }else{
       prioritizePreviews(0,0);
+      ensureMechanicalFrames();
     }
   }
   function wireEvents(){
