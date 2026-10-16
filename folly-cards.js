@@ -1706,7 +1706,7 @@
   }
   function wireEvents(){
     if(!isLive())return;
-    SERIES.forEach(function(_,i){wireRail(i);wireInstrument(i);wireInlineScore(i);wireOverlay(i);});
+    // Individual chapter nodes are wired by setupFollyChapter() after mount.
     scene.addEventListener('click',function(event){
       var node=event.target.closest('[data-fc-action]');
       if(!node)return;
