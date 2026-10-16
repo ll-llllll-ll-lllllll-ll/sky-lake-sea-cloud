@@ -242,9 +242,9 @@
   function assetPairMarkup(s,si,kind){
     var items=kind==='structure'?['full','back']:['instrument','body'];
     var switchNames={
-      zh:{structure:['建立','坍塌'],detail:['废墟乐器','废墟园林']},
-      en:{structure:['Construction','Collapse'],detail:['Ruin Instrument','Folly']},
-      ja:{structure:['構築','崩壊'],detail:['廃墟の楽器','フォリー']}
+      zh:{structure:['建立','坍塌'],detail:['废墟乐器','坍塌结构']},
+      en:{structure:['Construction','Collapse'],detail:['Ruin Instrument','Collapsed Structure']},
+      ja:{structure:['構築','崩壊'],detail:['廃墟の楽器','崩壊した構造']}
     };
     var names=(switchNames[state.lang]||switchNames.zh)[kind];
     var faces=items.map(function(k,index){
