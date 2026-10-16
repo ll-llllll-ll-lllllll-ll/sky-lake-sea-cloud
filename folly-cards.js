@@ -366,9 +366,11 @@
         '<h2>'+esc(chapterPart(si))+'</h2>'+
         '<p>'+esc(label(s.title))+'</p>'+
       '</div>'+
-      '<div class="fc-series-composition">'+assetPairMarkup(s,si,'structure')+
-        '<p class="fc-structure-description">'+esc(essay(si,'structure'))+'</p>'+
-        assetPairMarkup(s,si,'detail')+
+      '<div class="fc-series-composition">'+
+        '<div class="fc-artifact-reading">'+assetPairMarkup(s,si,'structure')+
+          '<p class="fc-structure-description">'+esc(essay(si,'structure'))+'</p>'+
+        '</div>'+
+        '<div class="fc-artifact-reading">'+assetPairMarkup(s,si,'detail')+'</div>'+
         instrumentMarkup(s,si)+
       '</div>'+
       '<div class="fc-film-head">'+
