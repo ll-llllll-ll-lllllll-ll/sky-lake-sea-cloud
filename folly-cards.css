@@ -2105,6 +2105,12 @@ body.fc-score-expanded{overflow:hidden!important;}
   margin-left:0;
   margin-right:0;
 }
+.fc-room .fc-swap-face .fc-artifact-image {
+  justify-content:flex-start;
+}
+.fc-room .fc-swap-face .fc-artifact-image img {
+  object-position:left center;
+}
 .fc-room .fc-instrument-wrap {
   margin-left:0;
   margin-right:0;
