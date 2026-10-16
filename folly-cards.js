@@ -241,11 +241,25 @@
 
   function assetPairMarkup(s,si,kind){
     var front=kind==='structure',items=front?['full','back']:['instrument','body'];
-    return '<div class="fc-asset-pair fc-asset-pair-'+kind+'">'+items.map(function(k){
-      return '<figure class="fc-artifact fc-artifact-'+k+'"><div class="fc-artifact-image">'+
-        '<img src="'+esc(s.assets[k])+'" loading="lazy" decoding="async" alt="'+esc(label(s.title)+' — '+term(k==='full'?'front':k))+'"></div>'+
-        '<figcaption><span>'+term(k==='full'?'front':k)+'</span><small>FOLLY '+s.roman+' / '+k.toUpperCase()+'</small></figcaption></figure>';
-    }).join('')+'</div>';
+    var order=items.map(function(k,index){
+      var title=term(k==='full'?'front':k);
+      return '<figure class="fc-artifact fc-swap-face fc-artifact-'+k+(index===0?' is-current':'')+'" data-fc-swap-face="'+index+'" aria-hidden="'+(index===0?'false':'true')+'">'+
+        '<div class="fc-artifact-image"><img src="'+esc(s.assets[k])+'" loading="lazy" decoding="async" alt="'+esc(label(s.title)+' — '+title)+'"></div>'+
+        '<figcaption><span>'+esc(title)+'</span><small>FOLLY '+s.roman+' / '+k.toUpperCase()+'</small></figcaption>'+
+      '</figure>';
+    }).join('');
+    var first=term(items[0]==='full'?'front':items[0]),second=term(items[1]);
+    return '<div class="fc-asset-pair fc-asset-pair-'+kind+'" data-fc-swap data-fc-series="'+si+'" data-fc-active="0" aria-label="'+esc(first+' / '+second)+'">'+
+      '<div class="fc-swap-shell"><div class="fc-swap-stage">'+order+'</div>'+
+        '<span class="fc-swap-fold" aria-hidden="true"><span class="fc-swap-fold-line"></span></span></div>'+
+      '<div class="fc-swap-controls">'+
+        '<span class="fc-swap-counter" data-fc-swap-counter>01 <small>/ 02</small></span>'+
+        '<div class="fc-swap-controls-right"><span class="fc-swap-up-next" data-fc-swap-up-next>'+esc(second)+'</span>'+
+          '<button type="button" data-fc-action="swap-image" data-fc-direction="-1" aria-label="'+esc(first+' / '+second)+'">←</button>'+
+          '<button type="button" data-fc-action="swap-image" data-fc-direction="1" aria-label="'+esc(first+' / '+second)+'">→</button>'+
+        '</div>'+
+      '</div>'+
+    '</div>';
   }
   function instrumentMarkup(s,si){
     return '<div class="fc-instrument-wrap">'+
