@@ -1727,218 +1727,289 @@
     var button=gate.querySelector('[data-fc-action="chapter-goto"]');
     var word=gate.querySelector('.fc-gate-word');
     var arrow=gate.querySelector('.fc-gate-arrow');
-    var direction=1,passed=false,pull=0,elastic=0,gesture=null,lastWheel=0;
-    var releaseTimer=0,springFrame=0,impulseFrame=0,adjusting=false;
-    var oldScrollY=window.scrollY||window.pageYOffset||0;
-    var WHEEL_LIMIT=150,TOUCH_LIMIT=86,MAX_ELASTIC=32;
-    var prefersReduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    function shiftViewport(amount){
-      if(Math.abs(amount)<.03)return;
-      adjusting=true;
-      window.scrollBy(0,amount);
-      // Any scroll event triggered by our own small rubber-band motion
-      // must never be mistaken for the reader changing direction.
-      requestAnimationFrame(function(){adjusting=false;});
+    // A reading seam, not a route/page transition. Both chapters stay in
+    // the same document, and crossing never replaces any DOM or seeks.
+    var TOUCH_LIMIT=102,WHEEL_LIMIT=160,SPRING_DISTANCE=33;
+    var previousY=window.scrollY||window.pageYOffset||0;
+    var drag=null,wheelPull=null,passed=0,coast=null;
+    var springId=0,coastTimer=0,wheelTimer=0,momentumId=0;
+    var programmaticUntil=0,lastWheelAt=0,direction=1;
+    var reduceMotion=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    function now(){return performance.now();}
+    function scrollY(){return window.scrollY||window.pageYOffset||0;}
+    function center(){
+      var r=gate.getBoundingClientRect();
+      return scrollY()+r.top+r.height*.5-(window.innerHeight||1)*.5;
     }
-    function show(value,active){
-      var amount=clamp(value,0,1);
-      gate.style.setProperty('--fc-gate-pull',amount.toFixed(3));
-      gate.classList.toggle('is-pulling',Boolean(active)&&amount>0);
+    function moveTo(y){
+      var distance=y-scrollY();
+      if(Math.abs(distance)<.1)return;
+      programmaticUntil=now()+66;
+      window.scrollTo(0,Math.max(0,y));
+      previousY=scrollY();
     }
-    function cancelSpring(){
-      if(springFrame){cancelAnimationFrame(springFrame);springFrame=0;}
-    }
-    function cancelImpulse(){
-      if(impulseFrame){cancelAnimationFrame(impulseFrame);impulseFrame=0;}
-    }
-    function setElastic(next,active){
-      pull=clamp(next,0,10000);
-      var limit=active==='touch'?TOUCH_LIMIT:WHEEL_LIMIT;
-      // Most travel stays in the browser, but the last few pixels move
-      // with a much lower ratio than the finger/wheel: REAL resistance.
-      var desired=MAX_ELASTIC*Math.pow(clamp(pull/limit,0,1),.85);
-      var delta=desired-elastic;
-      elastic=desired;
-      show(desired/MAX_ELASTIC,true);
-      shiftViewport(direction*delta);
-    }
-    function springBack(){
-      clearTimeout(releaseTimer);releaseTimer=0;
-      cancelSpring();
-      if(elastic<.1){elastic=0;pull=0;show(0,false);return;}
-      // A short spring back of <= 32 px, without moving a chapter or
-      // replacing the DOM. Users can interrupt it with their next gesture.
-      var origin=elastic,start=performance.now(),sign=direction;
-      gate.classList.remove('is-pulling');
-      function frame(now){
-        var t=clamp((now-start)/300,0,1),remaining=origin*Math.pow(1-t,3);
-        var step=remaining-elastic;
-        elastic=remaining;
-        shiftViewport(sign*step);
-        show(remaining/MAX_ELASTIC,false);
-        if(t<1)springFrame=requestAnimationFrame(frame);
-        else{springFrame=0;elastic=0;pull=0;show(0,false);}
-      }
-      springFrame=requestAnimationFrame(frame);
-    }
-    function enterNativeFlow(){
-      clearTimeout(releaseTimer);releaseTimer=0;
-      cancelSpring();
-      // The actual document has already followed the finger by up to
-      // 32px. Keep that displacement: undoing it would cause the "jump".
-      elastic=0;pull=0;passed=true;show(0,false);
-    }
-    function setDirection(d){
-      if(d!==1&&d!==-1)return;
-      if(direction===d)return;
-      if(elastic>.01)springBack();
+    function getDirection(value){return value>=0?1:-1;}
+    function labelFor(d){
+      if(d===direction)return;
       direction=d;
-      passed=false;
       gate.dataset.fcDirection=d>0?'down':'up';
-      var to=d>0?1:0;
-      var value=gate.getAttribute(d>0?'data-fc-word-down':'data-fc-word-up');
-      gate.dataset.fcTarget=String(to);
-      if(button){button.dataset.fcChapter=String(to);button.setAttribute('aria-label',value);}
-      if(word)word.textContent=value;
+      var target=d>0?1:0;
+      var message=gate.getAttribute(d>0?'data-fc-word-down':'data-fc-word-up');
+      gate.dataset.fcTarget=String(target);
+      if(button){
+        button.dataset.fcChapter=String(target);
+        button.setAttribute('aria-label',message);
+      }
+      if(word)word.textContent=message;
       if(arrow)arrow.textContent=d>0?'↓':'↑';
     }
-    function nearSeam(){
-      if(!isLive()||selection.open||prefersReduced)return false;
-      var r=gate.getBoundingClientRect(),h=window.innerHeight||1;
-      // Previous narrow mid-screen test was skipped by quick mobile flicks.
-      // Detect when the actual seam occupies the middle reading band.
-      return r.bottom>h*.13 && r.top<h*.87;
+    function annotate(amount,active){
+      gate.style.setProperty('--fc-gate-pull',clamp(amount,0,1).toFixed(3));
+      gate.classList.toggle('is-pulling',!!active&&amount>0);
+    }
+    function clearSpring(){if(springId){cancelAnimationFrame(springId);springId=0;}}
+    function clearMomentum(){if(momentumId){cancelAnimationFrame(momentumId);momentumId=0;}}
+    function clearTimers(){
+      clearTimeout(wheelTimer);wheelTimer=0;
+      clearTimeout(coastTimer);coastTimer=0;
+    }
+    function spring(from,to,finish){
+      clearSpring();
+      if(reduceMotion){moveTo(to);annotate(0,false);if(finish)finish();return;}
+      var t0=now();
+      function frame(t){
+        var p=clamp((t-t0)/320,0,1);
+        // A small soft overshoot gives a physical, not page-snapping, return.
+        var easing=1-Math.pow(1-p,3)*(Math.cos(p*3.4)*.07+.93);
+        moveTo(from+(to-from)*easing);
+        annotate((1-p)*Math.min(1,Math.abs(from-to)/SPRING_DISTANCE),false);
+        if(p<1)springId=requestAnimationFrame(frame);
+        else{springId=0;moveTo(to);annotate(0,false);if(finish)finish();}
+      }
+      springId=requestAnimationFrame(frame);
+    }
+    function inRange(d,y){
+      var distance=d*(center()-y);
+      // Arm before the centre of the small gap, in both directions.
+      return distance<160&&distance>-110;
+    }
+    function approaching(d,amount,y){
+      if(d!==1&&d!==-1)return false;
+      if(passed===d)return false;
+      var at=center(),checkpoint=at-d*49;
+      var projected=y+d*amount;
+      // Detect crossing the approach line even in a large wheel event.
+      return inRange(d,y)||
+        (d*(y-checkpoint)<0&&d*(projected-checkpoint)>=0);
+    }
+    function begin(mode,d){
+      clearSpring();clearMomentum();clearTimers();
+      coast=null;
+      labelFor(d);
+      var y=scrollY(),at=center(),checkpoint=at-d*49;
+      // If an input jumps into this seam from far away, consume only its
+      // approach distance as native travel, then begin the elastic stretch.
+      if(d*(checkpoint-y)>0)moveTo(checkpoint);
+      var base=scrollY();
+      var item={mode:mode,dir:d,base:base,pull:0,start:now(),
+        last:now(),events:0,elastic:0};
+      annotate(0,false);
+      return item;
+    }
+    function stretch(item,amount){
+      item.pull=Math.max(0,item.pull+amount);
+      var limit=item.mode==='touch'?TOUCH_LIMIT:WHEEL_LIMIT;
+      var ratio=clamp(item.pull/limit,0,1);
+      // Only the last 33px follow the input: this is actual scroll
+      // resistance, and it can be recovered on release.
+      item.elastic=SPRING_DISTANCE*Math.pow(ratio,.82);
+      moveTo(item.base+item.dir*item.elastic);
+      annotate(ratio,true);
+    }
+    function retreat(item){
+      if(!item)return;
+      var from=scrollY(),to=item.base;
+      annotate(0,false);
+      spring(from,to);
+    }
+    function releasePass(item,extra){
+      passed=item.dir;
+      clearTimers();clearSpring();
+      annotate(0,false);
+      // Never jump to the next part: both chapters are already in the DOM.
+      // Continue directly from the stretched position.
+      if(extra>0)moveTo(scrollY()+item.dir*Math.min(extra,35));
     }
     function wheel(event){
-      if(!event.cancelable||!isLive()||selection.open||prefersReduced)return;
-      var d=Math.sign(event.deltaY);if(!d)return;
-      if(!nearSeam()){if(elastic>.01)springBack();return;}
+      if(reduceMotion||!isLive()||selection.open||!event.cancelable)return;
       if(event.target?.closest?.('input,textarea,select,[data-fc-rail]'))return;
-      if(d!==direction){
-        setDirection(d);
-        // Reversing across the seam is never trapped or snapped.
-        return;
+      var delta=event.deltaY*(event.deltaMode===1?16:event.deltaMode===2?window.innerHeight:1);
+      if(Math.abs(delta)<.1)return;
+      var d=getDirection(delta),time=now(),amount=Math.min(Math.abs(delta),110);
+      lastWheelAt=time;
+      if(coast){coast=null;clearTimeout(coastTimer);}
+      if(passed===d)return;
+      if(passed&&passed!==d)passed=0;
+      if(!wheelPull){
+        if(!approaching(d,amount,scrollY()))return;
+        wheelPull=begin('wheel',d);
       }
-      if(passed)return;
-      cancelSpring();cancelImpulse();
-      var t=performance.now();
-      if(t-lastWheel>550&&elastic<.1)pull=0;
-      lastWheel=t;
-      clearTimeout(releaseTimer);
-      var factor=event.deltaMode===1?18:event.deltaMode===2?window.innerHeight:1;
-      var step=Math.min(Math.abs(event.deltaY)*factor,90);
-      if(pull+step>=WHEEL_LIMIT){
-        event.preventDefault();
-        setElastic(WHEEL_LIMIT,'wheel');
-        enterNativeFlow();
-        // A small onward movement makes the release perceptible, while the
-        // next wheel events remain entirely native and uninterrupted.
-        shiftViewport(d*Math.min(step*.35,26));
+      if(wheelPull.dir!==d){
+        var previous=wheelPull;wheelPull=null;retreat(previous);
         return;
       }
       event.preventDefault();
-      setElastic(pull+step,'wheel');
-      releaseTimer=window.setTimeout(springBack,360);
-    }
-    function touchstart(event){
-      if(event.touches.length!==1||selection.open)return;
-      if(event.target?.closest?.('button,a,input,textarea,select,[data-fc-rail]')){
-        gesture=null;return;
-      }
-      cancelImpulse();
-      gesture={y:event.touches[0].clientY,x:event.touches[0].clientX,
-        active:false,following:false,velocity:0};
-    }
-    function touchmove(event){
-      if(!gesture||event.touches.length!==1||prefersReduced)return;
-      var x=event.touches[0].clientX,y=event.touches[0].clientY;
-      var delta=gesture.y-y;gesture.y=y;
-      if(!delta)return;
-      if(gesture.following){
-        if(event.cancelable)event.preventDefault();
-        shiftViewport(delta);
-        gesture.velocity=gesture.velocity*.55+delta*.45;
+      var item=wheelPull;
+      if(time-item.last>440&&item.events>0){
+        // A quiet pause makes a second gesture deliberate rather than
+        // counting macOS trackpad inertial ticks as renewed pressure.
+        wheelPull=null;retreat(item);
         return;
       }
-      if(!gesture.active){
-        if(!nearSeam())return;
-        if(Math.abs(x-gesture.x)>Math.abs(delta)*1.5)return;
-        if(Math.sign(delta)!==direction){
-          setDirection(Math.sign(delta));
-          // The first reverse movement remains under native scrolling.
-          return;
-        }
-        if(passed)return;
-        cancelSpring();
-        gesture.active=true;
-        pull=0;
+      item.last=time;item.events++;
+      stretch(item,amount);
+      if(item.pull>=WHEEL_LIMIT&&item.events>=2&&time-item.start>=70){
+        wheelPull=null;releasePass(item,Math.abs(delta)-amount);
+        return;
       }
+      clearTimeout(wheelTimer);
+      wheelTimer=window.setTimeout(function(){
+        if(wheelPull===item){wheelPull=null;retreat(item);}
+      },245);
+    }
+    function touchStart(event){
+      if(reduceMotion||event.touches.length!==1||selection.open)return;
+      if(event.target?.closest?.('button,a,input,textarea,select,[data-fc-rail]'))return;
+      clearMomentum();
+      // A fresh touch can deliberately push past an inertial hold.
+      if(coast){clearTimeout(coastTimer);coast=null;}
+      drag={y:event.touches[0].clientY,x:event.touches[0].clientX,
+        started:now(),item:null,following:false,velocity:0};
+    }
+    function touchMove(event){
+      if(!drag||event.touches.length!==1||reduceMotion)return;
+      var x=event.touches[0].clientX,y=event.touches[0].clientY;
+      var delta=drag.y-y;
+      drag.y=y;
+      if(Math.abs(delta)<.2)return;
+      var d=getDirection(delta);
+      if(drag.following){
+        if(event.cancelable)event.preventDefault();
+        moveTo(scrollY()+delta);
+        drag.velocity=drag.velocity*.55+delta*.45;
+        return;
+      }
+      if(!drag.item){
+        if(Math.abs(x-drag.x)>Math.abs(delta)*1.7)return;
+        if(passed===d||!approaching(d,Math.abs(delta)*1.2,scrollY()))return;
+        if(passed&&passed!==d)passed=0;
+        if(!event.cancelable)return;
+        drag.item=begin('touch',d);
+        drag.started=now();
+      }
+      var item=drag.item;
       if(!event.cancelable)return;
       event.preventDefault();
-      if(Math.sign(delta)!==direction){
-        // Pushing back before the threshold actually unwinds the stretch.
-        setElastic(Math.max(0,pull-Math.abs(delta)*1.4),'touch');
+      if(item.dir!==d){
+        // Pulling backwards unwinds the tension in place.
+        stretch(item,-Math.abs(delta)*1.3);
         return;
       }
-      if(pull+Math.abs(delta)>=TOUCH_LIMIT){
-        setElastic(TOUCH_LIMIT,'touch');
-        enterNativeFlow();
-        gesture.following=true;
-        gesture.velocity=delta;
-        shiftViewport(direction*Math.min(Math.abs(delta)*.25,22));
-        return;
+      stretch(item,Math.abs(delta));
+      if(item.pull>=TOUCH_LIMIT&&now()-drag.started>=145){
+        releasePass(item,0);
+        drag.item=null;
+        drag.following=true;
+        drag.velocity=delta;
       }
-      setElastic(pull+Math.abs(delta),'touch');
     }
-    function touchend(){
-      if(!gesture)return;
-      if(gesture.following){
-        // Only a little continuation; don't synthesize another page move.
-        var velocity=gesture.velocity,distance=clamp(velocity*1.8,-54,54);
-        if(Math.abs(distance)>5&&!prefersReduced){
-          cancelImpulse();
-          var start=performance.now(),previous=0;
-          function momentum(now){
-            var t=clamp((now-start)/240,0,1);
-            var advanced=distance*(1-Math.pow(1-t,3));
-            shiftViewport(advanced-previous);previous=advanced;
-            if(t<1)impulseFrame=requestAnimationFrame(momentum);
-            else impulseFrame=0;
-          }
-          impulseFrame=requestAnimationFrame(momentum);
+    function touchEnd(){
+      if(!drag)return;
+      if(drag.item)retreat(drag.item);
+      else if(drag.following&&!reduceMotion&&Math.abs(drag.velocity)>3){
+        // Native inertia was cancelled by the drag handler. Supply just
+        // a short decaying continuation, without an anchored scroll jump.
+        var v=clamp(drag.velocity*3.2,-110,110),from=scrollY(),time=now();
+        clearMomentum();
+        function frame(t){
+          var p=clamp((t-time)/275,0,1);
+          moveTo(from+v*(1-Math.pow(1-p,3)));
+          if(p<1)momentumId=requestAnimationFrame(frame);
+          else momentumId=0;
         }
-      }else if(gesture.active){
-        springBack();
+        momentumId=requestAnimationFrame(frame);
       }
-      gesture=null;
+      drag=null;
+    }
+    function holdInertia(d){
+      // Safari's compositor can keep scrolling AFTER touchend, with no
+      // touchmove or wheel events. Catch that one-flick momentum here.
+      // This is why earlier versions could be skipped with one swipe.
+      if(coast)return;
+      clearSpring();
+      var checkpoint=center()-d*49;
+      coast={dir:d,base:checkpoint,last:now()};
+      labelFor(d);
+      moveTo(checkpoint);
+      annotate(.28,false);
+      function settle(){
+        if(!coast)return;
+        var base=coast.base;
+        coast=null;coastTimer=0;
+        spring(scrollY(),base,function(){annotate(0,false);});
+      }
+      coastTimer=window.setTimeout(settle,165);
     }
     function onScroll(){
-      var y=window.scrollY||window.pageYOffset||0;
-      var dy=y-oldScrollY;oldScrollY=y;
-      if(adjusting||gesture?.active||elastic>.01)return;
-      if(!nearSeam()){
-        passed=false;return;
+      var y=scrollY(),dy=y-previousY,old=previousY;
+      previousY=y;
+      if(reduceMotion||!isLive()||selection.open)return;
+      if(now()<programmaticUntil || drag?.item || drag?.following || wheelPull)return;
+      var d=Math.sign(dy);
+      if(!d)return;
+      if(passed===d){
+        if(d*(y-center())>190)passed=0;
+        return;
       }
-      if(Math.abs(dy)>4&&Math.sign(dy)!==direction)setDirection(Math.sign(dy));
+      if(passed&&passed!==d)passed=0;
+      // Do not treat a fresh wheel event as inertial page scrolling.
+      if(now()-lastWheelAt<100)return;
+      if(coast){
+        if(d===coast.dir){
+          moveTo(coast.base);
+          clearTimeout(coastTimer);
+          coastTimer=window.setTimeout(function(){
+            if(coast){var base=coast.base;coast=null;spring(scrollY(),base);}
+          },165);
+        }else{
+          coast=null;clearTimeout(coastTimer);
+        }
+        return;
+      }
+      // Fall back when a rapid mobile flick crosses the seam entirely
+      // between compositor scroll frames.
+      var at=center(),checkpoint=at-d*49;
+      if(d*(old-checkpoint)<0 && d*(y-checkpoint)>=0)holdInertia(d);
+      else if(inRange(d,y)&&Math.abs(dy)>54)holdInertia(d);
     }
-    window.addEventListener('scroll',onScroll,{passive:true});
     window.addEventListener('wheel',wheel,{capture:true,passive:false});
-    window.addEventListener('touchstart',touchstart,{capture:true,passive:true});
-    window.addEventListener('touchmove',touchmove,{capture:true,passive:false});
-    window.addEventListener('touchend',touchend,{capture:true,passive:true});
-    window.addEventListener('touchcancel',touchend,{capture:true,passive:true});
+    window.addEventListener('touchstart',touchStart,{capture:true,passive:true});
+    window.addEventListener('touchmove',touchMove,{capture:true,passive:false});
+    window.addEventListener('touchend',touchEnd,{capture:true,passive:true});
+    window.addEventListener('touchcancel',touchEnd,{capture:true,passive:true});
+    window.addEventListener('scroll',onScroll,{passive:true});
     gateDirectionCleanup=function(){
-      clearTimeout(releaseTimer);
-      cancelSpring();cancelImpulse();
-      window.removeEventListener('scroll',onScroll);
+      clearTimers();clearSpring();clearMomentum();
       window.removeEventListener('wheel',wheel,true);
-      window.removeEventListener('touchstart',touchstart,true);
-      window.removeEventListener('touchmove',touchmove,true);
-      window.removeEventListener('touchend',touchend,true);
-      window.removeEventListener('touchcancel',touchend,true);
+      window.removeEventListener('touchstart',touchStart,true);
+      window.removeEventListener('touchmove',touchMove,true);
+      window.removeEventListener('touchend',touchEnd,true);
+      window.removeEventListener('touchcancel',touchEnd,true);
+      window.removeEventListener('scroll',onScroll);
       gate.classList.remove('is-pulling');
     };
   }
+
   // Click navigation is optional; crossing the elastic seam never invokes
   // this function. Both Folly chapters are already present in the same page.
   function switchFollyChapter(target){
