@@ -2957,3 +2957,27 @@ body.fc-score-expanded{overflow:hidden!important;}
     margin-top:12px;
   }
 }
+
+
+/* Keep the secondary reading field spacious on smaller laptop screens. */
+@media(min-width:701px) and (max-width:1000px){
+  .fc-room .fc-series-composition .fc-asset-pair{
+    display:block;
+    width:100%;
+  }
+  .fc-room .fc-photo-column{
+    width:min(100%,calc(var(--fc-card-width) * 1.5));
+  }
+  .fc-room .fc-asset-aside{
+    width:min(100%,580px);
+    margin-top:clamp(20px,3vw,36px);
+    padding:0;
+  }
+  .fc-room .fc-instrument-layout{
+    display:block;
+  }
+  .fc-room .fc-instrument-layout .fc-instrument-description{
+    max-width:580px;
+    margin:clamp(20px,3vw,36px) 0 0;
+  }
+}
