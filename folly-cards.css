@@ -1572,131 +1572,160 @@ body.fc-score-expanded{overflow:hidden!important;}
 }
 
 
-/* v9 — one photograph at a time, the second folded behind.
-   Every frame has a viewport-entered 7-second clock, advanced in JS. */
-.fc-room .fc-series-composition .fc-asset-pair{
-  position:relative;display:block;isolation:isolate;
+/* v10 — quiet picture switcher: one photograph, two dots, two arrows.
+   The photographic frame remains 150% as wide as a Folly film card. */
+.fc-room .fc-series-composition .fc-asset-pair {
+  position:relative;
+  display:block;
+  isolation:isolate;
   width:min(100%,calc(var(--fc-card-width) * 1.5));
-  max-width:none;margin:clamp(18px,2vw,32px) auto 0;padding:0;
+  max-width:none;
+  margin:clamp(18px,2vw,32px) auto 0;
+  padding:0;
 }
-.fc-room .fc-swap-shell{
-  position:relative;display:block;width:100%;padding-right:clamp(14px,2vw,27px);
-  perspective:950px;box-sizing:border-box;
+.fc-room .fc-swap-stage {
+  position:relative;
+  display:block;
+  width:100%;
+  aspect-ratio:var(--fc-video-aspect,16 / 9);
+  min-height:0;
+  overflow:hidden;
+  background:rgba(202,204,196,.11);
+  border:1px solid rgba(38,42,39,.12);
 }
-.fc-room .fc-swap-stage{
-  position:relative;z-index:2;display:block;width:100%;
-  aspect-ratio:var(--fc-video-aspect,16 / 9);min-height:0;overflow:hidden;
-  border:1px solid rgba(38,42,39,.2);
-  background:rgba(202,204,196,.15);
-  box-shadow:0 12px 32px rgba(22,26,22,.05);
-}
-.fc-room .fc-swap-face{
-  position:absolute;inset:0;z-index:0;display:grid;
-  grid-template-rows:minmax(0,1fr) auto;
-  width:100%;height:100%;min-width:0;min-height:0;margin:0;padding:0;
-  opacity:0;pointer-events:none;transform:translateZ(0);
+.fc-room .fc-swap-face {
+  position:absolute;
+  inset:0;
+  z-index:0;
+  display:block;
+  width:100%;
+  height:100%;
+  min-width:0;
+  min-height:0;
+  margin:0;
+  padding:0;
+  opacity:0;
+  pointer-events:none;
   transition:opacity 2.3s cubic-bezier(.35,.03,.74,1);
 }
-.fc-room .fc-swap-face.is-current{z-index:2;opacity:1;transition:none;}
-.fc-room .fc-swap-face.is-fading{
-  z-index:4;opacity:0;transition:opacity 2.3s cubic-bezier(.35,.03,.74,1);
+.fc-room .fc-swap-face.is-current {
+  z-index:2;
+  opacity:1;
+  transition:none;
 }
-.fc-room .fc-swap-face .fc-artifact-image{
-  position:relative;display:flex;align-items:center;justify-content:center;
-  width:100%;height:100%;min-height:0;overflow:hidden;
-  padding:clamp(8px,1vw,18px);box-sizing:border-box;background:transparent;
+.fc-room .fc-swap-face.is-fading {
+  z-index:4;
+  opacity:0;
+  transition:opacity 2.3s cubic-bezier(.35,.03,.74,1);
 }
-.fc-room .fc-swap-face .fc-artifact-image img{
-  display:block;width:100%;height:100%;max-width:100%;max-height:100%;
-  object-fit:contain;object-position:center;filter:none;
+.fc-room .fc-swap-face .fc-artifact-image {
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  width:100%;
+  height:100%;
+  min-height:0;
+  overflow:hidden;
+  padding:clamp(8px,1vw,18px);
+  box-sizing:border-box;
+  background:transparent;
 }
-.fc-room .fc-swap-face figcaption{
-  display:flex;justify-content:space-between;align-items:baseline;gap:10px;
-  width:100%;min-height:35px;margin:0;padding:7px 12px;box-sizing:border-box;
-  border-top:1px solid rgba(45,48,42,.1);background:rgba(238,237,231,.9);
-  color:#393d35;font:400 12px/1.4 var(--serif),serif;
+.fc-room .fc-swap-face .fc-artifact-image img {
+  display:block;
+  width:100%;
+  height:100%;
+  max-width:100%;
+  max-height:100%;
+  object-fit:contain;
+  object-position:center;
+  filter:none;
 }
-.fc-room .fc-swap-face figcaption small{
-  color:rgba(43,45,40,.46);font:9px/1.35 var(--sans),sans-serif;letter-spacing:.085em;
+.fc-room .fc-swap-controls {
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:clamp(22px,4vw,47px);
+  padding:16px 0 0;
+  min-height:38px;
+  color:#3b413b;
 }
-.fc-room .fc-swap-fold{
-  position:absolute;z-index:1;top:9%;
-  left:calc(100% - clamp(14px,2vw,27px) - 5px);
-  width:clamp(22px,3.2vw,45px);height:82%;display:block;overflow:hidden;
-  border:1px solid rgba(40,43,39,.22);background:#b8b9b1;
-  box-shadow:7px 8px 20px rgba(25,28,26,.12);
-  transform:perspective(170px) rotateY(51deg);
-  transform-origin:0 50%;pointer-events:none;
+.fc-room .fc-swap-arrow {
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  flex:0 0 auto;
+  width:32px;
+  height:30px;
+  padding:0;
+  color:rgba(41,45,41,.57);
+  background:transparent;
+  border:0;
+  font:400 18px/1 var(--serif),serif;
+  cursor:pointer;
+  transition:color .2s ease;
 }
-.fc-room .fc-swap-fold img{
-  display:block;width:100%;height:100%;object-fit:cover;object-position:0 50%;
-  opacity:.82;filter:brightness(.85) saturate(.76);
+.fc-room .fc-swap-arrow:hover {color:rgba(41,45,41,.95);}
+.fc-room .fc-swap-dots {
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  gap:17px;
 }
-.fc-room .fc-swap-fold-line{
-  position:absolute;z-index:1;top:0;bottom:0;left:2px;width:1px;
-  background:rgba(241,241,233,.58);box-shadow:2px 0 8px rgba(20,20,20,.22);
+.fc-room .fc-swap-dot {
+  position:relative;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  width:23px;
+  height:28px;
+  margin:0;
+  padding:0;
+  background:transparent;
+  border:0;
+  cursor:pointer;
 }
-.fc-room .fc-swap-controls{
-  display:flex;align-items:baseline;justify-content:space-between;gap:20px;
-  min-height:46px;padding:13px clamp(14px,2vw,27px) 0 0;box-sizing:border-box;
-  color:#343934;
+.fc-room .fc-swap-dot span {
+  display:block;
+  width:5px;
+  height:5px;
+  border:1px solid rgba(45,51,45,.44);
+  border-radius:50%;
+  background:transparent;
+  transition:background .25s,border-color .25s,transform .25s;
 }
-.fc-room .fc-swap-counter{
-  display:inline-flex;align-items:baseline;gap:5px;min-width:77px;
-  white-space:nowrap;font:400 22px/1 var(--serif),serif;
+.fc-room .fc-swap-dot.is-active span {
+  background:#3f4942;
+  border-color:#3f4942;
+  transform:scale(1.22);
 }
-.fc-room .fc-swap-counter small{
-  font:400 10px/1 var(--sans),sans-serif;color:rgba(41,44,40,.42);
+.fc-room .fc-swap-dot:hover span {border-color:#3f4942;}
+.fc-room .fc-swap-dot:focus-visible,
+.fc-room .fc-swap-arrow:focus-visible {
+  outline:1px solid rgba(40,49,42,.76);
+  outline-offset:2px;
 }
-.fc-room .fc-swap-controls-right{
-  display:flex;align-items:center;justify-content:flex-end;gap:clamp(10px,1.65vw,22px);min-width:0;
-}
-.fc-room .fc-swap-up-next{
-  margin-right:9px;font:400 10px/1.5 var(--sans),sans-serif;
-  color:rgba(43,46,41,.5);letter-spacing:.035em;
-}
-.fc-room .fc-swap-controls button{
-  display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto;
-  width:31px;height:31px;padding:0;border:1px solid rgba(42,45,40,.25);
-  border-radius:50%;background:transparent;color:#353b36;
-  font:400 16px/1 var(--sans),sans-serif;cursor:pointer;
-  transition:border-color .2s,background .2s;
-}
-.fc-room .fc-swap-controls button:hover{
-  border-color:rgba(42,45,40,.75);background:rgba(36,41,37,.045);
-}
-.fc-room .fc-swap-controls button:focus-visible{
-  outline:1px solid #3f4a44;outline-offset:3px;
-}
-/* The instrument movie now has exactly the same physical frame as the
-   Folly movie fragments, even when the instrument source aspect differs. */
-.fc-room .fc-instrument-card.fc-card{
+.fc-room .fc-instrument-card.fc-card {
   width:var(--fc-card-width) !important;
   min-width:var(--fc-card-width) !important;
   max-width:var(--fc-card-width) !important;
   margin-left:0;
 }
-.fc-room .fc-instrument-card.fc-card .fc-frame{
+.fc-room .fc-instrument-card.fc-card .fc-frame {
   aspect-ratio:var(--fc-video-aspect,16 / 9);
 }
-@media(max-width:700px){
-  .fc-room .fc-series-composition .fc-asset-pair{
-    width:100%;margin:14px auto 0;
+@media(max-width:700px) {
+  .fc-room .fc-series-composition .fc-asset-pair {
+    width:100%;
+    margin:14px auto 0;
   }
-  .fc-room .fc-swap-shell{padding-right:15px;}
-  .fc-room .fc-swap-stage{aspect-ratio:1.12 / 1;}
-  .fc-room .fc-swap-fold{left:calc(100% - 19px);width:26px;}
-  .fc-room .fc-swap-face .fc-artifact-image{padding:9px;}
-  .fc-room .fc-swap-face figcaption{
-    padding:6px 9px;min-height:31px;font-size:10px;
-  }
-  .fc-room .fc-swap-face figcaption small{font-size:7px;}
-  .fc-room .fc-swap-counter{font-size:20px;min-width:65px;}
-  .fc-room .fc-swap-controls{padding-top:10px;}
-  .fc-room .fc-swap-up-next{font-size:9px;margin-right:0;}
-  .fc-room .fc-swap-controls-right{gap:9px;}
-  .fc-room .fc-swap-controls button{width:27px;height:27px;font-size:14px;}
+  .fc-room .fc-swap-stage {aspect-ratio:1.12 / 1;}
+  .fc-room .fc-swap-face .fc-artifact-image {padding:9px;}
+  .fc-room .fc-swap-controls {gap:19px;padding:11px 0 0;}
+  .fc-room .fc-swap-arrow {width:29px;height:30px;font-size:17px;}
+  .fc-room .fc-swap-dots {gap:13px;}
+  .fc-room .fc-swap-dot {width:22px;}
 }
-@media(prefers-reduced-motion:reduce){
-  .fc-room .fc-swap-face,.fc-room .fc-swap-face.is-fading{transition:none!important;}
+@media(prefers-reduced-motion:reduce) {
+  .fc-room .fc-swap-face,
+  .fc-room .fc-swap-face.is-fading {transition:none!important;}
 }
