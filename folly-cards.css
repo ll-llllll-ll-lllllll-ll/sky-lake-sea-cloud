@@ -3656,8 +3656,8 @@ body.fc-score-expanded{overflow:hidden!important;}
 /* The score now has no independent playback indicator or range control.
    Keep only the small pointer/fold controls beneath its actual artwork. */
 .fc-room .fc-inline-score .fc-score-controls-bottom {
-  margin:clamp(12px,2vw,26px) 0 0;
-  width:100%;
+  margin:clamp(12px,2vw,26px) auto 0;
+  width:min(640px,100%);
   justify-content:flex-end;
 }
 @media(max-width:700px){
