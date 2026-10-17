@@ -93,7 +93,6 @@
     zh:{
       heads:['园林构成','废墟乐器','废墟剧场'],
       stage:{structure:[['建造','下垂','坍缩'],['垂立','松动','失衡','倒塌']],detail:[['置放','搏动','熔毁'],['悬挂','感应','摔碎']]},
-      still:'取自影像末段的定格；可替换为独立阶段照片。',
       works:[
         {garden:'死水心室的构造取自沉墟中失去流动的水域：爆裂的储水形态、残余的心室结构与一潭死水彼此牵连。水体缓慢流失，承托随之消退；原本依靠内部平衡维系的材料在自重中挤压、碎裂、向内收缩，最后仍留在死水里继续腐蚀。',
          instrument:'「锈血心脏」由锈蚀金属碎片与玻璃罩构成，嵌在心室的钢筋与钢索连接之中。心室的下沉牵动滑轮与泵片，将缓慢的坍塌转为急促的敲击；每一次搏动都借来园林衰败的力量，同时耗损维持自身运作的结构。',
@@ -172,7 +171,6 @@
     en:{
       heads:['The Garden','Ruin Instrument','Ruin Theatre'],
       stage:{structure:[['Construction','Sagging','Inward Collapse'],['Upright','Loosening','Imbalance','Collapse']],detail:[['Placement','Pulsation','Meltdown'],['Suspension','Sensing','Shattering']]},
-      still:'A still from the final passage of the film; an independent stage photograph may replace it.',
       works:[
         {garden:'The stagnant-heart structure grows from a reservoir shell, the remains of a heart chamber and a pool of still water. As the water drains, internal support gives way. Under its own weight the construction compresses, fractures and contracts, leaving parts immersed and exposed to further corrosion.',
          instrument:'The Rust-Blood Heart encloses pieces of corroded metal in glass, connected to the ruined chamber by steel cables, pulleys and a pump blade. The chamber’s slow descent is transmitted as increasingly rapid knocks: each beat borrows energy from the garden’s collapse while consuming the instrument itself.',
@@ -251,7 +249,6 @@
     ja:{
       heads:['園林の構成','廃墟の楽器','廃墟劇場'],
       stage:{structure:[['構築','垂下','圧潰'],['直立','緩み','均衡喪失','倒壊']],detail:[['設置','鼓動','溶融崩壊'],['懸架','感応','落下破砕']]},
-      still:'映像終盤から切り出した静止画。各段階の写真と差し替え可能。',
       works:[
         {garden:'「死水心室」は破裂した貯水槽の形態、心室の残存構造、淀んだ水から組み立てられる。水が失われるにつれ内部の支持も消え、構造は自重で押し潰され、割れ、内側へと縮む。残った部分は水に浸されたまま腐食を続ける。',
          instrument:'錆びた金属片をガラスに封じた「錆血の心臓」は、鋼索と滑車、ポンプ片を通じて心室につながる。ゆっくりした沈下が急速な打撃へと変わり、一度の鼓動ごとに園林の崩壊から力を借りながら、自らの構造も消耗する。',
