@@ -551,22 +551,9 @@
   // Chapter II is deliberately not constructed until the reader crosses
   // this boundary. No photograph, mask or teaser asset belongs here.
   var activeChapter=0,lastFollyIntro='',chapterChanging=false;
-  function chapterGateMarkup(from){
-    var target=from===0?1:0;
-    var phrases={
-      zh:['继续阅读废墟园林·其二','阅读废墟园林·其一'],
-      en:['Continue reading Folly · Part Two','Return to Folly · Part One'],
-      ja:['フォリー・其の二を続けて読む','フォリー・其の一を読む']
-    };
-    var words=(phrases[state.lang]||phrases.zh)[from];
-    var arrow=target===1?'↓':'↑';
-    var ups=(phrases[state.lang]||phrases.zh)[1];
-    return '<section class="fc-chapter-gate" data-fc-chapter-gate data-fc-target="'+target+'" data-fc-direction="down" '+
-        'data-fc-word-down="'+esc(words)+'" data-fc-word-up="'+esc(ups)+'">'+
-      '<button type="button" class="fc-gate-continue" data-fc-action="chapter-goto" data-fc-chapter="1" aria-label="'+esc(words)+'">'+
-        '<span class="fc-gate-word">'+esc(words)+'</span><span class="fc-gate-arrow" aria-hidden="true">'+arrow+'</span>'+
-      '</button>'+
-    '</section>';
+  // A short, unadorned interval: no intermediary page or teaser image.
+  function chapterGateMarkup(){
+    return '<div class="fc-chapter-seam" data-fc-chapter-seam aria-hidden="true"></div>';
   }
   function chapterBodyMarkup(){
     // One uninterrupted document: both chapters have stable positions.
