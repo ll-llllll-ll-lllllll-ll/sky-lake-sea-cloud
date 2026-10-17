@@ -2179,8 +2179,9 @@
       var chapterLink=event.target.closest('[data-fc-chapter-link]');
       if(chapterLink){
         event.preventDefault();
-        var target=block(Number(chapterLink.dataset.fcChapterLink));
-        target?.scrollIntoView({behavior:'smooth',block:'start'});
+        var wanted=Number(chapterLink.dataset.fcChapterLink);
+        if(wanted===1)enterNextFolly();
+        else block(0)?.scrollIntoView({behavior:'smooth',block:'start'});
         return;
       }
       var node=event.target.closest('[data-fc-action]');
