@@ -397,6 +397,7 @@
     hoverFilm.card?.style.removeProperty('--fc-card-progress');
     if(hoverFilm.si>=0)block(hoverFilm.si)?.querySelector('[data-fc-slider]')?.classList.remove('is-hover-progress');
     var previousSeries=hoverFilm.si;
+    if(previousSeries>=0)railOriginLocks[previousSeries]=false;
     hoverFilm.card=null;hoverFilm.video=null;
     hoverFilm.si=-1;hoverFilm.index=-1;hoverFilm.kind='film';
     hoverFilm.active=false;hoverFilm.scrubbing=false;hoverFilm.sliderHover=false;
