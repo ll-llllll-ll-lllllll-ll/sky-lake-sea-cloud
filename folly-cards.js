@@ -346,9 +346,40 @@
   // a different off-screen video so hovering cannot disturb decoding.
   var hoverFilm={
     card:null,video:null,si:-1,index:-1,kind:'film',timer:0,leaveTimer:0,
-    request:0,active:false,scrubbing:false,sliderHover:false,seekFraction:null
+    request:0,active:false,scrubbing:false,sliderHover:false,seekFraction:null,followRail:false
   };
+  var hoverRailMotion=0;
+  function stopHoverRailMotion(){if(hoverRailMotion){cancelAnimationFrame(hoverRailMotion);hoverRailMotion=0;}}
+  // A time-driven travelling film strip. A single RAF follows media time;
+  // each frame advances the *real* horizontal scroll position, not a fake transform.
+  function followHoverFilm(){
+    if(hoverRailMotion)return;
+    var reduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    function tick(){
+      hoverRailMotion=0;
+      if(!isLive()||!hoverFilm.active||!hoverFilm.followRail||
+         hoverFilm.kind!=='film'||selection.open)return;
+      var si=hoverFilm.si,rail=railFor(si),video=hoverFilm.video;
+      if(!rail||!video)return;
+      if(!hoverFilm.scrubbing){
+        var stage=SERIES[si].stages[hoverFilm.index];
+        var frac=video.duration>0?clamp(video.currentTime/video.duration,0,1):0;
+        var absolute=stage.start+(stage.end-stage.start)*frac;
+        var max=Math.max(0,rail.scrollWidth-rail.clientWidth);
+        var target=max*clamp(absolute/SERIES[si].endTime,0,1);
+        // Set the lock through the following scroll event; otherwise its
+        // ordinary gallery logic would overwrite the film-driven slider.
+        railOriginLocks[si]=true;
+        var diff=target-rail.scrollLeft;
+        if(Math.abs(diff)>.4)rail.scrollLeft+=diff*(reduced?1:.095);
+        hoverFilm.card?.style.setProperty('--fc-card-progress',Math.round(frac*100)+'%');
+      }
+      hoverRailMotion=requestAnimationFrame(tick);
+    }
+    hoverRailMotion=requestAnimationFrame(tick);
+  }
   function stopHoverFilm(){
+    stopHoverRailMotion();
     hoverFilm.request++;
     clearTimeout(hoverFilm.timer);
     clearTimeout(hoverFilm.leaveTimer);
@@ -356,6 +387,7 @@
     if(hoverFilm.video){
       try{
         hoverFilm.video.ontimeupdate=null;
+        hoverFilm.video.onended=null;
         hoverFilm.video.pause();
         hoverFilm.video.removeAttribute('src');
         hoverFilm.video.load();
@@ -368,7 +400,7 @@
     hoverFilm.card=null;hoverFilm.video=null;
     hoverFilm.si=-1;hoverFilm.index=-1;hoverFilm.kind='film';
     hoverFilm.active=false;hoverFilm.scrubbing=false;hoverFilm.sliderHover=false;
-    hoverFilm.seekFraction=null;
+    hoverFilm.followRail=false;hoverFilm.seekFraction=null;
     if(previousSeries>=0&&scene&&!selection.open){
       var rail=railFor(previousSeries),range=block(previousSeries)?.querySelector('[data-fc-slider]');
       if(rail&&range){
@@ -413,6 +445,7 @@
     hoverFilm.kind=isInstrument?'instrument':'film';
     hoverFilm.scrubbing=!!opts.scrubbing;
     hoverFilm.sliderHover=!!opts.fromSlider;
+    hoverFilm.followRail=!isInstrument;
     hoverFilm.seekFraction=fraction;
     card.classList.add('is-hovering');
     var ticket=hoverFilm.request;
@@ -422,8 +455,19 @@
       var film=card.querySelector('.fc-hover-video');
       if(!film)return;
       hoverFilm.video=film;
-      film.loop=true;film.muted=true;film.preload='metadata';
+      film.loop=isInstrument;film.muted=true;film.preload='metadata';
       film.src=isInstrument?SERIES[si].assets.film:source(SERIES[si],index);
+      film.onended=function(){
+        if(ticket!==hoverFilm.request||selection.open||isInstrument)return;
+        var next=index+1;
+        if(next>=SERIES[si].stages.length){
+          stopHoverRailMotion();
+          hoverFilm.followRail=false;
+          return;
+        }
+        var nextCard=block(si)?.querySelector('[data-fc-card="'+next+'"]');
+        if(nextCard)startHoverFilm(nextCard,si,next,0,{fraction:0});
+      };
       film.ontimeupdate=function(){
         if(hoverFilm.video!==film||selection.open||hoverFilm.scrubbing)return;
         var duration=Number.isFinite(film.duration)&&film.duration>0?film.duration:1;
@@ -451,6 +495,7 @@
           hoverFilm.active=true;
           card.classList.add('is-previewing');
           if(hoverFilm.scrubbing)film.pause();
+          else if(!isInstrument)followHoverFilm();
         }).catch(function(){/* A browser may restrict muted preview autoplay. */});
       }
       if(film.readyState>=1)begin();
@@ -469,17 +514,23 @@
       var target=block(si)?.querySelector('[data-fc-card="'+idx+'"]');
       if(!target)return false;
       startHoverFilm(target,si,idx,0,{fraction:fraction,scrubbing:true,fromSlider:true});
-      // Keep the corresponding film visible without magnetically snapping
-      // the gallery under ordinary browsing.
-      railOriginLocks[si]=true;
-      align(si,idx,false);
-      requestAnimationFrame(function(){railOriginLocks[si]=false;});
+      // A manually moved time line positions the real card rail directly.
+      var rail=railFor(si);
+      if(rail){
+        railOriginLocks[si]=true;
+        rail.scrollLeft=Math.max(0,rail.scrollWidth-rail.clientWidth)*at/series.endTime;
+      }
     }else{
       hoverFilm.scrubbing=true;hoverFilm.sliderHover=true;
       hoverFilm.seekFraction=fraction;
       if(hoverFilm.video){
         hoverFilm.video.pause();
         seekPreviewFraction(hoverFilm.video,fraction);
+      }
+      var rail=railFor(si);
+      if(rail){
+        railOriginLocks[si]=true;
+        rail.scrollLeft=Math.max(0,rail.scrollWidth-rail.clientWidth)*at/series.endTime;
       }
     }
     hoverFilm.card?.style.setProperty('--fc-card-progress',Math.round(fraction*100)+'%');
@@ -745,7 +796,7 @@
             '<span class="fc-card-name">'+esc(term('moving'))+'</span></span>'+
           '</button></div>'+
       '</div>'+
-      '<p class="fc-instrument-lead">'+esc(instrumentLead())+'</p>'+
+      '<p class="fc-instrument-lead">'+esc(instrumentLead(si))+'</p>'+
     '</section>';
   }
   function inlineScoreMarkup(s,si){
@@ -834,13 +885,13 @@
     en:{lead:'A Folly rehearses its own disappearance from the moment it is built. Working with the gravity, weathering and fractures already present in a ruin, it gathers structure, instrument and observer into an unrepeatable performance. When matter finally lets go, the endpoint of architecture appears for a moment.',about:'About Folly',contents:'Works',next:'Continue reading'},
     ja:{lead:'フォリーは、建てられた瞬間から自らの消滅を稽古し始める。廃墟にすでにある重力、風化、亀裂を借りて、構造と楽器と見る者を一度かぎりの上演に置く。材料がついに手を放すとき、建築の終点が一瞬だけ姿を現す。',about:'フォリーについて',contents:'作品目次',next:'続きを読む'}
   };
-  var INSTRUMENT_LEAD={
-    zh:'乐器依照废墟的状态而制，声音随园林的沉降、失衡与毁坏而改变。',
-    en:'Each instrument is made for its ruin, sounding as the structure sinks, shifts and breaks.',
-    ja:'楽器は廃墟の状態に応じてつくられ、沈下や均衡の喪失、崩壊とともに音を変える。'
+  var INSTRUMENT_TITLES={
+    zh:['锈血心脏','以太狭间'],
+    en:['Rust-Blood Heart','Aether Interval'],
+    ja:['錆血の心臓','エーテルの狭間']
   };
   function folioIntro(key){return (FOLLY_INTRO[state.lang]||FOLLY_INTRO.zh)[key];}
-  function instrumentLead(){return INSTRUMENT_LEAD[state.lang]||INSTRUMENT_LEAD.zh;}
+  function instrumentLead(si){return (INSTRUMENT_TITLES[state.lang]||INSTRUMENT_TITLES.zh)[si];}
   function workChapterLabel(si){return chapterPart(si)+' · '+label(SERIES[si].title);}
   function readingPartHeading(i){
     return '<div class="fc-reading-part-head"><h3>'+esc(readingHead(i))+'</h3></div>';
@@ -945,7 +996,7 @@
     var slider=root.querySelector('[data-fc-slider]');
     var rail=railFor(si);
     var max=rail?Math.max(0,rail.scrollWidth-rail.clientWidth):0;
-    if(slider&&document.activeElement!==slider)slider.value=String(max?Math.round(rail.scrollLeft/max*1000):0);
+    if(slider&&document.activeElement!==slider&&!(hoverFilm.followRail&&hoverFilm.si===si))slider.value=String(max?Math.round(rail.scrollLeft/max*1000):0);
     if(scroll)align(si,i,true);
     if(nearViewport(root))prioritizePreviews(si,i);
     if(selection.open&&selection.series===si){
@@ -1400,7 +1451,7 @@
     var drag=null,scrollRaf=0,idleTimer=0,touched=false;
     var slider=root.querySelector('[data-fc-slider]');
     function syncRange(){
-      if(!slider||document.activeElement===slider)return;
+      if(!slider||document.activeElement===slider||(hoverFilm.followRail&&hoverFilm.si===si))return;
       var max=Math.max(0,rail.scrollWidth-rail.clientWidth);
       slider.value=String(max?Math.round(1000*rail.scrollLeft/max):0);
     }
@@ -1477,12 +1528,12 @@
     root.querySelectorAll('.fc-card').forEach(function(card){
       var index=Number(card.dataset.fcCard);
       card.addEventListener('pointerenter',function(event){
-        if(event.pointerType!=='mouse'||drag||selection.open)return;
+        if(event.pointerType!=='mouse'||drag||selection.open||(hoverFilm.followRail&&hoverFilm.si===si))return;
         clearTimeout(idleTimer);
         startHoverFilm(card,si,index,460);
       });
       card.addEventListener('pointerleave',function(){
-        if(hoverFilm.card===card)scheduleHoverStop(950);
+        if(hoverFilm.card===card&&!hoverFilm.followRail)scheduleHoverStop(950);
       });
       card.addEventListener('focusin',function(event){
         if(event.target.matches('.fc-card-button'))startHoverFilm(card,si,index,850);
@@ -1492,7 +1543,8 @@
       });
     });
     rail.addEventListener('scroll',function(){
-      if(hoverFilm.card?.closest('.fc-rail')===rail&&!hoverFilm.scrubbing&&!hoverFilm.sliderHover)stopHoverFilm();
+      if(hoverFilm.card?.closest('.fc-rail')===rail&&!hoverFilm.followRail&&!hoverFilm.scrubbing&&!hoverFilm.sliderHover)stopHoverFilm();
+      if(hoverFilm.followRail&&hoverFilm.si===si){clearTimeout(idleTimer);return;}
       if(!scrollRaf)scrollRaf=requestAnimationFrame(function(){
         scrollRaf=0;
         syncRange();
@@ -1505,10 +1557,14 @@
       // actually stops. This timer never changes the scroll position.
       idleTimer=setTimeout(idlePreview,1450);
     },{passive:true});
+    rail.addEventListener('pointerleave',function(){
+      if(hoverFilm.followRail&&hoverFilm.si===si&&!hoverFilm.sliderHover&&!hoverFilm.scrubbing)scheduleHoverStop(1000);
+    });
     if(slider){
       function finishPreviewScrub(){
         if(hoverFilm.si!==si||hoverFilm.kind!=='film'||!hoverFilm.scrubbing)return;
         hoverFilm.scrubbing=false;
+        if(hoverFilm.followRail)followHoverFilm();
         // Continue the silent inline film from the exact sought frame.
         var film=hoverFilm.video;
         if(film?.paused && film.readyState>=1){
