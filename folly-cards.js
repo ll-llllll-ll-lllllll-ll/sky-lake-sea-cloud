@@ -609,7 +609,7 @@
             '<span class="fc-card-copy"><span class="fc-card-count">01 <small>/ 01</small></span>'+
             '<span class="fc-card-name">'+esc(term('moving'))+'</span></span>'+
           '</button></div>'+
-        '<p class="fc-instrument-description">'+esc(essay(si,'instrument'))+'</p>'+
+        '<p class="fc-instrument-description">'+esc(reading(si).instrument)+'</p>'+
       '</div>'+
     '</section>';
   }
@@ -693,27 +693,48 @@
         '</section>'+
       '</section>';
   }
+  function readingPartHeading(i){
+    return '<div class="fc-reading-part-head">'+
+      '<span class="fc-reading-part-number">'+pad(i+1)+'</span>'+
+      '<h3>'+esc(readingHead(i))+'</h3>'+
+    '</div>';
+  }
   function sectionMarkup(s, si) {
-    return '<section class="fc-series-block" data-fc-series-block="'+si+'" id="fc-chapter-'+(si+1)+'" style="--fc-video-aspect:16 / 9;--fc-ratio-number:1.77778">'+
+    return '<section class="fc-series-block" data-fc-series-block="'+si+
+      '" id="fc-chapter-'+(si+1)+'" style="--fc-video-aspect:16 / 9;--fc-ratio-number:1.77778">'+
       '<div class="fc-series-heading">'+
         '<h2>'+esc(chapterPart(si))+'</h2>'+
         '<p>'+esc(label(s.title))+'</p>'+
       '</div>'+
       '<div class="fc-series-composition">'+
-        assetPairMarkup(s,si,'structure')+
-        assetPairMarkup(s,si,'detail')+
-        instrumentMarkup(s,si)+
+        '<section class="fc-reading-part fc-reading-garden" aria-label="'+esc(readingHead(0))+'">'+
+          readingPartHeading(0)+
+          assetPairMarkup(s,si,'structure')+
+          '<p class="fc-reading-copy fc-garden-copy">'+esc(reading(si).garden)+'</p>'+
+        '</section>'+
+        '<section class="fc-reading-part fc-reading-instrument" aria-label="'+esc(readingHead(1))+'">'+
+          readingPartHeading(1)+
+          instrumentMarkup(s,si)+
+          assetPairMarkup(s,si,'detail')+
+        '</section>'+
       '</div>'+
-      '<div class="fc-film-head">'+
-        '<h3>'+esc(term('movement'))+'</h3>'+
-        '<p class="fc-instruction">'+esc(i18n('instruction'))+'<span>'+esc(i18n('selection'))+'</span></p>'+
-      '</div>'+
-      '<div class="fc-gallery-area"><div class="fc-rail" data-fc-rail="'+si+'" tabindex="0" aria-label="'+esc(i18n('seek')+' / '+label(s.title))+'">'+
-        '<ol class="fc-strip">'+s.stages.map(function(stage,index){return cardMarkup(stage,index,s);}).join('')+'</ol>'+
-      '</div></div>'+
-      '<div class="fc-navigation">'+
-        '<input class="fc-slider" data-fc-slider="'+si+'" type="range" min="0" max="1000" value="0" step="1" aria-label="'+esc(i18n('seek')+' / '+label(s.title))+'"></div>'+
-      inlineScoreMarkup(s,si)+
+      '<section class="fc-reading-part fc-reading-theatre" aria-label="'+esc(readingHead(2))+'">'+
+        '<div class="fc-film-head">'+
+          '<div class="fc-reading-film-title">'+readingPartHeading(2)+'</div>'+
+          '<p class="fc-instruction">'+esc(i18n('instruction'))+'<span>'+esc(i18n('selection'))+'</span></p>'+
+        '</div>'+
+        '<p class="fc-reading-copy fc-theatre-copy">'+esc(reading(si).theatre)+'</p>'+
+        '<div class="fc-gallery-area"><div class="fc-rail" data-fc-rail="'+si+
+        '" tabindex="0" aria-label="'+esc(i18n('seek')+' / '+label(s.title))+'">'+
+          '<ol class="fc-strip">'+s.stages.map(function(stage,index){return cardMarkup(stage,index,s);}).join('')+'</ol>'+
+        '</div></div>'+
+        '<div class="fc-navigation">'+
+          '<input class="fc-slider" data-fc-slider="'+si+
+          '" type="range" min="0" max="1000" value="0" step="1" aria-label="'+
+          esc(i18n('seek')+' / '+label(s.title))+'"></div>'+
+        inlineScoreMarkup(s,si)+
+        '<p class="fc-reading-copy fc-score-reading">'+esc(reading(si).score)+'</p>'+
+      '</section>'+
     '</section>';
   }
   function pageMarkup(item) {
