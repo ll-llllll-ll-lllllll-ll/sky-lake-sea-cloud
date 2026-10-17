@@ -564,7 +564,7 @@
     if(!file)return;
     var token=mountedToken;
     img.dataset.fcPhaseLoading='1';
-    var v=document.createElement('video'),timer=0,finished=false;
+    var v=document.createElement('video'),timer=0,finished=false,targetTime=-1;
     v.muted=true;v.preload='auto';v.playsInline=true;
     v.setAttribute('playsinline','');
     function release(){
@@ -582,6 +582,9 @@
     function capture(){
       if(finished||token!==mountedToken||!img.isConnected)return release();
       if(v.readyState<2||!v.videoWidth||!v.videoHeight)return;
+      // In Safari loadeddata can fire at frame zero before the seek finishes.
+      // A phase picture must be taken from the requested final passage.
+      if(targetTime<0||Math.abs(v.currentTime-targetTime)>.18)return;
       try{
         var canvas=document.createElement('canvas');
         var width=Math.min(1080,v.videoWidth);
@@ -597,8 +600,9 @@
       try{
         var duration=v.duration;
         if(!Number.isFinite(duration)||duration<.2)return release();
-        v.currentTime=Math.max(.06,Math.min(duration-.08,
+        targetTime=Math.max(.06,Math.min(duration-.08,
           duration*Number(img.dataset.fcFilmTime||.94)));
+        v.currentTime=targetTime;
       }catch(_){release();}
     }
     activePhaseVideos.add(release);
