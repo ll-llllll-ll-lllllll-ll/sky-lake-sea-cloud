@@ -828,14 +828,14 @@
           '<button type="button" data-fc-action="close" aria-label="'+esc(i18n('close'))+'">×</button></div>'+
         '<div class="fc-projection-center">'+
           '<button type="button" class="fc-projection-arrow fc-arrow-prev" data-fc-action="previous" aria-label="'+esc(i18n('prev'))+'">←</button>'+
-          '<div class="fc-film-wrap"><video class="fc-film" data-fc-film playsinline webkit-playsinline preload="metadata" muted></video>'+
+          '<div class="fc-film-wrap"><video class="fc-film" data-fc-film playsinline webkit-playsinline preload="metadata" tabindex="0" aria-label="'+esc(i18n('open')+' / '+label(s.title))+'" muted></video>'+
             '<div class="fc-film-vignette"></div><span class="fc-film-status" data-fc-film-status aria-live="polite"></span>'+
             '<button class="fc-film-pause-sign" type="button" data-fc-action="play" aria-label="'+esc(i18n('pause'))+'">Ⅱ</button></div>'+
           '<button type="button" class="fc-projection-arrow fc-arrow-next" data-fc-action="next" aria-label="'+esc(i18n('next'))+'">→</button>'+
         '</div>'+
         scoreMarkup(s)+
-        '<div class="fc-projection-bottom"><span class="fc-now-title" data-fc-now-title>'+esc(label(s.stages[0]))+'</span>'+
-          '<span class="fc-time-index" data-fc-time-index>01 / '+pad(s.stages.length)+'</span>'+
+        '<div class="fc-projection-bottom"><span class="fc-time-index"><strong data-fc-time-index>01</strong><small data-fc-total> / '+pad(s.stages.length)+'</small></span>'+
+          '<span class="fc-now-title" data-fc-now-title>'+esc(label(s.stages[0]))+'</span>'+
           '<div class="fc-play-actions"><button type="button" data-fc-action="play" aria-label="'+esc(i18n('pause'))+'">Ⅱ</button>'+
             '<button type="button" data-fc-action="sound" aria-label="'+esc(i18n('sound'))+'">♪̸</button></div></div>'+
         '<div class="fc-inspection" data-fc-inspection hidden>'+
@@ -1003,7 +1003,8 @@
     if(selection.open&&selection.series===si){
       var overlay=activeOverlay();
       overlay.querySelector('[data-fc-now-title]').textContent=label(s.stages[i]);
-      overlay.querySelector('[data-fc-time-index]').textContent=pad(i+1)+' / '+pad(s.stages.length);
+      overlay.querySelector('[data-fc-time-index]').textContent=pad(i+1);
+      overlay.querySelector('[data-fc-total]').textContent=' / '+pad(s.stages.length);
       overlay.querySelector('[data-fc-projection-count]').textContent=pad(i+1)+' / '+pad(s.stages.length);
     }
   }
@@ -1321,10 +1322,11 @@
     if(!selection.instrument)focusCard(si,index,false);
     else {
       overlay.querySelector('[data-fc-now-title]').textContent=term('moving');
-      overlay.querySelector('[data-fc-time-index]').textContent='01 / 01';
+      overlay.querySelector('[data-fc-time-index]').textContent='01';
+      overlay.querySelector('[data-fc-total]').textContent=' / 01';
       overlay.querySelector('[data-fc-projection-count]').textContent='INSTRUMENT / 01';
     }
-    overlay.querySelector('[data-fc-action="close"]:not(.fc-projection-scrim)')?.focus({preventScroll:true});
+    overlay.querySelector('[data-fc-film]')?.focus({preventScroll:true});
     loadSelected(resume);
   }
   function loadSelected(startAt){
@@ -2304,6 +2306,20 @@
         var wanted=Number(chapterLink.dataset.fcChapterLink);
         if(wanted===1)enterNextFolly();
         else block(0)?.scrollIntoView({behavior:'smooth',block:'start'});
+        return;
+      }
+      // The image itself is the only visible playback surface. A tap or
+      // click toggles motion; the empty black surround closes the viewer.
+      if(selection.open&&event.target.matches('[data-fc-film]')&&player){
+        if(player.paused){
+          var attempt=player.play();
+          if(attempt?.catch)attempt.catch(function(){});
+          selection.paused=false;
+        }else{
+          player.pause();
+          selection.paused=true;
+        }
+        syncPlayButton();
         return;
       }
       var node=event.target.closest('[data-fc-action]');
