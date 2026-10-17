@@ -86,6 +86,119 @@
   };
   function term(key){return (SECTION_TERMS[state.lang]||SECTION_TERMS.zh)[key];}
   function essay(si,key){return label(SERIES_COPY[si][key]);}
+  // Exhibition reading texts: sourced from the two authored site statements
+  // and the manifesto's chapters on postdramatic space, the collapsible
+  // instrument and the final self-destroying note. Editable by series/phase.
+  var GARDEN_READING={
+    zh:{
+      heads:['园林构成','废墟乐器','废墟剧场'],
+      stage:{structure:['建造','坍塌','毁坏'],detail:['置放','磨损','销毁']},
+      still:'取自影像末段的定格；可替换为独立阶段照片。',
+      works:[
+        {garden:'死水心室的构造取自沉墟中失去流动的水域：爆裂的储水形态、残余的心室结构与一潭死水彼此牵连。水体缓慢流失，承托随之消退；原本依靠内部平衡维系的材料在自重中挤压、碎裂、向内收缩，最后仍留在死水里继续腐蚀。',
+         instrument:'「锈血心脏」由锈蚀金属碎片与玻璃罩构成，嵌在心室的钢筋与钢索连接之中。心室的下沉牵动滑轮与泵片，将缓慢的坍塌转为急促的敲击；每一次搏动都借来园林衰败的力量，同时耗损维持自身运作的结构。',
+         theatre:'死水心室的下沉与锈血心脏的搏动在同一段时间内相互牵动。声音从承重、牵引、碰撞和材料失效中发生，越接近最后一次敲击，乐器便越难继续维持原有形态。',
+         score:'十五帧机械记谱沿真实的受力路径记录位移与松脱。滑动剧场切片或下方时间线，图谱随声音逆序展开；那些短暂的连接、断裂与空白，为一场不可重演的坍塌留下读图的线索。',
+         phases:{
+           structure:[
+             ['由储水的外壳、心室残构与死水潭组成的初始结构。','各构件仍维持被安排的承托关系。原先流动的水被围困，空隙与连接共同勾勒出园林最初的形态。'],
+             ['水体流失后，心室失去内部承托。','结构开始在自重作用下挤压、碎裂并下沉；此前隐藏在完整表面以内的受力关系逐渐显露。'],
+             ['坍缩后留在死水中的残余形态。','毁坏没有随着一次坍塌停止，留下的结构继续浸泡和腐蚀；此图暂取剧场末段的实际影像定格。']
+           ],
+           detail:[
+             ['锈血心脏被安放在钢索传力的终端。','采集的锈蚀碎片封存在玻璃罩内，等待心室沉降所带来的最后一次动力。'],
+             ['牵引与重复敲击使装置逐渐承受过载。','滑轮和泵片将沉降转为搏动，金属摩擦、机械阻塞与不断加快的撞击共同改变其声音。'],
+             ['运动超过结构所能承受的极限。','这里的“销毁”指园林的力量传至乐器，最终主动终止原有的发声秩序；此图暂取乐器影像末段定格。']
+           ]
+         }},
+        {garden:'朽塔由三组向外牵引的钢缆与中央悬垂的重物勉强维持垂立，底部的玻璃轴球承受着微小的偏移。钢缆逐渐疲劳，张力和重心开始改变；地面的「塌别塔」又反复旋转碾磨，使支撑塔身的结构在持续扰动中走向坍落。',
+         instrument:'「以太狭间」把摆动天线、以太琴的干涉场和砂盘连接为一条回路：电磁变化转为频率、声音与振动，再由砂粒留下短暂图形。不断掉落的黑砂与积累的静电噪声，使这套努力维持秩序的装置逐渐逼近自身的负荷极限。',
+         theatre:'朽塔、以太狭间与地面旋转的塌别塔共同参与这场演奏。砂粒聚散，塔身摇摆，磨盘反复碾压地表与钢缆；一种秩序持续制造声音，又以自己的运作削弱另一种秩序。',
+         score:'折翼与双指针把这些运动的先后、偏移与关联保存在同一张图面上。它随剧场进度改变，也可以被独立折叠与检视；当传力关系松开，记谱留下的便是声响发生过的痕迹。',
+         phases:{
+           structure:[
+             ['钢缆、三点锚固与悬垂重物暂时托住朽塔。','近乎失衡的垂立姿态来自精细的张拉关系；塔体、狭间与地面的沙盘被布置在同一个空间中。'],
+             ['张力衰减，朽塔逐渐失去重心。','钢缆疲劳与底部不断受到的磨耗，让原本维系竖立的力量反过来成为失稳的来源。'],
+             ['结构越过轴球允许的角度而倾倒。','残余拉力把塔体推向地面，磨盘继续混合残骸与尘土；此图暂取剧场末段的实际影像定格。']
+           ],
+           detail:[
+             ['天线、以太狭间与砂盘构成发声回路。','不可见的干涉被转译为振动和砂粒的图形，机械装置因此成为能够听见环境变化的乐器。'],
+             ['砂粒持续散落，静电与电子噪声逐渐积累。','重复的振动、摩擦与碾磨消耗着器械的稳定性，暂时形成的图形又被下一次扰动抹去。'],
+             ['持续运作最终反过来破坏发声的条件。','“销毁”指园林内部的力量被执意传给器械，使既有秩序无法维持，而非普通的自然损耗；此图暂取乐器影像末段定格。']
+           ]
+         }}
+      ]
+    },
+    en:{
+      heads:['The Garden','Ruin Instrument','Ruin Theatre'],
+      stage:{structure:['Construction','Collapse','Destruction'],detail:['Placement','Wear','Destruction']},
+      still:'A still from the final passage of the film; an independent stage photograph may replace it.',
+      works:[
+        {garden:'The stagnant-heart structure grows from a reservoir shell, the remains of a heart chamber and a pool of still water. As the water drains, internal support gives way. Under its own weight the construction compresses, fractures and contracts, leaving parts immersed and exposed to further corrosion.',
+         instrument:'The Rust-Blood Heart encloses pieces of corroded metal in glass, connected to the ruined chamber by steel cables, pulleys and a pump blade. The chamber’s slow descent is transmitted as increasingly rapid knocks: each beat borrows energy from the garden’s collapse while consuming the instrument itself.',
+         theatre:'The sinking chamber and the beating heart move through the same time. Sound arises from load, tension, collision and structural failure; as the final blow approaches, the instrument loses the conditions that held it together.',
+         score:'Fifteen stop-motion frames trace displacement and release along the mechanical path. The notation follows the theatre footage in reverse, leaving the connections, breaks and silences of an unrepeatable collapse legible.',
+         phases:{structure:[
+          ['Reservoir shell, heart-chamber remnants and still water.','The components initially hold their arranged support. Enclosed water, gaps and joints describe the garden before its movement begins.'],
+          ['The chamber loses its support as the water retreats.','Its own weight presses the structure inward; fractures and sinking reveal forces formerly concealed within the shell.'],
+          ['The remnants remain in still water.','Corrosion continues after the collapse. This image is temporarily a still from the final theatre fragment.']
+         ],detail:[
+          ['The Rust-Blood Heart is placed at the end of the tensile chain.','Collected rusted fragments are enclosed in glass, awaiting the chamber’s last transfer of force.'],
+          ['Repeated impacts bring the mechanism under strain.','Pulleys and the blade turn sinking into beats; friction, obstruction and accelerating knocks change its sound.'],
+          ['Motion exceeds the instrument’s limits.','“Destruction” names a deliberate termination of the sounding order by force transmitted from the garden. The image is a film still.']
+         ]}},
+        {garden:'Three outward cable anchors and a suspended weight hold the Ruined Tower upright around a glass pivot. As cable tension weakens, its centre of gravity shifts. The ground-level grinding structure repeatedly wears at its supports until the tower can no longer keep its precarious balance.',
+         instrument:'Aether Interval links moving antennas, a theremin-like interference field and a sand plate. Electromagnetic changes become frequency, sound and vibration before briefly appearing in the sand. Falling grains, static charge and electronic noise gradually burden the apparatus.',
+         theatre:'The tower, the aether interval and the ground-level grinder perform together. Sand gathers and disperses, cables tremble and the wheel abrades the ground. One order produces sound through the very motions that undermine another.',
+         score:'Folding wings and paired pointers hold movements, deviations and their relationships in one plane. The score follows the film but may also be folded and examined independently; once the mechanism fails, its marks remain.',
+         phases:{structure:[
+          ['Three cable anchors and a hanging weight hold the tower.','Its improbable upright posture depends on a precise tensile arrangement spanning the tower, interval and sand field.'],
+          ['Tension fades and the centre of gravity moves.','Fatigued cables and repeated abrasion turn the original supporting order into the source of imbalance.'],
+          ['The tower falls beyond the pivot’s angular limit.','Remaining tension throws it to the ground while dust and fragments continue to mix. The image is a theatre-film still.']
+         ],detail:[
+          ['Antennas, the interval and the sand plate form a sounding circuit.','Invisible interference passes into vibration and temporary patterns in the sand.'],
+          ['Sand falls away as static and electronic noise accumulate.','Vibration, friction and grinding gradually consume the instrument’s stability and erase successive patterns.'],
+          ['The circuit destroys the conditions of its own sounding.','“Destruction” indicates a willed assault on an existing order through forces transmitted by the garden, not routine wear. The image is a film still.']
+         ]}}
+      ]
+    },
+    ja:{
+      heads:['園林の構成','廃墟の楽器','廃墟劇場'],
+      stage:{structure:['構築','崩壊','破壊'],detail:['設置','摩耗','破壊']},
+      still:'映像終盤から切り出した静止画。各段階の写真と差し替え可能。',
+      works:[
+        {garden:'「死水心室」は破裂した貯水槽の形態、心室の残存構造、淀んだ水から組み立てられる。水が失われるにつれ内部の支持も消え、構造は自重で押し潰され、割れ、内側へと縮む。残った部分は水に浸されたまま腐食を続ける。',
+         instrument:'錆びた金属片をガラスに封じた「錆血の心臓」は、鋼索と滑車、ポンプ片を通じて心室につながる。ゆっくりした沈下が急速な打撃へと変わり、一度の鼓動ごとに園林の崩壊から力を借りながら、自らの構造も消耗する。',
+         theatre:'沈む心室と鼓動する心臓は同じ時間を生きる。音は荷重、張力、衝突、構造の失効から生まれ、最後の一打に近づくほど、楽器は元の姿を維持できなくなる。',
+         score:'十五枚の連続図が力の伝達に沿った変位と弛緩を記録する。譜面は劇場映像と逆向きに進み、再演できない崩壊の接続、断裂、沈黙を読める形に残す。',
+         phases:{structure:[
+          ['貯水槽の殻、心室の残構、淀んだ水。','配置された支持関係が保たれ、水、空隙、接合部が動き始める前の園林の姿を形づくる。'],
+          ['水が引き、心室は内部の支持を失う。','構造は自重で圧縮され、割れ、沈み込み、表面に隠れていた力の関係が現れる。'],
+          ['崩壊後の残部は水中に残る。','腐食は続いていく。この画像には劇場映像終盤の静止画を暫定的に用いる。']
+         ],detail:[
+          ['錆血の心臓は張力の伝達経路の先に置かれる。','錆びた破片はガラスに収まり、沈下から伝わる最後の力を待つ。'],
+          ['反復する打撃が装置に過負荷を与える。','滑車とポンプ片が沈下を鼓動に変え、摩擦や閉塞、加速する衝撃が音を変える。'],
+          ['運動は構造の限界を超える。','「破壊」は園林から伝わる力によって発声の秩序を意図的に終わらせることを指す。画像は映像からの静止画。']
+         ]}},
+        {garden:'「朽塔」は外側へ伸びる三本の鋼索と吊り下げた重りによって、ガラスの軸球の上で辛うじて直立する。張力が衰え、重心が揺らぎ、地上の磨盤が支持部を繰り返し削ることで、塔はついに均衡を失う。',
+         instrument:'「エーテルの狭間」は揺れるアンテナ、テルミンに似た干渉場、砂盤を一つの回路につなぐ。電磁的な変化は周波数、音、振動となり、砂に短い模様を残す。砂の流出と静電気、電子雑音は装置への負荷を増していく。',
+         theatre:'朽塔、エーテルの狭間、地上の磨盤が一つの演奏に加わる。砂は集まり散り、鋼索は揺れ、磨盤は地表を削る。一つの秩序が音を生みながら、別の秩序の足場を失わせていく。',
+         score:'折り畳まれる翼と二本の指針が、運動とずれ、そのつながりを平面に留める。映像と連動しながら独立して折り畳み、検分することもできる。機構が壊れたあとにも痕跡は残る。',
+         phases:{structure:[
+          ['三点の鋼索と吊り重りが塔を支える。','不安定な直立姿勢は、塔と狭間と砂盤にまたがる精密な張力の配置によって成り立つ。'],
+          ['張力が衰え、重心が移る。','鋼索の疲労と繰り返す摩耗が、支えの仕組みを不均衡の原因へと変える。'],
+          ['軸球の許容角を超えて塔が倒れる。','残る張力が塔を地面へ投げ、瓦礫と砂が混ざり続ける。画像は劇場映像からの静止画。']
+         ],detail:[
+          ['アンテナ、狭間、砂盤が発声の回路をつくる。','見えない干渉は振動となり、砂に一時的な模様として現れる。'],
+          ['砂が落ち、静電気と雑音が蓄積する。','振動、摩擦、研磨が器械の安定を奪い、生まれた模様を次の揺れが消す。'],
+          ['回路は自らの発声条件を破壊する。','「破壊」は園林の力を伝え、既存の秩序を意図的に終わらせることを指す。画像は映像からの静止画。']
+         ]}}
+      ]
+    }
+  };
+  function reading(si){return (GARDEN_READING[state.lang]||GARDEN_READING.zh).works[si];}
+  function readingHead(i){return (GARDEN_READING[state.lang]||GARDEN_READING.zh).heads[i];}
+  function phaseName(kind,i){return (GARDEN_READING[state.lang]||GARDEN_READING.zh).stage[kind][i];}
   var i18n=function(k){return (COPY[state.lang]||COPY.zh)[k]||'';};
   var label=function(obj){return obj[state.lang]||obj.zh||'';};
   var esc=function(v){return escapeHtml(v == null?'':String(v));};
