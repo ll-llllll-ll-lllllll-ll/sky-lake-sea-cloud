@@ -1344,6 +1344,17 @@
     video.muted=selection.muted;video.loop=false;video.controls=false;
     video.preload='auto';video.playsInline=true;
     video.removeAttribute('poster');
+    // Match the film's actual encoded aspect ratio. The projection frame
+    // and its two-part caption both follow this ratio, so no unused black
+    // margins appear beside portrait or landscape footage.
+    overlay.style.setProperty('--fc-projection-ratio','1.77778');
+    video.addEventListener('loadedmetadata',function(){
+      if(token!==serial||!isLive()||!selection.open||player!==video)return;
+      if(video.videoWidth>0&&video.videoHeight>0){
+        overlay.style.setProperty('--fc-projection-ratio',
+          (video.videoWidth/video.videoHeight).toFixed(6));
+      }
+    },{once:true});
     var initialTime=clamp(Number(startAt)||0,0,1e7),started=false;
     var sourceUrl=selection.instrument?s.assets.film:source(s,i);
     function isCurrent(){return token===serial&&isLive()&&selection.open&&player===video;}
