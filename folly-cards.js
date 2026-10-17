@@ -13,27 +13,27 @@
     {id:'folly-1',roman:'I',title:{zh:'沉墟心室',en:'Effluent Sedimentation',ja:'沈墟の心室'},
      media:LOCAL_VIDEO+'folly-1/',poster:PHOTOS+'effluent-sedimentation.webp',
      assets:{structure:['structure-1.jpg','structure-2.jpg','structure-3.jpg'].map(function(f){return LOCAL_VIDEO+'folly-1-assets/'+f;}),detail:['instrument-1.jpg','instrument-2.jpg','instrument-3.jpg'].map(function(f){return LOCAL_VIDEO+'folly-1-assets/'+f;}),film:LOCAL_VIDEO+'folly-1-assets/instrument-1.mp4'},
-     kind:'linear',endTime:150,
+     year:2025,kind:'linear',endTime:150,
      stages:[
-       {start:0, end:20, zh:'滞岸之壳',en:'Stranded shell',ja:'岸に留まる殻'},
-       {start:20,end:42,zh:'余存维持',en:'Remaining in place',ja:'残存の維持'},
-       {start:42,end:56,zh:'枯蚀应力',en:'Erosive strain',ja:'侵食する応力'},
-       {start:56,end:84,zh:'磨损挣扎',en:'Worn resistance',ja:'摩耗と抗い'},
-       {start:84,end:124,zh:'徒劳空撑',en:'Futile support',ja:'徒労の支え'},
-       {start:124,end:150,zh:'崩塌余响',en:'After the collapse',ja:'崩落の余韻'}
+       {start:0, end:20, zh:'滞岸',en:'Stranded',ja:'滞岸'},
+       {start:20,end:42,zh:'维系',en:'Holding',ja:'維持'},
+       {start:42,end:56,zh:'蚀变',en:'Erosion',ja:'侵食'},
+       {start:56,end:84,zh:'挣动',en:'Struggle',ja:'抗い'},
+       {start:84,end:124,zh:'空撑',en:'Futile Support',ja:'空支'},
+       {start:124,end:150,zh:'余响',en:'Afterecho',ja:'余韻'}
      ]},
     {id:'folly-2',roman:'II',title:{zh:'朽塔焦土',en:'Aether Scorched-Earth',ja:'朽塔の焦土'},
      media:LOCAL_VIDEO+'folly-2/',poster:PHOTOS+'aether-scorched-earth.webp',
      assets:{structure:['structure-1.jpeg','structure-2.JPG','structure-3.JPG','structure-4.jpeg'].map(function(f){return LOCAL_VIDEO+'folly-2-assets/'+f;}),detail:['instrument-1.jpg','instrument-2.jpeg','instrument-3.jpeg'].map(function(f){return LOCAL_VIDEO+'folly-2-assets/'+f;}),film:LOCAL_VIDEO+'folly-2-assets/instrument-2.mp4'},
-     kind:'radial',endTime:255,
+     year:2026,kind:'radial',endTime:255,
      stages:[
-       {start:0,end:28,zh:'并和狭间',en:'The interval',ja:'並存の狭間'},
-       {start:28,end:67,zh:'非谐构合',en:'Disjointed assembly',ja:'不協和の構成'},
-       {start:67,end:105,zh:'磨盘震颤',en:'The mill trembles',ja:'摩盤の震え'},
-       {start:105,end:142,zh:'风蚀噪层',en:'Wind and noise',ja:'風食と雑音'},
-       {start:142,end:198,zh:'嗡鸣共振',en:'Resonant hum',ja:'唸りの共振'},
-       {start:198,end:231,zh:'以太余鸣',en:'Aether resonance',ja:'エーテルの残響'},
-       {start:231,end:255,zh:'无实之基',en:'The absent foundation',ja:'空虚な基盤'}
+       {start:0,end:28,zh:'狭间',en:'Interval',ja:'狭間'},
+       {start:28,end:67,zh:'构合',en:'Assembly',ja:'構合'},
+       {start:67,end:105,zh:'震颤',en:'Tremor',ja:'震動'},
+       {start:105,end:142,zh:'风蚀',en:'Weathering',ja:'風食'},
+       {start:142,end:198,zh:'共振',en:'Resonance',ja:'共振'},
+       {start:198,end:231,zh:'余鸣',en:'Reverberation',ja:'残響'},
+       {start:231,end:255,zh:'虚基',en:'Absent Base',ja:'虚基'}
      ]}
   ];
   var COPY = {
@@ -80,9 +80,9 @@
     }
   ];
   var SECTION_TERMS={
-    zh:{front:'正面 / 全貌',back:'背面',instrument:'仪器',body:'主体细部',moving:'废墟乐器 / 影像',movement:'废墟剧场',score:'废墟乐谱',scoreOpen:'展开图谱',scoreClose:'返回图谱',scoreFold:'折叠 / 展开',scoreReset:'复位',frame:'记谱帧'},
-    en:{front:'Full view',back:'Back view',instrument:'Instrument',body:'Body detail',moving:'Ruin Instrument / Film',movement:'Ruin Theatre',score:'Ruin Score',scoreOpen:'Enlarge score',scoreClose:'Return to score',scoreFold:'Fold / unfold',scoreReset:'Reset',frame:'Score frame'},
-    ja:{front:'全景',back:'背面',instrument:'器械',body:'本体細部',moving:'廃墟の楽器 / 映像',movement:'廃墟劇場',score:'廃墟の楽譜',scoreOpen:'譜面を拡大',scoreClose:'譜面に戻る',scoreFold:'折る / 開く',scoreReset:'リセット',frame:'譜面フレーム'}
+    zh:{front:'正面 / 全貌',back:'背面',instrument:'仪器',body:'主体细部',moving:'影像卡片',movement:'废墟剧场',score:'废墟乐谱',scoreOpen:'展开图谱',scoreClose:'返回图谱',scoreFold:'折叠 / 展开',scoreReset:'复位',frame:'记谱帧'},
+    en:{front:'Full view',back:'Back view',instrument:'Instrument',body:'Body detail',moving:'Film Card',movement:'Ruin Theatre',score:'Ruin Score',scoreOpen:'Enlarge score',scoreClose:'Return to score',scoreFold:'Fold / unfold',scoreReset:'Reset',frame:'Score frame'},
+    ja:{front:'全景',back:'背面',instrument:'器械',body:'本体細部',moving:'映像カード',movement:'廃墟劇場',score:'廃墟の楽譜',scoreOpen:'譜面を拡大',scoreClose:'譜面に戻る',scoreFold:'折る / 開く',scoreReset:'リセット',frame:'譜面フレーム'}
   };
   function term(key){return (SECTION_TERMS[state.lang]||SECTION_TERMS.zh)[key];}
   function essay(si,key){return label(SERIES_COPY[si][key]);}
@@ -91,7 +91,7 @@
   // instrument and the final self-destroying note. Editable by series/phase.
   var GARDEN_READING={
     zh:{
-      heads:['园林构成','废墟乐器','废墟剧场'],
+      heads:['坍塌结构','废墟乐器','废墟剧场'],
       stage:{structure:[['建造','下垂','坍缩'],['垂立','松动','失衡','倒塌']],detail:[['置放','搏动','熔毁'],['悬挂','感应','摔碎']]},
       works:[
         {garden:'死水心室的构造取自沉墟中失去流动的水域：爆裂的储水形态、残余的心室结构与一潭死水彼此牵连。水体缓慢流失，承托随之消退；原本依靠内部平衡维系的材料在自重中挤压、碎裂、向内收缩，最后仍留在死水里继续腐蚀。',
@@ -169,7 +169,7 @@
       ]
     },
     en:{
-      heads:['The Garden','Ruin Instrument','Ruin Theatre'],
+      heads:['Collapsing Structure','Ruin Instrument','Ruin Theatre'],
       stage:{structure:[['Construction','Sagging','Inward Collapse'],['Upright','Loosening','Imbalance','Collapse']],detail:[['Placement','Pulsation','Meltdown'],['Suspension','Sensing','Shattering']]},
       works:[
         {garden:'The stagnant-heart structure grows from a reservoir shell, the remains of a heart chamber and a pool of still water. As the water drains, internal support gives way. Under its own weight the construction compresses, fractures and contracts, leaving parts immersed and exposed to further corrosion.',
@@ -247,7 +247,7 @@
       ]
     },
     ja:{
-      heads:['園林の構成','廃墟の楽器','廃墟劇場'],
+      heads:['崩壊する構造','廃墟の楽器','廃墟劇場'],
       stage:{structure:[['構築','垂下','圧潰'],['直立','緩み','均衡喪失','倒壊']],detail:[['設置','鼓動','溶融崩壊'],['懸架','感応','落下破砕']]},
       works:[
         {garden:'「死水心室」は破裂した貯水槽の形態、心室の残存構造、淀んだ水から組み立てられる。水が失われるにつれ内部の支持も消え、構造は自重で押し潰され、割れ、内側へと縮む。残った部分は水に浸されたまま腐食を続ける。',
@@ -613,14 +613,6 @@
   }
 
 
-  // Photograph dates and places remain unspecified until the artist supplies them;
-  // per-stage descriptive text comes from GARDEN_READING above.
-  var PHOTO_INFORMATION={
-    zh:{date:'拍摄日期待补',place:'拍摄地点待补'},
-    en:{date:'Date to be added',place:'Location to be added'},
-    ja:{date:'撮影日未記入',place:'撮影場所未記入'}
-  };
-  function photoNotes(){return PHOTO_INFORMATION[state.lang]||PHOTO_INFORMATION.zh;}
   function assetPairMarkup(s,si,kind){
     // Every phase has a dedicated, artist-supplied photograph; the number
     // of structure phases may differ from one Folly to another.
@@ -639,15 +631,10 @@
         '" aria-pressed="'+(index===0?'true':'false')+'">'+esc(names[index])+'</button>';
     }).join('<span class="fc-swap-separator" aria-hidden="true">/</span>');
     var metadata=items.map(function(k,index){
-      var d=photoNotes();
       return '<div class="fc-photo-meta-panel" data-fc-meta-face="'+index+'" '+(index?'hidden':'')+'>'+
-        '<p class="fc-photo-meta-fields"><span>'+esc(d.date)+'</span><span>'+esc(d.place)+'</span></p>'+
+
         '<p class="fc-photo-meta-note">'+esc(notes[index][0])+'</p>'+
       '</div>';
-    }).join('');
-    var paragraphs=items.map(function(_,index){
-      return '<p class="fc-aside-panel" data-fc-aside-face="'+index+'" '+(index?'hidden':'')+'>'+
-        esc(notes[index][1])+'</p>';
     }).join('');
     return '<div class="fc-asset-pair fc-asset-pair-'+kind+'" data-fc-swap data-fc-series="'+si+
       '" data-fc-active="0" aria-label="'+esc(names.join(' / '))+'">'+
@@ -658,12 +645,13 @@
         '</div>'+
         '<div class="fc-photo-meta">'+metadata+'</div>'+
       '</div>'+
-      '<aside class="fc-asset-aside" aria-label="'+esc(names.join(' / '))+'">'+paragraphs+'</aside>'+
+
     '</div>';
   }
   function instrumentMarkup(s,si){
     return '<section class="fc-instrument-wrap">'+
       '<div class="fc-subchapter"><h3>'+esc(term('moving'))+'</h3></div>'+
+      '<p class="fc-instrument-lead">'+esc(instrumentLead())+'</p>'+
       '<div class="fc-instrument-layout">'+
         '<div class="fc-instrument-card fc-card" data-fc-instrument-card data-fc-series="'+si+'">'+
           '<button class="fc-card-button" type="button" data-fc-action="instrument" data-fc-series="'+si+'" aria-label="'+esc(term('moving'))+'">'+
@@ -674,7 +662,7 @@
             '<span class="fc-card-copy"><span class="fc-card-count">01 <small>/ 01</small></span>'+
             '<span class="fc-card-name">'+esc(term('moving'))+'</span></span>'+
           '</button></div>'+
-        '<p class="fc-instrument-description">'+esc(reading(si).instrument)+'</p>'+
+
       '</div>'+
     '</section>';
   }
@@ -747,6 +735,7 @@
         'aria-label="'+esc(chapterPart(0)+' · '+label(SERIES[0].title))+'">'+
         '<div class="fc-page-shadow" data-fc-page-shadow="0" aria-hidden="true"></div>'+
         sectionMarkup(SERIES[0],0)+
+        '<div class="fc-chapter-threshold" data-fc-chapter-threshold="0"><button type="button" class="fc-threshold-link" data-fc-action="chapter-next" data-fc-series="1">'+esc(folioIntro('next'))+' · '+esc(workChapterLabel(1))+' <span>↗</span></button><div class="fc-threshold-progress" aria-hidden="true"><i></i></div></div>'+
       '</section>'+
       '<section class="fc-chapter-page fc-chapter-page-two" data-fc-chapter-page="1" '+
         'aria-label="'+esc(chapterPart(1)+' · '+label(SERIES[1].title))+'">'+
@@ -758,38 +747,49 @@
         '</section>'+
       '</section>';
   }
+  var FOLLY_INTRO={
+    zh:{lead:'一座废墟园林，从建成之时便开始排练自己的消失。它借用废墟中已有的重力、风化与断裂，把结构、乐器和观看者放进同一场不可重演的演出；当材料终于松手，建筑的终点便在眼前短暂显形。',about:'关于废墟园林',contents:'作品目录',next:'继续阅读'},
+    en:{lead:'A Folly rehearses its own disappearance from the moment it is built. Working with the gravity, weathering and fractures already present in a ruin, it gathers structure, instrument and observer into an unrepeatable performance. When matter finally lets go, the endpoint of architecture appears for a moment.',about:'About Folly',contents:'Works',next:'Continue reading'},
+    ja:{lead:'フォリーは、建てられた瞬間から自らの消滅を稽古し始める。廃墟にすでにある重力、風化、亀裂を借りて、構造と楽器と見る者を一度かぎりの上演に置く。材料がついに手を放すとき、建築の終点が一瞬だけ姿を現す。',about:'フォリーについて',contents:'作品目次',next:'続きを読む'}
+  };
+  var INSTRUMENT_LEAD={
+    zh:'废墟乐器依照所在废墟的构造与变化而制成。园林的沉降、摩擦、失衡与坍塌成为它的动力，声音也随着这些状态的改变而改变。',
+    en:'Each ruin instrument is built for the conditions of its own site. Sinking, friction, imbalance and collapse supply its motion; its sound changes with the changing ruin.',
+    ja:'廃墟の楽器は、それぞれの廃墟の構造と変化に応じてつくられる。沈下、摩擦、均衡の喪失、崩壊が楽器を動かし、その音も廃墟の状態とともに変わっていく。'
+  };
+  function folioIntro(key){return (FOLLY_INTRO[state.lang]||FOLLY_INTRO.zh)[key];}
+  function instrumentLead(){return INSTRUMENT_LEAD[state.lang]||INSTRUMENT_LEAD.zh;}
+  function workChapterLabel(si){return chapterPart(si)+' · '+label(SERIES[si].title);}
   function readingPartHeading(i){
-    return '<div class="fc-reading-part-head">'+
-      '<span class="fc-reading-part-number">'+pad(i+1)+'</span>'+
-      '<h3>'+esc(readingHead(i))+'</h3>'+
-    '</div>';
+    return '<div class="fc-reading-part-head"><h3>'+esc(readingHead(i))+'</h3></div>';
   }
   function sectionMarkup(s, si) {
     return '<section class="fc-series-block" data-fc-series-block="'+si+
       '" id="fc-chapter-'+(si+1)+'" style="--fc-video-aspect:16 / 9;--fc-ratio-number:1.77778">'+
       '<div class="fc-series-heading">'+
-        '<h2>'+esc(chapterPart(si))+'</h2>'+
-        '<p>'+esc(label(s.title))+'</p>'+
+        '<h2>'+esc(workChapterLabel(si))+'</h2>'+
+        '<span class="fc-series-year">'+s.year+'</span>'+
       '</div>'+
       '<div class="fc-series-composition">'+
         '<section class="fc-reading-part fc-reading-garden" aria-label="'+esc(readingHead(0))+'">'+
           readingPartHeading(0)+
-          assetPairMarkup(s,si,'structure')+
           '<p class="fc-reading-copy fc-garden-copy">'+esc(reading(si).garden)+'</p>'+
+          assetPairMarkup(s,si,'structure')+
         '</section>'+
         '<section class="fc-reading-part fc-reading-instrument" aria-label="'+esc(readingHead(1))+'">'+
           readingPartHeading(1)+
           instrumentMarkup(s,si)+
           assetPairMarkup(s,si,'detail')+
+          '<p class="fc-reading-copy fc-instrument-full">'+esc(reading(si).instrument)+'</p>'+
         '</section>'+
       '</div>'+
       '<section class="fc-reading-part fc-reading-theatre" aria-label="'+esc(readingHead(2))+'">'+
         '<div class="fc-film-head">'+
           '<div class="fc-reading-film-title">'+readingPartHeading(2)+'</div>'+
-          '<p class="fc-instruction">'+esc(i18n('instruction'))+'<span>'+esc(i18n('selection'))+'</span></p>'+
+
         '</div>'+
         '<p class="fc-reading-copy fc-theatre-copy">'+esc(reading(si).theatre)+'</p>'+
-        '<div class="fc-gallery-area"><div class="fc-rail" data-fc-rail="'+si+
+        '<div class="fc-gallery-area"><div class="fc-gallery-hint" data-fc-gallery-hint="'+si+'" tabindex="0"><p>'+esc(i18n('instruction'))+'</p><p>'+esc(i18n('selection'))+'</p></div><div class="fc-rail" data-fc-rail="'+si+
         '" tabindex="0" aria-label="'+esc(i18n('seek')+' / '+label(s.title))+'">'+
           '<ol class="fc-strip">'+s.stages.map(function(stage,index){return cardMarkup(stage,index,s);}).join('')+'</ol>'+
         '</div></div>'+
@@ -810,7 +810,12 @@
       '<div class="fc-page" data-fc-scene>'+
         '<div class="fc-page-heading"><div class="fc-heading-primary">'+
           '<h1>'+esc(localised(item.title))+'</h1></div></div>'+
-        '<div class="fc-scroll-content" data-fc-chapter-body>'+chapterBodyMarkup()+'</div>'+
+        '<div class="fc-scroll-content" data-fc-chapter-body>'+
+        '<section class="fc-about" aria-label="'+esc(folioIntro('about'))+'">'+
+          '<h2>'+esc(folioIntro('about'))+'</h2><p>'+esc(folioIntro('lead'))+'</p>'+
+          '<nav class="fc-about-index" aria-label="'+esc(folioIntro('contents'))+'">'+
+            SERIES.map(function(series,i){return '<a href="#fc-chapter-'+(i+1)+'" data-fc-chapter-link="'+i+'"><span>'+esc(workChapterLabel(i))+'</span><small>'+series.year+'</small></a>';}).join('')+
+          '</nav></section>'+chapterBodyMarkup()+'</div>'+
         '<div data-fc-projection-slot>'+SERIES.map(projectionMarkup).join('')+'</div>'+
       '</div></section>';
   }
