@@ -344,11 +344,15 @@
   var scene=null,player=null,serial=0,queue=[],previewInFlight=0,previewComplete=new Set(),mountedToken=0;
   // Only one in-card film is allowed to play. The still-image extraction uses
   // a different off-screen video so hovering cannot disturb decoding.
-  var hoverFilm={card:null,video:null,si:-1,index:-1,kind:'film',timer:0,request:0,active:false};
+  var hoverFilm={
+    card:null,video:null,si:-1,index:-1,kind:'film',timer:0,leaveTimer:0,
+    request:0,active:false,scrubbing:false,sliderHover:false,seekFraction:null
+  };
   function stopHoverFilm(){
     hoverFilm.request++;
     clearTimeout(hoverFilm.timer);
-    hoverFilm.timer=0;
+    clearTimeout(hoverFilm.leaveTimer);
+    hoverFilm.timer=0;hoverFilm.leaveTimer=0;
     if(hoverFilm.video){
       try{
         hoverFilm.video.ontimeupdate=null;
@@ -362,9 +366,10 @@
     if(hoverFilm.si>=0)block(hoverFilm.si)?.querySelector('[data-fc-slider]')?.classList.remove('is-hover-progress');
     var previousSeries=hoverFilm.si;
     hoverFilm.card=null;hoverFilm.video=null;
-    hoverFilm.si=-1;hoverFilm.index=-1;hoverFilm.kind='film';hoverFilm.active=false;
-    // Return the shared rail to its actual scroll position after previewing.
-    if(previousSeries>=0 && scene && !selection.open){
+    hoverFilm.si=-1;hoverFilm.index=-1;hoverFilm.kind='film';
+    hoverFilm.active=false;hoverFilm.scrubbing=false;hoverFilm.sliderHover=false;
+    hoverFilm.seekFraction=null;
+    if(previousSeries>=0&&scene&&!selection.open){
       var rail=railFor(previousSeries),range=block(previousSeries)?.querySelector('[data-fc-slider]');
       if(rail&&range){
         var max=Math.max(1,rail.scrollWidth-rail.clientWidth);
@@ -373,16 +378,42 @@
       }
     }
   }
-  function startHoverFilm(card,si,index,delay){
+  // Allow the pointer to travel from a card to the slider below it
+  // without erasing the playing preview at the first pixel of empty space.
+  function scheduleHoverStop(delay){
+    clearTimeout(hoverFilm.leaveTimer);
+    hoverFilm.leaveTimer=window.setTimeout(function(){
+      hoverFilm.leaveTimer=0;
+      if(!hoverFilm.scrubbing&&!hoverFilm.sliderHover)stopHoverFilm();
+    },delay||750);
+  }
+  function seekPreviewFraction(video,fraction){
+    if(!video||!Number.isFinite(video.duration)||video.duration<=0)return;
+    var target=Math.min(video.duration-.06,video.duration*clamp(fraction,0,1));
+    try{video.currentTime=Math.max(0,target);}catch(_){}
+  }
+  function startHoverFilm(card,si,index,delay,options){
     if(!card?.isConnected||selection.open||!isLive())return;
     if(window.matchMedia('(prefers-reduced-motion: reduce)').matches)return;
-    if(hoverFilm.card===card&&(hoverFilm.active||hoverFilm.timer))return;
+    var opts=options||{};
+    var fraction=Number.isFinite(opts.fraction)?clamp(opts.fraction,0,1):null;
+    if(hoverFilm.card===card&&(hoverFilm.active||hoverFilm.timer||hoverFilm.video)){
+      clearTimeout(hoverFilm.leaveTimer);hoverFilm.leaveTimer=0;
+      if(fraction!==null){
+        hoverFilm.seekFraction=fraction;
+        if(hoverFilm.video)seekPreviewFraction(hoverFilm.video,fraction);
+      }
+      return;
+    }
     stopHoverFilm();
     var rail=railFor(si);
     if(!rail||rail.classList.contains('is-dragging'))return;
     var isInstrument=card.hasAttribute('data-fc-instrument-card');
     hoverFilm.card=card;hoverFilm.si=si;hoverFilm.index=index;
     hoverFilm.kind=isInstrument?'instrument':'film';
+    hoverFilm.scrubbing=!!opts.scrubbing;
+    hoverFilm.sliderHover=!!opts.fromSlider;
+    hoverFilm.seekFraction=fraction;
     card.classList.add('is-hovering');
     var ticket=hoverFilm.request;
     hoverFilm.timer=window.setTimeout(function(){
@@ -391,12 +422,10 @@
       var film=card.querySelector('.fc-hover-video');
       if(!film)return;
       hoverFilm.video=film;
-      film.loop=true;
-      film.muted=true;
-      film.preload='metadata';
+      film.loop=true;film.muted=true;film.preload='metadata';
       film.src=isInstrument?SERIES[si].assets.film:source(SERIES[si],index);
       film.ontimeupdate=function(){
-        if(hoverFilm.video!==film || selection.open)return;
+        if(hoverFilm.video!==film||selection.open||hoverFilm.scrubbing)return;
         var duration=Number.isFinite(film.duration)&&film.duration>0?film.duration:1;
         var fraction=clamp(film.currentTime/duration,0,1);
         var stage=SERIES[si].stages[index];
@@ -412,21 +441,57 @@
       };
       function begin(){
         if(ticket!==hoverFilm.request||selection.open||!card.isConnected)return;
-        try{
-          var target=Math.min(2,Math.max(0,film.duration-.3));
-          film.currentTime=target;
-        }catch(_){}
+        if(hoverFilm.seekFraction!==null)seekPreviewFraction(film,hoverFilm.seekFraction);
+        else{
+          try{film.currentTime=Math.min(2,Math.max(0,film.duration-.3));}catch(_){}
+        }
         var promise=film.play();
         if(promise?.then)promise.then(function(){
           if(ticket!==hoverFilm.request){film.pause();return;}
           hoverFilm.active=true;
           card.classList.add('is-previewing');
-        }).catch(function(){/* autoplay may be blocked by a browser */});
+          if(hoverFilm.scrubbing)film.pause();
+        }).catch(function(){/* A browser may restrict muted preview autoplay. */});
       }
       if(film.readyState>=1)begin();
       else film.addEventListener('loadedmetadata',begin,{once:true});
       film.load();
     },delay);
+  }
+  // The rail's range input is a gallery navigator at rest. During a
+  // hover preview it becomes a *time* scrubber, including across clips.
+  function seekHoverFilmByTime(si,absolute){
+    if(hoverFilm.si!==si||hoverFilm.kind!=='film'||!hoverFilm.card)return false;
+    var series=SERIES[si],at=clamp(absolute,0,series.endTime);
+    var idx=stageByTime(series,at),stage=series.stages[idx];
+    var fraction=clamp((at-stage.start)/Math.max(.001,stage.end-stage.start),0,1);
+    if(idx!==hoverFilm.index){
+      var target=block(si)?.querySelector('[data-fc-card="'+idx+'"]');
+      if(!target)return false;
+      startHoverFilm(target,si,idx,0,{fraction:fraction,scrubbing:true,fromSlider:true});
+      // Keep the corresponding film visible without magnetically snapping
+      // the gallery under ordinary browsing.
+      railOriginLocks[si]=true;
+      align(si,idx,false);
+      requestAnimationFrame(function(){railOriginLocks[si]=false;});
+    }else{
+      hoverFilm.scrubbing=true;hoverFilm.sliderHover=true;
+      hoverFilm.seekFraction=fraction;
+      if(hoverFilm.video){
+        hoverFilm.video.pause();
+        seekPreviewFraction(hoverFilm.video,fraction);
+      }
+    }
+    hoverFilm.card?.style.setProperty('--fc-card-progress',Math.round(fraction*100)+'%');
+    var range=block(si)?.querySelector('[data-fc-slider]');
+    if(range){
+      range.value=String(Math.round(1000*at/series.endTime));
+      range.style.setProperty('--fc-preview-progress',range.value/10+'%');
+      range.classList.add('is-hover-progress');
+    }
+    focusCard(si,idx,false);
+    updateInlineScore(si,at);
+    return true;
   }
   var io=null,scrollFrame=0,playRaf=0,hoverRAF=0,lastTrigger=null,resizeTimer=0;
   var upcomingVideo=null;
