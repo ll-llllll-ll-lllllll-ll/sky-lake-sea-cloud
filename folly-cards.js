@@ -669,8 +669,6 @@
   }
   function instrumentMarkup(s,si){
     return '<section class="fc-instrument-wrap">'+
-      '<div class="fc-subchapter"><h3>'+esc(term('moving'))+'</h3></div>'+
-      '<p class="fc-instrument-lead">'+esc(instrumentLead())+'</p>'+
       '<div class="fc-instrument-layout">'+
         '<div class="fc-instrument-card fc-card" data-fc-instrument-card data-fc-series="'+si+'">'+
           '<button class="fc-card-button" type="button" data-fc-action="instrument" data-fc-series="'+si+'" aria-label="'+esc(term('moving'))+'">'+
@@ -681,8 +679,8 @@
             '<span class="fc-card-copy"><span class="fc-card-count">01 <small>/ 01</small></span>'+
             '<span class="fc-card-name">'+esc(term('moving'))+'</span></span>'+
           '</button></div>'+
-
       '</div>'+
+      '<p class="fc-instrument-lead">'+esc(instrumentLead())+'</p>'+
     '</section>';
   }
   function inlineScoreMarkup(s,si){
@@ -772,9 +770,9 @@
     ja:{lead:'フォリーは、建てられた瞬間から自らの消滅を稽古し始める。廃墟にすでにある重力、風化、亀裂を借りて、構造と楽器と見る者を一度かぎりの上演に置く。材料がついに手を放すとき、建築の終点が一瞬だけ姿を現す。',about:'フォリーについて',contents:'作品目次',next:'続きを読む'}
   };
   var INSTRUMENT_LEAD={
-    zh:'废墟乐器依照所在废墟的构造与变化而制成。园林的沉降、摩擦、失衡与坍塌成为它的动力，声音也随着这些状态的改变而改变。',
-    en:'Each ruin instrument is built for the conditions of its own site. Sinking, friction, imbalance and collapse supply its motion; its sound changes with the changing ruin.',
-    ja:'廃墟の楽器は、それぞれの廃墟の構造と変化に応じてつくられる。沈下、摩擦、均衡の喪失、崩壊が楽器を動かし、その音も廃墟の状態とともに変わっていく。'
+    zh:'乐器依照废墟的状态而制，声音随园林的沉降、失衡与毁坏而改变。',
+    en:'Each instrument is made for its ruin, sounding as the structure sinks, shifts and breaks.',
+    ja:'楽器は廃墟の状態に応じてつくられ、沈下や均衡の喪失、崩壊とともに音を変える。'
   };
   function folioIntro(key){return (FOLLY_INTRO[state.lang]||FOLLY_INTRO.zh)[key];}
   function instrumentLead(){return INSTRUMENT_LEAD[state.lang]||INSTRUMENT_LEAD.zh;}
@@ -792,8 +790,8 @@
       '<div class="fc-series-composition">'+
         '<section class="fc-reading-part fc-reading-garden" aria-label="'+esc(readingHead(0))+'">'+
           readingPartHeading(0)+
-          '<p class="fc-reading-copy fc-garden-copy">'+esc(reading(si).garden)+'</p>'+
           assetPairMarkup(s,si,'structure')+
+          '<p class="fc-reading-copy fc-garden-copy">'+esc(reading(si).garden)+'</p>'+
         '</section>'+
         '<section class="fc-reading-part fc-reading-instrument" aria-label="'+esc(readingHead(1))+'">'+
           readingPartHeading(1)+
@@ -833,7 +831,7 @@
         '<section class="fc-about" aria-label="'+esc(folioIntro('about'))+'">'+
           '<h2>'+esc(folioIntro('about'))+'</h2><p>'+esc(folioIntro('lead'))+'</p>'+
           '<nav class="fc-about-index" aria-label="'+esc(folioIntro('contents'))+'">'+
-            SERIES.map(function(series,i){return '<a href="#fc-chapter-'+(i+1)+'" data-fc-chapter-link="'+i+'"><span>'+esc(workChapterLabel(i))+'</span><small>'+series.year+'</small></a>';}).join('')+
+            '<ol class="fc-about-list">'+SERIES.map(function(series,i){return '<li><a href="#fc-chapter-'+(i+1)+'" data-fc-chapter-link="'+i+'"><span>'+esc(workChapterLabel(i))+'</span><span class="fc-about-year">（'+series.year+'）</span></a></li>';}).join('')+'</ol>'+
           '</nav></section>'+chapterBodyMarkup()+'</div>'+
         '<div data-fc-projection-slot>'+SERIES.map(projectionMarkup).join('')+'</div>'+
       '</div></section>';
