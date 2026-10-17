@@ -551,17 +551,23 @@
   // Chapter II is deliberately not constructed until the reader crosses
   // this boundary. No photograph, mask or teaser asset belongs here.
   var activeChapter=0,lastFollyIntro='',chapterChanging=false;
-  // A short, unadorned interval: no intermediary page or teaser image.
-  function chapterGateMarkup(){
-    return '<div class="fc-chapter-seam" data-fc-chapter-seam aria-hidden="true"></div>';
-  }
+  // Each Folly is a self-contained page surface. The reader can scroll
+  // through either entire page and pass between them without wheel locks,
+  // synthetic momentum, or DOM replacement.
   function chapterBodyMarkup(){
-    // One uninterrupted document: both chapters have stable positions.
-    // Images and videos still load lazily only near the viewport.
-    return sectionMarkup(SERIES[0],0)+chapterGateMarkup(0)+sectionMarkup(SERIES[1],1)+
-      '<section class="fc-essay" aria-label="Folly notes"><div class="fc-essay-rule"></div>'+
-        '<p class="fc-essay-intro">'+esc(lastFollyIntro)+'</p>'+
-        '<div class="fc-essay-space" aria-hidden="true"></div>'+
+    return '<section class="fc-chapter-page fc-chapter-page-one" data-fc-chapter-page="0" '+
+        'aria-label="'+esc(chapterPart(0)+' · '+label(SERIES[0].title))+'">'+
+        '<div class="fc-page-shadow" data-fc-page-shadow="0" aria-hidden="true"></div>'+
+        sectionMarkup(SERIES[0],0)+
+      '</section>'+
+      '<section class="fc-chapter-page fc-chapter-page-two" data-fc-chapter-page="1" '+
+        'aria-label="'+esc(chapterPart(1)+' · '+label(SERIES[1].title))+'">'+
+        '<div class="fc-page-shadow" data-fc-page-shadow="1" aria-hidden="true"></div>'+
+        sectionMarkup(SERIES[1],1)+
+        '<section class="fc-essay" aria-label="Folly notes"><div class="fc-essay-rule"></div>'+
+          '<p class="fc-essay-intro">'+esc(lastFollyIntro)+'</p>'+
+          '<div class="fc-essay-space" aria-hidden="true"></div>'+
+        '</section>'+
       '</section>';
   }
   function sectionMarkup(s, si) {
