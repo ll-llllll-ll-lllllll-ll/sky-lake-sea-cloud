@@ -4558,3 +4558,37 @@ html:has(.fc-room){
     transition:none!important;
   }
 }
+
+
+/* v37 · Fix the projection viewer's viewport positioning.
+   The generic .room-view intro has animation-fill-mode:both and its
+   final keyframe keeps transform:translateY(0) permanently. A transformed
+   ancestor becomes the containing block for position:fixed descendants;
+   at the bottom of these long Folly pages the modal therefore opened
+   thousands of pixels above the viewport. Restrict the override to Folly.
+   All other rooms retain their original enter animation. */
+.room-view.fc-room{
+  animation:none !important;
+  transform:none !important;
+  will-change:auto !important;
+}
+.room-view.fc-room .fc-page{
+  transform:none;
+  filter:none;
+  perspective:none;
+}
+.room-view.fc-room [data-fc-projection-slot]{
+  position:fixed;
+  inset:0;
+  z-index:1000;
+  pointer-events:none;
+}
+.room-view.fc-room [data-fc-projection-slot] .fc-projection:not([hidden]){
+  position:fixed;
+  inset:0;
+  width:100vw;
+  height:100dvh;
+  min-height:100svh;
+  z-index:1001;
+  pointer-events:auto;
+}
