@@ -868,7 +868,7 @@
         'aria-label="'+esc(chapterPart(0)+' · '+label(SERIES[0].title))+'">'+
         '<div class="fc-page-shadow" data-fc-page-shadow="0" aria-hidden="true"></div>'+
         sectionMarkup(SERIES[0],0)+
-        '<div class="fc-chapter-threshold" data-fc-chapter-threshold="0"><button type="button" class="fc-threshold-link" data-fc-action="chapter-next" data-fc-series="1">'+esc(folioIntro('next'))+' · '+esc(workChapterLabel(1))+' <span>↗</span></button><div class="fc-threshold-progress" aria-hidden="true"><i></i></div></div>'+
+        '<div class="fc-chapter-threshold" data-fc-chapter-threshold="0"><div class="fc-threshold-sticky"><button type="button" class="fc-threshold-link" data-fc-action="chapter-next" data-fc-series="1">'+esc(folioIntro('next'))+' · '+esc(workChapterLabel(1))+' <span>↗</span></button><div class="fc-threshold-progress" aria-hidden="true"><i></i></div></div></div>'+
       '</section>'+
       '<section class="fc-chapter-page fc-chapter-page-two" data-fc-chapter-page="1" '+
         'aria-label="'+esc(chapterPart(1)+' · '+label(SERIES[1].title))+'">'+
@@ -2179,90 +2179,53 @@
   }
   function wireChapterThreshold(){
     if(chapterThresholdCleanup){chapterThresholdCleanup();chapterThresholdCleanup=null;}
-    var first=scene?.querySelector('[data-fc-chapter-page="0"]');
     var gate=scene?.querySelector('[data-fc-chapter-threshold]');
-    if(!first||!gate)return;
-    var armed=false,released=false,pull=0,idle=0,guarding=false,frame=0;
-    var touching=false,startTouchY=0,disarmedAt=0;
+    if(!gate)return;
+    // Native page momentum and proximity scroll-snap now provide the pause.
+    // No wheel interception, no forced scrollTo, no vertical position reset.
+    // The elastic feeling belongs to the invitation only; it never takes
+    // ownership of the browser's native scroll position.
+    var raf=0,quiet=0,closed=false,wasVisible=false,lastTop=null;
     chapterThresholdRelease=false;
-    function stopLine(){
-      var edge=first.getBoundingClientRect().bottom+window.scrollY;
-      return Math.max(0,edge-Math.min(window.innerHeight*.64,470));
-    }
     function paint(){
-      var t=clamp(pull/130,0,1);
-      gate.style.setProperty('--fc-gate-pull',t.toFixed(3));
-      gate.classList.toggle('is-pulling',pull>5);
-      gate.classList.toggle('is-armed',armed);
-    }
-    function clampToGate(){
-      if(guarding||released||chapterThresholdRelease||selection.open)return;
-      var stop=stopLine();
-      if(window.scrollY>stop+4 && window.scrollY<stop+window.innerHeight*.95){
-        guarding=true;
-        window.scrollTo({top:stop,behavior:'auto'});
-        requestAnimationFrame(function(){guarding=false;});
-      }
-    }
-    function rebound(){
-      pull=0;paint();
-    }
-    function stopBurst(){
-      idle=0;
-      if(!released&&!chapterThresholdRelease){
-        armed=true;disarmedAt=performance.now();rebound();
-      }
-    }
-    function wheel(event){
-      if(released||chapterThresholdRelease||selection.open||expandedScore!==-1||event.ctrlKey)return;
-      if(Math.abs(event.deltaX)>Math.abs(event.deltaY))return;
-      var line=stopLine(),y=window.scrollY;
-      if(event.deltaY<0){
-        if(y<line-120){armed=false;pull=0;paint();}
+      raf=0;
+      if(closed||!isLive())return;
+      var rect=gate.getBoundingClientRect();
+      var vh=window.innerHeight||700;
+      var visible=rect.bottom>vh*.10&&rect.top<vh*.94;
+      if(!visible){
+        if(wasVisible){gate.classList.remove('is-pulling');gate.style.setProperty('--fc-gate-pull','0');}
+        wasVisible=false;lastTop=null;
         return;
       }
-      if(y<line-180 || y>line+window.innerHeight*.90)return;
-      event.preventDefault();
-      if(y>=line-180)window.scrollTo({top:line,behavior:'auto'});
-      if(armed && performance.now()-disarmedAt>90){
-        pull+=Math.min(60,Math.abs(event.deltaY));
-        paint();
-        if(pull>=130){released=true;enterNextFolly();}
-      }else{
-        pull=Math.min(130,pull+Math.min(45,Math.abs(event.deltaY)));
-        paint();
-      }
-      clearTimeout(idle);
-      if(!released)idle=window.setTimeout(stopBurst,260);
+      wasVisible=true;
+      // A soft elastic displacement only while the native scroller moves.
+      // High-velocity input is capped so the artwork cannot shake or stutter.
+      var dy=lastTop===null?0:lastTop-rect.top;
+      lastTop=rect.top;
+      var progress=clamp((vh*.78-rect.top)/Math.max(1,rect.height-vh*.16),0,1);
+      var travel=Math.sin(progress*Math.PI);
+      var pull=clamp(travel*.66+Math.abs(dy)*.012,0,.90);
+      gate.style.setProperty('--fc-gate-pull',pull.toFixed(3));
+      gate.classList.add('is-pulling');
+      gate.classList.toggle('is-armed',progress>.55);
+      clearTimeout(quiet);
+      quiet=window.setTimeout(function(){
+        if(closed)return;
+        gate.classList.remove('is-pulling');
+        gate.style.setProperty('--fc-gate-pull','0');
+        lastTop=null;
+      },125);
     }
-    function scrollGuard(){
-      if(!frame)frame=requestAnimationFrame(function(){frame=0;clampToGate();});
-    }
-    function startTouch(event){
-      if(released||chapterThresholdRelease||event.touches.length!==1)return;
-      touching=true;startTouchY=event.touches[0].clientY;
-    }
-    function endTouch(event){
-      if(!touching||released||chapterThresholdRelease)return;
-      touching=false;
-      var diff=startTouchY-(event.changedTouches[0]?.clientY||startTouchY);
-      var line=stopLine();
-      if(diff>35&&window.scrollY>=line-180&&window.scrollY<line+window.innerHeight*.95){
-        if(armed){released=true;enterNextFolly();}
-        else{armed=true;pull=65;paint();window.scrollTo({top:line,behavior:'smooth'});window.setTimeout(rebound,360);}
-      }else if(window.scrollY<line-200){armed=false;rebound();}
-    }
-    window.addEventListener('wheel',wheel,{passive:false});
-    window.addEventListener('scroll',scrollGuard,{passive:true});
-    window.addEventListener('touchstart',startTouch,{passive:true});
-    window.addEventListener('touchend',endTouch,{passive:true});
+    function schedule(){if(!closed&&!raf)raf=requestAnimationFrame(paint);}
+    window.addEventListener('scroll',schedule,{passive:true});
+    window.addEventListener('resize',schedule,{passive:true});
     chapterThresholdCleanup=function(){
-      clearTimeout(idle);if(frame)cancelAnimationFrame(frame);
-      window.removeEventListener('wheel',wheel);
-      window.removeEventListener('scroll',scrollGuard);
-      window.removeEventListener('touchstart',startTouch);
-      window.removeEventListener('touchend',endTouch);
+      closed=true;clearTimeout(quiet);if(raf)cancelAnimationFrame(raf);
+      window.removeEventListener('scroll',schedule);
+      window.removeEventListener('resize',schedule);
     };
+    schedule();
   }
   var filmHintCleanup=null;
   function wireFilmHints(){
