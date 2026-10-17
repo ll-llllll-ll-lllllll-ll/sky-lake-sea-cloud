@@ -3745,3 +3745,30 @@ body.fc-score-expanded{overflow:hidden!important;}
     transition:none!important;
   }
 }
+
+
+/* v27 · Short-video-style chapter switch: a quiet seam, not an extra page.
+   JS advances one chapter per deliberate vertical gesture and disposes of
+   inertial wheel events until the 2nd work has settled into the viewport. */
+.fc-room .fc-chapter-seam {
+  display:block;
+  position:relative;
+  width:100%;
+  height:clamp(78px,13svh,124px);
+  min-height:0;
+  padding:0;
+  margin:0;
+  border:0;
+  box-shadow:none;
+  background:transparent;
+  overflow:visible;
+  pointer-events:none;
+}
+.fc-room .fc-chapter-seam+.fc-series-block {
+  scroll-margin-top:clamp(24px,6vh,76px);
+}
+@media(max-width:700px){
+  .fc-room .fc-chapter-seam {
+    height:clamp(70px,11svh,105px);
+  }
+}
