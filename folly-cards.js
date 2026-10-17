@@ -1715,205 +1715,44 @@
   // v27 · A single vertical hand-off, like advancing a short video.
   // Normal scrolling remains native everywhere except the short boundary.
   // The two works stay mounted in ONE document: nothing is replaced.
-  var gateDirectionCleanup=null;
-  function wireChapterGate(){
-    if(gateDirectionCleanup){gateDirectionCleanup();gateDirectionCleanup=null;}
-    var seam=scene?.querySelector('[data-fc-chapter-seam]');
-    if(!seam)return;
-    var raf=0,resetWheel=0,lockingUntil=0,animating=false;
-    var touch=null,wheelTotal=0,wheelDirection=0,wheelAt=0;
-    var lastScroll=window.scrollY||window.pageYOffset||0;
-    var landing=lastScroll,lastHandoff=0,lastBlockedWheel=0;
-    var reduceMotion=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    var WHEEL_STEP=76,TOUCH_STEP=62;
-    function now(){return performance.now();}
-    function sy(){return window.scrollY||window.pageYOffset||0;}
-    function position(el){return sy()+el.getBoundingClientRect().top;}
-    function metrics(){
-      var top=position(seam),h=window.innerHeight||1;
-      return {top:top,bottom:top+seam.getBoundingClientRect().height,h:h};
+  // Page shadows follow native scrolling only. There is deliberately NO
+  // preventDefault, scrollTo, lock timer, artificial inertia or snap logic.
+  var pageShadeCleanup=null;
+  function wireChapterShadows(){
+    if(pageShadeCleanup){pageShadeCleanup();pageShadeCleanup=null;}
+    if(!scene)return;
+    var first=scene.querySelector('[data-fc-chapter-page="0"]');
+    var second=scene.querySelector('[data-fc-chapter-page="1"]');
+    var shadowA=first?.querySelector('[data-fc-page-shadow="0"]');
+    var shadowB=second?.querySelector('[data-fc-page-shadow="1"]');
+    if(!first||!second||!shadowA||!shadowB)return;
+    var frame=0,closed=false;
+    function paint(){
+      frame=0;
+      if(closed||!isLive())return;
+      var viewport=window.innerHeight||document.documentElement.clientHeight||1;
+      var edge=second.getBoundingClientRect().top;
+      // 0 = next page is still below the screen, deep in shadow.
+      // 1 = next page has arrived; its shadow leaves it and settles
+      // gently onto the preceding page.
+      var start=viewport*.94,end=viewport*.08;
+      var progress=clamp((start-edge)/Math.max(1,start-end),0,1);
+      shadowA.style.opacity=(.37*progress).toFixed(3);
+      shadowB.style.opacity=(.46*(1-progress)).toFixed(3);
+      scene.style.setProperty('--fc-page-turn-progress',progress.toFixed(4));
+      var showing=progress>.5?1:0;
+      scene.dataset.fcReadingPage=String(showing);
     }
-    function available(){
-      return isLive()&&!selection.open&&!selection.scoreInspect&&expandedScore===-1;
-    }
-    function lockActive(){return animating||now()<lockingUntil;}
-    function isReadingEdge(dir,y){
-      var m=metrics();
-      // The last screen of I / first screen of II; nothing deeper in either
-      // chapter is intercepted.
-      return dir>0?y>=m.top-m.h*.92&&y<m.top+m.h*.16:
-        y>m.top-m.h*.23&&y<m.bottom+m.h*.87;
-    }
-    function threshold(dir){
-      var m=metrics();
-      return m.top+(dir>0?-m.h*.71:m.h*.10);
-    }
-    function releaseWheel(){
-      wheelTotal=0;wheelDirection=0;clearTimeout(resetWheel);resetWheel=0;
-    }
-    function target(dir){
-      var m=metrics();
-      return Math.max(0,dir>0?position(block(1))-m.h*.12:m.top-m.h*.76);
-    }
-    function commit(dir,kind){
-      if(!available()||lockActive()||lastHandoff===dir)return false;
-      var start=sy(),finish=target(dir);
-      // A giant trackpad event can overshoot the anchor before it is caught.
-      // Never animate backward while the reader is still swiping forward.
-      if(dir>0&&finish<=start)finish=start+Math.max(92,window.innerHeight*.18);
-      if(dir<0&&finish>=start)finish=Math.max(0,start-Math.max(92,window.innerHeight*.18));
-      releaseWheel();
-      touch=null;
-      if(Math.abs(finish-start)<2)return false;
-      animating=true;
-      lastHandoff=dir;
-      var startAt=now();
-      var travel=Math.abs(finish-start);
-      var duration=reduceMotion?0:Math.max(470,Math.min(690,380+travel*.32));
-      var endAnimation=function(){
-        if(raf){cancelAnimationFrame(raf);raf=0;}
-        window.scrollTo(0,finish);
-        lastScroll=sy();
-        landing=finish;
-        animating=false;
-        // The cooldown discards continued mouse-wheel/trackpad inertia and
-        // Safari scroll momentum. One gesture never cascades into another.
-        lockingUntil=now()+640;
-      };
-      function tick(t){
-        if(!isLive()){animating=false;raf=0;return;}
-        var p=Math.min(1,Math.max(0,(t-startAt)/duration));
-        // Soft acceleration followed by long deceleration, close to the
-        // vertical ease of a short-video feed but without a page swap.
-        var eased=p<.5?4*p*p*p:1-Math.pow(-2*p+2,3)/2;
-        window.scrollTo(0,start+(finish-start)*eased);
-        lastScroll=sy();
-        if(p<1)raf=requestAnimationFrame(tick);
-        else endAnimation();
-      }
-      if(!duration)endAnimation();
-      else raf=requestAnimationFrame(tick);
-      return true;
-    }
-    function skipInteractive(event){
-      return !!event.target?.closest?.(
-        'button,a,input,textarea,select,[data-fc-rail],'+
-        '[data-fc-inline-score],.fc-instrument-card,[contenteditable="true"]'
-      );
-    }
-    function wheel(event){
-      if(!available()||!event.cancelable||skipInteractive(event))return;
-      if(lockActive()){lastBlockedWheel=now();event.preventDefault();return;}
-      var dy=event.deltaY*(event.deltaMode===1?18:
-        event.deltaMode===2?window.innerHeight:1);
-      if(Math.abs(dy)<.1)return;
-      var dir=Math.sign(dy),y=sy(),t=now();
-      // Ignore the tail of a macOS trackpad flick until 240ms of silence.
-      // A genuinely new gesture, or an immediate reverse swipe after the
-      // cooldown, remains available.
-      if(lastHandoff===dir && t-lastBlockedWheel<240 && isReadingEdge(dir,y)){
-        lastBlockedWheel=t;event.preventDefault();return;
-      }
-      if(lastHandoff===dir && isReadingEdge(dir,y))return;
-      if(!isReadingEdge(dir,y)){
-        releaseWheel();
-        return;
-      }
-      event.preventDefault();
-      if(dir!==wheelDirection||t-wheelAt>370){wheelTotal=0;wheelDirection=dir;}
-      wheelAt=t;
-      wheelTotal+=Math.min(Math.abs(dy),105);
-      if(wheelTotal>=WHEEL_STEP)commit(dir,'wheel');
-      else{
-        clearTimeout(resetWheel);
-        resetWheel=window.setTimeout(releaseWheel,270);
-      }
-    }
-    function touchstart(event){
-      if(!available()||event.touches.length!==1||skipInteractive(event))return;
-      if(lockActive()){touch=null;return;}
-      var point=event.touches[0];
-      touch={x:point.clientX,startY:point.clientY,lastY:point.clientY,
-        distance:0,dir:0,captured:false};
-    }
-    function touchmove(event){
-      if(!available()||event.touches.length!==1)return;
-      if(lockActive()){
-        if(event.cancelable&&!skipInteractive(event))event.preventDefault();
-        return;
-      }
-      if(!touch||skipInteractive(event))return;
-      var point=event.touches[0],dy=touch.lastY-point.clientY;
-      touch.lastY=point.clientY;
-      if(Math.abs(point.clientX-touch.x)>Math.abs(point.clientY-touch.startY)*1.2)return;
-      if(Math.abs(dy)<.4)return;
-      var dir=Math.sign(dy);
-      if(!touch.captured){
-        if(lastHandoff===dir||!isReadingEdge(dir,sy()))return;
-        touch.captured=true;touch.dir=dir;touch.distance=0;
-      }
-      if(!event.cancelable)return;
-      event.preventDefault();
-      touch.distance+=dy*touch.dir;
-      if(touch.distance<0){touch.distance=0;return;}
-      if(touch.distance>=TOUCH_STEP)commit(touch.dir,'touch');
-    }
-    function touchend(){
-      if(!touch)return;
-      touch=null;
-    }
-    function onScroll(){
-      var y=sy(),dy=y-lastScroll;
-      lastScroll=y;
-      if(!available())return;
-      if(animating)return;
-      if(now()<lockingUntil){
-        // Safari can continue native momentum after touchend. During the
-        // brief latch, return only that residual displacement, not the page.
-        if(Math.abs(y-landing)>1.3){window.scrollTo(0,landing);lastScroll=sy();}
-        return;
-      }
-      if(Math.abs(dy)<1.5)return;
-      var dir=Math.sign(dy);
-      // Re-arm the same direction only once the reader has truly left
-      // the seam; immediately reversing is always available.
-      if(lastHandoff){
-        var m=metrics();
-        if(Math.abs(y-m.top)>m.h*.92)lastHandoff=0;
-        if(lastHandoff===dir)return;
-      }
-      var t=threshold(dir);
-      if((dir>0&&lastScroll-dy<t&&y>=t)||
-        (dir<0&&lastScroll-dy>t&&y<=t))commit(dir,'inertia');
-    }
-    function keydown(event){
-      if(!available()||skipInteractive(event)||event.ctrlKey||event.metaKey||event.altKey)return;
-      var dir=event.key==='ArrowDown'||event.key==='PageDown'||event.key===' '?1:
-        event.key==='ArrowUp'||event.key==='PageUp'?-1:0;
-      if(!dir)return;
-      if(lockActive()){event.preventDefault();return;}
-      if(!isReadingEdge(dir,sy())||lastHandoff===dir)return;
-      event.preventDefault();commit(dir,'keyboard');
-    }
-    var onWheel={capture:true,passive:false},onTouch={capture:true,passive:false};
-    window.addEventListener('wheel',wheel,onWheel);
-    window.addEventListener('touchstart',touchstart,{capture:true,passive:true});
-    window.addEventListener('touchmove',touchmove,onTouch);
-    window.addEventListener('touchend',touchend,{capture:true,passive:true});
-    window.addEventListener('touchcancel',touchend,{capture:true,passive:true});
-    window.addEventListener('scroll',onScroll,{passive:true});
-    window.addEventListener('keydown',keydown,true);
-    gateDirectionCleanup=function(){
-      releaseWheel();touch=null;
-      if(raf){cancelAnimationFrame(raf);raf=0;}
-      window.removeEventListener('wheel',wheel,true);
-      window.removeEventListener('touchstart',touchstart,true);
-      window.removeEventListener('touchmove',touchmove,true);
-      window.removeEventListener('touchend',touchend,true);
-      window.removeEventListener('touchcancel',touchend,true);
-      window.removeEventListener('scroll',onScroll);
-      window.removeEventListener('keydown',keydown,true);
+    function schedule(){if(!closed&&!frame)frame=requestAnimationFrame(paint);}
+    window.addEventListener('scroll',schedule,{passive:true});
+    window.addEventListener('resize',schedule,{passive:true});
+    pageShadeCleanup=function(){
+      closed=true;
+      if(frame)cancelAnimationFrame(frame);
+      window.removeEventListener('scroll',schedule);
+      window.removeEventListener('resize',schedule);
     };
+    schedule();
   }
   function setupFollyChapters(){
     SERIES.forEach(function(_,si){
@@ -1924,7 +1763,7 @@
       focusCard(si,0,false);
       updateInlineScore(si,0);
     });
-    wireChapterGate();
+    wireChapterShadows();
     initializeImageSwaps();
     setupPhotoReadingLayout();
     watchMechanicalScoreSizes();
@@ -2037,7 +1876,7 @@
   function mount(){
     var next=document.querySelector('[data-fc-scene]');
     if(scene===next)return;
-    if(gateDirectionCleanup){gateDirectionCleanup();gateDirectionCleanup=null;}
+    if(pageShadeCleanup){pageShadeCleanup();pageShadeCleanup=null;}
     if(photoReadingCleanup){photoReadingCleanup();photoReadingCleanup=null;}
     if(scene){clearImageSwaps();clearPreviews();stopMedia();releaseMechanicalScoreAssets();}
     releaseUpcoming();
