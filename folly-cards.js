@@ -1482,7 +1482,7 @@
         startHoverFilm(card,si,index,460);
       });
       card.addEventListener('pointerleave',function(){
-        if(hoverFilm.card===card)stopHoverFilm();
+        if(hoverFilm.card===card)scheduleHoverStop(950);
       });
       card.addEventListener('focusin',function(event){
         if(event.target.matches('.fc-card-button'))startHoverFilm(card,si,index,850);
@@ -1492,7 +1492,7 @@
       });
     });
     rail.addEventListener('scroll',function(){
-      if(hoverFilm.card?.closest('.fc-rail')===rail)stopHoverFilm();
+      if(hoverFilm.card?.closest('.fc-rail')===rail&&!hoverFilm.scrubbing&&!hoverFilm.sliderHover)stopHoverFilm();
       if(!scrollRaf)scrollRaf=requestAnimationFrame(function(){
         scrollRaf=0;
         syncRange();
@@ -1506,14 +1506,52 @@
       idleTimer=setTimeout(idlePreview,1450);
     },{passive:true});
     if(slider){
+      function finishPreviewScrub(){
+        if(hoverFilm.si!==si||hoverFilm.kind!=='film'||!hoverFilm.scrubbing)return;
+        hoverFilm.scrubbing=false;
+        // Continue the silent inline film from the exact sought frame.
+        var film=hoverFilm.video;
+        if(film?.paused && film.readyState>=1){
+          var promise=film.play();
+          if(promise?.catch)promise.catch(function(){});
+        }
+        if(!hoverFilm.sliderHover)scheduleHoverStop(550);
+      }
+      slider.addEventListener('pointerenter',function(){
+        if(hoverFilm.si!==si||hoverFilm.kind!=='film'||!hoverFilm.card)return;
+        clearTimeout(hoverFilm.leaveTimer);hoverFilm.leaveTimer=0;
+        hoverFilm.sliderHover=true;
+      });
+      slider.addEventListener('pointerleave',function(){
+        if(hoverFilm.si!==si||hoverFilm.kind!=='film'||!hoverFilm.card)return;
+        hoverFilm.sliderHover=false;
+        if(!hoverFilm.scrubbing)scheduleHoverStop(550);
+      });
+      slider.addEventListener('pointerdown',function(){
+        if(hoverFilm.si!==si||hoverFilm.kind!=='film'||!hoverFilm.card)return;
+        clearTimeout(hoverFilm.leaveTimer);hoverFilm.leaveTimer=0;
+        hoverFilm.scrubbing=true;hoverFilm.sliderHover=true;
+        hoverFilm.video?.pause();
+      });
+      slider.addEventListener('pointerup',finishPreviewScrub);
+      slider.addEventListener('pointercancel',finishPreviewScrub);
       slider.addEventListener('input',function(event){
         clearTimeout(idleTimer);
+        var at=SERIES[si].endTime*clamp(Number(event.target.value)/1000,0,1);
+        if(seekHoverFilmByTime(si,at))return;
+        // No active preview: preserve the freely scrolling card gallery.
         if(hoverFilm.card?.closest('.fc-rail')===rail)stopHoverFilm();
         var max=Math.max(0,rail.scrollWidth-rail.clientWidth);
         rail.scrollLeft=max*Number(event.target.value)/1000;
         scoreFromRail(si);
       });
-      slider.addEventListener('change',function(){syncRange();});
+      slider.addEventListener('change',function(){
+        if(hoverFilm.si===si&&hoverFilm.kind==='film'){
+          finishPreviewScrub();
+          return;
+        }
+        syncRange();
+      });
     }
     rail.addEventListener('keydown',function(event){
       if(event.key==='ArrowRight'){focusCard(si,selection.focus[si]+1,true);event.preventDefault();}
