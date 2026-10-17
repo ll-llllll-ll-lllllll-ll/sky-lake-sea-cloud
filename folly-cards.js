@@ -550,32 +550,42 @@
     return {date:copy.date,place:copy.place,short:copy.short[si][key],long:copy.long[si][key]};
   }
   function assetPairMarkup(s,si,kind){
-    var items=kind==='structure'?['full','back']:['instrument','body'];
-    var switchNames={
-      zh:{structure:['建立','坍塌'],detail:['废墟乐器','坍塌结构']},
-      en:{structure:['Construction','Collapse'],detail:['Ruin Instrument','Collapsed Structure']},
-      ja:{structure:['構築','崩壊'],detail:['廃墟の楽器','崩壊した構造']}
-    };
-    var names=(switchNames[state.lang]||switchNames.zh)[kind];
+    var structure=kind==='structure',items=structure?
+      ['full','back','structureEnd']:['instrument','body','instrumentEnd'];
+    var names=items.map(function(_,i){return phaseName(kind,i);});
+    var notes=reading(si).phases[kind];
     var faces=items.map(function(k,index){
-      return '<figure class="fc-artifact fc-swap-face'+(index===0?' is-current':'')+'" data-fc-swap-face="'+index+'" aria-hidden="'+(index===0?'false':'true')+'">'+
-        '<div class="fc-artifact-image"><img src="'+esc(s.assets[k])+'" loading="lazy" decoding="async" alt="'+esc(label(s.title)+' — '+names[index])+'"></div>'+
+      // The two existing photographs are preserved exactly as uploaded.
+      // Third stage: extract a real frame from the corresponding film only
+      // when that stage is requested. The original photo stays as fallback.
+      var fromVideo=index===2;
+      var image=fromVideo?(structure?s.assets.back:s.assets.body):s.assets[k];
+      var path=structure?source(s,s.stages.length-1):s.assets.film;
+      var filmAttr=fromVideo?' data-fc-phase-still data-fc-film-src="'+esc(path)+'" data-fc-film-time=".94"':'';
+      return '<figure class="fc-artifact fc-swap-face'+(index===0?' is-current':'')+
+        '" data-fc-swap-face="'+index+'" aria-hidden="'+(index===0?'false':'true')+'">'+
+        '<div class="fc-artifact-image"><img src="'+esc(image)+'"'+filmAttr+
+          ' loading="lazy" decoding="async" alt="'+esc(label(s.title)+' — '+names[index])+'"></div>'+
       '</figure>';
     }).join('');
     var options=items.map(function(k,index){
-      return '<button type="button" class="fc-swap-option'+(index===0?' is-active':'')+'" data-fc-action="swap-option" data-fc-index="'+index+'" aria-pressed="'+(index===0?'true':'false')+'">'+esc(names[index])+'</button>';
+      return '<button type="button" class="fc-swap-option'+(index===0?' is-active':'')+
+        '" data-fc-action="swap-option" data-fc-index="'+index+
+        '" aria-pressed="'+(index===0?'true':'false')+'">'+esc(names[index])+'</button>';
     }).join('<span class="fc-swap-separator" aria-hidden="true">/</span>');
     var metadata=items.map(function(k,index){
-      var d=photoNotes(si,k);
+      var d=photoNotes(si,index===2?(structure?'back':'body'):k);
       return '<div class="fc-photo-meta-panel" data-fc-meta-face="'+index+'" '+(index?'hidden':'')+'>'+
         '<p class="fc-photo-meta-fields"><span>'+esc(d.date)+'</span><span>'+esc(d.place)+'</span></p>'+
-        '<p class="fc-photo-meta-note">'+esc(d.short)+'</p>'+
+        '<p class="fc-photo-meta-note">'+esc(notes[index][0])+'</p>'+
       '</div>';
     }).join('');
-    var paragraphs=items.map(function(k,index){
-      return '<p class="fc-aside-panel" data-fc-aside-face="'+index+'" '+(index?'hidden':'')+'>'+esc(photoNotes(si,k).long)+'</p>';
+    var paragraphs=items.map(function(_,index){
+      return '<p class="fc-aside-panel" data-fc-aside-face="'+index+'" '+(index?'hidden':'')+'>'+
+        esc(notes[index][1])+'</p>';
     }).join('');
-    return '<div class="fc-asset-pair fc-asset-pair-'+kind+'" data-fc-swap data-fc-series="'+si+'" data-fc-active="0" aria-label="'+esc(names.join(' / '))+'">'+
+    return '<div class="fc-asset-pair fc-asset-pair-'+kind+'" data-fc-swap data-fc-series="'+si+
+      '" data-fc-active="0" aria-label="'+esc(names.join(' / '))+'">'+
       '<div class="fc-photo-column">'+
         '<div class="fc-swap-stage">'+faces+'</div>'+
         '<div class="fc-swap-controls" role="group" aria-label="'+esc(names.join(' / '))+'">'+
@@ -1739,11 +1749,16 @@
   }
   function advanceSwap(state,step){
     if(!state || !state.root.isConnected)return;
-    var next=(state.active+step+2)%2;
+    var count=state.root.querySelectorAll('[data-fc-swap-face]').length;
+    var next=((state.active+step)%count+count)%count;
     if(next===state.active){resetSwapTimer(state);return;}
     var oldFace=state.root.querySelector('[data-fc-swap-face="'+state.active+'"]');
     var nextFace=state.root.querySelector('[data-fc-swap-face="'+next+'"]');
     if(!oldFace||!nextFace)return;
+    if(next===2){
+      var still=nextFace.querySelector('[data-fc-phase-still]');
+      if(still)loadPhaseStill(still);
+    }
     clearTimeout(state.fade);
     [oldFace,nextFace].forEach(function(face){face.classList.remove('is-fading');});
     oldFace.classList.add('is-fading');
