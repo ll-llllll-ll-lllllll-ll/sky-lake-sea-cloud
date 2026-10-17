@@ -358,6 +358,7 @@
       }catch(_){}
     }
     hoverFilm.card?.classList.remove('is-hovering','is-previewing');
+    hoverFilm.card?.style.removeProperty('--fc-card-progress');
     if(hoverFilm.si>=0)block(hoverFilm.si)?.querySelector('[data-fc-slider]')?.classList.remove('is-hover-progress');
     var previousSeries=hoverFilm.si;
     hoverFilm.card=null;hoverFilm.video=null;
@@ -1230,7 +1231,7 @@
     var sourceUrl=selection.instrument?s.assets.film:source(s,i);
     function isCurrent(){return token===serial&&isLive()&&selection.open&&player===video;}
     function startedPlayback(){
-      if(!isCurrent())return;
+      if(!isCurrent()||started)return;
       started=true;frame.classList.add('has-started');
       frame.classList.remove('has-error');status.textContent='';
       selection.paused=false;syncPlayButton();warmFollowing();
@@ -2042,7 +2043,7 @@
       var stop=stopLine();
       if(window.scrollY>stop+4 && window.scrollY<stop+window.innerHeight*.95){
         guarding=true;
-        window.scrollTo({top:stop,behavior:'instant'});
+        window.scrollTo({top:stop,behavior:'auto'});
         requestAnimationFrame(function(){guarding=false;});
       }
     }
@@ -2065,7 +2066,7 @@
       }
       if(y<line-180 || y>line+window.innerHeight*.90)return;
       event.preventDefault();
-      if(y>=line-180)window.scrollTo({top:line,behavior:'instant'});
+      if(y>=line-180)window.scrollTo({top:line,behavior:'auto'});
       if(armed && performance.now()-disarmedAt>90){
         pull+=Math.min(60,Math.abs(event.deltaY));
         paint();
