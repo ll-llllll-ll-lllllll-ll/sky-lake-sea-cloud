@@ -3902,7 +3902,7 @@ body.fc-score-expanded{overflow:hidden!important;}
 }
 .fc-room .fc-reading-instrument .fc-instrument-wrap{
   width:100%;
-  margin:0 0 clamp(32px,5vw,74px);
+  margin:0 0 clamp(14px,2vw,28px);
   padding:0;
 }
 .fc-room .fc-reading-instrument .fc-instrument-wrap .fc-subchapter{
@@ -3915,7 +3915,7 @@ body.fc-score-expanded{overflow:hidden!important;}
   letter-spacing:.04em;
 }
 .fc-room .fc-reading-instrument .fc-asset-pair-detail{
-  margin-top:clamp(26px,4vw,52px);
+  margin-top:clamp(8px,1.2vw,18px);
 }
 .fc-room .fc-reading-copy{
   max-width:850px;
@@ -3982,10 +3982,10 @@ body.fc-score-expanded{overflow:hidden!important;}
     margin-top:clamp(95px,20vw,142px);
   }
   .fc-room .fc-reading-instrument .fc-instrument-wrap{
-    margin-bottom:30px;
+    margin-bottom:14px;
   }
   .fc-room .fc-reading-instrument .fc-asset-pair-detail{
-    margin-top:20px;
+    margin-top:9px;
   }
   .fc-room .fc-reading-theatre{
     margin-top:clamp(95px,19vw,148px);
