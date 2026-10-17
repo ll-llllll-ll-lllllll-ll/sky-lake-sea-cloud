@@ -4451,3 +4451,110 @@ body.fc-score-expanded{overflow:hidden!important;}
     font-size:12px;
   }
 }
+
+
+/* v36 · Material reading rhythm and a native, inertia-friendly seam.
+   There is only one vertical scroller: the browser. */
+.fc-room .fc-reading-instrument{
+  margin-top:clamp(62px,9vw,125px);
+}
+.fc-room .fc-reading-theatre{
+  margin-top:clamp(70px,8.5vw,128px);
+}
+.fc-room .fc-reading-instrument .fc-instrument-wrap{
+  margin-bottom:clamp(13px,1.75vw,26px);
+}
+.fc-room .fc-instrument-wrap .fc-instrument-lead{
+  margin-top:clamp(12px,1.3vw,18px);
+  font:400 clamp(14px,1.1vw,17px)/1.6 var(--fc-serif,var(--serif)),serif;
+  color:#262c27;
+  letter-spacing:.035em;
+}
+.fc-room .fc-instrument-wrap .fc-instrument-lead::before{
+  content:'— ';
+  color:rgba(40,45,40,.4);
+}
+html:has(.fc-room){
+  /* Only the inter-chapter threshold has a snap point; long-form pages
+     otherwise retain continuous, unsnapped, native scrolling. */
+  scroll-snap-type:y proximity;
+  scroll-padding-top:54px;
+}
+.fc-room .fc-chapter-threshold{
+  position:relative;
+  display:block;
+  height:clamp(650px,104svh,1350px);
+  min-height:650px;
+  width:100%;
+  margin:0;
+  padding:0;
+  overflow:visible;
+  background:linear-gradient(180deg,#eeede8 0%,#e9e8e2 58%,#e7e6e0 100%);
+  scroll-snap-align:start;
+  scroll-snap-stop:always;
+}
+.fc-room .fc-threshold-sticky{
+  position:sticky;
+  top:calc(54px + 32svh);
+  height:clamp(100px,14svh,160px);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:clamp(17px,2.7vh,26px);
+  width:100%;
+  padding:0 24px;
+  box-sizing:border-box;
+  will-change:transform;
+}
+.fc-room .fc-chapter-threshold .fc-threshold-link{
+  font:400 clamp(16px,1.55vw,24px)/1.8 var(--serif),serif;
+  transform:translate3d(0,calc(var(--fc-gate-pull,0) * -28px),0);
+  transition:transform .65s cubic-bezier(.14,1.45,.3,1), color .4s ease;
+}
+.fc-room .fc-chapter-threshold .fc-threshold-progress i{
+  transition:transform .65s cubic-bezier(.14,1.45,.3,1);
+}
+.fc-room .fc-chapter-threshold.is-pulling .fc-threshold-link,
+.fc-room .fc-chapter-threshold.is-pulling .fc-threshold-progress i{
+  transition:none;
+}
+.fc-room .fc-chapter-threshold .fc-threshold-progress{
+  width:min(190px,45vw);
+}
+.fc-room .fc-chapter-page-two{
+  /* A restrained shadow at the edge, not a separate screen transition. */
+  box-shadow:0 -12px 45px rgba(22,29,23,.11);
+}
+@media(max-width:700px){
+  .fc-room .fc-reading-instrument{
+    margin-top:clamp(47px,10vw,71px);
+  }
+  .fc-room .fc-reading-theatre{
+    margin-top:clamp(47px,9.5vw,74px);
+  }
+  .fc-room .fc-reading-instrument .fc-instrument-wrap{
+    margin-bottom:13px;
+  }
+  .fc-room .fc-instrument-wrap .fc-instrument-lead{
+    margin-top:12px;
+    font-size:14px;
+  }
+  .fc-room .fc-chapter-threshold{
+    height:105svh;
+    min-height:540px;
+  }
+  .fc-room .fc-threshold-sticky{
+    top:calc(54px + 30svh);
+    height:136px;
+  }
+  .fc-room .fc-chapter-threshold .fc-threshold-link{
+    font-size:clamp(14px,3.7vw,18px);
+  }
+}
+@media(prefers-reduced-motion:reduce){
+  .fc-room .fc-chapter-threshold .fc-threshold-link,
+  .fc-room .fc-chapter-threshold .fc-threshold-progress i{
+    transition:none!important;
+  }
+}
