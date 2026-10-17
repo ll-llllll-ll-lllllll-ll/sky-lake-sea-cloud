@@ -12,7 +12,7 @@
   var SERIES = [
     {id:'folly-1',roman:'I',title:{zh:'沉墟心室',en:'Effluent Sedimentation',ja:'沈墟の心室'},
      media:LOCAL_VIDEO+'folly-1/',poster:PHOTOS+'effluent-sedimentation.webp',
-     assets:{full:LOCAL_VIDEO+'folly-1-assets/folly-1-full.jpg',back:LOCAL_VIDEO+'folly-1-assets/folly-1-back.jpg',instrument:LOCAL_VIDEO+'folly-1-assets/folly-1-instrument.jpg',body:LOCAL_VIDEO+'folly-1-assets/folly-1-body.jpg',film:LOCAL_VIDEO+'folly-1-assets/instrument-1.mp4'},
+     assets:{structure:['structure-1.jpg','structure-2.jpg','structure-3.jpg'].map(function(f){return LOCAL_VIDEO+'folly-1-assets/'+f;}),detail:['instrument-1.jpg','instrument-2.jpg','instrument-3.jpg'].map(function(f){return LOCAL_VIDEO+'folly-1-assets/'+f;}),film:LOCAL_VIDEO+'folly-1-assets/instrument-1.mp4'},
      kind:'linear',endTime:150,
      stages:[
        {start:0, end:20, zh:'滞岸之壳',en:'Stranded shell',ja:'岸に留まる殻'},
@@ -24,7 +24,7 @@
      ]},
     {id:'folly-2',roman:'II',title:{zh:'朽塔焦土',en:'Aether Scorched-Earth',ja:'朽塔の焦土'},
      media:LOCAL_VIDEO+'folly-2/',poster:PHOTOS+'aether-scorched-earth.webp',
-     assets:{full:LOCAL_VIDEO+'folly-2-assets/folly-2-full.jpeg',back:LOCAL_VIDEO+'folly-2-assets/folly-2-back.jpeg',instrument:LOCAL_VIDEO+'folly-2-assets/folly-2-instrument.jpeg',body:LOCAL_VIDEO+'folly-2-assets/folly-2-body.jpeg',film:LOCAL_VIDEO+'folly-2-assets/instrument-2.mp4'},
+     assets:{structure:['structure-1.jpeg','structure-2.JPG','structure-3.JPG','structure-4.jpeg'].map(function(f){return LOCAL_VIDEO+'folly-2-assets/'+f;}),detail:['instrument-1.jpg','instrument-2.jpeg','instrument-3.jpeg'].map(function(f){return LOCAL_VIDEO+'folly-2-assets/'+f;}),film:LOCAL_VIDEO+'folly-2-assets/instrument-2.mp4'},
      kind:'radial',endTime:255,
      stages:[
        {start:0,end:28,zh:'并和狭间',en:'The interval',ja:'並存の狭間'},
@@ -92,7 +92,7 @@
   var GARDEN_READING={
     zh:{
       heads:['园林构成','废墟乐器','废墟剧场'],
-      stage:{structure:['建造','坍塌','毁坏'],detail:['置放','磨损','销毁']},
+      stage:{structure:[['建造','下垂','坍缩'],['垂立','松动','失衡','倒塌']],detail:[['置放','搏动','熔毁'],['悬挂','感应','摔碎']]},
       still:'取自影像末段的定格；可替换为独立阶段照片。',
       works:[
         {garden:'死水心室的构造取自沉墟中失去流动的水域：爆裂的储水形态、残余的心室结构与一潭死水彼此牵连。水体缓慢流失，承托随之消退；原本依靠内部平衡维系的材料在自重中挤压、碎裂、向内收缩，最后仍留在死水里继续腐蚀。',
@@ -101,14 +101,32 @@
          score:'十五帧机械记谱沿真实的受力路径记录位移与松脱。滑动剧场切片或下方时间线，图谱随声音逆序展开；那些短暂的连接、断裂与空白，为一场不可重演的坍塌留下读图的线索。',
          phases:{
            structure:[
-             ['由储水的外壳、心室残构与死水潭组成的初始结构。','各构件仍维持被安排的承托关系。原先流动的水被围困，空隙与连接共同勾勒出园林最初的形态。'],
-             ['水体流失后，心室失去内部承托。','结构开始在自重作用下挤压、碎裂并下沉；此前隐藏在完整表面以内的受力关系逐渐显露。'],
-             ['坍缩后留在死水中的残余形态。','毁坏没有随着一次坍塌停止，留下的结构继续浸泡和腐蚀；此图暂取剧场末段的实际影像定格。']
+             [
+               "由储水外壳、心室残构与死水潭形成的初始园林。",
+               "构件以预设的连接与承托关系暂时维持形态，水的重量与被围困的空隙共同组成建造后的静止状态。"
+             ],
+             [
+               "承托退去，心室构件开始下垂。",
+               "水体流失以后，受重力牵引的构件逐渐改变方向，原先维持距离的部分彼此靠近，坍缩从内部开始。"
+             ],
+             [
+               "心室向内坍缩，残部留在死水之中。",
+               "挤压、碎裂与下沉使初始结构失去轮廓；园林的毁坏没有随这次坍缩结束，材料仍继续浸泡和腐蚀。"
+             ]
            ],
            detail:[
-             ['锈血心脏被安放在钢索传力的终端。','采集的锈蚀碎片封存在玻璃罩内，等待心室沉降所带来的最后一次动力。'],
-             ['牵引与重复敲击使装置逐渐承受过载。','滑轮和泵片将沉降转为搏动，金属摩擦、机械阻塞与不断加快的撞击共同改变其声音。'],
-             ['运动超过结构所能承受的极限。','这里的“销毁”指园林的力量传至乐器，最终主动终止原有的发声秩序；此图暂取乐器影像末段定格。']
+             [
+               "锈血心脏被置放在心室的传力路径末端。",
+               "锈蚀金属碎片封存在玻璃罩内，与钢索、滑轮和泵片相连，等待园林传来的牵引。"
+             ],
+             [
+               "心室的沉降被转成一次次搏动。",
+               "金属摩擦、泵片运动和渐密的敲击共同构成声音，乐器在运作中不断耗损维持自身的连接。"
+             ],
+             [
+               "锈血心脏在终末运动中熔毁。",
+               "由园林传来的力量和持续的过载终于破坏其发声构造；这场执意的销毁使原先的运作秩序无法恢复。"
+             ]
            ]
          }},
         {garden:'朽塔由三组向外牵引的钢缆与中央悬垂的重物勉强维持垂立，底部的玻璃轴球承受着微小的偏移。钢缆逐渐疲劳，张力和重心开始改变；地面的「塌别塔」又反复旋转碾磨，使支撑塔身的结构在持续扰动中走向坍落。',
@@ -117,88 +135,202 @@
          score:'折翼与双指针把这些运动的先后、偏移与关联保存在同一张图面上。它随剧场进度改变，也可以被独立折叠与检视；当传力关系松开，记谱留下的便是声响发生过的痕迹。',
          phases:{
            structure:[
-             ['钢缆、三点锚固与悬垂重物暂时托住朽塔。','近乎失衡的垂立姿态来自精细的张拉关系；塔体、狭间与地面的沙盘被布置在同一个空间中。'],
-             ['张力衰减，朽塔逐渐失去重心。','钢缆疲劳与底部不断受到的磨耗，让原本维系竖立的力量反过来成为失稳的来源。'],
-             ['结构越过轴球允许的角度而倾倒。','残余拉力把塔体推向地面，磨盘继续混合残骸与尘土；此图暂取剧场末段的实际影像定格。']
+             [
+               "钢缆与悬垂重物将朽塔维持在垂立状态。",
+               "三点锚固和底部轴球承受着细微的偏移，塔身暂时停留在近乎失衡的张拉关系之中。"
+             ],
+             [
+               "连接与牵引开始松动。",
+               "钢缆逐渐疲劳，地面磨盘的反复扰动传入支撑部位，原本紧绷的关系出现间隙。"
+             ],
+             [
+               "重心偏移，朽塔进入失衡。",
+               "承重与牵引不再彼此抵消，底部的倾斜逐渐扩大，维系直立的力量反过来推动倾倒。"
+             ],
+             [
+               "张拉结构失效，朽塔最终倒塌。",
+               "塔身越过底部轴球允许的角度并撞向地面，残余钢缆与磨盘继续搅动散落的材料。"
+             ]
            ],
            detail:[
-             ['天线、以太狭间与砂盘构成发声回路。','不可见的干涉被转译为振动和砂粒的图形，机械装置因此成为能够听见环境变化的乐器。'],
-             ['砂粒持续散落，静电与电子噪声逐渐积累。','重复的振动、摩擦与碾磨消耗着器械的稳定性，暂时形成的图形又被下一次扰动抹去。'],
-             ['持续运作最终反过来破坏发声的条件。','“销毁”指园林内部的力量被执意传给器械，使既有秩序无法维持，而非普通的自然损耗；此图暂取乐器影像末段定格。']
+             [
+               "以太狭间的感应部件被悬挂起来。",
+               "天线、线缆与砂盘建立起尚未运作的联系，乐器暂时维持着等待感应的姿态。"
+             ],
+             [
+               "电磁干涉被感应并转成声音与振动。",
+               "砂盘留下短暂的图形；静电、砂粒的散落与不断积累的噪声，使这一回路始终处于扰动之中。"
+             ],
+             [
+               "乐器在传来的冲击中摔碎。",
+               "园林失衡的力量沿连接传至以太狭间，感应与发声的构件遭到破坏，原有回路随之终止。"
+             ]
            ]
          }}
       ]
     },
     en:{
       heads:['The Garden','Ruin Instrument','Ruin Theatre'],
-      stage:{structure:['Construction','Collapse','Destruction'],detail:['Placement','Wear','Destruction']},
+      stage:{structure:[['Construction','Sagging','Inward Collapse'],['Upright','Loosening','Imbalance','Collapse']],detail:[['Placement','Pulsation','Meltdown'],['Suspension','Sensing','Shattering']]},
       still:'A still from the final passage of the film; an independent stage photograph may replace it.',
       works:[
         {garden:'The stagnant-heart structure grows from a reservoir shell, the remains of a heart chamber and a pool of still water. As the water drains, internal support gives way. Under its own weight the construction compresses, fractures and contracts, leaving parts immersed and exposed to further corrosion.',
          instrument:'The Rust-Blood Heart encloses pieces of corroded metal in glass, connected to the ruined chamber by steel cables, pulleys and a pump blade. The chamber’s slow descent is transmitted as increasingly rapid knocks: each beat borrows energy from the garden’s collapse while consuming the instrument itself.',
          theatre:'The sinking chamber and the beating heart move through the same time. Sound arises from load, tension, collision and structural failure; as the final blow approaches, the instrument loses the conditions that held it together.',
          score:'Fifteen stop-motion frames trace displacement and release along the mechanical path. The notation follows the theatre footage in reverse, leaving the connections, breaks and silences of an unrepeatable collapse legible.',
-         phases:{structure:[
-          ['Reservoir shell, heart-chamber remnants and still water.','The components initially hold their arranged support. Enclosed water, gaps and joints describe the garden before its movement begins.'],
-          ['The chamber loses its support as the water retreats.','Its own weight presses the structure inward; fractures and sinking reveal forces formerly concealed within the shell.'],
-          ['The remnants remain in still water.','Corrosion continues after the collapse. This image is temporarily a still from the final theatre fragment.']
-         ],detail:[
-          ['The Rust-Blood Heart is placed at the end of the tensile chain.','Collected rusted fragments are enclosed in glass, awaiting the chamber’s last transfer of force.'],
-          ['Repeated impacts bring the mechanism under strain.','Pulleys and the blade turn sinking into beats; friction, obstruction and accelerating knocks change its sound.'],
-          ['Motion exceeds the instrument’s limits.','“Destruction” names a deliberate termination of the sounding order by force transmitted from the garden. The image is a film still.']
-         ]}},
+         phases:{
+           structure:[
+             [
+               "The reservoir shell, chamber remnants and still water form the garden’s initial construction.",
+               "Connections and supports hold the elements in place. Water and the spaces enclosed by the structure remain momentarily still."
+             ],
+             [
+               "As support recedes, the chamber’s components begin to sag.",
+               "With the loss of water, gravity draws the members out of alignment. Previously separated parts move closer as collapse begins within."
+             ],
+             [
+               "The chamber collapses inward, leaving remnants in still water.",
+               "Compression, fractures and subsidence undo its initial outline; immersion and corrosion continue after the collapse."
+             ]
+           ],
+           detail:[
+             [
+               "The Rust-Blood Heart is placed at the end of the chamber’s force-transmission path.",
+               "Rusted fragments are sealed in glass and connected to cables, pulleys and a pump blade, awaiting the pull of the garden."
+             ],
+             [
+               "The chamber’s descent becomes a succession of pulses.",
+               "Friction, the pump blade and increasingly frequent impacts make sound while wearing away the connections that sustain the instrument."
+             ],
+             [
+               "The Rust-Blood Heart melts apart in its final motion.",
+               "Force transmitted from the garden and continuing overload destroy its sounding structure; this deliberate destruction ends its former order of operation."
+             ]
+           ]
+         }},
         {garden:'Three outward cable anchors and a suspended weight hold the Ruined Tower upright around a glass pivot. As cable tension weakens, its centre of gravity shifts. The ground-level grinding structure repeatedly wears at its supports until the tower can no longer keep its precarious balance.',
          instrument:'Aether Interval links moving antennas, a theremin-like interference field and a sand plate. Electromagnetic changes become frequency, sound and vibration before briefly appearing in the sand. Falling grains, static charge and electronic noise gradually burden the apparatus.',
          theatre:'The tower, the aether interval and the ground-level grinder perform together. Sand gathers and disperses, cables tremble and the wheel abrades the ground. One order produces sound through the very motions that undermine another.',
          score:'Folding wings and paired pointers hold movements, deviations and their relationships in one plane. The score follows the film but may also be folded and examined independently; once the mechanism fails, its marks remain.',
-         phases:{structure:[
-          ['Three cable anchors and a hanging weight hold the tower.','Its improbable upright posture depends on a precise tensile arrangement spanning the tower, interval and sand field.'],
-          ['Tension fades and the centre of gravity moves.','Fatigued cables and repeated abrasion turn the original supporting order into the source of imbalance.'],
-          ['The tower falls beyond the pivot’s angular limit.','Remaining tension throws it to the ground while dust and fragments continue to mix. The image is a theatre-film still.']
-         ],detail:[
-          ['Antennas, the interval and the sand plate form a sounding circuit.','Invisible interference passes into vibration and temporary patterns in the sand.'],
-          ['Sand falls away as static and electronic noise accumulate.','Vibration, friction and grinding gradually consume the instrument’s stability and erase successive patterns.'],
-          ['The circuit destroys the conditions of its own sounding.','“Destruction” indicates a willed assault on an existing order through forces transmitted by the garden, not routine wear. The image is a film still.']
-         ]}}
+         phases:{
+           structure:[
+             [
+               "Cables and a suspended weight hold the tower upright.",
+               "Three anchors and the glass pivot accommodate minute deviations; the tower stands only through a precarious balance of tension."
+             ],
+             [
+               "Connections and restraints begin to loosen.",
+               "Cable fatigue and repeated disturbance from the ground-level grinder open gaps in what had been a taut arrangement."
+             ],
+             [
+               "The centre of gravity shifts and the tower loses balance.",
+               "Load and counter-tension no longer cancel one another; the tilt at the base grows as the original supports begin to drive the fall."
+             ],
+             [
+               "The tensile order fails and the tower collapses.",
+               "It passes the pivot’s permissible angle and strikes the ground while the cables and grinder continue to disturb the debris."
+             ]
+           ],
+           detail:[
+             [
+               "The sensing parts of Aether Interval are suspended.",
+               "Antennas, cables and a sand plate are connected but still at rest, holding the instrument in readiness."
+             ],
+             [
+               "Electromagnetic interference is sensed and converted into sound and vibration.",
+               "The sand briefly retains its patterns while static, falling grains and accumulating noise disturb the circuit."
+             ],
+             [
+               "The instrument shatters under the transmitted impact.",
+               "The garden’s loss of balance reaches Aether Interval through its connections, breaking the components of sensing and sound."
+             ]
+           ]
+         }}
       ]
     },
     ja:{
       heads:['園林の構成','廃墟の楽器','廃墟劇場'],
-      stage:{structure:['構築','崩壊','破壊'],detail:['設置','摩耗','破壊']},
+      stage:{structure:[['構築','垂下','圧潰'],['直立','緩み','均衡喪失','倒壊']],detail:[['設置','鼓動','溶融崩壊'],['懸架','感応','落下破砕']]},
       still:'映像終盤から切り出した静止画。各段階の写真と差し替え可能。',
       works:[
         {garden:'「死水心室」は破裂した貯水槽の形態、心室の残存構造、淀んだ水から組み立てられる。水が失われるにつれ内部の支持も消え、構造は自重で押し潰され、割れ、内側へと縮む。残った部分は水に浸されたまま腐食を続ける。',
          instrument:'錆びた金属片をガラスに封じた「錆血の心臓」は、鋼索と滑車、ポンプ片を通じて心室につながる。ゆっくりした沈下が急速な打撃へと変わり、一度の鼓動ごとに園林の崩壊から力を借りながら、自らの構造も消耗する。',
          theatre:'沈む心室と鼓動する心臓は同じ時間を生きる。音は荷重、張力、衝突、構造の失効から生まれ、最後の一打に近づくほど、楽器は元の姿を維持できなくなる。',
          score:'十五枚の連続図が力の伝達に沿った変位と弛緩を記録する。譜面は劇場映像と逆向きに進み、再演できない崩壊の接続、断裂、沈黙を読める形に残す。',
-         phases:{structure:[
-          ['貯水槽の殻、心室の残構、淀んだ水。','配置された支持関係が保たれ、水、空隙、接合部が動き始める前の園林の姿を形づくる。'],
-          ['水が引き、心室は内部の支持を失う。','構造は自重で圧縮され、割れ、沈み込み、表面に隠れていた力の関係が現れる。'],
-          ['崩壊後の残部は水中に残る。','腐食は続いていく。この画像には劇場映像終盤の静止画を暫定的に用いる。']
-         ],detail:[
-          ['錆血の心臓は張力の伝達経路の先に置かれる。','錆びた破片はガラスに収まり、沈下から伝わる最後の力を待つ。'],
-          ['反復する打撃が装置に過負荷を与える。','滑車とポンプ片が沈下を鼓動に変え、摩擦や閉塞、加速する衝撃が音を変える。'],
-          ['運動は構造の限界を超える。','「破壊」は園林から伝わる力によって発声の秩序を意図的に終わらせることを指す。画像は映像からの静止画。']
-         ]}},
+         phases:{
+           structure:[
+             [
+               "貯水槽の殻と心室の残構、淀んだ水によって園林が組み上がる。",
+               "部材はあらかじめ配置された接続と支持によって形を保ち、水の重みと囲い込まれた空隙が静止した姿をつくる。"
+             ],
+             [
+               "支えを失った心室の部材が垂れ下がり始める。",
+               "水が減るにつれ、重力に引かれた部材の向きが変わり、離れていた部分が近づいて内部から崩れ始める。"
+             ],
+             [
+               "心室が内側へ圧潰し、残部が淀んだ水に残る。",
+               "圧縮、亀裂、沈下によって当初の輪郭が失われる。崩壊のあとも浸水と腐食は続いていく。"
+             ]
+           ],
+           detail:[
+             [
+               "錆血の心臓が心室の力の伝達経路の末端に置かれる。",
+               "錆びた金属片はガラスに封じられ、鋼索、滑車、ポンプ片を通じて園林からの牽引を待つ。"
+             ],
+             [
+               "心室の沈下が繰り返す鼓動へと変わる。",
+               "摩擦、ポンプ片の運動、密度を増す打撃が音を生み、楽器は発声しながら自らの接続をすり減らす。"
+             ],
+             [
+               "錆血の心臓は最後の運動のなかで溶融し、壊れていく。",
+               "園林から届く力と過負荷が発声の構造を破壊し、意図された終結によって元の運作秩序は失われる。"
+             ]
+           ]
+         }},
         {garden:'「朽塔」は外側へ伸びる三本の鋼索と吊り下げた重りによって、ガラスの軸球の上で辛うじて直立する。張力が衰え、重心が揺らぎ、地上の磨盤が支持部を繰り返し削ることで、塔はついに均衡を失う。',
          instrument:'「エーテルの狭間」は揺れるアンテナ、テルミンに似た干渉場、砂盤を一つの回路につなぐ。電磁的な変化は周波数、音、振動となり、砂に短い模様を残す。砂の流出と静電気、電子雑音は装置への負荷を増していく。',
          theatre:'朽塔、エーテルの狭間、地上の磨盤が一つの演奏に加わる。砂は集まり散り、鋼索は揺れ、磨盤は地表を削る。一つの秩序が音を生みながら、別の秩序の足場を失わせていく。',
          score:'折り畳まれる翼と二本の指針が、運動とずれ、そのつながりを平面に留める。映像と連動しながら独立して折り畳み、検分することもできる。機構が壊れたあとにも痕跡は残る。',
-         phases:{structure:[
-          ['三点の鋼索と吊り重りが塔を支える。','不安定な直立姿勢は、塔と狭間と砂盤にまたがる精密な張力の配置によって成り立つ。'],
-          ['張力が衰え、重心が移る。','鋼索の疲労と繰り返す摩耗が、支えの仕組みを不均衡の原因へと変える。'],
-          ['軸球の許容角を超えて塔が倒れる。','残る張力が塔を地面へ投げ、瓦礫と砂が混ざり続ける。画像は劇場映像からの静止画。']
-         ],detail:[
-          ['アンテナ、狭間、砂盤が発声の回路をつくる。','見えない干渉は振動となり、砂に一時的な模様として現れる。'],
-          ['砂が落ち、静電気と雑音が蓄積する。','振動、摩擦、研磨が器械の安定を奪い、生まれた模様を次の揺れが消す。'],
-          ['回路は自らの発声条件を破壊する。','「破壊」は園林の力を伝え、既存の秩序を意図的に終わらせることを指す。画像は映像からの静止画。']
-         ]}}
+         phases:{
+           structure:[
+             [
+               "鋼索と吊り重りが朽塔を直立させている。",
+               "三点の錨と底部のガラスの軸球がわずかなずれを受け止め、塔は危うい張力の均衡によって立っている。"
+             ],
+             [
+               "接続部と鋼索の緊張が緩み始める。",
+               "鋼索の疲労と地上の磨盤による反復した揺さぶりが、張り詰めていた支持関係に隙間を生む。"
+             ],
+             [
+               "重心が移動し、朽塔は均衡を失う。",
+               "荷重と牽引が釣り合わなくなり、基部の傾きが増して、支える力そのものが転倒を促す。"
+             ],
+             [
+               "張力による支持が破綻し、朽塔は倒壊する。",
+               "塔は軸球の許容角を越えて地面に落ち、鋼索と磨盤が散らばった部材をなお動かし続ける。"
+             ]
+           ],
+           detail:[
+             [
+               "エーテルの狭間の感応部が宙に吊られる。",
+               "アンテナ、鋼索、砂盤が接続され、まだ動き出さない楽器は感応を待つ姿勢を保つ。"
+             ],
+             [
+               "電磁的な干渉が感知され、音と振動に変わる。",
+               "砂盤には一時的な模様が残り、静電気と落ちる砂、増していく雑音が回路を揺さぶる。"
+             ],
+             [
+               "伝わってきた衝撃によって楽器が落下し、砕ける。",
+               "園林の均衡喪失が接続を通じてエーテルの狭間に及び、感応と発声を担う部材を破壊する。"
+             ]
+           ]
+         }}
       ]
     }
   };
   function reading(si){return (GARDEN_READING[state.lang]||GARDEN_READING.zh).works[si];}
   function readingHead(i){return (GARDEN_READING[state.lang]||GARDEN_READING.zh).heads[i];}
-  function phaseName(kind,i){return (GARDEN_READING[state.lang]||GARDEN_READING.zh).stage[kind][i];}
+  function phaseName(si,kind,i){return (GARDEN_READING[state.lang]||GARDEN_READING.zh).stage[kind][si][i];}
   var i18n=function(k){return (COPY[state.lang]||COPY.zh)[k]||'';};
   var label=function(obj){return obj[state.lang]||obj.zh||'';};
   var esc=function(v){return escapeHtml(v == null?'':String(v));};
@@ -484,153 +616,24 @@
   }
 
 
-  // Editable placeholders: one short archive caption and one longer note per
-  // photo. None of the date/place values are guessed from the folder name.
+  // Photograph dates and places remain unspecified until the artist supplies them;
+  // per-stage descriptive text comes from GARDEN_READING above.
   var PHOTO_INFORMATION={
-    zh:{
-      date:'拍摄日期待补',place:'拍摄地点待补',
-      short:[
-        {full:'建立状态的正面全貌；材质、尺寸及制作信息待补。',
-         back:'坍塌后的背面状态；残留构件与损耗记录待补。',
-         instrument:'废墟乐器的局部构造；材料与传动方式待补。',
-         body:'坍塌结构的连接细部；断裂与变形记录待补。'},
-        {full:'建立状态的正面全貌；支撑方式与材料信息待补。',
-         back:'背面与坍塌后的形态；现场变化记录待补。',
-         instrument:'废墟乐器的构件细节；制作与动作信息待补。',
-         body:'坍塌结构的残余形态；连接、折叠与变形记录待补。'}
-      ],
-      long:[
-        {full:'主体结构在正面与背面之间显露出不同的构件关系。影像开始之前，先让它作为一件静止的构造被观看。',
-         back:'从背面重新观看，原先完整的支撑关系开始松动；构件退入背景，坍塌后的形态仍留下建造时的痕迹。此处文字待进一步校订。',
-         instrument:'乐器的局部结构被单独取出：连接、承重和可能发声的部件暂时停止运动，等待影像继续展开。此处文字待进一步校订。',
-         body:'坍塌结构保留着局部连接与材料断裂的形状，这些细节将原本连续的动作停留在一个可以观察的瞬间。此处文字待进一步校订。'},
-        {full:'主体与背面的两幅图像保留了结构各自的面貌。它们在运动之前，已将构造的重心、连接与空隙呈现出来。',
-         back:'从背后观看结构，原先稳定的边界变得松散；失去支撑后的材料继续保留着形体和受力的方向。此处文字待进一步校订。',
-         instrument:'乐器的细节将运动的起点暂时固定下来。各部分之间的间隙、接合与牵引关系等待在影像中显现。此处文字待进一步校订。',
-         body:'在坍塌结构的局部，折叠和变形留下不同于完整状态的空间关系。此处文字待进一步校订。'}
-      ]
-    },
-    en:{
-      date:'Date to be added',place:'Location to be added',
-      short:[
-        {full:'Established structure; material and dimensions to be added.',back:'Collapsed rear view; condition notes to be added.',instrument:'Instrument detail; mechanism and materials to be added.',body:'Collapsed body; joints and fracture notes to be added.'},
-        {full:'Established structure; supports and materials to be added.',back:'Rear view after collapse; field notes to be added.',instrument:'Instrument details; construction notes to be added.',body:'Collapsed structure; folding and deformation notes to be added.'}
-      ],
-      long:[
-        {full:'Seen from the front and back, the structure reveals different relationships among its parts. Before the film begins, it remains here as a still construction.',
-         back:'Seen from behind, the supporting relationships begin to loosen. The remaining members still carry traces of their construction. Text awaiting revision.',
-         instrument:'The instrument is set apart for closer attention: connections, weight and possible sources of sound remain still until the moving image begins. Text awaiting revision.',
-         body:'Joints and fractures of the collapsed structure suspend its movement in a single observable moment. Text awaiting revision.'},
-        {full:'The two views retain the structure from either side. Even at rest, its weight, connections and openings become visible.',
-         back:'From the rear, the structure loses its stable outline while its materials retain the directions of their former loads. Text awaiting revision.',
-         instrument:'Details of the instrument hold movement at its point of departure; gaps, joints and points of tension await the moving image. Text awaiting revision.',
-         body:'Folding and deformation leave the collapsed structure with spatial relationships unlike its original form. Text awaiting revision.'}
-      ]
-    },
-    ja:{
-      date:'撮影日未記入',place:'撮影場所未記入',
-      short:[
-        {full:'構築時の正面全景。素材と寸法は追記予定。',back:'崩壊後の背面。残存部材の記録は追記予定。',instrument:'楽器の部分構造。素材と機構は追記予定。',body:'崩壊した本体の細部。接合と亀裂の記録は追記予定。'},
-        {full:'構築時の正面全景。支持構造の情報は追記予定。',back:'崩壊後の背面。現場記録は追記予定。',instrument:'楽器の構成部材。製作と動作の情報は追記予定。',body:'崩壊した構造の残余。変形の記録は追記予定。'}
-      ],
-      long:[
-        {full:'表裏から見ると、構造体の各部材は異なる関係を見せる。映像が始まる前に、まず静止した構築物として見る。',
-         back:'裏側から見ると、支えの関係が緩み始め、残った部材には建造時の痕跡が見える。文章は後日推敲予定。',
-         instrument:'器械の接合、荷重、音を発する可能性のある部材を静止した状態で見る。文章は後日推敲予定。',
-         body:'崩壊した構造の接合と亀裂が、連続する動きを観察可能な一瞬に留める。文章は後日推敲予定。'},
-        {full:'二つの視点から、構造体の表と裏を記録する。動き始める前から、重み、接合、空隙が見えている。',
-         back:'背面では輪郭が緩み、材料にはかつて受けた力の方向が残されている。文章は後日推敲予定。',
-         instrument:'器械の細部は動き始める直前を留め、空隙や接合、張力の関係を示す。文章は後日推敲予定。',
-         body:'折り畳みと変形が、元の姿とは異なる空間的関係を残す。文章は後日推敲予定。'}
-      ]
-    }
+    zh:{date:'拍摄日期待补',place:'拍摄地点待补'},
+    en:{date:'Date to be added',place:'Location to be added'},
+    ja:{date:'撮影日未記入',place:'撮影場所未記入'}
   };
-  function photoNotes(si,key){
-    var copy=PHOTO_INFORMATION[state.lang]||PHOTO_INFORMATION.zh;
-    return {date:copy.date,place:copy.place,short:copy.short[si][key],long:copy.long[si][key]};
-  }
-  // Only two authored still photographs exist per sequence at present.
-  // The third phase comes directly from the last passage of the relevant
-  // existing video. It is decoded once, on demand, with the original photo
-  // as a fallback if the browser cannot seek this MP4.
-  var activePhaseVideos=new Set();
-  function clearPhaseStills(){
-    activePhaseVideos.forEach(function(release){release();});
-    activePhaseVideos.clear();
-  }
-  function loadPhaseStill(img){
-    if(!img||img.dataset.fcPhaseLoaded||img.dataset.fcPhaseLoading)return;
-    var file=img.dataset.fcFilmSrc;
-    if(!file)return;
-    var token=mountedToken;
-    img.dataset.fcPhaseLoading='1';
-    var v=document.createElement('video'),timer=0,finished=false,targetTime=-1;
-    v.muted=true;v.preload='auto';v.playsInline=true;
-    v.setAttribute('playsinline','');
-    function release(){
-      if(finished)return;
-      finished=true;
-      clearTimeout(timer);
-      activePhaseVideos.delete(release);
-      v.removeEventListener('loadedmetadata',metadata);
-      v.removeEventListener('seeked',capture);
-      v.removeEventListener('loadeddata',capture);
-      v.removeEventListener('error',release);
-      try{v.pause();v.removeAttribute('src');v.load();}catch(_){}
-      delete img.dataset.fcPhaseLoading;
-    }
-    function capture(){
-      if(finished||token!==mountedToken||!img.isConnected)return release();
-      if(v.readyState<2||!v.videoWidth||!v.videoHeight)return;
-      // In Safari loadeddata can fire at frame zero before the seek finishes.
-      // A phase picture must be taken from the requested final passage.
-      if(targetTime<0||Math.abs(v.currentTime-targetTime)>.18)return;
-      try{
-        var canvas=document.createElement('canvas');
-        var width=Math.min(1080,v.videoWidth);
-        canvas.width=width;
-        canvas.height=Math.max(1,Math.round(width*v.videoHeight/v.videoWidth));
-        canvas.getContext('2d',{alpha:false}).drawImage(v,0,0,canvas.width,canvas.height);
-        img.src=canvas.toDataURL('image/jpeg',.84);
-        img.dataset.fcPhaseLoaded='film';
-        release();
-      }catch(_){release();}
-    }
-    function metadata(){
-      try{
-        var duration=v.duration;
-        if(!Number.isFinite(duration)||duration<.2)return release();
-        targetTime=Math.max(.06,Math.min(duration-.08,
-          duration*Number(img.dataset.fcFilmTime||.94)));
-        v.currentTime=targetTime;
-      }catch(_){release();}
-    }
-    activePhaseVideos.add(release);
-    v.addEventListener('loadedmetadata',metadata);
-    v.addEventListener('seeked',capture);
-    v.addEventListener('loadeddata',capture);
-    v.addEventListener('error',release);
-    timer=window.setTimeout(release,18000);
-    v.src=file;
-    v.load();
-  }
+  function photoNotes(){return PHOTO_INFORMATION[state.lang]||PHOTO_INFORMATION.zh;}
   function assetPairMarkup(s,si,kind){
-    var structure=kind==='structure',items=structure?
-      ['full','back','structureEnd']:['instrument','body','instrumentEnd'];
-    var names=items.map(function(_,i){return phaseName(kind,i);});
+    // Every phase has a dedicated, artist-supplied photograph; the number
+    // of structure phases may differ from one Folly to another.
+    var items=s.assets[kind];
+    var names=items.map(function(_,i){return phaseName(si,kind,i);});
     var notes=reading(si).phases[kind];
-    var faces=items.map(function(k,index){
-      // The two existing photographs are preserved exactly as uploaded.
-      // Third stage: extract a real frame from the corresponding film only
-      // when that stage is requested. The original photo stays as fallback.
-      var fromVideo=index===2;
-      var image=fromVideo?(structure?s.assets.back:s.assets.body):s.assets[k];
-      var path=structure?source(s,s.stages.length-1):s.assets.film;
-      var filmAttr=fromVideo?' data-fc-phase-still data-fc-film-src="'+esc(path)+'" data-fc-film-time=".94"':'';
+    var faces=items.map(function(image,index){
       return '<figure class="fc-artifact fc-swap-face'+(index===0?' is-current':'')+
         '" data-fc-swap-face="'+index+'" aria-hidden="'+(index===0?'false':'true')+'">'+
-        '<div class="fc-artifact-image"><img src="'+esc(image)+'"'+filmAttr+
-          ' loading="lazy" decoding="async" alt="'+esc(label(s.title)+' — '+names[index])+'"></div>'+
+        '<div class="fc-artifact-image"><img src="'+esc(image)+'" loading="lazy" decoding="async" alt="'+esc(label(s.title)+' — '+names[index])+'"></div>'+
       '</figure>';
     }).join('');
     var options=items.map(function(k,index){
@@ -639,7 +642,7 @@
         '" aria-pressed="'+(index===0?'true':'false')+'">'+esc(names[index])+'</button>';
     }).join('<span class="fc-swap-separator" aria-hidden="true">/</span>');
     var metadata=items.map(function(k,index){
-      var d=photoNotes(si,index===2?(structure?'back':'body'):k);
+      var d=photoNotes();
       return '<div class="fc-photo-meta-panel" data-fc-meta-face="'+index+'" '+(index?'hidden':'')+'>'+
         '<p class="fc-photo-meta-fields"><span>'+esc(d.date)+'</span><span>'+esc(d.place)+'</span></p>'+
         '<p class="fc-photo-meta-note">'+esc(notes[index][0])+'</p>'+
@@ -1841,10 +1844,6 @@
     var oldFace=state.root.querySelector('[data-fc-swap-face="'+state.active+'"]');
     var nextFace=state.root.querySelector('[data-fc-swap-face="'+next+'"]');
     if(!oldFace||!nextFace)return;
-    if(next===2){
-      var still=nextFace.querySelector('[data-fc-phase-still]');
-      if(still)loadPhaseStill(still);
-    }
     clearTimeout(state.fade);
     [oldFace,nextFace].forEach(function(face){face.classList.remove('is-fading');});
     oldFace.classList.add('is-fading');
@@ -2092,7 +2091,7 @@
     if(scene===next)return;
     if(pageShadeCleanup){pageShadeCleanup();pageShadeCleanup=null;}
     if(photoReadingCleanup){photoReadingCleanup();photoReadingCleanup=null;}
-    if(scene){clearPhaseStills();clearImageSwaps();clearPreviews();stopMedia();releaseMechanicalScoreAssets();}
+    if(scene){clearImageSwaps();clearPreviews();stopMedia();releaseMechanicalScoreAssets();}
     releaseUpcoming();
     document.body.classList.remove('fc-modal-open','fc-score-expanded');
     scene=next;player=null;
