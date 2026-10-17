@@ -80,9 +80,9 @@
     }
   ];
   var SECTION_TERMS={
-    zh:{front:'正面 / 全貌',back:'背面',instrument:'仪器',body:'主体细部',moving:'仪器动态记录',movement:'废墟剧场',score:'废墟乐谱',scoreOpen:'展开图谱',scoreClose:'返回图谱',scoreFold:'折叠 / 展开',scoreReset:'复位',frame:'记谱帧'},
-    en:{front:'Full view',back:'Back view',instrument:'Instrument',body:'Body detail',moving:'Instrument in motion',movement:'Ruin Theatre',score:'Ruin Score',scoreOpen:'Enlarge score',scoreClose:'Return to score',scoreFold:'Fold / unfold',scoreReset:'Reset',frame:'Score frame'},
-    ja:{front:'全景',back:'背面',instrument:'器械',body:'本体細部',moving:'器械の動き',movement:'廃墟劇場',score:'廃墟の楽譜',scoreOpen:'譜面を拡大',scoreClose:'譜面に戻る',scoreFold:'折る / 開く',scoreReset:'リセット',frame:'譜面フレーム'}
+    zh:{front:'正面 / 全貌',back:'背面',instrument:'仪器',body:'主体细部',moving:'废墟乐器 / 影像',movement:'废墟剧场',score:'废墟乐谱',scoreOpen:'展开图谱',scoreClose:'返回图谱',scoreFold:'折叠 / 展开',scoreReset:'复位',frame:'记谱帧'},
+    en:{front:'Full view',back:'Back view',instrument:'Instrument',body:'Body detail',moving:'Ruin Instrument / Film',movement:'Ruin Theatre',score:'Ruin Score',scoreOpen:'Enlarge score',scoreClose:'Return to score',scoreFold:'Fold / unfold',scoreReset:'Reset',frame:'Score frame'},
+    ja:{front:'全景',back:'背面',instrument:'器械',body:'本体細部',moving:'廃墟の楽器 / 映像',movement:'廃墟劇場',score:'廃墟の楽譜',scoreOpen:'譜面を拡大',scoreClose:'譜面に戻る',scoreFold:'折る / 開く',scoreReset:'リセット',frame:'譜面フレーム'}
   };
   function term(key){return (SECTION_TERMS[state.lang]||SECTION_TERMS.zh)[key];}
   function essay(si,key){return label(SERIES_COPY[si][key]);}
