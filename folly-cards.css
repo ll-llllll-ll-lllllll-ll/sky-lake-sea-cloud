@@ -4022,3 +4022,21 @@ body.fc-score-expanded{overflow:hidden!important;}
     row-gap:6px;
   }
 }
+
+/* Four distinct structure photographs in Folly II: keep the selected
+   movement title prominent without clipping the others on narrow screens. */
+@media(max-width:560px){
+  .fc-room .fc-asset-pair-structure[data-fc-series="1"] .fc-swap-options{
+    gap:clamp(4px,1.35vw,8px);
+    max-width:100%;
+  }
+  .fc-room .fc-asset-pair-structure[data-fc-series="1"] .fc-swap-option{
+    font-size:clamp(9px,2.55vw,11px);
+  }
+  .fc-room .fc-asset-pair-structure[data-fc-series="1"] .fc-swap-option.is-active{
+    font-size:clamp(17px,4.6vw,23px);
+  }
+  .fc-room .fc-asset-pair-structure[data-fc-series="1"] .fc-swap-separator{
+    font-size:clamp(9px,2.4vw,11px);
+  }
+}
