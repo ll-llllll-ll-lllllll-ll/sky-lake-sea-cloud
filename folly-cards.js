@@ -1706,330 +1706,199 @@
     }
     document.addEventListener('visibilitychange',onImageSwapVisibility);
   }
+  // v27 · A single vertical hand-off, like advancing a short video.
+  // Normal scrolling remains native everywhere except the short boundary.
+  // The two works stay mounted in ONE document: nothing is replaced.
   var gateDirectionCleanup=null;
   function wireChapterGate(){
     if(gateDirectionCleanup){gateDirectionCleanup();gateDirectionCleanup=null;}
-    var gate=scene?.querySelector('[data-fc-chapter-gate]');
-    if(!gate)return;
-    var button=gate.querySelector('[data-fc-action="chapter-goto"]');
-    var word=gate.querySelector('.fc-gate-word');
-    var arrow=gate.querySelector('.fc-gate-arrow');
-    // A reading seam, not a route/page transition. Both chapters stay in
-    // the same document, and crossing never replaces any DOM or seeks.
-    var TOUCH_LIMIT=102,WHEEL_LIMIT=160,SPRING_DISTANCE=33;
-    var previousY=window.scrollY||window.pageYOffset||0;
-    var drag=null,wheelPull=null,passed=0,coast=null;
-    var springId=0,coastTimer=0,wheelTimer=0,momentumId=0;
-    var programmaticUntil=0,programmaticY=-1,lastWheelAt=0,direction=1;
+    var seam=scene?.querySelector('[data-fc-chapter-seam]');
+    if(!seam)return;
+    var raf=0,resetWheel=0,lockingUntil=0,animating=false;
+    var touch=null,wheelTotal=0,wheelDirection=0,wheelAt=0;
+    var lastScroll=window.scrollY||window.pageYOffset||0;
+    var landing=lastScroll,lastHandoff=0,resizeQuiet=0;
     var reduceMotion=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var WHEEL_STEP=76,TOUCH_STEP=62;
     function now(){return performance.now();}
-    function scrollY(){return window.scrollY||window.pageYOffset||0;}
-    function center(){
-      var r=gate.getBoundingClientRect();
-      return scrollY()+r.top+r.height*.5-(window.innerHeight||1)*.5;
+    function sy(){return window.scrollY||window.pageYOffset||0;}
+    function position(el){return sy()+el.getBoundingClientRect().top;}
+    function metrics(){
+      var top=position(seam),h=window.innerHeight||1;
+      return {top:top,bottom:top+seam.getBoundingClientRect().height,h:h};
     }
-    function moveTo(y){
-      var distance=y-scrollY();
-      if(Math.abs(distance)<.1)return;
-      programmaticUntil=now()+66;
-      window.scrollTo(0,Math.max(0,y));
-      programmaticY=scrollY();
-      previousY=programmaticY;
+    function available(){
+      return isLive()&&!selection.open&&!selection.scoreInspect&&expandedScore===-1;
     }
-    function getDirection(value){return value>=0?1:-1;}
-    function labelFor(d){
-      if(d===direction)return;
-      direction=d;
-      gate.dataset.fcDirection=d>0?'down':'up';
-      var target=d>0?1:0;
-      var message=gate.getAttribute(d>0?'data-fc-word-down':'data-fc-word-up');
-      gate.dataset.fcTarget=String(target);
-      if(button){
-        button.dataset.fcChapter=String(target);
-        button.setAttribute('aria-label',message);
+    function lockActive(){return animating||now()<lockingUntil;}
+    function isReadingEdge(dir,y){
+      var m=metrics();
+      // The last screen of I / first screen of II; nothing deeper in either
+      // chapter is intercepted.
+      return dir>0?y>=m.top-m.h*.92&&y<m.top+m.h*.16:
+        y>m.top-m.h*.23&&y<m.bottom+m.h*.87;
+    }
+    function threshold(dir){
+      var m=metrics();
+      return m.top+(dir>0?-m.h*.71:m.h*.10);
+    }
+    function releaseWheel(){
+      wheelTotal=0;wheelDirection=0;clearTimeout(resetWheel);resetWheel=0;
+    }
+    function target(dir){
+      var m=metrics();
+      return Math.max(0,dir>0?position(block(1))-m.h*.12:m.top-m.h*.76);
+    }
+    function commit(dir,kind){
+      if(!available()||lockActive()||lastHandoff===dir)return false;
+      var start=sy(),finish=target(dir);
+      releaseWheel();
+      touch=null;
+      if(Math.abs(finish-start)<2)return false;
+      animating=true;
+      lastHandoff=dir;
+      var startAt=now();
+      var travel=Math.abs(finish-start);
+      var duration=reduceMotion?0:Math.max(470,Math.min(690,380+travel*.32));
+      var endAnimation=function(){
+        if(raf){cancelAnimationFrame(raf);raf=0;}
+        window.scrollTo(0,finish);
+        lastScroll=sy();
+        landing=finish;
+        animating=false;
+        // The cooldown discards continued mouse-wheel/trackpad inertia and
+        // Safari scroll momentum. One gesture never cascades into another.
+        lockingUntil=now()+640;
+      };
+      function tick(t){
+        if(!isLive()){animating=false;raf=0;return;}
+        var p=Math.min(1,Math.max(0,(t-startAt)/duration));
+        // Soft acceleration followed by long deceleration, close to the
+        // vertical ease of a short-video feed but without a page swap.
+        var eased=p<.5?4*p*p*p:1-Math.pow(-2*p+2,3)/2;
+        window.scrollTo(0,start+(finish-start)*eased);
+        lastScroll=sy();
+        if(p<1)raf=requestAnimationFrame(tick);
+        else endAnimation();
       }
-      if(word)word.textContent=message;
-      if(arrow)arrow.textContent=d>0?'↓':'↑';
+      if(!duration)endAnimation();
+      else raf=requestAnimationFrame(tick);
+      return true;
     }
-    function annotate(amount,active){
-      gate.style.setProperty('--fc-gate-pull',clamp(amount,0,1).toFixed(3));
-      gate.classList.toggle('is-pulling',!!active&&amount>0);
-    }
-    function clearSpring(){if(springId){cancelAnimationFrame(springId);springId=0;}}
-    function clearMomentum(){if(momentumId){cancelAnimationFrame(momentumId);momentumId=0;}}
-    function clearTimers(){
-      clearTimeout(wheelTimer);wheelTimer=0;
-      clearTimeout(coastTimer);coastTimer=0;
-    }
-    function spring(from,to,finish){
-      clearSpring();
-      if(reduceMotion){moveTo(to);annotate(0,false);if(finish)finish();return;}
-      var t0=now();
-      function frame(t){
-        var p=clamp((t-t0)/320,0,1);
-        // A small soft overshoot gives a physical, not page-snapping, return.
-        var easing=1-Math.pow(1-p,3)*(Math.cos(p*3.4)*.07+.93);
-        moveTo(from+(to-from)*easing);
-        annotate((1-p)*Math.min(1,Math.abs(from-to)/SPRING_DISTANCE),false);
-        if(p<1)springId=requestAnimationFrame(frame);
-        else{springId=0;moveTo(to);annotate(0,false);if(finish)finish();}
-      }
-      springId=requestAnimationFrame(frame);
-    }
-    function inRange(d,y){
-      var distance=d*(center()-y);
-      // Arm before the centre of the small gap, in both directions.
-      return distance<80&&distance>-110;
-    }
-    function approaching(d,amount,y){
-      if(d!==1&&d!==-1)return false;
-      if(passed===d)return false;
-      var at=center(),checkpoint=at-d*49;
-      var projected=y+d*amount;
-      // Detect crossing the approach line even in a large wheel event.
-      return inRange(d,y)||
-        (d*(y-checkpoint)<0&&d*(projected-checkpoint)>=0);
-    }
-    function begin(mode,d){
-      clearSpring();clearMomentum();clearTimers();
-      coast=null;
-      labelFor(d);
-      var y=scrollY(),at=center(),checkpoint=at-d*49;
-      // If an input jumps into this seam from far away, consume only its
-      // approach distance as native travel, then begin the elastic stretch.
-      if(d*(checkpoint-y)>0)moveTo(checkpoint);
-      var base=scrollY();
-      var item={mode:mode,dir:d,base:base,pull:0,start:now(),
-        last:now(),events:0,elastic:0};
-      annotate(0,false);
-      return item;
-    }
-    function stretch(item,amount){
-      item.pull=Math.max(0,item.pull+amount);
-      var limit=item.mode==='touch'?TOUCH_LIMIT:WHEEL_LIMIT;
-      var ratio=clamp(item.pull/limit,0,1);
-      // Only the last 33px follow the input: this is actual scroll
-      // resistance, and it can be recovered on release.
-      item.elastic=SPRING_DISTANCE*Math.pow(ratio,.82);
-      moveTo(item.base+item.dir*item.elastic);
-      annotate(ratio,true);
-    }
-    function retreat(item){
-      if(!item)return;
-      var from=scrollY(),to=item.base;
-      annotate(0,false);
-      spring(from,to);
-    }
-    function releasePass(item,extra){
-      passed=item.dir;
-      clearTimers();clearSpring();
-      annotate(0,false);
-      // Never jump to the next part: both chapters are already in the DOM.
-      // Continue directly from the stretched position.
-      if(extra>0)moveTo(scrollY()+item.dir*Math.min(extra,35));
+    function skipInteractive(event){
+      return !!event.target?.closest?.(
+        'button,a,input,textarea,select,[data-fc-rail],'+
+        '[data-fc-inline-score],.fc-instrument-card,[contenteditable="true"]'
+      );
     }
     function wheel(event){
-      if(reduceMotion||!isLive()||selection.open||!event.cancelable)return;
-      if(Number(gate.dataset.fcBypassUntil||0)>now())return;
-      if(event.target?.closest?.('input,textarea,select,[data-fc-rail]'))return;
-      var delta=event.deltaY*(event.deltaMode===1?16:event.deltaMode===2?window.innerHeight:1);
-      if(Math.abs(delta)<.1)return;
-      var d=getDirection(delta),time=now(),amount=Math.min(Math.abs(delta),110);
-      lastWheelAt=time;
-      if(coast){coast=null;clearTimeout(coastTimer);}
-      if(passed===d)return;
-      if(passed&&passed!==d)passed=0;
-      if(!wheelPull){
-        if(!approaching(d,amount,scrollY()))return;
-        wheelPull=begin('wheel',d);
-      }
-      if(wheelPull.dir!==d){
-        var previous=wheelPull;wheelPull=null;retreat(previous);
+      if(!available()||!event.cancelable||skipInteractive(event))return;
+      if(lockActive()){event.preventDefault();return;}
+      var dy=event.deltaY*(event.deltaMode===1?18:
+        event.deltaMode===2?window.innerHeight:1);
+      if(Math.abs(dy)<.1)return;
+      var dir=Math.sign(dy),y=sy();
+      if(lastHandoff===dir && isReadingEdge(dir,y))return;
+      if(!isReadingEdge(dir,y)){
+        releaseWheel();
         return;
       }
       event.preventDefault();
-      var item=wheelPull;
-      if(time-item.last>440&&item.events>0){
-        // A quiet pause makes a second gesture deliberate rather than
-        // counting macOS trackpad inertial ticks as renewed pressure.
-        wheelPull=null;retreat(item);
-        return;
+      var t=now();
+      if(dir!==wheelDirection||t-wheelAt>370){wheelTotal=0;wheelDirection=dir;}
+      wheelAt=t;
+      wheelTotal+=Math.min(Math.abs(dy),105);
+      if(wheelTotal>=WHEEL_STEP)commit(dir,'wheel');
+      else{
+        clearTimeout(resetWheel);
+        resetWheel=window.setTimeout(releaseWheel,270);
       }
-      item.last=time;item.events++;
-      stretch(item,amount);
-      if(item.pull>=WHEEL_LIMIT&&item.events>=2&&time-item.start>=70){
-        wheelPull=null;releasePass(item,Math.abs(delta)-amount);
-        return;
-      }
-      clearTimeout(wheelTimer);
-      wheelTimer=window.setTimeout(function(){
-        if(wheelPull===item){wheelPull=null;retreat(item);}
-      },245);
     }
-    function touchStart(event){
-      if(reduceMotion||event.touches.length!==1||selection.open)return;
-      if(Number(gate.dataset.fcBypassUntil||0)>now())return;
-      if(event.target?.closest?.('button,a,input,textarea,select,[data-fc-rail]'))return;
-      clearMomentum();
-      // A fresh touch can deliberately push past an inertial hold.
-      if(coast){clearTimeout(coastTimer);coast=null;}
-      clearSpring();
-      annotate(0,false);
-      drag={y:event.touches[0].clientY,x:event.touches[0].clientX,
-        started:now(),item:null,following:false,velocity:0};
+    function touchstart(event){
+      if(!available()||event.touches.length!==1||skipInteractive(event))return;
+      if(lockActive()){touch=null;return;}
+      var point=event.touches[0];
+      touch={x:point.clientX,startY:point.clientY,lastY:point.clientY,
+        distance:0,dir:0,captured:false};
     }
-    function touchMove(event){
-      if(!drag||event.touches.length!==1||reduceMotion)return;
-      var x=event.touches[0].clientX,y=event.touches[0].clientY;
-      var delta=drag.y-y;
-      drag.y=y;
-      if(Math.abs(delta)<.2)return;
-      var d=getDirection(delta);
-      if(drag.following){
-        if(event.cancelable)event.preventDefault();
-        moveTo(scrollY()+delta);
-        drag.velocity=drag.velocity*.55+delta*.45;
+    function touchmove(event){
+      if(!available()||event.touches.length!==1)return;
+      if(lockActive()){
+        if(event.cancelable&&!skipInteractive(event))event.preventDefault();
         return;
       }
-      if(!drag.item){
-        if(Math.abs(x-drag.x)>Math.abs(delta)*1.7)return;
-        if(passed===d||!approaching(d,Math.abs(delta)*1.2,scrollY()))return;
-        if(passed&&passed!==d)passed=0;
-        if(!event.cancelable)return;
-        drag.item=begin('touch',d);
-        drag.started=now();
+      if(!touch||skipInteractive(event))return;
+      var point=event.touches[0],dy=touch.lastY-point.clientY;
+      touch.lastY=point.clientY;
+      if(Math.abs(point.clientX-touch.x)>Math.abs(point.clientY-touch.startY)*1.2)return;
+      if(Math.abs(dy)<.4)return;
+      var dir=Math.sign(dy);
+      if(!touch.captured){
+        if(lastHandoff===dir||!isReadingEdge(dir,sy()))return;
+        touch.captured=true;touch.dir=dir;touch.distance=0;
       }
-      var item=drag.item;
       if(!event.cancelable)return;
       event.preventDefault();
-      if(item.dir!==d){
-        // Pulling backwards unwinds the tension in place.
-        stretch(item,-Math.abs(delta)*1.3);
-        return;
-      }
-      stretch(item,Math.abs(delta));
-      if(item.pull>=TOUCH_LIMIT&&now()-drag.started>=145){
-        releasePass(item,0);
-        drag.item=null;
-        drag.following=true;
-        drag.velocity=delta;
-      }
+      touch.distance+=dy*touch.dir;
+      if(touch.distance<0){touch.distance=0;return;}
+      if(touch.distance>=TOUCH_STEP)commit(touch.dir,'touch');
     }
-    function touchEnd(){
-      if(!drag)return;
-      if(drag.item)retreat(drag.item);
-      else if(drag.following&&!reduceMotion&&Math.abs(drag.velocity)>3){
-        // Native inertia was cancelled by the drag handler. Supply just
-        // a short decaying continuation, without an anchored scroll jump.
-        var v=clamp(drag.velocity*3.2,-110,110),from=scrollY(),time=now();
-        clearMomentum();
-        function frame(t){
-          var p=clamp((t-time)/275,0,1);
-          moveTo(from+v*(1-Math.pow(1-p,3)));
-          if(p<1)momentumId=requestAnimationFrame(frame);
-          else momentumId=0;
-        }
-        momentumId=requestAnimationFrame(frame);
-      }
-      drag=null;
-    }
-    function holdInertia(d){
-      // Safari's compositor can keep scrolling AFTER touchend, with no
-      // touchmove or wheel events. Catch that one-flick momentum here.
-      // This is why earlier versions could be skipped with one swipe.
-      if(coast)return;
-      clearSpring();
-      var checkpoint=center()-d*49;
-      coast={dir:d,base:checkpoint,last:now()};
-      labelFor(d);
-      // A rapid flick may overshoot the seam by more than a frame.
-      // Never yank the viewport back 100–200px in a single paint: brake
-      // by <=24px, then recover the remaining distance as a spring.
-      var target=checkpoint+d*20;
-      moveTo(scrollY()+clamp(target-scrollY(),-24,24));
-      spring(scrollY(),target);
-      function settle(){
-        if(!coast)return;
-        var base=coast.base;
-        coast=null;coastTimer=0;
-        spring(scrollY(),base,function(){annotate(0,false);});
-      }
-      coastTimer=window.setTimeout(settle,430);
+    function touchend(){
+      if(!touch)return;
+      touch=null;
     }
     function onScroll(){
-      var y=scrollY(),dy=y-previousY,old=previousY;
-      previousY=y;
-      if(reduceMotion||!isLive()||selection.open)return;
-      if(Number(gate.dataset.fcBypassUntil||0)>now())return;
-      // Safari can emit an asynchronous compositor scroll during the
-      // 66ms after our correction. Ignore only the scroll we actually set,
-      // never genuine remaining inertia that is still pushing the page.
-      if(now()<programmaticUntil&&Math.abs(y-programmaticY)<1.2)return;
-      if(drag?.item || drag?.following || wheelPull)return;
-      var d=Math.sign(dy);
-      if(!d)return;
-      if(passed===d){
-        if(d*(y-center())>190)passed=0;
+      var y=sy(),dy=y-lastScroll;
+      lastScroll=y;
+      if(!available())return;
+      if(animating)return;
+      if(now()<lockingUntil){
+        // Safari can continue native momentum after touchend. During the
+        // brief latch, return only that residual displacement, not the page.
+        if(Math.abs(y-landing)>1.3){window.scrollTo(0,landing);lastScroll=sy();}
         return;
       }
-      if(passed&&passed!==d)passed=0;
-      // Do not treat a fresh wheel event as inertial page scrolling.
-      if(now()-lastWheelAt<100)return;
-      if(coast){
-        if(d===coast.dir){
-          var target=coast.base+coast.dir*20;
-          moveTo(scrollY()+clamp(target-scrollY(),-24,24));
-          spring(scrollY(),target);
-          clearTimeout(coastTimer);
-          coastTimer=window.setTimeout(function(){
-            if(coast){var base=coast.base;coast=null;spring(scrollY(),base);}
-          },430);
-        }else{
-          coast=null;clearTimeout(coastTimer);
-        }
-        return;
+      if(Math.abs(dy)<1.5)return;
+      var dir=Math.sign(dy);
+      // Re-arm the same direction only once the reader has truly left
+      // the seam; immediately reversing is always available.
+      if(lastHandoff){
+        var m=metrics();
+        if(Math.abs(y-m.top)>m.h*.92)lastHandoff=0;
+        if(lastHandoff===dir)return;
       }
-      // Fall back when a rapid mobile flick crosses the seam entirely
-      // between compositor scroll frames.
-      var at=center(),checkpoint=at-d*49;
-      if(d*(old-checkpoint)<0 && d*(y-checkpoint)>=0)holdInertia(d);
-      else if(Math.abs(dy)>54&&
-        (Math.abs(old-at)<245||Math.abs(y-at)<245))holdInertia(d);
+      var t=threshold(dir);
+      if((dir>0&&lastScroll-dy<t&&y>=t)||
+        (dir<0&&lastScroll-dy>t&&y<=t))commit(dir,'inertia');
     }
-    window.addEventListener('wheel',wheel,{capture:true,passive:false});
-    window.addEventListener('touchstart',touchStart,{capture:true,passive:true});
-    window.addEventListener('touchmove',touchMove,{capture:true,passive:false});
-    window.addEventListener('touchend',touchEnd,{capture:true,passive:true});
-    window.addEventListener('touchcancel',touchEnd,{capture:true,passive:true});
+    function keydown(event){
+      if(!available()||skipInteractive(event)||event.ctrlKey||event.metaKey||event.altKey)return;
+      var dir=event.key==='ArrowDown'||event.key==='PageDown'||event.key===' '?1:
+        event.key==='ArrowUp'||event.key==='PageUp'?-1:0;
+      if(!dir)return;
+      if(lockActive()){event.preventDefault();return;}
+      if(!isReadingEdge(dir,sy())||lastHandoff===dir)return;
+      event.preventDefault();commit(dir,'keyboard');
+    }
+    var onWheel={capture:true,passive:false},onTouch={capture:true,passive:false};
+    window.addEventListener('wheel',wheel,onWheel);
+    window.addEventListener('touchstart',touchstart,{capture:true,passive:true});
+    window.addEventListener('touchmove',touchmove,onTouch);
+    window.addEventListener('touchend',touchend,{capture:true,passive:true});
+    window.addEventListener('touchcancel',touchend,{capture:true,passive:true});
     window.addEventListener('scroll',onScroll,{passive:true});
+    window.addEventListener('keydown',keydown,true);
     gateDirectionCleanup=function(){
-      clearTimers();clearSpring();clearMomentum();
+      releaseWheel();touch=null;
+      if(raf){cancelAnimationFrame(raf);raf=0;}
       window.removeEventListener('wheel',wheel,true);
-      window.removeEventListener('touchstart',touchStart,true);
-      window.removeEventListener('touchmove',touchMove,true);
-      window.removeEventListener('touchend',touchEnd,true);
-      window.removeEventListener('touchcancel',touchEnd,true);
+      window.removeEventListener('touchstart',touchstart,true);
+      window.removeEventListener('touchmove',touchmove,true);
+      window.removeEventListener('touchend',touchend,true);
+      window.removeEventListener('touchcancel',touchend,true);
       window.removeEventListener('scroll',onScroll);
-      gate.classList.remove('is-pulling');
+      window.removeEventListener('keydown',keydown,true);
     };
-  }
-
-  // Click navigation is optional; crossing the elastic seam never invokes
-  // this function. Both Folly chapters are already present in the same page.
-  function switchFollyChapter(target){
-    if(!isLive()||target<0||target>1)return;
-    var destination=block(target);
-    if(!destination)return;
-    activeChapter=target;
-    // Explicit reading navigation bypasses the gesture-only resistance.
-    var gate=scene.querySelector('[data-fc-chapter-gate]');
-    if(gate)gate.dataset.fcBypassUntil=String(performance.now()+1800);
-    destination.scrollIntoView({
-      behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',
-      // Clicking "its first part" should return to the seam near the
-      // chapter's end, not unexpectedly travel to the site's beginning.
-      block:target===0?'end':'start'
-    });
   }
   function setupFollyChapters(){
     SERIES.forEach(function(_,si){
@@ -2072,10 +1941,6 @@
       if(!node)return;
       var action=node.dataset.fcAction;
       var si=Number(node.dataset.fcSeries);
-      if(action==='chapter-goto'){
-        switchFollyChapter(Number(node.dataset.fcChapter));
-        return;
-      }
       if(action==='select'){
         select(Number(node.dataset.fcSeries),Number(node.dataset.fcIndex));return;
       }
