@@ -549,6 +549,67 @@
     var copy=PHOTO_INFORMATION[state.lang]||PHOTO_INFORMATION.zh;
     return {date:copy.date,place:copy.place,short:copy.short[si][key],long:copy.long[si][key]};
   }
+  // Only two authored still photographs exist per sequence at present.
+  // The third phase comes directly from the last passage of the relevant
+  // existing video. It is decoded once, on demand, with the original photo
+  // as a fallback if the browser cannot seek this MP4.
+  var activePhaseVideos=new Set();
+  function clearPhaseStills(){
+    activePhaseVideos.forEach(function(release){release();});
+    activePhaseVideos.clear();
+  }
+  function loadPhaseStill(img){
+    if(!img||img.dataset.fcPhaseLoaded||img.dataset.fcPhaseLoading)return;
+    var file=img.dataset.fcFilmSrc;
+    if(!file)return;
+    var token=mountedToken;
+    img.dataset.fcPhaseLoading='1';
+    var v=document.createElement('video'),timer=0,finished=false;
+    v.muted=true;v.preload='auto';v.playsInline=true;
+    v.setAttribute('playsinline','');
+    function release(){
+      if(finished)return;
+      finished=true;
+      clearTimeout(timer);
+      activePhaseVideos.delete(release);
+      v.removeEventListener('loadedmetadata',metadata);
+      v.removeEventListener('seeked',capture);
+      v.removeEventListener('loadeddata',capture);
+      v.removeEventListener('error',release);
+      try{v.pause();v.removeAttribute('src');v.load();}catch(_){}
+      delete img.dataset.fcPhaseLoading;
+    }
+    function capture(){
+      if(finished||token!==mountedToken||!img.isConnected)return release();
+      if(v.readyState<2||!v.videoWidth||!v.videoHeight)return;
+      try{
+        var canvas=document.createElement('canvas');
+        var width=Math.min(1080,v.videoWidth);
+        canvas.width=width;
+        canvas.height=Math.max(1,Math.round(width*v.videoHeight/v.videoWidth));
+        canvas.getContext('2d',{alpha:false}).drawImage(v,0,0,canvas.width,canvas.height);
+        img.src=canvas.toDataURL('image/jpeg',.84);
+        img.dataset.fcPhaseLoaded='film';
+        release();
+      }catch(_){release();}
+    }
+    function metadata(){
+      try{
+        var duration=v.duration;
+        if(!Number.isFinite(duration)||duration<.2)return release();
+        v.currentTime=Math.max(.06,Math.min(duration-.08,
+          duration*Number(img.dataset.fcFilmTime||.94)));
+      }catch(_){release();}
+    }
+    activePhaseVideos.add(release);
+    v.addEventListener('loadedmetadata',metadata);
+    v.addEventListener('seeked',capture);
+    v.addEventListener('loadeddata',capture);
+    v.addEventListener('error',release);
+    timer=window.setTimeout(release,18000);
+    v.src=file;
+    v.load();
+  }
   function assetPairMarkup(s,si,kind){
     var structure=kind==='structure',items=structure?
       ['full','back','structureEnd']:['instrument','body','instrumentEnd'];
@@ -2027,7 +2088,7 @@
     if(scene===next)return;
     if(pageShadeCleanup){pageShadeCleanup();pageShadeCleanup=null;}
     if(photoReadingCleanup){photoReadingCleanup();photoReadingCleanup=null;}
-    if(scene){clearImageSwaps();clearPreviews();stopMedia();releaseMechanicalScoreAssets();}
+    if(scene){clearPhaseStills();clearImageSwaps();clearPreviews();stopMedia();releaseMechanicalScoreAssets();}
     releaseUpcoming();
     document.body.classList.remove('fc-modal-open','fc-score-expanded');
     scene=next;player=null;
