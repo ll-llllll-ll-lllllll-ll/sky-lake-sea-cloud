@@ -1717,7 +1717,7 @@
     var raf=0,resetWheel=0,lockingUntil=0,animating=false;
     var touch=null,wheelTotal=0,wheelDirection=0,wheelAt=0;
     var lastScroll=window.scrollY||window.pageYOffset||0;
-    var landing=lastScroll,lastHandoff=0,resizeQuiet=0;
+    var landing=lastScroll,lastHandoff=0,lastBlockedWheel=0;
     var reduceMotion=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     var WHEEL_STEP=76,TOUCH_STEP=62;
     function now(){return performance.now();}
@@ -1752,6 +1752,10 @@
     function commit(dir,kind){
       if(!available()||lockActive()||lastHandoff===dir)return false;
       var start=sy(),finish=target(dir);
+      // A giant trackpad event can overshoot the anchor before it is caught.
+      // Never animate backward while the reader is still swiping forward.
+      if(dir>0&&finish<=start)finish=start+Math.max(92,window.innerHeight*.18);
+      if(dir<0&&finish>=start)finish=Math.max(0,start-Math.max(92,window.innerHeight*.18));
       releaseWheel();
       touch=null;
       if(Math.abs(finish-start)<2)return false;
@@ -1793,18 +1797,23 @@
     }
     function wheel(event){
       if(!available()||!event.cancelable||skipInteractive(event))return;
-      if(lockActive()){event.preventDefault();return;}
+      if(lockActive()){lastBlockedWheel=now();event.preventDefault();return;}
       var dy=event.deltaY*(event.deltaMode===1?18:
         event.deltaMode===2?window.innerHeight:1);
       if(Math.abs(dy)<.1)return;
-      var dir=Math.sign(dy),y=sy();
+      var dir=Math.sign(dy),y=sy(),t=now();
+      // Ignore the tail of a macOS trackpad flick until 240ms of silence.
+      // A genuinely new gesture, or an immediate reverse swipe after the
+      // cooldown, remains available.
+      if(lastHandoff===dir && t-lastBlockedWheel<240 && isReadingEdge(dir,y)){
+        lastBlockedWheel=t;event.preventDefault();return;
+      }
       if(lastHandoff===dir && isReadingEdge(dir,y))return;
       if(!isReadingEdge(dir,y)){
         releaseWheel();
         return;
       }
       event.preventDefault();
-      var t=now();
       if(dir!==wheelDirection||t-wheelAt>370){wheelTotal=0;wheelDirection=dir;}
       wheelAt=t;
       wheelTotal+=Math.min(Math.abs(dy),105);
