@@ -1586,7 +1586,7 @@
       });
     });
     rail.addEventListener('scroll',function(){
-      if(hoverFilm.card?.closest('.fc-rail')===rail&&!hoverFilm.followRail&&!hoverFilm.scrubbing&&!hoverFilm.sliderHover)stopHoverFilm();
+      if(hoverFilm.card?.closest('.fc-rail')===rail&&!hoverFilm.followRail&&!hoverFilm.scrubbing&&!hoverFilm.sliderHover&&!(manualMode&&drag&&!drag.moved))stopHoverFilm();
       if(hoverFilm.followRail&&hoverFilm.si===si)return;
       if(!scrollRaf)scrollRaf=requestAnimationFrame(function(){
         scrollRaf=0;
