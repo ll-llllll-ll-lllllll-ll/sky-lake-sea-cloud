@@ -97,7 +97,7 @@
         {garden:'死水心室的构造取自沉墟中失去流动的水域：爆裂的储水形态、残余的心室结构与一潭死水彼此牵连。水体缓慢流失，承托随之消退；原本依靠内部平衡维系的材料在自重中挤压、碎裂、向内收缩，最后仍留在死水里继续腐蚀。',
          instrument:'「锈血心脏」由锈蚀金属碎片与玻璃罩构成，嵌在心室的钢筋与钢索连接之中。心室的下沉牵动滑轮与泵片，将缓慢的坍塌转为急促的敲击；每一次搏动都借来园林衰败的力量，同时耗损维持自身运作的结构。',
          theatre:'死水心室的下沉与锈血心脏的搏动在同一段时间内相互牵动。声音从承重、牵引、碰撞和材料失效中发生，越接近最后一次敲击，乐器便越难继续维持原有形态。',
-         score:'这份图谱由「废墟园林·死水心室」的钢筋残片结构设计图与「锈血心脏」循环开关的电路图叠合而成。两套图线在同一平面交错，既记录心室坍缩时构件的位移与机械联动，也呈现坍缩的力量如何沿连接传递，最终转化为乐器的声音。随着结构逐渐失去支撑，这份原本用于设计与记录的图纸，也在一连串位移、断裂与发声之中，逐渐成为心室坍缩的变奏曲。',
+         score:'这份图谱由「坍塌构造：死水心室」的钢筋残片结构设计图与「废墟乐器：锈血心脏」循环开关的电路图叠合而成。两套图线在同一平面交错：随着钢筋锈蚀、应力衰减，图谱记录着心室坍缩时构件的位移与机械联动，而坍塌的进程又经感应装置传入电子线路，转化为不断加速的敲击与搏动。位移、断裂与发声逐渐加重「锈血心脏」的运行负荷，使它在愈发急促的跳动中最终熔毁；原本用于设计与记录的图纸，也由此成为心室坍缩的变奏曲。',
          phases:{
            structure:[
              [
@@ -175,7 +175,7 @@
         {garden:'The stagnant-heart structure grows from a reservoir shell, the remains of a heart chamber and a pool of still water. As the water drains, internal support gives way. Under its own weight the construction compresses, fractures and contracts, leaving parts immersed and exposed to further corrosion.',
          instrument:'The Rust-Blood Heart encloses pieces of corroded metal in glass, connected to the ruined chamber by steel cables, pulleys and a pump blade. The chamber’s slow descent is transmitted as increasingly rapid knocks: each beat borrows energy from the garden’s collapse while consuming the instrument itself.',
          theatre:'The sinking chamber and the beating heart move through the same time. Sound arises from load, tension, collision and structural failure; as the final blow approaches, the instrument loses the conditions that held it together.',
-         score:'This score emerged from the superimposition of two drawings: the structural plan of the reinforcing-bar fragments in Folly · Stagnant Heart Chamber, and the circuit diagram for the repeating switch of Rust-Blood Heart. Their lines cross on a single plane, tracing the shifting components and mechanical linkages of the chamber’s collapse, as well as the path by which that force reaches the instrument and becomes sound. As the structure gives way, what began as a means of design and documentation gradually becomes a set of variations on the chamber’s collapse.',
+         score:'This score overlays the structural drawing of the rebar fragments in “Collapsing Structure: Stagnant Heart Chamber” with the circuit diagram of the cycling switch in “Ruin Instrument: Rust-Blood Heart.” Their lines intersect on a single plane: as the steel corrodes and its stresses diminish, the drawing records the shifting components and mechanical linkages of the chamber’s collapse, while sensors carry the progress of that collapse into an electronic circuit, turning it into increasingly rapid knocks and pulses. Each displacement, fracture and sound adds to the load on Rust-Blood Heart, driving its beat faster until it finally melts down. What began as a drawing for design and documentation thus becomes a set of variations on the chamber’s collapse.',
          phases:{
            structure:[
              [
@@ -253,7 +253,7 @@
         {garden:'「死水心室」は破裂した貯水槽の形態、心室の残存構造、淀んだ水から組み立てられる。水が失われるにつれ内部の支持も消え、構造は自重で押し潰され、割れ、内側へと縮む。残った部分は水に浸されたまま腐食を続ける。',
          instrument:'錆びた金属片をガラスに封じた「錆血の心臓」は、鋼索と滑車、ポンプ片を通じて心室につながる。ゆっくりした沈下が急速な打撃へと変わり、一度の鼓動ごとに園林の崩壊から力を借りながら、自らの構造も消耗する。',
          theatre:'沈む心室と鼓動する心臓は同じ時間を生きる。音は荷重、張力、衝突、構造の失効から生まれ、最後の一打に近づくほど、楽器は元の姿を維持できなくなる。',
-         score:'この譜面は、「フォリー・死水の心室」の鉄筋残片の構造設計図と、「錆血の心臓」の循環スイッチの回路図を重ね合わせて生まれた。二つの図面の線は同じ平面で交差し、心室の圧潰に伴う部材の変位と機械的な連動、さらにその力が接続部を伝わって楽器の音へと変わる過程を描き出す。構造が次第に支えを失うなか、設計と記録のために引かれた線は、変位と断裂、発声を経て、心室の圧潰をめぐる変奏曲の譜面となっていく。',
+         score:'この譜面は、「崩壊構造：死水の心室」の鉄筋残片の構造設計図と、「廃墟の楽器：錆血の心臓」の循環スイッチの回路図を重ね合わせて生まれた。二つの図面の線は同じ平面で交わり、鉄筋の腐食と応力の低下に伴って心室が圧潰していく過程で、部材の変位と機械的な連動を記録する。同時に、崩壊の進行は感知装置から電子回路へと伝えられ、次第に速まる打撃と鼓動の音へと変わっていく。変位と断裂、発声を重ねるほど「錆血の心臓」にかかる負荷は増し、鼓動を速めながら、ついには溶け崩れる。こうして設計と記録のために引かれた線は、心室の圧潰をめぐる変奏曲の譜面となる。',
          phases:{
            structure:[
              [
@@ -894,8 +894,25 @@
   function folioIntro(key){return (FOLLY_INTRO[state.lang]||FOLLY_INTRO.zh)[key];}
   function instrumentLead(si){return (INSTRUMENT_TITLES[state.lang]||INSTRUMENT_TITLES.zh)[si];}
   function workChapterLabel(si){return chapterPart(si)+' · '+label(SERIES[si].title);}
-  function readingPartHeading(i){
-    return '<div class="fc-reading-part-head"><h3>'+esc(readingHead(i))+'</h3></div>';
+  // Site-specific names for the three successive parts of each Folly.
+  // The overall theatre title may differ from the structure's name.
+  var READING_PART_NAMES={
+    zh:[['死水心室','锈血心脏','沉墟心室'],['朽塔','以太狭间','朽塔焦土']],
+    en:[['Stagnant Heart Chamber','Rust-Blood Heart','Effluent Sedimentation'],['Ruined Tower','Aether Interval','Aether Scorched-Earth']],
+    ja:[['死水の心室','錆血の心臓','沈墟の心室'],['朽塔','エーテルの狭間','朽塔の焦土']]
+  };
+  function readingSectionName(si,i){
+    return (READING_PART_NAMES[state.lang]||READING_PART_NAMES.zh)[si][i];
+  }
+  function readingSectionLabel(si,i){
+    return readingHead(i)+(state.lang==='en'?': ':'：')+readingSectionName(si,i);
+  }
+  function readingPartHeading(i,si){
+    return '<div class="fc-reading-part-head"><h3>'+
+      '<span class="fc-reading-part-kind">'+esc(readingHead(i))+'</span>'+
+      '<span class="fc-reading-part-divider">'+esc(state.lang==='en'?': ':'：')+'</span>'+
+      '<span class="fc-reading-part-title">'+esc(readingSectionName(si,i))+'</span>'+
+      '</h3></div>';
   }
   function sectionMarkup(s, si) {
     return '<section class="fc-series-block" data-fc-series-block="'+si+
@@ -905,21 +922,21 @@
         '<span class="fc-series-year">'+s.year+'</span>'+
       '</div>'+
       '<div class="fc-series-composition">'+
-        '<section class="fc-reading-part fc-reading-garden" aria-label="'+esc(readingHead(0))+'">'+
-          readingPartHeading(0)+
+        '<section class="fc-reading-part fc-reading-garden" aria-label="'+esc(readingSectionLabel(si,0))+'">'+
+          readingPartHeading(0,si)+
           assetPairMarkup(s,si,'structure')+
           '<p class="fc-reading-copy fc-garden-copy">'+esc(reading(si).garden)+'</p>'+
         '</section>'+
-        '<section class="fc-reading-part fc-reading-instrument" aria-label="'+esc(readingHead(1))+'">'+
-          readingPartHeading(1)+
+        '<section class="fc-reading-part fc-reading-instrument" aria-label="'+esc(readingSectionLabel(si,1))+'">'+
+          readingPartHeading(1,si)+
           instrumentMarkup(s,si)+
           assetPairMarkup(s,si,'detail')+
           '<p class="fc-reading-copy fc-instrument-full">'+esc(reading(si).instrument)+'</p>'+
         '</section>'+
       '</div>'+
-      '<section class="fc-reading-part fc-reading-theatre" aria-label="'+esc(readingHead(2))+'">'+
+      '<section class="fc-reading-part fc-reading-theatre" aria-label="'+esc(readingSectionLabel(si,2))+'">'+
         '<div class="fc-film-head">'+
-          '<div class="fc-reading-film-title">'+readingPartHeading(2)+'</div>'+
+          '<div class="fc-reading-film-title">'+readingPartHeading(2,si)+'</div>'+
 
         '</div>'+
         '<p class="fc-reading-copy fc-theatre-copy">'+esc(reading(si).theatre)+'</p>'+
