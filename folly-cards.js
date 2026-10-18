@@ -37,9 +37,9 @@
      ]}
   ];
   var COPY = {
-    zh:{group:'废墟园林 / 图景',instruction:'向右翻阅散落的瞬间',selection:'点击一幅图景，进入它短暂的变化。',seek:'滑动阶段',open:'观看这一瞬间',close:'回到图景',prev:'上一阶段',next:'下一阶段',sound:'打开声音',mute:'静音',play:'继续',pause:'暂停',score:'检视图谱',reset:'复位',loading:'影像就位中',missing:'这一阶段的影像尚未就位',allEnd:'本卷已至尾声',hintI:'图谱随时间逆行 · 悬停校准指针',hintII:'三角翼可折叠 · 悬停校准指针',loadingPoster:'',zoom:'放大'},
-    en:{group:'FOLLY / TABLEAUX',instruction:'Move right through scattered moments.',selection:'Select a tableau to enter its brief transformation.',seek:'Move through stages',open:'Open this moment',close:'Return to the tableaux',prev:'Previous stage',next:'Next stage',sound:'Sound on',mute:'Mute',play:'Resume',pause:'Pause',score:'Inspect the score',reset:'Reset',loading:'Preparing the moving image',missing:'This fragment is not available yet',allEnd:'The sequence has ended',hintI:'Score runs in reverse · Hover to calibrate',hintII:'Three folding wings · Hover to calibrate',loadingPoster:'',zoom:'Zoom'},
-    ja:{group:'フォリー / 風景の断片',instruction:'右へ進み、散らばった瞬間をたどる。',selection:'一枚を選び、その短い変化に入る。',seek:'段階を移動',open:'この瞬間を見る',close:'風景に戻る',prev:'前の段階',next:'次の段階',sound:'音声オン',mute:'消音',play:'再開',pause:'一時停止',score:'楽譜を検視',reset:'リセット',loading:'映像を準備中',missing:'この断片はまだありません',allEnd:'この巻は終わりました',hintI:'楽譜は逆行 · ホバーで校正',hintII:'三つの翼を折る · ホバーで校正',loadingPoster:'',zoom:'拡大'}
+    zh:{group:'废墟园林 / 图景',instruction:'向右翻阅散落的瞬间',seek:'滑动阶段',open:'观看这一瞬间',close:'回到图景',prev:'上一阶段',next:'下一阶段',sound:'打开声音',mute:'静音',play:'继续',pause:'暂停',score:'检视图谱',reset:'复位',loading:'影像就位中',missing:'这一阶段的影像尚未就位',allEnd:'本卷已至尾声',hintI:'图谱随时间逆行 · 悬停校准指针',hintII:'三角翼可折叠 · 悬停校准指针',loadingPoster:'',zoom:'放大'},
+    en:{group:'FOLLY / TABLEAUX',instruction:'Move right through scattered moments.',seek:'Move through stages',open:'Open this moment',close:'Return to the tableaux',prev:'Previous stage',next:'Next stage',sound:'Sound on',mute:'Mute',play:'Resume',pause:'Pause',score:'Inspect the score',reset:'Reset',loading:'Preparing the moving image',missing:'This fragment is not available yet',allEnd:'The sequence has ended',hintI:'Score runs in reverse · Hover to calibrate',hintII:'Three folding wings · Hover to calibrate',loadingPoster:'',zoom:'Zoom'},
+    ja:{group:'フォリー / 風景の断片',instruction:'右へ進み、散らばった瞬間をたどる。',seek:'段階を移動',open:'この瞬間を見る',close:'風景に戻る',prev:'前の段階',next:'次の段階',sound:'音声オン',mute:'消音',play:'再開',pause:'一時停止',score:'楽譜を検視',reset:'リセット',loading:'映像を準備中',missing:'この断片はまだありません',allEnd:'この巻は終わりました',hintI:'楽譜は逆行 · ホバーで校正',hintII:'三つの翼を折る · ホバーで校正',loadingPoster:'',zoom:'拡大'}
   };
   // Short interim captions stay close to the physical artefacts. They can be
   // replaced with the artist's full Chinese/English/Japanese texts later.
@@ -1492,10 +1492,16 @@
     function claimManualControl(preserveFrame){
       manualMode=true;
       if(hoverFilm.si!==si||hoverFilm.kind!=='film')return;
+      // A pending dwell timer or video metadata load must not resume
+      // playback underneath a held pointer. Only an already-playing
+      // preview can be preserved as a paused frame for click-to-open.
+      if(!preserveFrame||!hoverFilm.active){
+        stopHoverFilm();
+        return;
+      }
       stopHoverRailMotion();
       hoverFilm.followRail=false;
-      if(hoverFilm.video)hoverFilm.video.pause();
-      if(!preserveFrame)stopHoverFilm();
+      hoverFilm.video?.pause();
     }
     // Trackpad horizontal deltas and touch swipes belong entirely to the
     // browser's native inertial scroller. Vertical mouse wheel stays vertical.
