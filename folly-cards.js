@@ -1572,7 +1572,11 @@
         startHoverFilm(card,si,index,980);
       });
       card.addEventListener('pointerleave',function(){
-        if(hoverFilm.card===card&&!hoverFilm.followRail)scheduleHoverStop(950);
+        if(hoverFilm.card!==card)return;
+        // Dwell is valid only while this particular card is still hovered.
+        // Once playback is active, allow the moving film to drift freely.
+        if(!hoverFilm.active){stopHoverFilm();return;}
+        if(!hoverFilm.followRail)scheduleHoverStop(600);
       });
       card.addEventListener('focusin',function(event){
         if(!manualMode&&event.target.matches('.fc-card-button'))startHoverFilm(card,si,index,1000);
