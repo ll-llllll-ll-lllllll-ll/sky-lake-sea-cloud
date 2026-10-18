@@ -37,7 +37,7 @@
      ]}
   ];
   var COPY = {
-    zh:{group:'废墟园林 / 图景',instruction:'向右翻阅散落的瞬间。',selection:'点击一幅图景，进入它短暂的变化。',seek:'滑动阶段',open:'观看这一瞬间',close:'回到图景',prev:'上一阶段',next:'下一阶段',sound:'打开声音',mute:'静音',play:'继续',pause:'暂停',score:'检视图谱',reset:'复位',loading:'影像就位中',missing:'这一阶段的影像尚未就位',allEnd:'本卷已至尾声',hintI:'图谱随时间逆行 · 悬停校准指针',hintII:'三角翼可折叠 · 悬停校准指针',loadingPoster:'',zoom:'放大'},
+    zh:{group:'废墟园林 / 图景',instruction:'向右翻阅散落的瞬间',selection:'点击一幅图景，进入它短暂的变化。',seek:'滑动阶段',open:'观看这一瞬间',close:'回到图景',prev:'上一阶段',next:'下一阶段',sound:'打开声音',mute:'静音',play:'继续',pause:'暂停',score:'检视图谱',reset:'复位',loading:'影像就位中',missing:'这一阶段的影像尚未就位',allEnd:'本卷已至尾声',hintI:'图谱随时间逆行 · 悬停校准指针',hintII:'三角翼可折叠 · 悬停校准指针',loadingPoster:'',zoom:'放大'},
     en:{group:'FOLLY / TABLEAUX',instruction:'Move right through scattered moments.',selection:'Select a tableau to enter its brief transformation.',seek:'Move through stages',open:'Open this moment',close:'Return to the tableaux',prev:'Previous stage',next:'Next stage',sound:'Sound on',mute:'Mute',play:'Resume',pause:'Pause',score:'Inspect the score',reset:'Reset',loading:'Preparing the moving image',missing:'This fragment is not available yet',allEnd:'The sequence has ended',hintI:'Score runs in reverse · Hover to calibrate',hintII:'Three folding wings · Hover to calibrate',loadingPoster:'',zoom:'Zoom'},
     ja:{group:'フォリー / 風景の断片',instruction:'右へ進み、散らばった瞬間をたどる。',selection:'一枚を選び、その短い変化に入る。',seek:'段階を移動',open:'この瞬間を見る',close:'風景に戻る',prev:'前の段階',next:'次の段階',sound:'音声オン',mute:'消音',play:'再開',pause:'一時停止',score:'楽譜を検視',reset:'リセット',loading:'映像を準備中',missing:'この断片はまだありません',allEnd:'この巻は終わりました',hintI:'楽譜は逆行 · ホバーで校正',hintII:'三つの翼を折る · ホバーで校正',loadingPoster:'',zoom:'拡大'}
   };
@@ -940,7 +940,7 @@
 
         '</div>'+
         '<p class="fc-reading-copy fc-theatre-copy">'+esc(reading(si).theatre)+'</p>'+
-        '<div class="fc-gallery-area"><div class="fc-gallery-hint" data-fc-gallery-hint="'+si+'" tabindex="0"><p>'+esc(i18n('instruction'))+'</p><p>'+esc(i18n('selection'))+'</p></div><div class="fc-rail" data-fc-rail="'+si+
+        '<div class="fc-gallery-area"><div class="fc-gallery-hint" data-fc-gallery-hint="'+si+'" tabindex="0"><p>'+esc(i18n('instruction'))+'</p></div><div class="fc-rail" data-fc-rail="'+si+
         '" tabindex="0" aria-label="'+esc(i18n('seek')+' / '+label(s.title))+'">'+
           '<ol class="fc-strip">'+s.stages.map(function(stage,index){return cardMarkup(stage,index,s);}).join('')+'</ol>'+
         '</div></div>'+
@@ -1479,47 +1479,44 @@
   function wireRail(si){
     var rail=railFor(si),root=block(si);
     if(!rail||!root)return;
-    var drag=null,scrollRaf=0,idleTimer=0,touched=false;
+    var drag=null,scrollRaf=0,manualMode=false;
     var slider=root.querySelector('[data-fc-slider]');
     function syncRange(){
       if(!slider||document.activeElement===slider||(hoverFilm.followRail&&hoverFilm.si===si))return;
       var max=Math.max(0,rail.scrollWidth-rail.clientWidth);
       slider.value=String(max?Math.round(1000*rail.scrollLeft/max):0);
     }
-    function idlePreview(){
-      idleTimer=0;
-      if(selection.open||!isLive()||document.hidden||drag||hoverFilm.card||!nearViewport(root))return;
-      // After someone horizontally explores, a resting tableau comes alive.
-      // Never initiate this when the pointer is outside the rail unless a
-      // touch gesture brought the visitor here.
-      var pointed=(typeof rail.matches==='function'&&rail.matches(':hover'));
-      if(!pointed&&!touched)return;
-      var index=nearest(si),card=root.querySelector('[data-fc-card="'+index+'"]');
-      if(!card)return;
-      var bounds=card.getBoundingClientRect(),r=rail.getBoundingClientRect();
-      if(bounds.right>r.left+50&&bounds.left<r.right-50)
-        startHoverFilm(card,si,index,0);
-      touched=false;
+    // Manual exploration wins over auto-follow until the pointer has
+    // completely left the gallery. This prevents hover-enter events from
+    // stealing control while the strip is being dragged.
+    function claimManualControl(preserveFrame){
+      manualMode=true;
+      if(hoverFilm.si!==si||hoverFilm.kind!=='film')return;
+      stopHoverRailMotion();
+      hoverFilm.followRail=false;
+      if(hoverFilm.video)hoverFilm.video.pause();
+      if(!preserveFrame)stopHoverFilm();
     }
     // Trackpad horizontal deltas and touch swipes belong entirely to the
     // browser's native inertial scroller. Vertical mouse wheel stays vertical.
     rail.addEventListener('wheel',function(event){
-      if(selection.open||!event.shiftKey||Math.abs(event.deltaX)>Math.abs(event.deltaY))return;
+      if(selection.open)return;
+      if(Math.abs(event.deltaX)+Math.abs(event.deltaY)>1)claimManualControl(false);
+      if(!event.shiftKey||Math.abs(event.deltaX)>Math.abs(event.deltaY))return;
       event.preventDefault();
       rail.scrollLeft+=event.deltaY*(event.deltaMode===1?22:event.deltaMode===2?rail.clientWidth:1);
     },{passive:false});
     // Mouse drag is a free pixel-wise translation, with no release centring.
     rail.addEventListener('pointerdown',function(event){
       if(event.pointerType==='touch'||event.pointerType==='pen'){
-        touched=true;
-        clearTimeout(idleTimer);
-        if(hoverFilm.card?.closest('.fc-rail')===rail)stopHoverFilm();
+        claimManualControl(false);
         return;
       }
       if(event.pointerType!=='mouse'||event.button!==0)return;
-      clearTimeout(idleTimer);
-      // A mere click must preserve the playing hover video's timestamp.
-      // Stop its preview only once the gesture becomes a genuine drag.
+      // Stop the moving rail on *press*, before the six-pixel drag threshold.
+      // Keep the paused video frame until click vs drag is resolved, so a
+      // simple click can still open the full film at the preview timestamp.
+      claimManualControl(true);
       drag={pointerId:event.pointerId,x:event.clientX,left:rail.scrollLeft,moved:false};
     });
     rail.addEventListener('pointermove',function(event){
@@ -1527,7 +1524,7 @@
       var dx=event.clientX-drag.x;
       if(Math.abs(dx)>6&&!drag.moved){
         drag.moved=true;
-        if(hoverFilm.card?.closest('.fc-rail')===rail)stopHoverFilm();
+        if(hoverFilm.si===si)stopHoverFilm();
         rail.classList.add('is-dragging');
         try{rail.setPointerCapture(event.pointerId);}catch(_){}
       }
@@ -1547,6 +1544,9 @@
           if(rail.isConnected)delete rail.dataset.fcJustDragged;
         },170);
       }
+      // Leave manualMode active while the pointer remains over the rail.
+      // A fresh pointer exit and re-entry is needed to restart autoplay.
+      if(!rail.matches(':hover'))manualMode=false;
       // Intentionally no scrollTo, scroll-snap or alignment on release.
     }
     rail.addEventListener('pointerup',finishDrag);
@@ -1559,15 +1559,17 @@
     root.querySelectorAll('.fc-card').forEach(function(card){
       var index=Number(card.dataset.fcCard);
       card.addEventListener('pointerenter',function(event){
-        if(event.pointerType!=='mouse'||drag||selection.open||(hoverFilm.followRail&&hoverFilm.si===si))return;
-        clearTimeout(idleTimer);
-        startHoverFilm(card,si,index,460);
+        if(event.pointerType!=='mouse'||drag||manualMode||selection.open||
+           (hoverFilm.followRail&&hoverFilm.si===si))return;
+        // Intentional dwell: no instant play when a moving gallery passes
+        // beneath the pointer. Pressing anywhere always takes control.
+        startHoverFilm(card,si,index,980);
       });
       card.addEventListener('pointerleave',function(){
         if(hoverFilm.card===card&&!hoverFilm.followRail)scheduleHoverStop(950);
       });
       card.addEventListener('focusin',function(event){
-        if(event.target.matches('.fc-card-button'))startHoverFilm(card,si,index,850);
+        if(!manualMode&&event.target.matches('.fc-card-button'))startHoverFilm(card,si,index,1000);
       });
       card.addEventListener('focusout',function(){
         if(hoverFilm.card===card)stopHoverFilm();
@@ -1575,7 +1577,7 @@
     });
     rail.addEventListener('scroll',function(){
       if(hoverFilm.card?.closest('.fc-rail')===rail&&!hoverFilm.followRail&&!hoverFilm.scrubbing&&!hoverFilm.sliderHover)stopHoverFilm();
-      if(hoverFilm.followRail&&hoverFilm.si===si){clearTimeout(idleTimer);return;}
+      if(hoverFilm.followRail&&hoverFilm.si===si)return;
       if(!scrollRaf)scrollRaf=requestAnimationFrame(function(){
         scrollRaf=0;
         syncRange();
@@ -1583,13 +1585,13 @@
         if(selection.focus[si]!==closest)focusCard(si,closest,false);
         scoreFromRail(si);
       });
-      clearTimeout(idleTimer);
-      // A still card begins a muted miniature preview only AFTER scrolling
-      // actually stops. This timer never changes the scroll position.
-      idleTimer=setTimeout(idlePreview,1450);
+      // Manual scrolling does not re-trigger autoplay on idle. A fresh
+      // hover after exiting the rail is required to resume the sequence.
     },{passive:true});
     rail.addEventListener('pointerleave',function(){
-      if(hoverFilm.followRail&&hoverFilm.si===si&&!hoverFilm.sliderHover&&!hoverFilm.scrubbing)scheduleHoverStop(1000);
+      if(!drag)manualMode=false;
+      if(hoverFilm.si===si&&!hoverFilm.sliderHover&&!hoverFilm.scrubbing)
+        scheduleHoverStop(380);
     });
     if(slider){
       function finishPreviewScrub(){
@@ -1623,7 +1625,6 @@
       slider.addEventListener('pointerup',finishPreviewScrub);
       slider.addEventListener('pointercancel',finishPreviewScrub);
       slider.addEventListener('input',function(event){
-        clearTimeout(idleTimer);
         var at=SERIES[si].endTime*clamp(Number(event.target.value)/1000,0,1);
         if(seekHoverFilmByTime(si,at))return;
         // No active preview: preserve the freely scrolling card gallery.
