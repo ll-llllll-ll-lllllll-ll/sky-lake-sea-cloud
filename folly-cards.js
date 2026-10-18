@@ -905,12 +905,12 @@
     return (READING_PART_NAMES[state.lang]||READING_PART_NAMES.zh)[si][i];
   }
   function readingSectionLabel(si,i){
-    return readingHead(i)+(state.lang==='en'?': ':'：')+readingSectionName(si,i);
+    return readingHead(i)+('｜')+readingSectionName(si,i);
   }
   function readingPartHeading(i,si){
     return '<div class="fc-reading-part-head"><h3>'+
       '<span class="fc-reading-part-kind">'+esc(readingHead(i))+'</span>'+
-      '<span class="fc-reading-part-divider">'+esc(state.lang==='en'?': ':'：')+'</span>'+
+      '<span class="fc-reading-part-divider">'+esc('｜')+'</span>'+
       '<span class="fc-reading-part-title">'+esc(readingSectionName(si,i))+'</span>'+
       '</h3></div>';
   }
