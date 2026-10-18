@@ -4758,3 +4758,23 @@ html:has(.fc-room){
     animation:none!important;
   }
 }
+
+
+/* v40 · Named movements: category and work share one unbroken heading,
+   with the work's own name a little quieter than the section label. */
+.fc-room .fc-reading-part-head h3 .fc-reading-part-kind{
+  color:#1f241f;
+}
+.fc-room .fc-reading-part-head h3 .fc-reading-part-divider{
+  color:rgba(35,42,35,.45);
+  font-weight:400;
+}
+.fc-room .fc-reading-part-head h3 .fc-reading-part-title{
+  color:rgba(32,39,32,.82);
+  font-weight:400;
+}
+@media(max-width:700px){
+  .fc-room .fc-reading-part-head h3{
+    overflow-wrap:break-word;
+  }
+}
