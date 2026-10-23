@@ -7,6 +7,7 @@
     title:{zh:'时间晶体',en:'Time Crystal',ja:'時間結晶'},
     prefix:{zh:'其一',en:'Part One',ja:'其の一'},
     progress:'Work in progress since 2023',
+    year:'2023—',
     hero:[
       {title:{zh:'效果图',en:'Visualisation',ja:'完成予想図'},src:null},
       {title:{zh:'设计图',en:'Design Drawing',ja:'設計図'},src:null}
@@ -46,7 +47,7 @@
   }
   function renderWork(w,i){
     return '<section class="ins-work" id="ins-work-'+(i+1)+'" data-ins-work="'+i+'">'+
-      '<header class="ins-work-title"><h2>'+E(title(w))+'</h2><span>2023—</span></header>'+
+      '<header class="ins-work-title"><h2>'+E(title(w))+'</h2><span>'+E(w.year||'')+'</span></header>'+
       '<div class="ins-hero-grid">'+w.hero.map(function(x,j){return renderHero(w,x,j);}).join('')+'</div>'+
       '<p class="ins-work-progress">'+E(w.progress)+'</p>'+
       '<section class="ins-gallery" aria-label="'+E(T('archive'))+'">'+
