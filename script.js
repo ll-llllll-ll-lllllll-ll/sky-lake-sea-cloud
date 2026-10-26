@@ -1990,11 +1990,11 @@ render();
   if (instrument) {
     instrument.images = [
       {
-        src: "./works/the-instrument/img3-blur.jpg",
+        src: "./works/the-instrument/the-instrument-2/ship-in-klein-bottle-1.jpg",
         caption: { zh: "仪器试作 01", en: "instrument study 01", ja: "器械試作 01" }
       },
       {
-        src: "./works/the-instrument/img4-blur.jpg",
+        src: "./works/the-instrument/the-instrument-2/ship-in-klein-bottle-2.jpg",
         caption: { zh: "仪器试作 02", en: "instrument study 02", ja: "器械試作 02" }
       }
     ];
