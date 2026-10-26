@@ -4778,3 +4778,355 @@ html:has(.fc-room){
     overflow-wrap:break-word;
   }
 }
+
+
+/* v43 · Folly II / 朽塔焦土: calibrated four-piece triangular score.
+   Direct port of Ruin Archive's physical hinge geometry and layered glass,
+   adapted to the portfolio's existing inline (rather than side) score.
+   The printed layer stays independently foldable; only the two live
+   needles follow the seven film segments. Folly I is not affected. */
+.fc-room .fc-inline-score-device > .fc-score-cluster.fc-folly2-score {
+  display:block;
+  position:relative;
+  flex:0 0 auto;
+  width:min(92%,min(64vh,555px));
+  height:auto;
+  min-width:0;
+  min-height:0;
+  max-width:100%;
+  max-height:100%;
+  aspect-ratio:1/1;
+  padding:0;
+  overflow:visible;
+  border:0;
+  background:transparent;
+  box-shadow:none;
+  isolation:isolate;
+  perspective:1300px;
+  transform-style:preserve-3d;
+}
+.fc-room .fc-inline-score-device:has(> .fc-folly2-score) {
+  height:clamp(355px,56vw,590px);
+  overflow:visible;
+}
+.fc-room .fc-inline-score.is-expanded .fc-inline-score-device:has(> .fc-folly2-score){
+  height:min(75dvh,750px);
+}
+.fc-room .fc-inline-score.is-expanded .fc-inline-score-device > .fc-folly2-score{
+  height:min(100%,650px);
+  width:auto;
+  max-width:100%;
+}
+.fc-room .fc-folly2-score .fc-score-shadow,
+.fc-room .fc-folly2-score .fc-score-hud {
+  position:absolute;
+  inset:0;
+  display:block;
+  width:100%;
+  height:100%;
+  min-width:0;
+  min-height:0;
+  padding:0;
+  border:0;
+  border-radius:0;
+  box-shadow:none;
+  background:transparent;
+  transform:none;
+  overflow:visible;
+}
+.fc-room .fc-folly2-score .fc-score-shadow {
+  z-index:2;
+  opacity:1;
+  pointer-events:auto;
+  filter:drop-shadow(3px 6px 10px rgba(29,33,29,.14));
+}
+.fc-room .fc-folly2-score .fc-score-hud {
+  z-index:5;
+  opacity:1;
+  visibility:visible;
+  pointer-events:none;
+  backdrop-filter:none;
+  -webkit-backdrop-filter:none;
+}
+.fc-room .fc-folly2-score .fc-folly2-fold-stage {
+  position:absolute;
+  display:block;
+  inset:0;
+  width:100%;
+  height:100%;
+  max-width:none;
+  min-width:0;
+  min-height:0;
+  opacity:1;
+  pointer-events:auto;
+  isolation:isolate;
+  transform-style:preserve-3d;
+  overflow:visible;
+}
+.fc-room .fc-folly2-score .fc-fold-core,
+.fc-room .fc-folly2-score .fc-fold-finish {
+  position:absolute;
+  left:var(--fc-f2-left,30%);
+  top:var(--fc-f2-top,34%);
+  width:var(--fc-f2-side,40%);
+  height:var(--fc-f2-high,34.64%);
+  transform:translateZ(-5px);
+  transform-style:preserve-3d;
+  clip-path:polygon(0 0,100% 0,50% 100%);
+  -webkit-clip-path:polygon(0 0,100% 0,50% 100%);
+  overflow:hidden;
+  pointer-events:none;
+}
+.fc-room .fc-folly2-score .fc-fold-core {
+  z-index:1;
+  background:rgba(248,248,241,.04);
+  transition:opacity .25s linear;
+}
+.fc-room .fc-folly2-score .fc-fold-axis {
+  position:absolute;
+  width:0;
+  height:0;
+  min-width:0;
+  min-height:0;
+  z-index:2;
+  transform:rotateZ(var(--fc-f2-axis,0deg));
+  transform-style:preserve-3d;
+  transition:opacity .25s linear;
+}
+.fc-room .fc-folly2-score .fc-fold-wing {
+  position:absolute;
+  left:calc(var(--fc-f2-side,200px) / -2);
+  top:calc(var(--fc-f2-high,173px) * -1);
+  width:var(--fc-f2-side,200px);
+  height:var(--fc-f2-high,173px);
+  transform-origin:50% 100%;
+  transform-style:preserve-3d;
+  transform:rotateX(var(--fc-fold-angle,0deg));
+  /* The physical wing owns its triangular cut. Both printed faces remain
+     rectangular textures so the reverse never appears to pivot at its apex. */
+  clip-path:polygon(50% 0,100% 100%,0 100%);
+  -webkit-clip-path:polygon(50% 0,100% 100%,0 100%);
+  overflow:hidden;
+  cursor:grab;
+  touch-action:none;
+  pointer-events:auto;
+  transition:none;
+  will-change:transform;
+}
+.fc-room .fc-folly2-score .fc-fold-axis.fc-f2-fold-animate .fc-fold-wing {
+  transition:transform .72s cubic-bezier(.18,.78,.18,1);
+}
+.fc-room .fc-folly2-score .fc-fold-axis.fc-f2-dragging .fc-fold-wing{
+  cursor:grabbing;
+  transition:none!important;
+}
+.fc-room .fc-folly2-score .fc-fold-face{
+  position:absolute;
+  inset:0;
+  overflow:hidden;
+  backface-visibility:hidden;
+  -webkit-backface-visibility:hidden;
+  transform-style:preserve-3d;
+}
+.fc-room .fc-folly2-score .fc-fold-face-front{
+  transform:translateZ(.25px);
+  opacity:.97;
+}
+.fc-room .fc-folly2-score .fc-fold-face-back{
+  transform:rotateX(180deg) translateZ(.25px);
+  opacity:.47;
+  filter:none;
+}
+.fc-room .fc-folly2-score .fc-fold-face-back img{
+  transform:scaleX(-1);
+  filter:contrast(.93) saturate(.62);
+}
+.fc-room .fc-folly2-score .fc-fold-core img,
+.fc-room .fc-folly2-score .fc-fold-face img,
+.fc-room .fc-folly2-score .fc-fold-finish img{
+  display:block;
+  width:100%;
+  height:100%;
+  max-width:none;
+  max-height:none;
+  object-fit:cover;
+  object-position:center;
+  user-select:none;
+  pointer-events:none;
+  -webkit-user-drag:none;
+}
+.fc-room .fc-folly2-score .fc-fold-finish{
+  z-index:12;
+  opacity:0;
+  visibility:hidden;
+  transform:none;
+  transition:opacity .22s ease,visibility 0s linear .22s;
+}
+.fc-room .fc-folly2-score.fc-f2-final .fc-fold-finish{
+  opacity:1;
+  visibility:visible;
+  transition:opacity .92s cubic-bezier(.22,1,.36,1),visibility 0s;
+}
+.fc-room .fc-folly2-score.fc-f2-final .fc-fold-core,
+.fc-room .fc-folly2-score.fc-f2-final .fc-fold-axis {
+  opacity:.025;
+  pointer-events:none;
+}
+/* Three-corner target + shifted, translucent upper indicator triangle. */
+.fc-room .fc-folly2-score .fc-f2-shadow-corners,
+.fc-room .fc-folly2-score .fc-f2-live-triangle {
+  position:absolute;
+  left:var(--fc-f2-left,30%);
+  top:var(--fc-f2-top,34%);
+  width:var(--fc-f2-side,40%);
+  height:var(--fc-f2-high,34.64%);
+  overflow:visible;
+  box-sizing:border-box;
+}
+.fc-room .fc-folly2-score .fc-f2-shadow-corners {
+  z-index:18;
+  opacity:0;
+  pointer-events:none;
+  transition:opacity .42s ease;
+}
+.fc-room .fc-folly2-score.fc-f2-live .fc-f2-shadow-corners{
+  opacity:.58;
+}
+.fc-room .fc-folly2-score .fc-f2-live-triangle {
+  z-index:25;
+  --fc-f2-hover-x:0px;
+  --fc-f2-hover-y:0px;
+  transform:translate(
+    calc(12px + var(--fc-f2-hover-x,0px)),
+    calc(-14px + var(--fc-f2-hover-y,0px))
+  );
+  opacity:0;
+  visibility:hidden;
+  pointer-events:none;
+  transition:transform .75s cubic-bezier(.25,1,.5,1),opacity .42s ease,visibility 0s .42s;
+}
+.fc-room .fc-inline-score[data-fc-pointers="on"] .fc-folly2-score.fc-f2-live .fc-f2-live-triangle{
+  opacity:1;
+  visibility:visible;
+  pointer-events:auto;
+  transition:transform .75s cubic-bezier(.25,1,.5,1),opacity .42s ease,visibility 0s;
+}
+.fc-room .fc-folly2-score.fc-f2-locked .fc-f2-live-triangle{
+  transform:translate(0,0)!important;
+  transition:transform .28s cubic-bezier(.17,.84,.44,1),opacity .42s ease!important;
+}
+.fc-room .fc-folly2-score .fc-f2-glass{
+  position:absolute;
+  inset:0;
+  clip-path:polygon(0 0,100% 0,50% 100%);
+  -webkit-clip-path:polygon(0 0,100% 0,50% 100%);
+  background:rgba(255,255,248,.10);
+  border:1px solid rgba(248,248,244,.15);
+  backdrop-filter:blur(2px) brightness(1.05);
+  -webkit-backdrop-filter:blur(2px) brightness(1.05);
+  box-shadow:inset 0 0 17px rgba(255,255,255,.12);
+  pointer-events:none;
+}
+.fc-room .fc-folly2-score.fc-f2-locked .fc-f2-glass{
+  background:rgba(255,255,248,.015);
+  backdrop-filter:blur(0);
+  -webkit-backdrop-filter:blur(0);
+}
+.fc-room .fc-folly2-score .fc-f2-corners{
+  position:absolute;
+  inset:0;
+  display:block;
+  width:100%;
+  height:100%;
+  overflow:visible;
+  pointer-events:none;
+}
+.fc-room .fc-folly2-score .fc-f2-corners path{
+  fill:none;
+  stroke:rgba(65,71,63,.68);
+  stroke-width:1.25px;
+  stroke-linecap:square;
+  vector-effect:non-scaling-stroke;
+}
+.fc-room .fc-folly2-score.fc-f2-locked .fc-f2-corners path{
+  stroke:rgba(36,48,38,.96);
+  stroke-width:1.5px;
+}
+.fc-room .fc-folly2-score .fc-radial-needles{
+  position:absolute;
+  inset:0;
+  left:0;
+  top:0;
+  width:100%;
+  height:100%;
+  z-index:22;
+  overflow:hidden;
+  clip-path:polygon(0 0,100% 0,50% 100%);
+  -webkit-clip-path:polygon(0 0,100% 0,50% 100%);
+  pointer-events:none;
+}
+.fc-room .fc-inline-score[data-fc-pointers="on"] .fc-folly2-score.fc-f2-live .fc-radial-needles{
+  pointer-events:auto;
+  cursor:ew-resize;
+  touch-action:none;
+}
+.fc-room .fc-folly2-score .fc-radial-needles i{
+  position:absolute;
+  display:block;
+  left:15%;top:85%;
+  width:73%;height:2px;
+  transform-origin:left center;
+  transform:rotate(-65deg);
+  background:#ffb870;
+  box-shadow:0 0 5px #ffdaaa,0 0 12px #c45733,0 0 18px #7a4336;
+  filter:drop-shadow(0 0 4px rgba(200,90,50,.72));
+  transition:transform .15s linear,filter .25s ease;
+  pointer-events:none;
+}
+.fc-room .fc-folly2-score .fc-radial-needles i:nth-child(2){
+  left:80%;top:0%;width:48%;
+  transform:rotate(-55deg);
+  transition-duration:.03s,.25s;
+}
+.fc-room .fc-folly2-score.fc-f2-locked .fc-radial-needles i{
+  filter:none;
+}
+.fc-room .fc-folly2-score .fc-score-manual{
+  display:none;
+}
+.fc-room .fc-folly2-score .fc-score-expand{
+  opacity:0;
+  pointer-events:none;
+}
+.fc-room .fc-folly2-score.fc-f2-assets-partial::after{
+  content:"SCORE / IMAGE LOADING INCOMPLETE";
+  position:absolute;
+  bottom:4px;
+  left:0;
+  color:rgba(45,54,45,.55);
+  font:10px/1.4 var(--serif),serif;
+  letter-spacing:.04em;
+}
+@media(max-width:700px),(hover:none){
+  .fc-room .fc-inline-score-device:has(> .fc-folly2-score){
+    height:clamp(305px,85vw,440px);
+  }
+  .fc-room .fc-inline-score-device>.fc-folly2-score{
+    width:min(100%,440px);
+    max-height:100%;
+  }
+  .fc-room .fc-folly2-score .fc-f2-live-triangle{
+    transform:none;
+  }
+  .fc-room .fc-folly2-score .fc-f2-glass,
+  .fc-room .fc-folly2-score .fc-f2-shadow-corners{
+    display:none;
+  }
+}
+@media(prefers-reduced-motion:reduce){
+  .fc-room .fc-folly2-score .fc-fold-wing,
+  .fc-room .fc-folly2-score .fc-fold-finish,
+  .fc-room .fc-folly2-score .fc-f2-live-triangle{
+    transition:none!important;
+  }
+}
