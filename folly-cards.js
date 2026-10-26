@@ -1333,6 +1333,10 @@
         if(!axes[i])return;
         axes[i].style.left=p.x+'px';axes[i].style.top=p.y+'px';
         axes[i].style.setProperty('--fc-f2-axis',p.rotation+'deg');
+        // The same outward normal used in Ruin Archive's score gesture.
+        // A positive displacement *toward* the hinged edge folds the wing,
+        // no matter whether this is the top, left or right flap.
+        axes[i].dataset.fcF2AxisRotation=String(p.rotation);
       });
     }
     function syncLayers(){
@@ -1372,9 +1376,10 @@
         later(revealFinal,280);
         if(delayedLive)later(function(){cluster.classList.add('fc-f2-live');},1000);
         else cluster.classList.add('fc-f2-live');
-      }
-      else{
-        cluster.classList.remove('fc-f2-final');
+      }else{
+        // The live score/pointers belong to the folded centre alone.
+        // They must leave when even one wing opens again.
+        cluster.classList.remove('fc-f2-final','fc-f2-live');
         if(!busy)clearLock();
       }
       updateButton();
@@ -1395,7 +1400,7 @@
       if(destroyed)return;
       cancelTimers();clearLock();busy=true;targetFolded=fold;
       updateButton();
-      cluster.classList.remove('fc-f2-final','fc-f2-folded');
+      cluster.classList.remove('fc-f2-final','fc-f2-folded','fc-f2-live');
       if(fold){stamps=[0,0,0];serial=0;syncLayers();}
       var order=fold?orderFold:orderUnfold;
       var startDelay=!fold&&cluster.dataset.fcF2HadFinal==='true'?190:0;
@@ -1437,16 +1442,31 @@
       wing.addEventListener('pointerdown',function(ev){
         if(ev.pointerType==='mouse'&&ev.button!==0)return;
         cancelTimers();busy=false;clearLock();
-        gesture={id:ev.pointerId,x:ev.clientX,y:ev.clientY,angle:angles[i]};
+        var rect=stage.getBoundingClientRect();
+        var axisX=rect.left+(parseFloat(axis.style.left)||0);
+        var axisY=rect.top+(parseFloat(axis.style.top)||0);
+        var theta=(parseFloat(axis.dataset.fcF2AxisRotation)||0)*Math.PI/180;
+        // Port of folly-archive createFoldScoreScene.axisGeometry().
+        // The outward vector points towards the visible wing tip.
+        // Dragging inward decreases the pointer's projection and folds it.
+        var outwardX=Math.sin(theta),outwardY=-Math.cos(theta);
+        gesture={
+          id:ev.pointerId,angle:angles[i],
+          axisX:axisX,axisY:axisY,outwardX:outwardX,outwardY:outwardY,
+          projection:(ev.clientX-axisX)*outwardX+(ev.clientY-axisY)*outwardY
+        };
         axis.classList.add('fc-f2-dragging');
         try{wing.setPointerCapture(ev.pointerId);}catch(_){}
         ev.preventDefault();ev.stopPropagation();
       });
       wing.addEventListener('pointermove',function(ev){
         if(!gesture||gesture.id!==ev.pointerId)return;
-        var d=(gesture.y-ev.clientY)*.78+(ev.clientX-gesture.x)*.32;
-        applyWing(i,gesture.angle+d,false);
-        cluster.classList.remove('fc-f2-final','fc-f2-folded');
+        var currentProjection=
+          (ev.clientX-gesture.axisX)*gesture.outwardX+
+          (ev.clientY-gesture.axisY)*gesture.outwardY;
+        var towardsHinge=gesture.projection-currentProjection;
+        applyWing(i,gesture.angle+towardsHinge*.78,false);
+        cluster.classList.remove('fc-f2-final','fc-f2-folded','fc-f2-live');
         ev.preventDefault();ev.stopPropagation();
       });
       function release(ev){
