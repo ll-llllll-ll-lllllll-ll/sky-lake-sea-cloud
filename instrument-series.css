@@ -970,3 +970,81 @@ body.ins-modal-open{overflow:hidden!important;}
     transition:none!important;
   }
 }
+
+
+/* v50 · The Instrument, source-edited artist statements (2026-10-26).
+   Reading hierarchy: series argument, each work's exact research TYPE,
+   one image-led conceptual description, then small unobtrusive image notes.
+   No scientific results, formulae or unsupported empirical claims. */
+.ins-room .ins-series-statement{
+  display:block;
+  width:min(100%,795px);
+  max-width:795px;
+}
+.ins-room .ins-series-statement p{
+  width:100%;
+  margin:0;
+  padding:0;
+  color:rgba(33,40,34,.85);
+  font:400 clamp(15px,1.18vw,18px)/2.06 var(--serif),serif;
+  letter-spacing:.012em;
+  text-wrap:pretty;
+}
+.ins-room .ins-series-statement p + p{
+  margin-top:clamp(17px,2.5vw,31px);
+}
+.ins-room .ins-work-title{
+  padding-bottom:clamp(9px,1.5vw,20px);
+}
+.ins-room .ins-work-kind{
+  display:block;
+  width:calc(100% - 2 * var(--ins-side));
+  max-width:880px;
+  margin:0 var(--ins-side) clamp(33px,4.8vw,69px);
+  padding:0;
+  color:rgba(39,46,39,.55);
+  font:400 clamp(12px,1vw,15px)/1.8 var(--serif),serif;
+  letter-spacing:.028em;
+  overflow-wrap:anywhere;
+}
+.ins-room .ins-card-note{
+  display:block;
+  margin-top:clamp(10px,1.4vw,18px);
+  padding:0;
+  width:100%;
+  min-height:2.9em;
+  max-width:100%;
+  color:rgba(40,46,40,.55);
+  font:400 clamp(11px,.9vw,13px)/1.72 var(--serif),serif;
+  letter-spacing:.005em;
+  text-align:left;
+  text-wrap:pretty;
+}
+.ins-room .ins-card-button:hover .ins-card-note,
+.ins-room .ins-card-button:focus-visible .ins-card-note{
+  color:rgba(29,38,31,.76);
+  transition:color .25s ease;
+}
+@media(max-width:700px){
+  .ins-room .ins-series-statement p{
+    font-size:14px;
+    line-height:2.06;
+  }
+  .ins-room .ins-series-statement p+p{
+    margin-top:21px;
+  }
+  .ins-room .ins-work-title{
+    padding-bottom:11px;
+  }
+  .ins-room .ins-work-kind{
+    margin-bottom:34px;
+    font-size:11px;
+    line-height:1.8;
+  }
+  .ins-room .ins-card-note{
+    min-height:3.2em;
+    margin-top:10px;
+    font-size:11px;
+    line-height:1.7;
+  }
+}
