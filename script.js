@@ -311,17 +311,57 @@ const state = {
 
 const app = document.querySelector("#app");
 
+// First-visit language: explicit link > deliberate saved selection >
+// the visitor's browser/device preferences > English fallback.
+// Automatic detection is never saved over a deliberate preference.
+function supportedLanguage(locale) {
+  var code = String(locale || "").trim().toLowerCase().replace(/_/g, "-");
+  if (code === "zh" || code.indexOf("zh-") === 0 ||
+      code === "cmn" || code.indexOf("cmn-") === 0) return "zh";
+  if (code === "ja" || code.indexOf("ja-") === 0 || code === "jp") return "ja";
+  if (code === "en" || code.indexOf("en-") === 0) return "en";
+  return null;
+}
+
 function readLanguage() {
   try {
-    var saved = localStorage.getItem("sky-sea-lake-cloud-language");
-    return LANGS.indexOf(saved) >= 0 ? saved : "zh";
-  } catch (_) {
-    return "zh";
-  }
+    var forced = supportedLanguage(new URLSearchParams(location.search).get("lang"));
+    if (forced) return forced;
+  } catch (_) {}
+
+  try {
+    var saved = supportedLanguage(localStorage.getItem("sky-sea-lake-cloud-language"));
+    if (saved) return saved;
+  } catch (_) {}
+
+  try {
+    var preferred = Array.isArray(navigator.languages) && navigator.languages.length
+      ? navigator.languages : [navigator.language || navigator.userLanguage];
+    for (var i = 0; i < preferred.length; i++) {
+      var detected = supportedLanguage(preferred[i]);
+      if (detected) return detected;
+    }
+  } catch (_) {}
+
+  // The site has authored zh-Hans, en and ja; no other translation is implied.
+  return "en";
 }
 
 function saveLanguage(lang) {
   try { localStorage.setItem("sky-sea-lake-cloud-language", lang); } catch (_) {}
+}
+
+function clearLinkLanguageOverride() {
+  // When a visitor selects another language, prevent ?lang= on a shared link
+  // from undoing that choice on refresh; preserve other params and the hash.
+  try {
+    var params = new URLSearchParams(location.search);
+    if (!params.has("lang")) return;
+    params.delete("lang");
+    var remaining = params.toString();
+    history.replaceState(history.state, "", location.pathname +
+      (remaining ? "?" + remaining : "") + location.hash);
+  } catch (_) {}
 }
 
 function localised(value) {
@@ -1309,6 +1349,7 @@ app.addEventListener("click", function(event) {
     if (LANGS.indexOf(lang) < 0) return;
     state.lang = lang;
     saveLanguage(lang);
+    clearLinkLanguageOverride();
     render();
   }
 });
