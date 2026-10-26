@@ -1048,3 +1048,51 @@ body.ins-modal-open{overflow:hidden!important;}
     line-height:1.7;
   }
 }
+
+
+/* v52 · A real JPEG poster for the 25MB Klein Bottle Ship film.
+   No canvas seeking or full video download until the visitor interacts. */
+.ins-room .ins-video-screen{
+  position:relative;
+}
+.ins-room .ins-video-poster{
+  position:absolute;
+  inset:0;
+  z-index:1;
+  display:block;
+  width:100%;
+  height:100%;
+  object-fit:contain;
+  object-position:center;
+  user-select:none;
+  -webkit-user-drag:none;
+  pointer-events:none;
+  background:transparent;
+}
+.ins-room .ins-video-poster[hidden]{display:none!important;}
+.ins-room .ins-video-still{
+  z-index:1;
+}
+.ins-room .ins-video-preview{
+  z-index:2;
+}
+.ins-room .ins-video-card.is-previewing .ins-video-poster{
+  opacity:0;
+}
+.ins-room .ins-arrow,
+.ins-room .ins-video-open-mark,
+.ins-room .ins-turn-arrow{
+  font-family:Georgia,"Times New Roman",serif;
+  font-variant-emoji:text;
+}
+.ins-room .ins-arrow,
+.ins-room .ins-video-open-mark{
+  font-size:0!important;
+  line-height:0!important;
+  width:18px;
+  height:18px;
+  background:center/contain no-repeat url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M5 19 19 5M9 5h10v10' stroke='%23f9f9ef' stroke-width='1.8' fill='none' stroke-linecap='square'/%3E%3C/svg%3E");
+}
+.ins-room .ins-arrow{
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M5 19 19 5M9 5h10v10' stroke='%23363834' stroke-width='1.8' fill='none' stroke-linecap='square'/%3E%3C/svg%3E");
+}
