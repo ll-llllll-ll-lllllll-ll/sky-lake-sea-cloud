@@ -732,6 +732,17 @@ function indexPanel() {
       '<section class="index-group"><p class="index-heading">' + labels[state.lang].works + "</p>";
 
   works.forEach(function(item) {
+    if (item.slug === "fictional-topography") {
+      var unavailable = {
+        zh: "暂时不可用", en: "Temporarily unavailable", ja: "現在利用できません"
+      }[state.lang];
+      html += '<span class="index-link index-link-unavailable" tabindex="0" ' +
+        'aria-label="' + escapeHtml(localised(item.title) + " · " + unavailable) + '">' +
+        '<span class="index-unavailable-title">' + escapeHtml(localised(item.title)) + '</span>' +
+        '<span class="index-unavailable-note" aria-hidden="true">' + escapeHtml(unavailable) + '</span>' +
+      '</span>';
+      return;
+    }
     html += '<button type="button" class="index-link" data-action="route" data-route="' + item.slug + '">' +
       escapeHtml(localised(item.title)) + "</button>";
   });
@@ -792,7 +803,7 @@ function renderHome() {
 
 function parseRoute() {
   var slug = location.hash.replace(/^#\/?/, "").split("/")[0];
-  if (!slug) return null;
+  if (!slug || slug === "fictional-topography") return null;
   return rooms.find(function(item) { return item.slug === slug; }) || null;
 }
 
@@ -1232,6 +1243,7 @@ function goHome() {
 }
 
 function goRoute(route) {
+  if (route === "fictional-topography") return;
   state.indexOpen = false;
   state.calendarOpen = false;
   location.hash = route;
@@ -2020,6 +2032,9 @@ render();
 
   function nextWithinGroup(item) {
     var list = item && item.group === "collection" ? collections : item && item.group === "writing" ? writings : works;
+    // Retain Fictional Topography in the index, but never send a visitor
+    // to its unfinished page via the footer's next-work navigation.
+    list = list.filter(function(entry) { return entry.slug !== "fictional-topography"; });
     if (!list.length) return null;
     var index = list.findIndex(function (candidate) { return candidate.slug === item.slug; });
     if (index < 0) return list[0];
