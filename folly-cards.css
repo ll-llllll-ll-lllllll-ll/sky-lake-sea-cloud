@@ -4994,8 +4994,8 @@ html:has(.fc-room){
 }
 .fc-room .fc-folly2-score .fc-f2-live-triangle {
   z-index:25;
-  --fc-f2-hover-x:0px;
-  --fc-f2-hover-y:0px;
+  /* Hover offsets are set on the cluster by the calibration controller
+     and intentionally INHERIT here; do not shadow them with local defaults. */
   transform:translate(
     calc(12px + var(--fc-f2-hover-x,0px)),
     calc(-14px + var(--fc-f2-hover-y,0px))
