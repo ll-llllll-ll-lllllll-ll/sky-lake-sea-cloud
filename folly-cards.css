@@ -5073,8 +5073,11 @@ html:has(.fc-room){
 .fc-room .fc-folly2-score .fc-radial-needles i{
   position:absolute;
   display:block;
-  left:15%;top:85%;
-  width:73%;height:2px;
+  /* v46: Folly Archive v323 independently calibrated first needle.
+     These percentages are measured in the FINAL inverted triangle,
+     not the large unfolded three-wing sheet. */
+  left:33.5%;top:50%;
+  width:40%;height:1.7px;
   transform-origin:left center;
   transform:rotate(-65deg);
   background:#ffb870;
@@ -5084,7 +5087,8 @@ html:has(.fc-room){
   pointer-events:none;
 }
 .fc-room .fc-folly2-score .fc-radial-needles i:nth-child(2){
-  left:80%;top:0%;width:48%;
+  /* v46: second needle has a separate origin and shorter length. */
+  left:41.5%;top:22%;width:29%;height:1.7px;
   transform:rotate(-55deg);
   transition-duration:.03s,.25s;
 }
@@ -5128,5 +5132,39 @@ html:has(.fc-room){
   .fc-room .fc-folly2-score .fc-fold-finish,
   .fc-room .fc-folly2-score .fc-f2-live-triangle{
     transition:none!important;
+  }
+}
+
+
+/* v46 · The plotted needles must be seated on the final score only.
+   The triangle is the common registration plane on desktop and mobile. */
+.fc-room .fc-folly2-score .fc-f2-live-triangle{
+  transform:translate(
+    calc(12px + var(--fc-f2-hover-x,0px)),
+    calc(-14px + var(--fc-f2-hover-y,0px))
+  );
+}
+.fc-room .fc-inline-score[data-fc-pointers="on"] .fc-folly2-score.fc-f2-live.fc-f2-folded .fc-f2-live-triangle{
+  opacity:1;
+  visibility:visible;
+  pointer-events:auto;
+}
+.fc-room .fc-folly2-score:not(.fc-f2-folded) .fc-f2-live-triangle{
+  opacity:0!important;
+  visibility:hidden!important;
+  pointer-events:none!important;
+}
+.fc-room .fc-folly2-score .fc-radial-needles i{
+  min-width:0;
+  border:0;
+  transform-origin:left center;
+}
+@media(max-width:700px),(hover:none){
+  /* In the compact reference viewer, alignment is direct: no hovering
+     glass offset, no magnetic translation, both needles share the
+     physical folded centre's origin. */
+  .fc-room .fc-folly2-score .fc-f2-live-triangle,
+  .fc-room .fc-folly2-score.fc-f2-locked .fc-f2-live-triangle{
+    transform:translate(0,0)!important;
   }
 }
