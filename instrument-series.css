@@ -459,3 +459,155 @@ body.ins-modal-open{overflow:hidden!important;}
 @media(prefers-reduced-motion:reduce){
   .ins-card,.ins-arrow{transition:none!important;}
 }
+
+/* v47 · Ion Trap (2023): one image field, two visual states.
+   The design plate and rendering exchange as a slow, 7-second Folly-style
+   diptych; the original horizontal archive stays below, unsnapped. */
+.ins-room .ins-hero-grid{
+  display:block;
+  width:min(1210px,calc(100% - 2 * var(--ins-side)));
+  max-width:1210px;
+  margin:0 var(--ins-side);
+}
+.ins-room .ins-hero-switch{
+  display:block;
+  position:relative;
+  width:100%;
+  min-width:0;
+  margin:0;
+  padding:0;
+}
+.ins-room .ins-hero-screen{
+  display:block;
+  position:relative;
+  width:100%;
+  height:clamp(350px,51vw,715px);
+  min-height:0;
+  aspect-ratio:auto;
+  box-sizing:border-box;
+  background:#e9e8e2;
+  overflow:hidden;
+  border:0;
+}
+.ins-room .ins-hero-face{
+  position:absolute;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  inset:0;
+  z-index:1;
+  opacity:0;
+  visibility:hidden;
+  pointer-events:none;
+  transition:opacity 1.15s cubic-bezier(.2,.8,.2,1),visibility 0s 1.15s;
+}
+.ins-room .ins-hero-face.is-active{
+  z-index:2;
+  opacity:1;
+  visibility:visible;
+  transition:opacity 1.15s cubic-bezier(.2,.8,.2,1),visibility 0s;
+}
+.ins-room .ins-hero-face img{
+  display:block;
+  width:100%;
+  height:100%;
+  max-width:100%;
+  max-height:100%;
+  object-fit:contain;
+  object-position:center;
+  user-select:none;
+  -webkit-user-drag:none;
+}
+.ins-room .ins-hero-meta{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-end;
+  flex-wrap:wrap;
+  gap:14px 28px;
+  margin:0;
+  padding:clamp(19px,2.2vw,30px) 0 0;
+}
+.ins-room .ins-hero-options{
+  display:flex;
+  flex-wrap:wrap;
+  align-items:baseline;
+  gap:clamp(12px,2vw,26px);
+  max-width:100%;
+}
+.ins-room .ins-hero-option{
+  display:inline-flex;
+  align-items:baseline;
+  gap:clamp(7px,1vw,12px);
+  margin:0;
+  padding:0 0 4px;
+  min-height:30px;
+  width:auto;
+  border:0;
+  background:transparent;
+  color:rgba(33,41,34,.51);
+  cursor:pointer;
+  font:400 clamp(13px,1.15vw,16px)/1.5 var(--serif),serif;
+  transition:color .75s ease;
+}
+.ins-room .ins-hero-option span{
+  display:inline-block;
+  font-size:1em;
+  transition:font-size .6s cubic-bezier(.2,.8,.2,1),opacity .6s ease;
+}
+.ins-room .ins-hero-option.is-active span{
+  font-size:clamp(23px,2vw,29px);
+  color:#242b24;
+}
+.ins-room .ins-hero-option small{
+  color:rgba(35,42,34,.44);
+  font:400 clamp(11px,.88vw,13px)/1.45 var(--serif),serif;
+  letter-spacing:.025em;
+}
+.ins-room .ins-hero-option:hover span{color:#242b24;}
+.ins-room .ins-hero-separator{
+  color:rgba(35,41,35,.27);
+  font:400 clamp(11px,1vw,14px)/1.5 var(--serif),serif;
+  transform:translateY(-1px);
+}
+.ins-room .ins-hero-project{
+  display:block;
+  color:rgba(34,39,34,.47);
+  font:400 clamp(11px,.92vw,13px)/1.6 var(--serif),serif;
+  letter-spacing:.055em;
+  white-space:nowrap;
+}
+.ins-room .ins-work-progress{
+  margin-top:clamp(28px,3.5vw,52px);
+}
+.ins-room .ins-gallery{
+  margin-top:clamp(85px,10.8vw,156px);
+}
+@media(max-width:700px){
+  .ins-room .ins-hero-screen{
+    height:clamp(300px,94vw,530px);
+  }
+  .ins-room .ins-hero-meta{
+    padding-top:18px;
+    align-items:baseline;
+    gap:10px 20px;
+  }
+  .ins-room .ins-hero-options{
+    gap:9px 15px;
+  }
+  .ins-room .ins-hero-option.is-active span{
+    font-size:23px;
+  }
+  .ins-room .ins-hero-option small{
+    font-size:10px;
+  }
+  .ins-room .ins-hero-project{
+    font-size:11px;
+  }
+}
+@media(prefers-reduced-motion:reduce){
+  .ins-room .ins-hero-face,
+  .ins-room .ins-hero-option,
+  .ins-room .ins-hero-option span{
+    transition:none!important;
+  }
+}
