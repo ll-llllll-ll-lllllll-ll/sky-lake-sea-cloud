@@ -217,6 +217,7 @@
     var video=viewer.querySelector('[data-ins-full-video]');
     active={room:room,viewer:viewer,si:si,idx:0,trigger:trigger,kind:'video'};
     video.muted=false;
+    video.controls=false;
     video.loop=false;
     video.playsInline=true;
     video.src=w.video;
@@ -375,14 +376,15 @@
           // A real decoded two-second still, as in Folly's instrument card.
           // Wait for seeked before drawing; Safari cannot reliably draw a
           // video frame that has loaded metadata but not decoded footage.
-          if(!o.playing&&preview.seekable.length){
+          if(!o.playing&&Number.isFinite(preview.duration)&&preview.duration>0){
             try{preview.currentTime=Math.min(2,Math.max(0,preview.duration-.1));}catch(_){}
           }
         },{once:true});
         preview.addEventListener('seeked',function(){
           if(o.playing||!preview.videoWidth||!preview.videoHeight)return;
           try{
-            still.width=preview.videoWidth;still.height=preview.videoHeight;
+            still.width=Math.min(960,preview.videoWidth);
+            still.height=Math.max(1,Math.round(still.width*preview.videoHeight/preview.videoWidth));
             still.getContext('2d').drawImage(preview,0,0,still.width,still.height);
             card.classList.add('has-still');
           }catch(_){}
