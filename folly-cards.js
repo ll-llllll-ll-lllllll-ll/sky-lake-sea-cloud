@@ -1267,6 +1267,246 @@
       score.querySelector('[data-fc-action="score-expand"]')?.focus({preventScroll:true});
     }
   }
+  /* Folly II · authored three-wing instrument from Ruin Archive attachment
+     viewer (opt91 / v318 / v328 / v341 / v347 / v357).
+     The four-piece physical score is independent of the film timeline.
+     Geometry, sequential folding, face order and calibration live here.
+     Video progress continues to own ONLY the two live needle angles. */
+  var folly2ScoreControllers=new WeakMap();
+  var folly2ScoreCleanup=null;
+  function installFolly2Score(score){
+    if(folly2ScoreCleanup){folly2ScoreCleanup();folly2ScoreCleanup=null;}
+    var cluster=score.querySelector('.fc-folly2-score');
+    var stage=cluster?.querySelector('.fc-folly2-fold-stage');
+    if(!cluster||!stage)return;
+    var axes=Array.from(stage.querySelectorAll('[data-fc-wing]'));
+    var triangle=cluster.querySelector('[data-fc-f2-calibrate]');
+    var button=score.querySelector('[data-fc-action="score-fold"]');
+    var images=Array.from(stage.querySelectorAll('img'));
+    var angles=[0,0,0],stamps=[0,0,0],serial=0;
+    var timers=[],observer=null,resizer=null,drag=null;
+    var destroyed=false,autoQueued=false,busy=false,targetFolded=false,locked=false;
+    var compact=window.matchMedia('(max-width:700px), (hover:none)').matches;
+    var FOLD_MS=720,OVERLAP_MS=432,WAIT_MS=2500;
+    var orderFold=[2,1,0],orderUnfold=[0,1,2];
+    function later(callback,delay){
+      var timer=window.setTimeout(function(){
+        timers=timers.filter(function(v){return v!==timer;});
+        if(!destroyed&&score.isConnected)callback();
+      },delay);
+      timers.push(timer);
+    }
+    function cancelTimers(){
+      timers.forEach(clearTimeout);
+      timers=[];
+    }
+    function layout(){
+      if(destroyed||!stage.isConnected)return;
+      var r=stage.getBoundingClientRect();
+      if(!r.width||!r.height)return;
+      var side=Math.min(r.width*(compact?.54:.40),r.height*(compact?.56:.44));
+      var high=side*Math.sqrt(3)/2;
+      var cx=r.width/2,cy=r.height/2+Math.min(r.height*.025,12);
+      var L={x:cx-side/2,y:cy-high/3},R={x:cx+side/2,y:cy-high/3};
+      var D={x:cx,y:cy+high*2/3};
+      // Geometry always comes from the actual score box, never a presumed
+      // fixed CSS width; the bottom edges of the triangular wings are hinges.
+      cluster.style.setProperty('--fc-f2-side',side+'px');
+      cluster.style.setProperty('--fc-f2-high',high+'px');
+      cluster.style.setProperty('--fc-f2-left',L.x+'px');
+      cluster.style.setProperty('--fc-f2-top',L.y+'px');
+      [
+        {x:(L.x+R.x)/2,y:L.y,rotation:0},
+        {x:(D.x+L.x)/2,y:(D.y+L.y)/2,rotation:-120},
+        {x:(R.x+D.x)/2,y:(R.y+D.y)/2,rotation:120}
+      ].forEach(function(p,i){
+        if(!axes[i])return;
+        axes[i].style.left=p.x+'px';axes[i].style.top=p.y+'px';
+        axes[i].style.setProperty('--fc-f2-axis',p.rotation+'deg');
+      });
+    }
+    function syncLayers(){
+      var ranked=stamps.map(function(value,i){return {value:value,i:i};})
+        .filter(function(a){return a.value>0;})
+        .sort(function(a,b){return a.value-b.value;});
+      axes.forEach(function(axis,i){
+        var rank=ranked.findIndex(function(a){return a.i===i;});
+        axis.style.zIndex=String(rank<0?2:3+rank);
+      });
+    }
+    function applyWing(i,angle,animate){
+      angles[i]=clamp(angle,0,180);
+      var axis=axes[i];
+      if(!axis)return;
+      axis.classList.toggle('fc-f2-fold-animate',!!animate);
+      axis.style.setProperty('--fc-fold-angle',angles[i]+'deg');
+      if(angles[i]>90 && !stamps[i])stamps[i]=++serial;
+      if(angles[i]<6)stamps[i]=0;
+      syncLayers();
+    }
+    function clearLock(){
+      locked=false;
+      cluster.classList.remove('fc-f2-locked');
+      cluster.style.removeProperty('--fc-f2-hover-x');
+      cluster.style.removeProperty('--fc-f2-hover-y');
+    }
+    function revealFinal(){
+      if(destroyed||!angles.every(function(a){return a>=174;}))return;
+      cluster.classList.add('fc-f2-final');
+    }
+    function syncFolded(){
+      var done=angles.every(function(a){return a>=174;});
+      targetFolded=done;
+      cluster.classList.toggle('fc-f2-folded',done);
+      if(done){later(revealFinal,280);cluster.classList.add('fc-f2-live');}
+      else{
+        cluster.classList.remove('fc-f2-final');
+        if(!busy)clearLock();
+      }
+      updateButton();
+    }
+    function updateButton(){
+      if(!button)return;
+      button.disabled=busy;
+      var names={
+        zh:targetFolded?['展开图谱 △','展开图谱']:['折叠图谱 ▽','折叠图谱'],
+        en:targetFolded?['UNFOLD SCORE △','Unfold score']:['FOLD SCORE ▽','Fold score'],
+        ja:targetFolded?['図譜を展開 △','図譜を展開']:['図譜を折畳 ▽','図譜を折畳']
+      };
+      var value=names[state.lang]||names.zh;
+      button.textContent=value[0];
+      button.setAttribute('aria-label',value[1]);
+    }
+    function sequence(fold){
+      if(destroyed)return;
+      cancelTimers();clearLock();busy=true;targetFolded=fold;
+      updateButton();
+      cluster.classList.remove('fc-f2-final','fc-f2-folded');
+      if(fold){stamps=[0,0,0];serial=0;syncLayers();}
+      var order=fold?orderFold:orderUnfold;
+      var startDelay=!fold&&cluster.dataset.fcF2HadFinal==='true'?190:0;
+      cluster.dataset.fcF2HadFinal='false';
+      order.forEach(function(i,rank){
+        later(function(){applyWing(i,fold?180:0,true);},startDelay+rank*OVERLAP_MS);
+      });
+      later(function(){
+        busy=false;
+        axes.forEach(function(axis){axis.classList.remove('fc-f2-fold-animate');});
+        if(fold){
+          cluster.classList.add('fc-f2-folded');
+          cluster.dataset.fcF2HadFinal='true';
+          cluster.classList.add('fc-f2-live');
+        }else{
+          cluster.classList.remove('fc-f2-live');
+          cluster.dataset.fcF2HadFinal='false';
+        }
+        syncFolded();
+      },startDelay+(order.length-1)*OVERLAP_MS+FOLD_MS+60);
+    }
+    var controller={
+      toggle:function(){sequence(!targetFolded);},
+      fold:function(){sequence(true);},
+      unfold:function(){sequence(false);},
+      get angles(){return angles.slice();},
+      destroy:function(){
+        destroyed=true;cancelTimers();observer?.disconnect();resizer?.disconnect();
+        if(triangle){triangle.onpointermove=null;triangle.onpointerleave=null;}
+        folly2ScoreControllers.delete(score);
+      }
+    };
+    folly2ScoreControllers.set(score,controller);
+    folly2ScoreCleanup=controller.destroy;
+    axes.forEach(function(axis,i){
+      var wing=axis.querySelector('[data-fc-drag-wing]');
+      if(!wing)return;
+      var gesture=null;
+      wing.addEventListener('pointerdown',function(ev){
+        if(ev.pointerType==='mouse'&&ev.button!==0)return;
+        cancelTimers();busy=false;clearLock();
+        gesture={id:ev.pointerId,x:ev.clientX,y:ev.clientY,angle:angles[i]};
+        axis.classList.add('fc-f2-dragging');
+        try{wing.setPointerCapture(ev.pointerId);}catch(_){}
+        ev.preventDefault();ev.stopPropagation();
+      });
+      wing.addEventListener('pointermove',function(ev){
+        if(!gesture||gesture.id!==ev.pointerId)return;
+        var d=(gesture.y-ev.clientY)*.78+(ev.clientX-gesture.x)*.32;
+        applyWing(i,gesture.angle+d,false);
+        cluster.classList.remove('fc-f2-final','fc-f2-folded');
+        ev.preventDefault();ev.stopPropagation();
+      });
+      function release(ev){
+        if(!gesture||ev.pointerId!==gesture.id)return;
+        var finalAngle=angles[i]>92?180:0;
+        gesture=null;axis.classList.remove('fc-f2-dragging');
+        applyWing(i,finalAngle,true);
+        later(function(){
+          axis.classList.remove('fc-f2-fold-animate');
+          syncFolded();
+        },FOLD_MS+30);
+      }
+      wing.addEventListener('pointerup',release);
+      wing.addEventListener('pointercancel',release);
+      wing.addEventListener('lostpointercapture',release);
+    });
+    // A hovering calibration triangle drifts by at most 6px. Reaching any
+    // of the three physical corners locks the glass and both needles to the
+    // printed lower triangle. No hover calibration on compact/touch layouts.
+    if(triangle&&!compact){
+      triangle.addEventListener('pointermove',function(ev){
+        if(busy||locked||!cluster.classList.contains('fc-f2-folded')||
+           score.dataset.fcPointers!=='on')return;
+        var rect=triangle.getBoundingClientRect();
+        if(!rect.width||!rect.height)return;
+        var x=clamp((ev.clientX-rect.left)/rect.width,0,1);
+        var y=clamp((ev.clientY-rect.top)/rect.height,0,1);
+        cluster.style.setProperty('--fc-f2-hover-x',((x-.5)*12).toFixed(2)+'px');
+        cluster.style.setProperty('--fc-f2-hover-y',((y-.5)*12).toFixed(2)+'px');
+        if((x<.18&&y<.18)||(x>.82&&y<.18)||(Math.abs(x-.5)<.14&&y>.80)){
+          locked=true;cluster.classList.add('fc-f2-locked');
+          cluster.style.setProperty('--fc-f2-hover-x','0px');
+          cluster.style.setProperty('--fc-f2-hover-y','0px');
+        }
+      });
+      triangle.addEventListener('pointerleave',function(){
+        if(!locked)clearLock();
+      });
+    }
+    var booted=false,assetsReady=false;
+    function maybeBoot(){
+      if(booted||!assetsReady||destroyed)return;
+      booted=true;
+      later(function(){sequence(true);},WAIT_MS);
+    }
+    Promise.all(images.map(function(img){
+      if(img.complete&&img.naturalWidth)return Promise.resolve(true);
+      if(img.decode)return img.decode().then(function(){return true;}).catch(function(){return false;});
+      return new Promise(function(done){
+        img.addEventListener('load',function(){done(true);},{once:true});
+        img.addEventListener('error',function(){done(false);},{once:true});
+      });
+    })).then(function(ok){
+      if(destroyed)return;
+      assetsReady=true;
+      cluster.classList.toggle('fc-f2-assets-partial',ok.some(function(v){return !v;}));
+      if(!observer)maybeBoot();
+    });
+    // Align the three real PNG flaps before any fold. No fixed offsets
+    // borrowed from the Ruin Archive full-screen attachment viewer.
+    layout();
+    if(typeof ResizeObserver!=='undefined'){
+      resizer=new ResizeObserver(layout);resizer.observe(stage);
+    }
+    if(typeof IntersectionObserver!=='undefined'){
+      observer=new IntersectionObserver(function(entries){
+        if(entries.some(function(e){return e.isIntersecting;})){
+          maybeBoot();observer?.disconnect();observer=null;
+        }
+      },{threshold:.15});
+      observer.observe(score);
+    }
+    updateButton();
+  }
   function foldInlineScore(si){
     if(si!==1)return;
     var score=block(si)?.querySelector('[data-fc-inline-score]');
@@ -2448,6 +2688,7 @@
     if(filmHintCleanup){filmHintCleanup();filmHintCleanup=null;}
     if(chapterThresholdCleanup){chapterThresholdCleanup();chapterThresholdCleanup=null;}
     if(photoReadingCleanup){photoReadingCleanup();photoReadingCleanup=null;}
+    if(folly2ScoreCleanup){folly2ScoreCleanup();folly2ScoreCleanup=null;}
     if(scene){clearImageSwaps();clearPreviews();stopMedia();releaseMechanicalScoreAssets();}
     releaseUpcoming();
     document.body.classList.remove('fc-modal-open','fc-score-expanded');
