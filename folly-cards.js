@@ -339,7 +339,8 @@
   // authored mobile sequence exists; do not silently fall back to Ruin Archive.
   var FILES_I=Array.from({length:15},function(_,i){return LOCAL_VIDEO+'score-1/score-1-'+(i+1)+'.webp';});
   var FILES_I_MOBILE=FILES_I;
-  var FOLD_BASE=ARCHIVE+'attachments/aether-scorched-earth/';
+  var FOLD_BASE=LOCAL_VIDEO+'score-2/';
+  // Five actual PNG assets from this site's newly uploaded Folly II score.
   var selection={series:0,index:0,focus:[0,0],open:false,muted:true,paused:false,scoreInspect:false,scoreZoom:1,scorePanX:0,scorePanY:0,folds:[0,0,0],lastTime:0,manualFrame:null,instrument:false};
   var scene=null,player=null,serial=0,queue=[],previewInFlight=0,previewComplete=new Set(),mountedToken=0;
   // Only one in-card film is allowed to play. The still-image extraction uses
@@ -574,7 +575,7 @@
     return window.matchMedia('(max-width: 700px)').matches?FILES_I_MOBILE[frame-1]:FILES_I[frame-1];
   }
   function foldMarkup(isShadow){
-    return '<div class="fc-fold-stage '+(isShadow?'fc-fold-shadow-stage':'')+'">'+
+    return '<div class="fc-fold-stage fc-folly2-fold-stage '+(isShadow?'fc-fold-shadow-stage':'')+'">'+
       '<div class="fc-fold-core"><img src="'+FOLD_BASE+'score-center.png" alt="" draggable="false"></div>'+
       [1,2,3].map(function(i){
         return '<div class="fc-fold-axis fc-fold-axis-'+i+'" data-fc-wing="'+(i-1)+'">'+
@@ -723,13 +724,21 @@
         '<button class="fc-score-expand" type="button" data-fc-action="inspect">'+esc(i18n('score'))+' ↗</button>'+
       '</div>';
     }
-    var notation='<div class="fc-score-notation fc-fold-notation">'+foldMarkup(false)+
-      '<div class="fc-radial-needles" aria-hidden="true"><i data-fc-needle="0"></i><i data-fc-needle="1"></i></div></div>';
-    return '<div class="fc-score-cluster fc-score-radial">'+
-      '<div class="fc-score-shadow" data-fc-score-shadow aria-hidden="true">'+foldMarkup(true)+'</div>'+
+    // Ruin Archive's Folly II apparatus: an independently folded lower
+    // three-wing score, with separate glass/calibration and twin live needles.
+    // Only the artwork is replaced; the Folly film/player remains untouched.
+    var corners='<svg class="fc-f2-corners" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">'+
+      '<path d="M 1.8 1.8 H 18 M 1.8 1.8 L 10 18 M 98.2 1.8 H 82 M 98.2 1.8 L 90 18 M 50 98.2 L 42 82 M 50 98.2 L 58 82"></path></svg>';
+    return '<div class="fc-score-cluster fc-score-radial fc-folly2-score" data-fc-f2-state="open">'+
+      '<div class="fc-score-shadow" data-fc-score-shadow>'+foldMarkup(true)+
+        '<div class="fc-f2-shadow-corners" aria-hidden="true">'+corners+'</div>'+
+      '</div>'+
       '<div class="fc-score-hud" data-fc-score-hud>'+
-        '<p class="fc-score-mark">SCORE / '+s.roman+'</p>'+notation+
-        '<div class="fc-score-indicator"><i class="fc-score-light"></i><span>SYNC / '+s.roman+'</span></div>'+
+        '<div class="fc-f2-live-triangle" data-fc-f2-calibrate>'+
+          '<div class="fc-f2-glass" aria-hidden="true"></div>'+
+          '<div class="fc-radial-needles" aria-hidden="true"><i data-fc-needle="0"></i><i data-fc-needle="1"></i></div>'+
+          '<div class="fc-f2-live-corners" aria-hidden="true">'+corners+'</div>'+
+        '</div>'+
       '</div>'+
       '<p class="fc-score-manual">'+esc(i18n('hintII'))+'</p>'+
       '<button class="fc-score-expand" type="button" data-fc-action="inspect">'+esc(i18n('score'))+' ↗</button>'+
@@ -1172,25 +1181,13 @@
         pulse.style.transform='translate(-50%,-50%) scale('+(beat>0?(1-Math.pow(beat,2)*.4):1).toFixed(3)+')';
       }
     }else{
-      overlay.querySelector('[data-fc-needle="0"]')?.style.setProperty('transform','rotate('+(-65+95*ratio)+'deg)');
-      overlay.querySelector('[data-fc-needle="1"]')?.style.setProperty('transform','rotate('+(-55+129*Math.min(1,ratio*1.2))+'deg)');
-      // Mirror folly-archive's authored 2.5s wait, 720ms hinges,
-      // overlapping 432ms apart, and fold order 3 → 2 → 1.
-      var wings=[0,0,0];
-      [2,1,0].forEach(function(wi,rank){
-        var p=clamp((absolute-(2.5+rank*.432))/.720,0,1);
-        wings[wi]=180*(p*p*(3-2*p));
+      // The score's mechanical fold is a physical event, NOT a time scrub.
+      // During playback only the two instrument needles follow film time.
+      overlay.querySelectorAll('[data-fc-needle="0"]').forEach(function(n){
+        n.style.transform='rotate('+(-65+95*ratio).toFixed(3)+'deg)';
       });
-      // Hand folding takes precedence only while the visitor explicitly
-      // manipulates the graphic score. Returning to the film rail restores sync.
-      if(si!==undefined && manualWings[si])wings=manualWings[si].slice();
-      var cluster=overlay.querySelector('.fc-score-cluster');
-      if(cluster)cluster.classList.toggle('is-hud-awaiting',absolute<5.1);
-      overlay.querySelectorAll('.fc-score-cluster [data-fc-wing]').forEach(function(el){
-        el.style.setProperty('--fc-fold-angle',wings[Number(el.dataset.fcWing)]+'deg');
-      });
-      overlay.querySelectorAll('.fc-score-cluster .fc-fold-stage').forEach(function(el){
-        el.classList.toggle('is-folded',wings.every(function(a){return a>=174;}));
+      overlay.querySelectorAll('[data-fc-needle="1"]').forEach(function(n){
+        n.style.transform='rotate('+(-55+129*Math.min(1,ratio*1.2)).toFixed(3)+'deg)';
       });
     }
   }
@@ -1271,13 +1268,10 @@
     }
   }
   function foldInlineScore(si){
-    var s=SERIES[si];
-    if(!s||s.kind!=='radial')return;
-    var opened=manualWings[si] && manualWings[si].every(function(v){return v>170;});
-    manualWings[si]=opened?[0,0,0]:[180,180,180];
-    // The fold gesture also selects its authored early movement position.
-    // The full film sequence remains addressable by the continuous timeline.
-    seekFilmFromScore(si,opened?0:4.2,{keepWings:true});
+    if(si!==1)return;
+    var score=block(si)?.querySelector('[data-fc-inline-score]');
+    var controller=score&&folly2ScoreControllers.get(score);
+    if(controller)controller.toggle();
   }
   function updateInspect() {
     var overlay=activeOverlay();if(!overlay)return;
@@ -1751,6 +1745,7 @@
   function wireInlineScore(si){
     var score=block(si)?.querySelector('[data-fc-inline-score]');
     if(!score)return;
+    if(si===1)installFolly2Score(score);
     if(si===0){
       var knob=score.querySelector('.fc-mechanical-v2-knob');
       var sheet=score.querySelector('[data-fc-mechanical-sheet]');
@@ -1930,7 +1925,7 @@
       needles.addEventListener('lostpointercapture',function(){needleGesture=null;});
     }
     // Folly II: three authored hinged wings remain independently draggable.
-    score.querySelectorAll('.fc-score-shadow [data-fc-drag-wing]').forEach(function(wing){
+    score.querySelectorAll(si===1?'.fc-f2-no-legacy-wing-wiring':'.fc-score-shadow [data-fc-drag-wing]').forEach(function(wing){
       var wi=Number(wing.dataset.fcDragWing),gesture=null;
       wing.addEventListener('pointerdown',function(event){
         if(event.pointerType==='mouse'&&event.button!==0)return;
