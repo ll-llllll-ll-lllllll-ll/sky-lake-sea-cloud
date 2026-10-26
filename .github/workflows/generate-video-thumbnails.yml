@@ -1,0 +1,73 @@
+name: Generate video thumbnails
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/generate-video-thumbnails.yml'
+      - 'works/ruin-garden/folly-*/*.mp4'
+      - 'works/the-instrument/the-instrument-2/*.mp4'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: ruin-garden-video-thumbnails
+  cancel-in-progress: false
+
+jobs:
+  thumbnails:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out source videos
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - name: Install FFmpeg if missing
+        shell: bash
+        run: |
+          if ! command -v ffmpeg >/dev/null 2>&1; then
+            sudo apt-get update -qq
+            sudo apt-get install -y ffmpeg
+          fi
+      - name: Extract real two-second poster frames
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p works/ruin-garden/thumbnails
+          poster() {
+            local source="$1" destination="$2"
+            test -s "$source" || { echo "Source missing: $source" >&2; exit 1; }
+            # A 960px JPEG is normally tens of KB instead of 18-25 MB.
+            # Fast seek, one decoded frame, preserved aspect ratio.
+            ffmpeg -hide_banner -loglevel error -y -ss 2 -i "$source" \
+              -an -vf "scale=w='min(960,iw)':h=-2" -frames:v 1 \
+              -q:v 5 "$destination"
+            test -s "$destination"
+            echo "Created $destination ($(wc -c < "$destination") bytes)"
+          }
+          for series in 1 2; do
+            if [ "$series" -eq 1 ]; then count=6; else count=7; fi
+            for i in $(seq 1 "$count"); do
+              poster "works/ruin-garden/folly-${series}/${i}.mp4" \
+                "works/ruin-garden/thumbnails/folly-${series}-${i}.jpg"
+            done
+            poster "works/ruin-garden/folly-${series}-assets/instrument-${series}.mp4" \
+              "works/ruin-garden/thumbnails/folly-${series}-instrument.jpg"
+          done
+          poster "works/the-instrument/the-instrument-2/ship-in-klein-bottle.mp4" \
+            "works/the-instrument/the-instrument-2/ship-in-klein-bottle-thumb.jpg"
+      - name: Commit generated thumbnails
+        shell: bash
+        run: |
+          set -euo pipefail
+          git add works/ruin-garden/thumbnails works/the-instrument/the-instrument-2/ship-in-klein-bottle-thumb.jpg
+          if git diff --cached --quiet; then
+            echo "All thumbnails are already current."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "Generate optimized JPEG posters for Folly and Instrument clips"
+          git push
