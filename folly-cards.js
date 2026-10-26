@@ -1354,11 +1354,15 @@
       if(destroyed||!angles.every(function(a){return a>=174;}))return;
       cluster.classList.add('fc-f2-final');
     }
-    function syncFolded(){
+    function syncFolded(delayedLive){
       var done=angles.every(function(a){return a>=174;});
       targetFolded=done;
       cluster.classList.toggle('fc-f2-folded',done);
-      if(done){later(revealFinal,280);cluster.classList.add('fc-f2-live');}
+      if(done){
+        later(revealFinal,280);
+        if(delayedLive)later(function(){cluster.classList.add('fc-f2-live');},1000);
+        else cluster.classList.add('fc-f2-live');
+      }
       else{
         cluster.classList.remove('fc-f2-final');
         if(!busy)clearLock();
@@ -1377,7 +1381,7 @@
       button.textContent=value[0];
       button.setAttribute('aria-label',value[1]);
     }
-    function sequence(fold){
+    function sequence(fold,automatic){
       if(destroyed)return;
       cancelTimers();clearLock();busy=true;targetFolded=fold;
       updateButton();
@@ -1395,12 +1399,11 @@
         if(fold){
           cluster.classList.add('fc-f2-folded');
           cluster.dataset.fcF2HadFinal='true';
-          cluster.classList.add('fc-f2-live');
         }else{
           cluster.classList.remove('fc-f2-live');
           cluster.dataset.fcF2HadFinal='false';
         }
-        syncFolded();
+        syncFolded(!!automatic);
       },startDelay+(order.length-1)*OVERLAP_MS+FOLD_MS+60);
     }
     var controller={
@@ -1477,7 +1480,7 @@
     function maybeBoot(){
       if(booted||!assetsReady||destroyed)return;
       booted=true;
-      later(function(){sequence(true);},WAIT_MS);
+      later(function(){sequence(true,true);},WAIT_MS);
     }
     Promise.all(images.map(function(img){
       if(img.complete&&img.naturalWidth)return Promise.resolve(true);
