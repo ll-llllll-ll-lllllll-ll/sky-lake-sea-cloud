@@ -9,12 +9,17 @@
     progress:'Work in progress since 2023',
     year:'2023—',
     hero:[
-      {title:{zh:'效果图',en:'Visualisation',ja:'完成予想図'},src:null},
-      {title:{zh:'设计图',en:'Design Drawing',ja:'設計図'},src:null}
+      {title:{zh:'设计图',en:'Design Drawing',ja:'設計図'},year:'2023',src:'./works/the-instrument/the-instrument-1/ion trap.png'},
+      {title:{zh:'渲染图',en:'Rendering',ja:'レンダリング'},year:'2023',src:'./works/the-instrument/the-instrument-1/ion trap-render.png'}
     ],
     gallery:[
-      {src:'./works/the-instrument/img3-blur.jpg',title:{zh:'试作记录 01',en:'Instrument Study 01',ja:'試作記録 01'}},
-      {src:'./works/the-instrument/img4-blur.jpg',title:{zh:'试作记录 02',en:'Instrument Study 02',ja:'試作記録 02'}}
+      {src:'./works/the-instrument/the-instrument-1/ruins-1.jpg',title:{zh:'遗构 01',en:'Ruins 01',ja:'遺構 01'}},
+      {src:'./works/the-instrument/the-instrument-1/ruins-2.jpg',title:{zh:'遗构 02',en:'Ruins 02',ja:'遺構 02'}},
+      {src:'./works/the-instrument/the-instrument-1/foundation.jpg',title:{zh:'基座',en:'Foundation',ja:'基礎'}},
+      {src:'./works/the-instrument/the-instrument-1/sphere.jpg',title:{zh:'球体',en:'Sphere',ja:'球体'}},
+      {src:'./works/the-instrument/the-instrument-1/accelerator.jpg',title:{zh:'加速器',en:'Accelerator',ja:'加速器'}},
+      {src:'./works/the-instrument/the-instrument-1/satellites.jpg',title:{zh:'卫星',en:'Satellites',ja:'衛星'}},
+      {src:'./works/the-instrument/the-instrument-1/core.jpg',title:{zh:'核心',en:'Core',ja:'中核'}}
     ]
   }];
   var I18N={
@@ -29,13 +34,29 @@
   function E(x){return escapeHtml(String(x==null?'':x));}
   function N(i){return String(i+1).padStart(2,'0');}
   function title(w){return L(w.prefix)+' · '+L(w.title);}
-  function renderHero(w,image,i){
-    var name=L(image.title);
-    var visual=image.src?
-      '<img src="'+E(image.src)+'" alt="'+E(L(w.title)+' · '+name)+'" loading="lazy" decoding="async">':
-      '<span class="ins-await"><span>'+E(name)+'</span><small>'+E(T('wait'))+'</small></span>';
-    return '<figure class="ins-hero"><div class="ins-hero-visual">'+visual+'</div>'+
-      '<figcaption><span>'+N(i)+'</span><span>'+E(name)+'</span></figcaption></figure>';
+  // The two principal images are ONE quiet two-state composition.
+  // Like Folly's photographic study, they exchange with a soft fade and
+  // large/small typography, rather than competing as adjacent thumbnails.
+  function renderHero(w){
+    return '<figure class="ins-hero-switch" data-ins-hero data-ins-active="0" aria-label="'+
+      E(L(w.title)+' · '+L(w.hero[0].title)+' / '+L(w.hero[1].title))+'">'+
+      '<div class="ins-hero-screen">'+w.hero.map(function(image,i){
+        return '<div class="ins-hero-face'+(i===0?' is-active':'')+'" data-ins-hero-face="'+i+'" aria-hidden="'+(i===0?'false':'true')+'">'+
+          '<img src="'+E(image.src)+'" alt="'+E(L(w.title)+' · '+L(image.title))+'" '+
+          (i===0?'fetchpriority="high"':'loading="lazy"')+' decoding="async" draggable="false">'+
+        '</div>';
+      }).join('')+'</div>'+
+      '<figcaption class="ins-hero-meta">'+
+        '<div class="ins-hero-options" role="group" aria-label="'+E(L(w.title))+'">'+
+          w.hero.map(function(image,i){
+            return '<button class="ins-hero-option'+(i===0?' is-active':'')+'" type="button" '+
+              'data-ins-hero-choice="'+i+'" aria-pressed="'+(i===0?'true':'false')+'">'+
+              '<span>'+E(L(image.title))+'</span><small>'+E(image.year)+'</small>'+
+            '</button>';
+          }).join('<span class="ins-hero-separator" aria-hidden="true">｜</span>')+
+        '</div><span class="ins-hero-project">Ion Trap / '+E('2023')+'</span>'+
+      '</figcaption>'+
+    '</figure>';
   }
   function renderCard(w,photo,i){
     return '<li class="ins-card"><button type="button" class="ins-card-button" data-ins-open="'+i+
@@ -48,7 +69,7 @@
   function renderWork(w,i){
     return '<section class="ins-work" id="ins-work-'+(i+1)+'" data-ins-work="'+i+'">'+
       '<header class="ins-work-title"><h2>'+E(title(w))+'</h2><span>'+E(w.year||'')+'</span></header>'+
-      '<div class="ins-hero-grid">'+w.hero.map(function(x,j){return renderHero(w,x,j);}).join('')+'</div>'+
+      '<div class="ins-hero-grid">'+renderHero(w)+'</div>'+
       '<p class="ins-work-progress">'+E(w.progress)+'</p>'+
       '<section class="ins-gallery" aria-label="'+E(T('archive'))+'">'+
         '<div class="ins-gallery-heading"><h3>'+E(T('archive'))+'</h3><p>'+E(T('hint'))+'</p></div>'+
@@ -156,6 +177,71 @@
     });
     sync();
   }
+  // Seven-second alternating images, as in Folly. Pause while offscreen,
+  // during manual changes and in background tabs; never start a second timer.
+  var heroState=null;
+  function stopHero(){
+    if(!heroState)return;
+    clearTimeout(heroState.timer);
+    heroState.observer?.disconnect();
+    heroState=null;
+  }
+  function bindHero(room){
+    stopHero();
+    var hero=room.querySelector('[data-ins-hero]');
+    if(!hero)return;
+    var entry={room:room,hero:hero,index:0,visible:false,timer:0,observer:null};
+    heroState=entry;
+    function arm(){
+      clearTimeout(entry.timer);
+      entry.timer=0;
+      if(!entry.visible||document.hidden||!hero.isConnected||heroState!==entry)return;
+      entry.timer=window.setTimeout(function(){
+        entry.timer=0;
+        change((entry.index+1)%2);
+      },7000);
+    }
+    function change(index){
+      if(index===entry.index){arm();return;}
+      entry.index=index;
+      hero.dataset.insActive=String(index);
+      hero.querySelectorAll('[data-ins-hero-face]').forEach(function(face,i){
+        var active=i===index;
+        face.classList.toggle('is-active',active);
+        face.setAttribute('aria-hidden',active?'false':'true');
+      });
+      hero.querySelectorAll('[data-ins-hero-choice]').forEach(function(choice,i){
+        var active=i===index;
+        choice.classList.toggle('is-active',active);
+        choice.setAttribute('aria-pressed',String(active));
+      });
+      arm();
+    }
+    hero.addEventListener('click',function(e){
+      var button=e.target.closest('[data-ins-hero-choice]');
+      if(!button)return;
+      change(Number(button.dataset.insHeroChoice)||0);
+    });
+    if('IntersectionObserver' in window){
+      entry.observer=new IntersectionObserver(function(entries){
+        if(entry!==heroState)return;
+        entry.visible=entries.some(function(x){return x.isIntersecting&&x.intersectionRatio>=.13;});
+        if(entry.visible)arm();
+        else{clearTimeout(entry.timer);entry.timer=0;}
+      },{threshold:[0,.13,.5]});
+      entry.observer.observe(hero);
+    }else{
+      entry.visible=true;arm();
+    }
+  }
+  document.addEventListener('visibilitychange',function(){
+    if(!heroState)return;
+    clearTimeout(heroState.timer);heroState.timer=0;
+    if(!document.hidden&&heroState.hero.isConnected&&heroState.visible){
+      // Set visibility through a new intersection cycle when supported.
+      heroState.hero.querySelector('[data-ins-hero-choice].is-active')?.click();
+    }
+  });
   function bind(room){
     if(room.dataset.insBound)return;
     room.dataset.insBound='1';
@@ -175,10 +261,12 @@
       }
     });
     WORKS.forEach(function(_,i){wireGallery(room,i);});
+    bindHero(room);
   }
   function mount(){
     var room=document.querySelector('[data-ins-room]');
     if(active&&(!room||active.room!==room))close();
+    if(heroState&&(!room||heroState.room!==room))stopHero();
     if(room)bind(room);
   }
   var app=document.getElementById('app');
