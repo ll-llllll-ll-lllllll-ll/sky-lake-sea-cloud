@@ -117,9 +117,9 @@ const works = [
     group: "work",
     title: { zh: "The Instrument", en: "The Instrument", ja: "The Instrument" },
     intro: {
-      zh: "一些介于实验器械、声音、机械与私人宇宙学之间的装置。仪器在这里不是为了给出答案，而是让微弱的直觉暂时获得形状。",
-      en: "Objects between experimental apparatus, sound, mechanism and private cosmology. Here an instrument does not provide an answer; it lets a faint intuition briefly take shape.",
-      ja: "実験器械、音、機構、私的宇宙論のあいだにある装置群。ここで器械は答えを出すためではなく、かすかな直観に一時的な形を与えるためにある。"
+      zh: "《The Instrument》是一组介于实验仪器、雕塑与私人宇宙论之间的构成主义装置。我将它们视为“神不再眷顾的实验”：在测量与观测的精密形制中，保留对时间、意识与宇宙边界的艺术性追问。",
+      en: "The Instrument is a series of Constructivist apparatuses between laboratory equipment, sculpture and private cosmology. These experiments forsaken by the gods keep questions of time, consciousness and the universe alive within the forms of measurement and observation.",
+      ja: "《The Instrument》は、実験器具、彫刻、私的な宇宙論のあいだに置かれた構成主義的な装置のシリーズである。「神に見放された実験」として、計測と観測の精密な形式のなかに、時間、意識、宇宙の境界をめぐる芸術的な問いを留める。"
     },
     images: [
       { src: "./img3-blur.jpg", caption: { zh: "仪器试作 01", en: "instrument study 01", ja: "器械試作 01" } },
