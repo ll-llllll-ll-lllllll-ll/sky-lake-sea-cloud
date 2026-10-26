@@ -180,19 +180,25 @@
   if(typeof parseRoute==='function'&&parseRoute()?.slug==='the-instrument')render();
   function close(){
     if(!active)return;
-    var trigger=active.trigger,viewer=active.viewer;
+    var a=active,viewer=a.viewer;
+    var video=viewer.querySelector('[data-ins-full-video]');
+    video.pause();video.removeAttribute('src');video.load();
     viewer.hidden=true;
+    viewer.classList.remove('is-video');
+    viewer.style.removeProperty('--ins-film-ratio');
     viewer.querySelector('[data-ins-full]').removeAttribute('src');
     document.body.classList.remove('ins-modal-open');
     active=null;
-    if(trigger&&trigger.isConnected)trigger.focus({preventScroll:true});
+    if(a.trigger&&a.trigger.isConnected)a.trigger.focus({preventScroll:true});
   }
   function open(room,si,idx,trigger){
     var w=WORKS[si],photo=w&&w.gallery[idx];
     if(!photo)return;
+    if(active)close();
     var viewer=room.querySelector('[data-ins-viewer]');
     if(!viewer)return;
-    active={room:room,viewer:viewer,si:si,idx:idx,trigger:trigger};
+    active={room:room,viewer:viewer,si:si,idx:idx,trigger:trigger,kind:'image'};
+    viewer.classList.remove('is-video');
     var img=viewer.querySelector('[data-ins-full]');
     img.src=photo.src;img.alt=L(w.title)+' · '+L(photo.title);
     viewer.querySelector('[data-ins-count]').innerHTML=N(idx)+' <small>/ '+N(w.gallery.length-1)+'</small>';
@@ -201,8 +207,36 @@
     document.body.classList.add('ins-modal-open');
     viewer.querySelector('[data-ins-close]').focus({preventScroll:true});
   }
+  function openVideo(room,si,trigger){
+    var w=WORKS[si],viewer=room.querySelector('[data-ins-viewer]');
+    if(!viewer||!w||!w.video)return;
+    if(active)close();
+    var preview=room.querySelector('[data-ins-video-card="'+si+'"] .ins-video-preview');
+    preview?.pause();
+    viewer.classList.add('is-video');
+    var video=viewer.querySelector('[data-ins-full-video]');
+    active={room:room,viewer:viewer,si:si,idx:0,trigger:trigger,kind:'video'};
+    video.muted=false;
+    video.loop=false;
+    video.playsInline=true;
+    video.src=w.video;
+    video.onloadedmetadata=function(){
+      if(active?.viewer!==viewer||active.kind!=='video')return;
+      if(video.videoWidth&&video.videoHeight)
+        viewer.style.setProperty('--ins-film-ratio',String(video.videoWidth/video.videoHeight));
+    };
+    viewer.querySelector('[data-ins-count]').innerHTML='01 <small>/ 01</small>';
+    viewer.querySelector('[data-ins-name]').textContent=L(w.videoLabel)||T('video');
+    viewer.hidden=false;
+    document.body.classList.add('ins-modal-open');
+    viewer.querySelector('[data-ins-close]').focus({preventScroll:true});
+    // User initiated click authorizes sound in Safari; never claim autoplay
+    // succeeded when the browser blocks it.
+    var playing=video.play();
+    if(playing?.catch)playing.catch(function(){video.controls=true;});
+  }
   function step(dir){
-    if(!active)return;
+    if(!active||active.kind!=='image')return;
     var a=active,n=WORKS[a.si].gallery.length,k=a.idx+dir;
     if(k>=0&&k<n)open(a.room,a.si,k,a.trigger);
   }
@@ -257,71 +291,132 @@
     });
     sync();
   }
-  // Seven-second alternating images, as in Folly. Pause while offscreen,
-  // during manual changes and in background tabs; never start a second timer.
-  var heroState=null;
-  function stopHero(){
-    if(!heroState)return;
-    clearTimeout(heroState.timer);
-    heroState.observer?.disconnect();
-    heroState=null;
+  // One independent visibility-aware alternating image clock per work.
+  // This is essential on the two-work Folly-like reading page: the second
+  // work must not inherit the first work's timer or selected image.
+  var heroes=[];
+  function clearHeroes(){
+    heroes.forEach(function(h){clearTimeout(h.timer);h.observer?.disconnect();});
+    heroes=[];
   }
-  function bindHero(room){
-    stopHero();
-    var hero=room.querySelector('[data-ins-hero]');
-    if(!hero)return;
-    var entry={room:room,hero:hero,index:0,visible:false,timer:0,observer:null};
-    heroState=entry;
-    function arm(){
-      clearTimeout(entry.timer);
-      entry.timer=0;
-      if(!entry.visible||document.hidden||!hero.isConnected||heroState!==entry)return;
-      entry.timer=window.setTimeout(function(){
-        entry.timer=0;
-        change((entry.index+1)%2);
-      },7000);
-    }
-    function change(index){
-      if(index===entry.index){arm();return;}
-      entry.index=index;
-      hero.dataset.insActive=String(index);
-      hero.querySelectorAll('[data-ins-hero-face]').forEach(function(face,i){
-        var active=i===index;
-        face.classList.toggle('is-active',active);
-        face.setAttribute('aria-hidden',active?'false':'true');
+  function bindHeroes(room){
+    clearHeroes();
+    room.querySelectorAll('[data-ins-hero]').forEach(function(root){
+      var entry={room:room,root:root,index:0,visible:false,timer:0,observer:null,arm:null};
+      heroes.push(entry);
+      function arm(){
+        clearTimeout(entry.timer);entry.timer=0;
+        if(!entry.visible||document.hidden||!root.isConnected||!heroes.includes(entry))return;
+        entry.timer=window.setTimeout(function(){entry.timer=0;change((entry.index+1)%2);},7000);
+      }
+      entry.arm=arm;
+      function change(index){
+        if(index===entry.index){arm();return;}
+        entry.index=index;root.dataset.insActive=String(index);
+        root.querySelectorAll('[data-ins-hero-face]').forEach(function(face,i){
+          var yes=i===index;face.classList.toggle('is-active',yes);
+          face.setAttribute('aria-hidden',yes?'false':'true');
+        });
+        root.querySelectorAll('[data-ins-hero-choice]').forEach(function(button,i){
+          var yes=i===index;button.classList.toggle('is-active',yes);
+          button.setAttribute('aria-pressed',String(yes));
+        });
+        arm();
+      }
+      root.addEventListener('click',function(ev){
+        var button=ev.target.closest('[data-ins-hero-choice]');
+        if(button)change(Number(button.dataset.insHeroChoice)||0);
       });
-      hero.querySelectorAll('[data-ins-hero-choice]').forEach(function(choice,i){
-        var active=i===index;
-        choice.classList.toggle('is-active',active);
-        choice.setAttribute('aria-pressed',String(active));
-      });
-      arm();
-    }
-    hero.addEventListener('click',function(e){
-      var button=e.target.closest('[data-ins-hero-choice]');
-      if(!button)return;
-      change(Number(button.dataset.insHeroChoice)||0);
+      if('IntersectionObserver' in window){
+        entry.observer=new IntersectionObserver(function(entries){
+          if(!heroes.includes(entry))return;
+          entry.visible=entries.some(function(e){return e.isIntersecting&&e.intersectionRatio>=.13;});
+          if(entry.visible)arm();
+          else{clearTimeout(entry.timer);entry.timer=0;}
+        },{threshold:[0,.13,.5]});
+        entry.observer.observe(root);
+      }else{
+        entry.visible=true;arm();
+      }
     });
-    if('IntersectionObserver' in window){
-      entry.observer=new IntersectionObserver(function(entries){
-        if(entry!==heroState)return;
-        entry.visible=entries.some(function(x){return x.isIntersecting&&x.intersectionRatio>=.13;});
-        if(entry.visible)arm();
-        else{clearTimeout(entry.timer);entry.timer=0;}
-      },{threshold:[0,.13,.5]});
-      entry.observer.observe(hero);
-    }else{
-      entry.visible=true;arm();
-    }
   }
   document.addEventListener('visibilitychange',function(){
-    if(!heroState)return;
-    clearTimeout(heroState.timer);heroState.timer=0;
-    if(!document.hidden&&heroState.hero.isConnected&&heroState.visible){
-      // Set visibility through a new intersection cycle when supported.
-      heroState.hero.querySelector('[data-ins-hero-choice].is-active')?.click();
-    }
+    heroes.forEach(function(h){
+      clearTimeout(h.timer);h.timer=0;
+      if(!document.hidden&&h.visible)h.arm();
+    });
   });
+  var films=[];
+  function clearFilms(){
+    films.forEach(function(o){
+      clearTimeout(o.timer);
+      o.observer?.disconnect();
+      var v=o.video;
+      if(v){v.pause();v.removeAttribute('src');v.load();}
+    });
+    films=[];
+  }
+  function bindFilms(room){
+    clearFilms();
+    room.querySelectorAll('[data-ins-video-card]').forEach(function(card){
+      var preview=card.querySelector('.ins-video-preview');
+      var still=card.querySelector('.ins-video-still');
+      var movie=card.dataset.insVideoPath;
+      var o={room:room,card:card,video:preview,timer:0,observer:null,playing:false};
+      films.push(o);
+      function init(){
+        if(preview.hasAttribute('src')||!card.isConnected)return;
+        preview.src=movie;
+        preview.preload='metadata';
+        preview.addEventListener('loadedmetadata',function(){
+          if(preview.videoWidth&&preview.videoHeight){
+            card.style.setProperty('--ins-video-aspect',preview.videoWidth+'/'+preview.videoHeight);
+          }
+          // A real decoded two-second still, as in Folly's instrument card.
+          // Wait for seeked before drawing; Safari cannot reliably draw a
+          // video frame that has loaded metadata but not decoded footage.
+          if(!o.playing&&preview.seekable.length){
+            try{preview.currentTime=Math.min(2,Math.max(0,preview.duration-.1));}catch(_){}
+          }
+        },{once:true});
+        preview.addEventListener('seeked',function(){
+          if(o.playing||!preview.videoWidth||!preview.videoHeight)return;
+          try{
+            still.width=preview.videoWidth;still.height=preview.videoHeight;
+            still.getContext('2d').drawImage(preview,0,0,still.width,still.height);
+            card.classList.add('has-still');
+          }catch(_){}
+        },{once:true});
+      }
+      function stop(){
+        clearTimeout(o.timer);o.timer=0;
+        preview.pause();card.classList.remove('is-previewing');
+        o.playing=false;
+      }
+      card.addEventListener('pointerenter',function(e){
+        if(e.pointerType!=='mouse'||document.hidden)return;
+        init();clearTimeout(o.timer);
+        o.timer=window.setTimeout(function(){
+          if(!card.matches(':hover')||document.hidden||!card.isConnected)return;
+          preview.muted=true;preview.loop=true;
+          o.playing=true;
+          var p=preview.play();
+          if(p?.then)p.then(function(){card.classList.add('is-previewing');})
+                      .catch(function(){o.playing=false;});
+        },600);
+      });
+      card.addEventListener('pointerleave',stop);
+      card.addEventListener('pointerdown',function(){clearTimeout(o.timer);o.timer=0;});
+      card.addEventListener('focusin',init);
+      if('IntersectionObserver' in window){
+        o.observer=new IntersectionObserver(function(entries){
+          if(entries.some(function(e){return e.isIntersecting;})){init();o.observer?.disconnect();}
+        },{rootMargin:'170px'});
+        o.observer.observe(card);
+      }
+      o.stop=stop;
+    });
+  }
   function bind(room){
     if(room.dataset.insBound)return;
     room.dataset.insBound='1';
@@ -334,6 +429,17 @@
         return;
       }
       if(e.target.closest('[data-ins-close]')){close();return;}
+      if(active?.kind==='video'&&e.target.matches('[data-ins-full-video]')){
+        var v=e.target;if(v.paused){var promise=v.play();if(promise?.catch)promise.catch(function(){});}
+        else v.pause();
+        return;
+      }
+      var videoButton=e.target.closest('[data-ins-video-open]');
+      if(videoButton){
+        var si=Number(videoButton.dataset.insVideoOpen);
+        films.forEach(function(o){if(Number(o.card.dataset.insVideoCard)===si)o.stop();});
+        openVideo(room,si,videoButton);return;
+      }
       var button=e.target.closest('[data-ins-open]');
       if(button){
         var work=button.closest('[data-ins-work]');
@@ -341,12 +447,14 @@
       }
     });
     WORKS.forEach(function(_,i){wireGallery(room,i);});
-    bindHero(room);
+    bindHeroes(room);
+    bindFilms(room);
   }
   function mount(){
     var room=document.querySelector('[data-ins-room]');
     if(active&&(!room||active.room!==room))close();
-    if(heroState&&(!room||heroState.room!==room))stopHero();
+    if(heroes.length&&(!room||heroes[0].room!==room))clearHeroes();
+    if(films.length&&(!room||films[0].room!==room))clearFilms();
     if(room)bind(room);
   }
   var app=document.getElementById('app');
@@ -354,6 +462,11 @@
   document.addEventListener('keydown',function(e){
     if(!active)return;
     if(e.key==='Escape'){close();e.preventDefault();e.stopImmediatePropagation();}
+    if(active.kind==='video'&&(e.key===' '||e.key==='Spacebar')){
+      var v=active.viewer.querySelector('[data-ins-full-video]');
+      if(v.paused){var p=v.play();if(p?.catch)p.catch(function(){});}else v.pause();
+      e.preventDefault();return;
+    }
     if(e.key==='ArrowRight'){step(1);e.preventDefault();}
     if(e.key==='ArrowLeft'){step(-1);e.preventDefault();}
   },true);
