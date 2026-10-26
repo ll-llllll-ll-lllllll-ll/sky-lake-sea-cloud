@@ -721,7 +721,7 @@
           '</div>'+
         '</div>'+
         '<p class="fc-score-manual">'+esc(i18n('hintI'))+'</p>'+
-        '<button class="fc-score-expand" type="button" data-fc-action="inspect">'+esc(i18n('score'))+' ↗</button>'+
+        '<button class="fc-score-expand" type="button" data-fc-action="inspect">'+esc(i18n('score'))+' ↗︎</button>'+
       '</div>';
     }
     // Ruin Archive's Folly II apparatus: an independently folded lower
@@ -741,17 +741,64 @@
         '</div>'+
       '</div>'+
       '<p class="fc-score-manual">'+esc(i18n('hintII'))+'</p>'+
-      '<button class="fc-score-expand" type="button" data-fc-action="inspect">'+esc(i18n('score'))+' ↗</button>'+
+      '<button class="fc-score-expand" type="button" data-fc-action="inspect">'+esc(i18n('score'))+' ↗︎</button>'+
     '</div>';
+  }
+  function posterFor(si,index,kind){
+    var suffix=kind==='instrument'?'instrument':String(index+1);
+    return LOCAL_VIDEO+'thumbnails/folly-'+(si+1)+'-'+suffix+'.jpg';
+  }
+  // Static JPEGs are generated from the actual clips in the GitHub build.
+  // Only a failed JPEG uses the legacy MP4 frame extraction; on mobile with
+  // a valid poster, not even one MP4 request is needed to display the rail.
+  function wirePosters(){
+    if(!isLive())return;
+    scene.querySelectorAll('.fc-thumbnail[data-fc-poster-si]').forEach(function(img){
+      var card=img.closest('.fc-card');
+      if(!card)return;
+      var si=Number(img.dataset.fcPosterSi);
+      var instrument=img.dataset.fcPosterKind==='instrument';
+      var index=instrument?0:Number(img.dataset.fcPosterIndex);
+      function loaded(){
+        if(!card.isConnected)return;
+        img.dataset.posterStatus='loaded';
+        card.classList.add('has-thumbnail');
+        if(img.naturalWidth&&img.naturalHeight){
+          var ratio=img.naturalWidth+' / '+img.naturalHeight;
+          if(instrument)card.style.setProperty('--fc-instrument-aspect',ratio);
+          else block(si)?.style.setProperty('--fc-video-aspect',ratio);
+        }
+      }
+      function failed(){
+        if(!card.isConnected)return;
+        img.dataset.posterStatus='error';
+        img.hidden=true;
+        // Fallback for an image that has not yet been generated, or for
+        // an older cached deployment. Decoding is now one card at a time.
+        var key=si+':'+(instrument?'instrument':index);
+        if(previewComplete.has(key))return;
+        queue.unshift({si:si,index:index,kind:instrument?'instrument':'film',key:key});
+        processPreviews();
+      }
+      img.dataset.posterStatus='pending';
+      img.addEventListener('load',loaded,{once:true});
+      img.addEventListener('error',failed,{once:true});
+      if(img.complete){
+        if(img.naturalWidth>0)loaded();
+        else failed();
+      }
+    });
   }
   function cardMarkup(stage,index,s){
     return '<li class="fc-card" data-fc-card="'+index+'" data-fc-series="'+SERIES.indexOf(s)+'">'+
       '<button class="fc-card-button" type="button" data-fc-action="select" data-fc-index="'+index+'" data-fc-series="'+SERIES.indexOf(s)+'" aria-label="'+esc(i18n('open')+': '+label(stage))+'">'+
         '<span class="fc-frame">'+
+          '<img class="fc-thumbnail" data-fc-poster-si="'+SERIES.indexOf(s)+'" data-fc-poster-index="'+index+'" '+
+            'alt="" loading="'+(index<2?'eager':'lazy')+'" decoding="async" src="'+esc(posterFor(SERIES.indexOf(s),index,'film'))+'">'+
           '<canvas class="fc-preview-frame" aria-hidden="true"></canvas>'+
           '<video class="fc-preview" playsinline webkit-playsinline preload="none" muted aria-hidden="true"></video>'+
           '<video class="fc-hover-video" playsinline webkit-playsinline preload="none" muted loop aria-hidden="true"></video>'+
-          '<span class="fc-card-filmwash" aria-hidden="true"></span><span class="fc-card-open-sign">↗</span></span>'+
+          '<span class="fc-card-filmwash" aria-hidden="true"></span><span class="fc-card-open-sign">↗︎</span></span>'+
         '<span class="fc-card-copy"><span class="fc-card-count">'+pad(index+1)+' <small>/ '+pad(s.stages.length)+'</small></span>'+
         '<span class="fc-card-name">'+esc(label(stage))+'</span></span>'+
       '</button></li>';
@@ -798,10 +845,12 @@
       '<div class="fc-instrument-layout">'+
         '<div class="fc-instrument-card fc-card" data-fc-instrument-card data-fc-series="'+si+'">'+
           '<button class="fc-card-button" type="button" data-fc-action="instrument" data-fc-series="'+si+'" aria-label="'+esc(term('moving'))+'">'+
-            '<span class="fc-frame"><canvas class="fc-preview-frame" aria-hidden="true"></canvas>'+
+            '<span class="fc-frame"><img class="fc-thumbnail" data-fc-poster-si="'+si+'" data-fc-poster-kind="instrument" '+
+              'alt="" loading="lazy" decoding="async" src="'+esc(posterFor(si,0,'instrument'))+'">'+
+              '<canvas class="fc-preview-frame" aria-hidden="true"></canvas>'+
             '<video class="fc-preview" playsinline webkit-playsinline preload="none" muted aria-hidden="true"></video>'+
             '<video class="fc-hover-video" playsinline webkit-playsinline preload="none" muted loop aria-hidden="true"></video>'+
-            '<span class="fc-card-open-sign">↗</span></span>'+
+            '<span class="fc-card-open-sign">↗︎</span></span>'+
             '<span class="fc-card-copy"><span class="fc-card-count">01 <small>/ 01</small></span>'+
             '<span class="fc-card-name">'+esc(term('moving'))+'</span></span>'+
           '</button></div>'+
@@ -846,11 +895,11 @@
         '<div class="fc-projection-top"><span>FOLLY '+s.roman+' <b data-fc-projection-count>01 / '+pad(s.stages.length)+'</b></span>'+
           '<button type="button" data-fc-action="close" aria-label="'+esc(i18n('close'))+'">×</button></div>'+
         '<div class="fc-projection-center">'+
-          '<button type="button" class="fc-projection-arrow fc-arrow-prev" data-fc-action="previous" aria-label="'+esc(i18n('prev'))+'">←</button>'+
+          '<button type="button" class="fc-projection-arrow fc-arrow-prev" data-fc-action="previous" aria-label="'+esc(i18n('prev'))+'">←︎</button>'+
           '<div class="fc-film-wrap"><video class="fc-film" data-fc-film playsinline webkit-playsinline preload="metadata" tabindex="0" aria-label="'+esc(i18n('open')+' / '+label(s.title))+'" muted></video>'+
             '<div class="fc-film-vignette"></div><span class="fc-film-status" data-fc-film-status aria-live="polite"></span>'+
             '<button class="fc-film-pause-sign" type="button" data-fc-action="play" aria-label="'+esc(i18n('pause'))+'">Ⅱ</button></div>'+
-          '<button type="button" class="fc-projection-arrow fc-arrow-next" data-fc-action="next" aria-label="'+esc(i18n('next'))+'">→</button>'+
+          '<button type="button" class="fc-projection-arrow fc-arrow-next" data-fc-action="next" aria-label="'+esc(i18n('next'))+'">→︎</button>'+
         '</div>'+
         scoreMarkup(s)+
         '<div class="fc-projection-bottom"><span class="fc-time-index"><strong data-fc-time-index>01</strong><small data-fc-total> / '+pad(s.stages.length)+'</small></span>'+
@@ -888,7 +937,7 @@
         'aria-label="'+esc(chapterPart(0)+' · '+label(SERIES[0].title))+'">'+
         '<div class="fc-page-shadow" data-fc-page-shadow="0" aria-hidden="true"></div>'+
         sectionMarkup(SERIES[0],0)+
-        '<div class="fc-chapter-threshold" data-fc-chapter-threshold="0"><div class="fc-threshold-sticky"><button type="button" class="fc-threshold-link" data-fc-action="chapter-next" data-fc-series="1">'+esc(folioIntro('next'))+' · '+esc(workChapterLabel(1))+' <span>↗</span></button><div class="fc-threshold-progress" aria-hidden="true"><i></i></div></div></div>'+
+        '<div class="fc-chapter-threshold" data-fc-chapter-threshold="0"><div class="fc-threshold-sticky"><button type="button" class="fc-threshold-link" data-fc-action="chapter-next" data-fc-series="1">'+esc(folioIntro('next'))+' · '+esc(workChapterLabel(1))+' <span>↗︎</span></button><div class="fc-threshold-progress" aria-hidden="true"><i></i></div></div></div>'+
       '</section>'+
       '<section class="fc-chapter-page fc-chapter-page-two" data-fc-chapter-page="1" '+
         'aria-label="'+esc(chapterPart(1)+' · '+label(SERIES[1].title))+'">'+
@@ -975,7 +1024,7 @@
   function pageMarkup(item) {
     lastFollyIntro=localised(item.intro);
     return '<section class="room-view fc-room"><header class="room-head">'+
-      '<button type="button" data-action="home" class="room-back">← '+esc(labels[state.lang].back)+'</button>'+
+      '<button type="button" data-action="home" class="room-back">←︎ '+esc(labels[state.lang].back)+'</button>'+
       '<p>'+esc(labels[state.lang].works)+' / '+esc(localised(item.title))+'</p>'+languageSwitch()+'</header>'+
       '<div class="fc-page" data-fc-scene>'+
         '<div class="fc-page-heading"><div class="fc-heading-primary">'+
@@ -1051,6 +1100,10 @@
   }
   function prioritizePreviews(si,index) {
     if(!isLive())return;
+    // The JPEG pipeline controls preview readiness; do not fetch a 25MB
+    // video just to prepare a still while the lightweight image is loading.
+    // When a JPEG fails, wirePosters explicitly requests a single fallback.
+    if(scene.querySelector('.fc-thumbnail[data-fc-poster-si]'))return;
     // Only the current neighbourhood, not all thirteen videos at once.
     var n=SERIES[si].stages.length;
     var nearby=[index,index+1,index-1,index+2,index-2].filter(function(i){return i>=0&&i<n;});
@@ -1151,8 +1204,8 @@
     if(!overlay)return;
     var ratio=clamp(absolute/s.endTime,0,1);
     if(s.kind==='linear'){
-      // Original Ruin Archive relation: moving image 0→100% corresponds to
-      // stop-motion 15→01, with the first seven score frames forming stage I.
+      // Original Ruin Archive relation: moving image 0→︎100% corresponds to
+      // stop-motion 15→︎01, with the first seven score frames forming stage I.
       var state=mechanicalStageForFilm(ratio);
       overlay.querySelectorAll('.fc-mechanical-v2').forEach(function(cluster){
         cluster.dataset.fcFrame=String(state.frame);
@@ -1272,7 +1325,7 @@
       document.body.classList.remove('fc-score-expanded');
       score.querySelectorAll('[data-fc-action="score-expand"]').forEach(function(b){
         b.setAttribute('aria-expanded','false');
-        b.textContent=term('scoreOpen')+' ↗';
+        b.textContent=term('scoreOpen')+' ↗︎';
       });
       score.querySelector('[data-fc-action="score-expand"]')?.focus({preventScroll:true});
     }
@@ -2027,8 +2080,8 @@
         var activePointer=null,dragBounds=null,pendingY=null,dragFrame=0;
         var syncKnob=function(y){
           if(!dragBounds)return;
-          // Geometry matches Ruin Archive's authored 14.55%→6.80%,
-          // with the film mapped in reverse (frame 15→frame 01).
+          // Geometry matches Ruin Archive's authored 14.55%→︎6.80%,
+          // with the film mapped in reverse (frame 15→︎frame 01).
           var bottom=dragBounds.top+dragBounds.height*MECHANICAL_CFG.knobBottom/100;
           var top=dragBounds.top+dragBounds.height*MECHANICAL_CFG.knobTop/100;
           var stageProgress=clamp((bottom-y)/Math.max(1,bottom-top),0,1);
@@ -2738,6 +2791,7 @@
     // A stable two-chapter document: no node replacement during scrolling.
     // The delegated action listener survives all intra-page movement.
     wireEvents();
+    wirePosters();
     setupFollyChapters();
   }
   var app=document.getElementById('app');
