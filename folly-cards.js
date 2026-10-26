@@ -97,7 +97,7 @@
         {garden:'死水心室的构造取自沉墟中失去流动的水域：爆裂的储水形态、残余的心室结构与一潭死水彼此牵连。水体缓慢流失，承托随之消退；原本依靠内部平衡维系的材料在自重中挤压、碎裂、向内收缩，最后仍留在死水里继续腐蚀。',
          instrument:'「锈血心脏」由锈蚀金属碎片与玻璃罩构成，嵌在心室的钢筋与钢索连接之中。心室的下沉牵动滑轮与泵片，将缓慢的坍塌转为急促的敲击；每一次搏动都借来园林衰败的力量，同时耗损维持自身运作的结构。',
          theatre:'死水心室的下沉与锈血心脏的搏动在同一段时间内相互牵动。声音从承重、牵引、碰撞和材料失效中发生，越接近最后一次敲击，乐器便越难继续维持原有形态。',
-         score:'这份图谱由「坍塌构造：死水心室」的钢筋残片结构设计图与「废墟乐器：锈血心脏」循环开关的电路图叠合而成。两套图线在同一平面交错：随着钢筋锈蚀、应力衰减，图谱记录着心室坍缩时构件的位移与机械联动，而坍塌的进程又经感应装置传入电子线路，转化为不断加速的敲击与搏动。位移、断裂与发声逐渐加重「锈血心脏」的运行负荷，使它在愈发急促的跳动中最终熔毁；原本用于设计与记录的图纸，也由此成为心室坍缩的变奏曲。',
+         score:'这份图谱由「坍塌结构：死水心室」的钢筋残片结构设计图与「废墟乐器：锈血心脏」循环开关的电路图叠合而成。两套图线在同一平面交错：随着钢筋锈蚀、应力衰减，图谱记录着心室坍缩时构件的位移与机械联动，而坍塌的进程又经感应装置传入电子线路，转化为不断加速的敲击与搏动。位移、断裂与发声逐渐加重「锈血心脏」的运行负荷，使它在愈发急促的跳动中最终熔毁；原本用于设计与记录的图纸，也由此成为心室坍缩的变奏曲乐谱。',
          phases:{
            structure:[
              [
@@ -131,7 +131,7 @@
         {garden:'朽塔由三组向外牵引的钢缆与中央悬垂的重物勉强维持垂立，底部的玻璃轴球承受着微小的偏移。钢缆逐渐疲劳，张力和重心开始改变；地面的「塌别塔」又反复旋转碾磨，使支撑塔身的结构在持续扰动中走向坍落。',
          instrument:'「以太狭间」把摆动天线、以太琴的干涉场和砂盘连接为一条回路：电磁变化转为频率、声音与振动，再由砂粒留下短暂图形。不断掉落的黑砂与积累的静电噪声，使这套努力维持秩序的装置逐渐逼近自身的负荷极限。',
          theatre:'朽塔、以太狭间与地面旋转的塌别塔共同参与这场演奏。砂粒聚散，塔身摇摆，磨盘反复碾压地表与钢缆；一种秩序持续制造声音，又以自己的运作削弱另一种秩序。',
-         score:'折翼与双指针把这些运动的先后、偏移与关联保存在同一张图面上。它随剧场进度改变，也可以被独立折叠与检视；当传力关系松开，记谱留下的便是声响发生过的痕迹。',
+         score:'这份图谱由「坍塌结构：朽塔」的摆动结构设计图与「废墟乐器：以太狭间」的频差电路图叠合而成。两套图线在同一平面交错：随着张拉结构的松动、塔体失衡，图谱记录着朽塔天线重叠时构件的位移与信号干扰，而干扰的信号又经感应装置传入信号回路与电磁系统，转化为不断变换频率的声音。干扰的叠加与过载逐渐加重「以太狭间」的运行负荷，使它在愈发嘈杂的振动中最终烧毁；原本用于设计与记录的图纸，也由此成为朽塔以太的谐虐曲乐谱。',
          phases:{
            structure:[
              [
@@ -175,7 +175,7 @@
         {garden:'The stagnant-heart structure grows from a reservoir shell, the remains of a heart chamber and a pool of still water. As the water drains, internal support gives way. Under its own weight the construction compresses, fractures and contracts, leaving parts immersed and exposed to further corrosion.',
          instrument:'The Rust-Blood Heart encloses pieces of corroded metal in glass, connected to the ruined chamber by steel cables, pulleys and a pump blade. The chamber’s slow descent is transmitted as increasingly rapid knocks: each beat borrows energy from the garden’s collapse while consuming the instrument itself.',
          theatre:'The sinking chamber and the beating heart move through the same time. Sound arises from load, tension, collision and structural failure; as the final blow approaches, the instrument loses the conditions that held it together.',
-         score:'This score overlays the structural drawing of the rebar fragments in “Collapsing Structure: Stagnant Heart Chamber” with the circuit diagram of the cycling switch in “Ruin Instrument: Rust-Blood Heart.” Their lines intersect on a single plane: as the steel corrodes and its stresses diminish, the drawing records the shifting components and mechanical linkages of the chamber’s collapse, while sensors carry the progress of that collapse into an electronic circuit, turning it into increasingly rapid knocks and pulses. Each displacement, fracture and sound adds to the load on Rust-Blood Heart, driving its beat faster until it finally melts down. What began as a drawing for design and documentation thus becomes a set of variations on the chamber’s collapse.',
+         score:'This score overlays the structural drawing of the rebar fragments in “Collapsing Structure: Stagnant Heart Chamber” with the circuit diagram of the cycling switch in “Ruin Instrument: Rust-Blood Heart.” Their lines intersect on a single plane: as the steel corrodes and its stresses diminish, the drawing records the shifting components and mechanical linkages of the chamber’s collapse, while sensors carry the progress of that collapse into an electronic circuit, turning it into increasingly rapid knocks and pulses. Each displacement, fracture and sound adds to the load on Rust-Blood Heart, driving its beat faster until it finally melts down. What began as a drawing for design and documentation thus becomes the score for variations on the chamber’s collapse.',
          phases:{
            structure:[
              [
@@ -209,7 +209,7 @@
         {garden:'Three outward cable anchors and a suspended weight hold the Ruined Tower upright around a glass pivot. As cable tension weakens, its centre of gravity shifts. The ground-level grinding structure repeatedly wears at its supports until the tower can no longer keep its precarious balance.',
          instrument:'Aether Interval links moving antennas, a theremin-like interference field and a sand plate. Electromagnetic changes become frequency, sound and vibration before briefly appearing in the sand. Falling grains, static charge and electronic noise gradually burden the apparatus.',
          theatre:'The tower, the aether interval and the ground-level grinder perform together. Sand gathers and disperses, cables tremble and the wheel abrades the ground. One order produces sound through the very motions that undermine another.',
-         score:'Folding wings and paired pointers hold movements, deviations and their relationships in one plane. The score follows the film but may also be folded and examined independently; once the mechanism fails, its marks remain.',
+         score:'This score overlays the drawing of the tower’s oscillating structure in “Collapsing Structure: Ruined Tower” with the beat-frequency circuit diagram of “Ruin Instrument: Aether Interval.” Their lines intersect on a single plane: as the tensioned structure loosens and the tower loses its balance, the drawing records the displacement of components and signal interference between the tower’s overlapping antennas. Sensors carry those disrupted signals into the signal circuits and electromagnetic system, where they become sounds of continually shifting frequency. The accumulation of interference and overload steadily increases the strain on Aether Interval, until the instrument finally burns out amid ever noisier vibrations. What began as a drawing for design and documentation thus becomes the score of a cruel scherzo for the tower’s aether.',
          phases:{
            structure:[
              [
@@ -287,7 +287,7 @@
         {garden:'「朽塔」は外側へ伸びる三本の鋼索と吊り下げた重りによって、ガラスの軸球の上で辛うじて直立する。張力が衰え、重心が揺らぎ、地上の磨盤が支持部を繰り返し削ることで、塔はついに均衡を失う。',
          instrument:'「エーテルの狭間」は揺れるアンテナ、テルミンに似た干渉場、砂盤を一つの回路につなぐ。電磁的な変化は周波数、音、振動となり、砂に短い模様を残す。砂の流出と静電気、電子雑音は装置への負荷を増していく。',
          theatre:'朽塔、エーテルの狭間、地上の磨盤が一つの演奏に加わる。砂は集まり散り、鋼索は揺れ、磨盤は地表を削る。一つの秩序が音を生みながら、別の秩序の足場を失わせていく。',
-         score:'折り畳まれる翼と二本の指針が、運動とずれ、そのつながりを平面に留める。映像と連動しながら独立して折り畳み、検分することもできる。機構が壊れたあとにも痕跡は残る。',
+         score:'この図譜は、「崩壊構造：朽塔」の揺動構造の設計図と、「廃墟の楽器：エーテルの狭間」の周波数差を利用する回路図を重ね合わせて生まれた。二つの図面の線は同じ平面で交わる。張力によって保たれた構造が緩み、塔が均衡を失うにつれ、図譜は朽塔のアンテナが重なり合うときの部材の変位と信号干渉を記録する。干渉した信号は感知装置を通じて信号回路と電磁系へ伝えられ、周波数を絶えず変える音となる。干渉の重なりと過負荷は「エーテルの狭間」の稼働負荷を徐々に高め、騒々しさを増す振動のなかで、ついには焼損に至る。こうして設計と記録のために引かれた線は、朽塔のエーテルをめぐる諧虐曲の譜面となる。',
          phases:{
            structure:[
              [
@@ -809,6 +809,16 @@
       '<p class="fc-instrument-lead">'+esc(instrumentLead(si))+'</p>'+
     '</section>';
   }
+  // Each Folly has its own authored score title, distinct from the
+  // common category label used by the score controls and page navigation.
+  var FOLLY_SCORE_TITLES={
+    zh:['《心室坍缩变奏曲》','《朽塔以太谐虐曲》'],
+    en:['Variations on the Chamber’s Collapse','Tower Aether: A Cruel Scherzo'],
+    ja:['《心室圧潰変奏曲》','《朽塔エーテル諧虐曲》']
+  };
+  function scoreWorkTitle(si){
+    return (FOLLY_SCORE_TITLES[state.lang]||FOLLY_SCORE_TITLES.zh)[si];
+  }
   function inlineScoreMarkup(s,si){
     var pointerLabel={
       zh:['显示指针','隐藏指针'],en:['Show pointers','Hide pointers'],
@@ -817,7 +827,7 @@
     return '<section class="fc-inline-score" data-fc-inline-score="'+si+'" data-fc-pointers="off">'+
       '<div class="fc-inline-score-main">'+
         '<div class="fc-inline-score-device">'+scoreMarkup(s)+'</div>'+
-        '<h3 class="fc-score-caption">'+esc(term('score'))+'</h3>'+
+        '<h3 class="fc-score-caption">'+esc(scoreWorkTitle(si))+'</h3>'+
         '<div class="fc-score-controls-bottom">'+
           (s.kind==='radial'?'<div class="fc-score-minimal-actions"><button type="button" data-fc-action="score-fold" data-fc-series="'+si+'">'+esc(term('scoreFold'))+' ↕</button></div>':'')+
           '<button type="button" class="fc-pointer-switch" data-fc-action="score-pointer" data-fc-series="'+si+'" role="switch" aria-checked="false" data-fc-label-off="'+esc(pointerLabel[0])+'" data-fc-label-on="'+esc(pointerLabel[1])+'">'+
