@@ -8,52 +8,38 @@
     prefix:{zh:'其一',en:'Part One',ja:'其の一'},
     progress:'Work in progress since 2023',
     year:'2023',
+    kind:{"zh":"实验｜拉普拉斯妖的结石　·　仪器｜时间晶体透镜","en":"Experiment | The Stone of Laplace’s Demon　·　Instrument | Time Crystal Lens","ja":"実験｜ラプラスの悪魔の結石　·　器具｜時間結晶レンズ"},
     heroLabel:{zh:'离子阱',en:'Ion Trap',ja:'イオントラップ'},
-    intro:{
-      zh:'【待补充：时间晶体的构造、离子阱与作品设想之间的关系。】',
-      en:'[To be added: the structure of Time Crystal and the relationship between the ion trap and the work.]',
-      ja:'【追記予定：『時間結晶』の構造と、イオントラップを用いた作品構想について。】'
-    },
-    galleryIntro:{
-      zh:'【待补充：模型、装置及其所处环境的图像说明。】',
-      en:'[To be added: notes on the model, apparatus and its setting.]',
-      ja:'【追記予定：模型、装置とその周辺環境について。】'
-    },
+    intro:{"zh":"《时间晶体透镜》是《拉普拉斯妖的结石》这一实验设想中的观测仪器模型。它借用离子阱、时间晶体与聚焦镜的形态，试图让不可见的时间结构获得一个可以凝视的形体。如果过去、现在与未来像一块早已凝固的琥珀，意识便如一束沿世界线移动的光，只能照亮自身所处的瞬间。作品在决定论的严密秩序中，为观测者保留一处细微的梗阻：我们是否只能逐帧观看既定的宇宙，还是仍有尚未被计算的可能？","en":"The Time Crystal Lens is an imagined observational instrument within the experiment “The Stone of Laplace’s Demon.” Drawing on the forms of an ion trap, a time crystal and a focusing mirror, it gives an elusive structure of time something that might be contemplated. If past, present and future were held together like an insect in amber, consciousness would resemble a beam of light moving along a worldline, illuminating only the moment it inhabits. Within the severe order of determinism, the instrument preserves a small obstruction: must we read an already written universe frame by frame, or might something remain beyond calculation?","ja":"《時間結晶レンズ》は、実験構想《ラプラスの悪魔の結石》に属する観測器具の模型である。イオントラップ、時間結晶、集光鏡のかたちを借りて、目に見えない時間の構造に、凝視しうる姿を与えようとする。もし過去・現在・未来が、琥珀のなかで既に凝固したように共存しているなら、意識は世界線を移動する一筋の光として、その瞬間だけを照らしているのかもしれない。決定論の緊密な秩序の内部に、この装置は小さなつかえを残す。私たちは書き終えられた宇宙を一齣ずつ見るしかないのか。それとも、まだ計算されていない可能性があるのだろうか。"},
+    galleryIntro:{"zh":"图像依次展开仪器周围的环境、基座与构件：遗构、球体、加速器、卫星与核心，被组织成一个尚未完成的微型宇宙。它们保留着精密的秩序，也让观测在真正开始之前，先成为一件关于时间与感知的事物。","en":"The images move from the setting and foundations to the instrument’s constituent forms: ruins, sphere, accelerator, satellites and core arranged as an unfinished miniature cosmos. Their measured order remains, even as observation becomes an object of time and perception before any experiment can begin.","ja":"写真は装置の周囲の風景から基礎、そして各部の形態へと進む。遺構、球体、加速器、衛星、中核が、まだ完成していない小さな宇宙として並べられる。精密な秩序を残しながら、観測という行為は、実験が始まる前に時間と知覚をめぐるひとつの事物となっている。"},
     hero:[
       {title:{zh:'设计图',en:'Design Drawing',ja:'設計図'},year:'2023',src:'./works/the-instrument/the-instrument-1/ion trap.png'},
       {title:{zh:'渲染图',en:'Rendering',ja:'レンダリング'},year:'2023',src:'./works/the-instrument/the-instrument-1/ion trap-render.png'}
     ],
     gallery:[
-      {src:'./works/the-instrument/the-instrument-1/ruins-1.jpg',title:{zh:'遗构 01',en:'Ruins 01',ja:'遺構 01'}},
-      {src:'./works/the-instrument/the-instrument-1/ruins-2.jpg',title:{zh:'遗构 02',en:'Ruins 02',ja:'遺構 02'}},
-      {src:'./works/the-instrument/the-instrument-1/foundation.jpg',title:{zh:'基座',en:'Foundation',ja:'基礎'}},
-      {src:'./works/the-instrument/the-instrument-1/sphere.jpg',title:{zh:'球体',en:'Sphere',ja:'球体'}},
-      {src:'./works/the-instrument/the-instrument-1/accelerator.jpg',title:{zh:'加速器',en:'Accelerator',ja:'加速器'}},
-      {src:'./works/the-instrument/the-instrument-1/satellites.jpg',title:{zh:'卫星',en:'Satellites',ja:'衛星'}},
-      {src:'./works/the-instrument/the-instrument-1/core.jpg',title:{zh:'核心',en:'Core',ja:'中核'}}
+      {src:'./works/the-instrument/the-instrument-1/ruins-1.jpg',title:{zh:'遗构 01',en:'Ruins 01',ja:'遺構 01'},note:{"zh":"理性退入背景之后，实验空间成为一片遗构。","en":"An experimental space after reason has receded into the background.","ja":"理性が背景へ退いたあと、実験空間は遺構となる。"}},
+      {src:'./works/the-instrument/the-instrument-1/ruins-2.jpg',title:{zh:'遗构 02',en:'Ruins 02',ja:'遺構 02'},note:{"zh":"尚未完成的装置，保存着被延迟的未来。","en":"An unfinished apparatus holding a future that has been deferred.","ja":"未完成の装置に、先送りされた未来が留まる。"}},
+      {src:'./works/the-instrument/the-instrument-1/foundation.jpg',title:{zh:'基座',en:'Foundation',ja:'基礎'},note:{"zh":"几何与材料为一次不确定的观测搭起基座。","en":"Geometry and matter form the base of an uncertain observation.","ja":"幾何学と素材が、不確かな観測の土台を形づくる。"}},
+      {src:'./works/the-instrument/the-instrument-1/sphere.jpg',title:{zh:'球体',en:'Sphere',ja:'球体'},note:{"zh":"一个近乎凝固的形体，承载着时间琥珀的想象。","en":"A form almost held in suspension, recalling time preserved in amber.","ja":"凝固しかけた形態に、時間の琥珀という想像が宿る。"}},
+      {src:'./works/the-instrument/the-instrument-1/accelerator.jpg',title:{zh:'加速器',en:'Accelerator',ja:'加速器'},note:{"zh":"重复的运动，使时间的节律获得可见的形式。","en":"Repetition gives the rhythm of time a visible form.","ja":"反復する動きが、時間の律動に目に見える形を与える。"}},
+      {src:'./works/the-instrument/the-instrument-1/satellites.jpg',title:{zh:'卫星',en:'Satellites',ja:'衛星'},note:{"zh":"围绕与偏离之间，生成一幅私人的星图。","en":"Between orbit and departure, a private star chart takes shape.","ja":"周回と逸脱のあいだに、個人的な星図が生まれる。"}},
+      {src:'./works/the-instrument/the-instrument-1/core.jpg',title:{zh:'核心',en:'Core',ja:'中核'},note:{"zh":"所有结构指向的中心，仍是一处未被回答的空白。","en":"The centre to which everything points remains an unanswered space.","ja":"すべてが向かう中心には、なお答えのない空白がある。"}}
     ]
   },{
     title:{zh:'克莱因瓶中的船',en:'Ship in a Klein Bottle',ja:'クラインの壺の船'},
     prefix:{zh:'其二',en:'Part Two',ja:'其の二'},
-    year:'',
+    year:'2024',
     progress:'',
+    kind:{"zh":"理论｜宇宙无形之手　·　模型｜克莱因瓶中船","en":"Theory | The Invisible Hand of the Universe　·　Model | Ship in a Klein Bottle","ja":"理論｜宇宙の見えざる手　·　模型｜クラインの壺の船"},
     heroLabel:{zh:'克莱因瓶中的船',en:'Ship in a Klein Bottle',ja:'クラインの壺の船'},
     hero:[
-      {title:{zh:'图像一',en:'Image One',ja:'図像一'},year:'',src:'./works/the-instrument/the-instrument-2/ship-in-klein-bottle-1.jpg'},
-      {title:{zh:'图像二',en:'Image Two',ja:'図像二'},year:'',src:'./works/the-instrument/the-instrument-2/ship-in-klein-bottle-2.jpg'}
+      {title:{zh:'模型视图一',en:'Model View One',ja:'模型図一'},year:'2024',src:'./works/the-instrument/the-instrument-2/ship-in-klein-bottle-1.jpg'},
+      {title:{zh:'模型视图二',en:'Model View Two',ja:'模型図二'},year:'2024',src:'./works/the-instrument/the-instrument-2/ship-in-klein-bottle-2.jpg'}
     ],
-    intro:{
-      zh:'【待补充：克莱因瓶中的船的构造、运作方式及作品设想。】',
-      en:'[To be added: the structure, operation and conception of Ship in a Klein Bottle.]',
-      ja:'【追記予定：『クラインの壺の船』の構造、作動方法と構想について。】'
-    },
+    intro:{"zh":"《克莱因瓶中的船》是《宇宙无形之手》构想中的宇宙论模型。它借克莱因瓶封闭却无边界的几何悖论想象我们的处境：瓶是宇宙，船是其中航行的文明。透明容器中的小船似乎不断向前，却无法抵达真正的外部；使它移动的力量又仿佛来自它无法看见的地方。作品将发条宇宙的宏大秩序缩入一件由木、玻璃与金属构筑的小型装置，让看似自主的航行与不可见的驱动并置，留下一个关于自由意志、感知边界及宇宙之外的思想实验。","en":"Ship in a Klein Bottle is a cosmological model within the speculative project “The Invisible Hand of the Universe.” It borrows the paradox of a space that is closed yet without boundary: the bottle stands for the universe, the vessel for the civilisation sailing inside it. The small ship appears to travel onwards within its transparent enclosure, yet can never reach an outside; the force that moves it seems to arrive from somewhere beyond its sight. Wood, glass and metal reduce the vast machinery of a clockwork cosmos to a small object, holding apparently autonomous motion beside an unseen source of movement. What remains is a thought experiment about free will, the limits of perception and the possibility of an outside.","ja":"《クラインの壺の船》は、構想《宇宙の見えざる手》に属する宇宙論の模型である。閉じていながら境界をもたないクラインの壺の幾何学的な逆説を借り、瓶を宇宙、その内部を航行する船を文明に見立てる。透明な容器のなかの小舟は進みつづけるように見えて、真の外部には決して辿り着けない。それを動かす力もまた、船の視界の外から訪れるかのようだ。木、ガラス、金属で組まれた小さな装置に、時計仕掛けの宇宙の巨大な秩序を収め、自ら進むように見える航行と、見えない駆動を重ね合わせる。そこに残されるのは、自由意志、知覚の境界、そして宇宙の「外」をめぐる思考実験である。"},
     video:'./works/the-instrument/the-instrument-2/ship-in-klein-bottle.mp4',
     videoLabel:{zh:'运动影像',en:'Moving Image',ja:'映像'},
-    videoIntro:{
-      zh:'【待补充：运动影像所记录的机械动作与时间过程。】',
-      en:'[To be added: the mechanical motion and passage of time recorded in the film.]',
-      ja:'【追記予定：映像に記録された機構の運動と時間の経過について。】'
-    },
+    videoIntro:{"zh":"影像让瓶中船的航行与外部驱动之间的距离逐渐显现。小船的运动始终发生在封闭的透明空间内，而使它移动的力量却留在视野之外；反复的航程由此成为一次没有出口的观测，悬置着自主与支配之间的疑问。","en":"The moving image gradually reveals the distance between the ship’s passage and its external drive. Its motion remains inside a transparent, enclosed space, while the force that moves it stays beyond view. The recurring voyage becomes an observation without an exit, leaving the relation between agency and control unresolved.","ja":"映像は、瓶のなかを進む船と外部の駆動との隔たりを少しずつ浮かび上がらせる。船の動きは閉じた透明な空間で起こり、その力の源は視野の外に留まる。繰り返される航行は、出口のない観測となり、自律と支配のあいだに問いを残す。"},
     gallery:[]
   }];
   var I18N={
