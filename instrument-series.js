@@ -7,7 +7,18 @@
     title:{zh:'时间晶体',en:'Time Crystal',ja:'時間結晶'},
     prefix:{zh:'其一',en:'Part One',ja:'其の一'},
     progress:'Work in progress since 2023',
-    year:'2023—',
+    year:'2023',
+    heroLabel:{zh:'离子阱',en:'Ion Trap',ja:'イオントラップ'},
+    intro:{
+      zh:'【待补充：时间晶体的构造、离子阱与作品设想之间的关系。】',
+      en:'[To be added: the structure of Time Crystal and the relationship between the ion trap and the work.]',
+      ja:'【追記予定：『時間結晶』の構造と、イオントラップを用いた作品構想について。】'
+    },
+    galleryIntro:{
+      zh:'【待补充：模型、装置及其所处环境的图像说明。】',
+      en:'[To be added: notes on the model, apparatus and its setting.]',
+      ja:'【追記予定：模型、装置とその周辺環境について。】'
+    },
     hero:[
       {title:{zh:'设计图',en:'Design Drawing',ja:'設計図'},year:'2023',src:'./works/the-instrument/the-instrument-1/ion trap.png'},
       {title:{zh:'渲染图',en:'Rendering',ja:'レンダリング'},year:'2023',src:'./works/the-instrument/the-instrument-1/ion trap-render.png'}
@@ -21,11 +32,34 @@
       {src:'./works/the-instrument/the-instrument-1/satellites.jpg',title:{zh:'卫星',en:'Satellites',ja:'衛星'}},
       {src:'./works/the-instrument/the-instrument-1/core.jpg',title:{zh:'核心',en:'Core',ja:'中核'}}
     ]
+  },{
+    title:{zh:'克莱因瓶中的船',en:'Ship in a Klein Bottle',ja:'クラインの壺の船'},
+    prefix:{zh:'其二',en:'Part Two',ja:'其の二'},
+    year:'',
+    progress:'',
+    heroLabel:{zh:'克莱因瓶中的船',en:'Ship in a Klein Bottle',ja:'クラインの壺の船'},
+    hero:[
+      {title:{zh:'图像一',en:'Image One',ja:'図像一'},year:'',src:'./works/the-instrument/the-instrument-2/ship-in-klein-bottle-1.jpg'},
+      {title:{zh:'图像二',en:'Image Two',ja:'図像二'},year:'',src:'./works/the-instrument/the-instrument-2/ship-in-klein-bottle-2.jpg'}
+    ],
+    intro:{
+      zh:'【待补充：克莱因瓶中的船的构造、运作方式及作品设想。】',
+      en:'[To be added: the structure, operation and conception of Ship in a Klein Bottle.]',
+      ja:'【追記予定：『クラインの壺の船』の構造、作動方法と構想について。】'
+    },
+    video:'./works/the-instrument/the-instrument-2/ship-in-klein-bottle.mp4',
+    videoLabel:{zh:'运动影像',en:'Moving Image',ja:'映像'},
+    videoIntro:{
+      zh:'【待补充：运动影像所记录的机械动作与时间过程。】',
+      en:'[To be added: the mechanical motion and passage of time recorded in the film.]',
+      ja:'【追記予定：映像に記録された機構の運動と時間の経過について。】'
+    },
+    gallery:[]
   }];
   var I18N={
-    zh:{about:'关于 The Instrument',archive:'效果图集',hint:'向右翻阅散落的瞬间',wait:'图片待上传',view:'查看图像',close:'退出观看'},
-    en:{about:'About The Instrument',archive:'Visual Studies',hint:'Move right through scattered moments',wait:'Image to be added',view:'View image',close:'Close viewer'},
-    ja:{about:'The Instrument について',archive:'イメージ集',hint:'右へ進み、散らばった瞬間をたどる',wait:'画像は後日追加',view:'画像を見る',close:'閉じる'}
+    zh:{about:'关于 The Instrument',archive:'效果图集',hint:'向右翻阅散落的瞬间',wait:'图片待上传',view:'查看图像',close:'退出观看',next:'下一件作品',video:'运动影像'},
+    en:{about:'About The Instrument',archive:'Visual Studies',hint:'Move right through scattered moments',wait:'Image to be added',view:'View image',close:'Close viewer',next:'Next work',video:'Moving Image'},
+    ja:{about:'The Instrument について',archive:'イメージ集',hint:'右へ進み、散らばった瞬間をたどる',wait:'画像は後日追加',view:'画像を見る',close:'閉じる',next:'次の作品',video:'映像'}
   };
   var active=null;
   function lng(){return I18N[state.lang]?state.lang:'zh';}
@@ -51,10 +85,10 @@
           w.hero.map(function(image,i){
             return '<button class="ins-hero-option'+(i===0?' is-active':'')+'" type="button" '+
               'data-ins-hero-choice="'+i+'" aria-pressed="'+(i===0?'true':'false')+'">'+
-              '<span>'+E(L(image.title))+'</span><small>'+E(image.year)+'</small>'+
+              '<span>'+E(L(image.title))+'</span>'+(image.year?'<small>'+E(image.year)+'</small>':'')+
             '</button>';
           }).join('<span class="ins-hero-separator" aria-hidden="true">｜</span>')+
-        '</div><span class="ins-hero-project">Ion Trap / '+E('2023')+'</span>'+
+        '</div><span class="ins-hero-project">'+E(L(w.heroLabel))+(w.year?' / '+E(w.year):'')+'</span>'+
       '</figcaption>'+
     '</figure>';
   }
@@ -66,19 +100,61 @@
       '<span class="ins-card-copy"><span class="ins-card-number">'+N(i)+' <small>/ '+N(w.gallery.length-1)+'</small></span>'+
       '<span class="ins-card-name">'+E(L(photo.title))+'</span></span></button></li>';
   }
-  function renderWork(w,i){
-    return '<section class="ins-work" id="ins-work-'+(i+1)+'" data-ins-work="'+i+'">'+
-      '<header class="ins-work-title"><h2>'+E(title(w))+'</h2><span>'+E(w.year||'')+'</span></header>'+
-      '<div class="ins-hero-grid">'+renderHero(w)+'</div>'+
-      '<p class="ins-work-progress">'+E(w.progress)+'</p>'+
-      '<section class="ins-gallery" aria-label="'+E(T('archive'))+'">'+
-        '<div class="ins-gallery-heading"><h3>'+E(T('archive'))+'</h3><p>'+E(T('hint'))+'</p></div>'+
-        '<div class="ins-gallery-rail" data-ins-rail="'+i+'" tabindex="0" aria-label="'+E(T('archive'))+'">'+
-          '<ol class="ins-gallery-strip">'+w.gallery.map(function(p,j){return renderCard(w,p,j);}).join('')+'</ol>'+
+  function renderFilm(w,si){
+    if(!w.video)return '';
+    var label=L(w.videoLabel)||T('video');
+    return '<section class="ins-film-section" aria-label="'+E(label)+'">'+
+      '<div class="ins-section-heading"><h3>'+E(label)+'</h3></div>'+
+      '<div class="ins-film-layout">'+
+        '<div class="ins-video-card" data-ins-video-card="'+si+'" data-ins-video-path="'+E(w.video)+'">'+
+          '<button class="ins-video-open" type="button" data-ins-video-open="'+si+'" aria-label="'+E(T('view')+' · '+label)+'">'+
+            '<span class="ins-video-screen">'+
+              '<canvas class="ins-video-still" aria-hidden="true"></canvas>'+
+              '<video class="ins-video-preview" muted loop playsinline webkit-playsinline preload="none" aria-hidden="true"></video>'+
+              '<span class="ins-video-open-mark" aria-hidden="true">↗</span>'+
+            '</span>'+
+            '<span class="ins-video-caption"><span class="ins-video-number">01 <small>/ 01</small></span><span class="ins-video-name">'+E(label)+'</span></span>'+
+          '</button>'+
         '</div>'+
-        (w.gallery.length>1?'<div class="ins-gallery-navigation"><input data-ins-slider="'+i+
-          '" type="range" min="0" max="1000" value="0" step="1" aria-label="'+E(T('archive'))+'"></div>':'')+
-      '</section></section>';
+      '</div>'+
+      '<p class="ins-reading-copy ins-film-copy">'+E(L(w.videoIntro))+'</p>'+
+    '</section>';
+  }
+  function renderGallery(w,si){
+    if(!w.gallery||!w.gallery.length)return '';
+    return '<section class="ins-gallery" aria-label="'+E(T('archive'))+'">'+
+      '<div class="ins-gallery-heading"><h3>'+E(T('archive'))+'</h3><p>'+E(T('hint'))+'</p></div>'+
+      '<p class="ins-reading-copy ins-gallery-intro">'+E(L(w.galleryIntro))+'</p>'+
+      '<div class="ins-gallery-rail" data-ins-rail="'+si+'" tabindex="0" aria-label="'+E(T('archive'))+'">'+
+        '<ol class="ins-gallery-strip">'+w.gallery.map(function(p,j){return renderCard(w,p,j);}).join('')+'</ol>'+
+      '</div>'+
+      (w.gallery.length>1?'<div class="ins-gallery-navigation"><input data-ins-slider="'+si+
+        '" type="range" min="0" max="1000" value="0" step="1" aria-label="'+E(T('archive'))+'"></div>':'')+
+    '</section>';
+  }
+  function renderWork(w,i){
+    return '<section class="ins-work ins-reading-page" id="ins-work-'+(i+1)+'" data-ins-work="'+i+'">'+
+      '<header class="ins-work-title"><h2>'+E(title(w))+'</h2><span>'+E(w.year||'')+'</span></header>'+
+      '<div class="ins-reading-content">'+
+        '<section class="ins-design-section" aria-label="'+E(L(w.heroLabel))+'">'+
+          '<div class="ins-hero-grid">'+renderHero(w)+'</div>'+
+          '<p class="ins-reading-copy ins-work-intro">'+E(L(w.intro))+'</p>'+
+          (w.progress?'<p class="ins-work-progress">'+E(w.progress)+'</p>':'')+
+        '</section>'+
+      '</div>'+
+      (w.video?renderFilm(w,i):'')+
+      renderGallery(w,i)+
+    '</section>';
+  }
+  function renderTurn(i){
+    var next=WORKS[i+1];if(!next)return '';
+    return '<div class="ins-page-turn" aria-label="'+E(T('next'))+'">'+
+      '<button type="button" class="ins-turn-link" data-ins-jump="'+(i+1)+'">'+
+        '<span class="ins-turn-line" aria-hidden="true"></span>'+
+        '<span class="ins-turn-small">'+E(T('next'))+'</span>'+
+        '<span class="ins-turn-name">'+E(title(next))+'</span>'+
+        '<span class="ins-turn-arrow" aria-hidden="true">↓</span>'+
+      '</button></div>';
   }
   function renderInstrument(item){
     return '<section class="room-view ins-room" data-ins-room>'+
@@ -88,11 +164,12 @@
       '<section class="ins-about"><h2>'+E(T('about'))+'</h2><p>'+E(L(item.intro))+'</p>'+
       '<nav class="ins-contents"><ol>'+
         WORKS.map(function(w,i){return '<li><button type="button" data-ins-jump="'+i+'">'+E(title(w))+
-          '<span>（'+E(w.progress)+'）</span></button></li>';}).join('')+
-      '</ol></nav></section>'+WORKS.map(renderWork).join('')+'</div>'+
+          (w.progress?'<span>（'+E(w.progress)+'）</span>':'')+'</button></li>';}).join('')+
+      '</ol></nav></section>'+WORKS.map(function(w,i){return renderWork(w,i)+renderTurn(i);}).join('')+'</div>'+
       '<div class="ins-viewer" data-ins-viewer role="dialog" aria-modal="true" hidden>'+
         '<button class="ins-viewer-scrim" type="button" data-ins-close aria-label="'+E(T('close'))+'"></button>'+
         '<div class="ins-viewer-stage"><img class="ins-viewer-image" data-ins-full alt="">'+
+        '<video class="ins-viewer-film" data-ins-full-video playsinline webkit-playsinline preload="metadata"></video>'+
           '<div class="ins-viewer-copy"><span data-ins-count></span><span data-ins-name></span></div></div>'+
       '</div></section>';
   }
