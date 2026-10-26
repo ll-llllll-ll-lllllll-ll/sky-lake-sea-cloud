@@ -3008,3 +3008,65 @@ body {
 .room-view[data-room="seawater"] .seawater-vessel-text + .seawater-vessel-text {
   margin-top:1.45em;
 }
+
+
+/* v47 · Fictional Topography is retained as a sealed index trace.
+   A thin stroke across its name, rather than a navigable work link. */
+.index-panel .index-link-unavailable{
+  display:block;
+  position:relative;
+  width:max-content;
+  max-width:100%;
+  padding:5px 0;
+  color:rgba(247,247,240,.37);
+  font-family:var(--serif);
+  font-size:clamp(17px,1.5vw,21px);
+  letter-spacing:.02em;
+  line-height:1.35;
+  text-align:left;
+  cursor:default;
+  outline-offset:3px;
+}
+.index-panel .index-link-unavailable:hover,
+.index-panel .index-link-unavailable:focus-visible{
+  color:rgba(247,247,240,.38);
+  transform:none;
+}
+.index-panel .index-unavailable-title{
+  display:inline;
+  color:inherit;
+  font-size:inherit;
+  font-family:inherit;
+  text-decoration:line-through;
+  text-decoration-color:rgba(247,247,240,.46);
+  text-decoration-thickness:1px;
+  text-decoration-skip-ink:none;
+}
+.index-panel .index-unavailable-note{
+  display:block;
+  position:absolute;
+  z-index:3;
+  left:calc(100% + 17px);
+  top:50%;
+  width:max-content;
+  max-width:160px;
+  color:rgba(247,247,240,.76);
+  font:400 11px/1.4 var(--serif),serif;
+  letter-spacing:.03em;
+  opacity:0;
+  transform:translate(0,-45%);
+  pointer-events:none;
+  visibility:hidden;
+  transition:opacity .23s ease,transform .23s ease,visibility 0s linear .23s;
+}
+.index-panel .index-link-unavailable:hover .index-unavailable-note,
+.index-panel .index-link-unavailable:focus-visible .index-unavailable-note{
+  opacity:1;
+  transform:translate(0,-50%);
+  visibility:visible;
+  transition:opacity .23s ease,transform .23s ease,visibility 0s;
+}
+@media(max-width:700px){
+  .index-panel .index-link-unavailable{font-size:18px;padding:4px 0;}
+  .index-panel .index-unavailable-note{left:calc(100% + 10px);font-size:10px;}
+}
