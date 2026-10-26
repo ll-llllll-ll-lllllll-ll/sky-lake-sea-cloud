@@ -1285,7 +1285,7 @@
     var images=Array.from(stage.querySelectorAll('img'));
     var angles=[0,0,0],stamps=[0,0,0],serial=0;
     var timers=[],observer=null,resizer=null,drag=null;
-    var destroyed=false,autoQueued=false,busy=false,targetFolded=false,locked=false;
+    var destroyed=false,busy=false,targetFolded=false,locked=false;
     var compact=window.matchMedia('(max-width:700px), (hover:none)').matches;
     var FOLD_MS=720,OVERLAP_MS=432,WAIT_MS=2500;
     var orderFold=[2,1,0],orderUnfold=[0,1,2];
@@ -1407,6 +1407,7 @@
       toggle:function(){sequence(!targetFolded);},
       fold:function(){sequence(true);},
       unfold:function(){sequence(false);},
+      resetLock:clearLock,
       get angles(){return angles.slice();},
       destroy:function(){
         destroyed=true;cancelTimers();observer?.disconnect();resizer?.disconnect();
@@ -2630,6 +2631,7 @@
         if(!score)return;
         var on=score.dataset.fcPointers!=='on';
         score.dataset.fcPointers=on?'on':'off';
+        if(!on)folly2ScoreControllers.get(score)?.resetLock();
         node.setAttribute('aria-checked',String(on));
         var caption=node.querySelector('.fc-pointer-switch-text');
         if(caption)caption.textContent=node.getAttribute(on?'data-fc-label-on':'data-fc-label-off');
@@ -2644,6 +2646,7 @@
       if(action==='score-reset'){
         var which=Number(node.dataset.fcSeries);
         manualWings[which]=null;
+        if(which===1)folly2ScoreControllers.get(block(which)?.querySelector('[data-fc-inline-score]'))?.unfold();
         scoreScale[which]=1;scorePan[which]=[0,0];
         scoreFromRail(which);
         return;
