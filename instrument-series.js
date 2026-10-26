@@ -83,7 +83,7 @@
     return '<li class="ins-card"><button type="button" class="ins-card-button" data-ins-open="'+i+
       '" aria-label="'+E(T('view')+' · '+L(photo.title))+'">'+
       '<span class="ins-card-image"><img src="'+E(photo.src)+'" alt="'+E(L(w.title)+' · '+L(photo.title))+
-      '" loading="lazy" decoding="async"><span class="ins-arrow" aria-hidden="true">↗</span></span>'+
+      '" loading="lazy" decoding="async"><span class="ins-arrow" aria-hidden="true">↗︎</span></span>'+
       '<span class="ins-card-copy"><span class="ins-card-number">'+N(i)+' <small>/ '+N(w.gallery.length-1)+'</small></span>'+
       '<span class="ins-card-name">'+E(L(photo.title))+'</span></span>'+
       (photo.note?'<span class="ins-card-note">'+E(L(photo.note))+'</span>':'')+
@@ -98,9 +98,11 @@
         '<div class="ins-video-card" data-ins-video-card="'+si+'" data-ins-video-path="'+E(w.video)+'">'+
           '<button class="ins-video-open" type="button" data-ins-video-open="'+si+'" aria-label="'+E(T('view')+' · '+label)+'">'+
             '<span class="ins-video-screen">'+
+              '<img class="ins-video-poster" alt="" loading="lazy" decoding="async" '+
+                'src="./works/the-instrument/the-instrument-2/ship-in-klein-bottle-thumb.jpg">'+
               '<canvas class="ins-video-still" aria-hidden="true"></canvas>'+
               '<video class="ins-video-preview" muted loop playsinline webkit-playsinline preload="none" aria-hidden="true"></video>'+
-              '<span class="ins-video-open-mark" aria-hidden="true">↗</span>'+
+              '<span class="ins-video-open-mark" aria-hidden="true">↗︎</span>'+
             '</span>'+
             '<span class="ins-video-caption"><span class="ins-video-number">01 <small>/ 01</small></span><span class="ins-video-name">'+E(label)+'</span></span>'+
           '</button>'+
@@ -143,12 +145,12 @@
         '<span class="ins-turn-line" aria-hidden="true"></span>'+
         '<span class="ins-turn-small">'+E(T('next'))+'</span>'+
         '<span class="ins-turn-name">'+E(title(next))+'</span>'+
-        '<span class="ins-turn-arrow" aria-hidden="true">↓</span>'+
+        '<span class="ins-turn-arrow" aria-hidden="true">↓︎</span>'+
       '</button></div>';
   }
   function renderInstrument(item){
     return '<section class="room-view ins-room" data-ins-room>'+
-      '<header class="room-head"><button type="button" data-action="home" class="room-back">← '+
+      '<header class="room-head"><button type="button" data-action="home" class="room-back">←︎ '+
         E(labels[lng()].back)+'</button><p>'+E(labels[lng()].works)+' / '+E(L(item.title))+'</p>'+languageSwitch()+'</header>'+
       '<div class="ins-page"><header class="ins-page-title"><h1>'+E(L(item.title))+'</h1></header>'+
       '<section class="ins-about"><h2>'+E(T('about'))+'</h2>'+
@@ -355,10 +357,31 @@
     room.querySelectorAll('[data-ins-video-card]').forEach(function(card){
       var preview=card.querySelector('.ins-video-preview');
       var still=card.querySelector('.ins-video-still');
+      var poster=card.querySelector('.ins-video-poster');
       var movie=card.dataset.insVideoPath;
       var o={room:room,card:card,video:preview,timer:0,observer:null,playing:false};
       films.push(o);
-      function init(){
+      // A cached real JPEG appears long before iOS Safari can seek the MP4.
+      // Poster errors alone enable the old frame-capture fallback.
+      var hasPoster=false,posterFailed=false,activeHover=false;
+      if(poster){
+        function ready(){
+          hasPoster=true;
+          card.classList.add('has-poster');
+          if(poster.naturalWidth&&poster.naturalHeight)
+            card.style.setProperty('--ins-video-aspect',poster.naturalWidth+'/'+poster.naturalHeight);
+        }
+        function missing(){
+          posterFailed=true;
+          poster.hidden=true;
+          // Missing CI output still yields an actual still when possible.
+          init(true);
+        }
+        poster.addEventListener('load',ready,{once:true});
+        poster.addEventListener('error',missing,{once:true});
+        if(poster.complete){if(poster.naturalWidth)ready();else missing();}
+      }
+      function init(captureFallback){
         if(preview.hasAttribute('src')||!card.isConnected)return;
         preview.src=movie;
         preview.preload='metadata';
@@ -369,12 +392,12 @@
           // A real decoded two-second still, as in Folly's instrument card.
           // Wait for seeked before drawing; Safari cannot reliably draw a
           // video frame that has loaded metadata but not decoded footage.
-          if(!o.playing&&Number.isFinite(preview.duration)&&preview.duration>0){
+          if(captureFallback&&posterFailed&&!o.playing&&Number.isFinite(preview.duration)&&preview.duration>0){
             try{preview.currentTime=Math.min(2,Math.max(0,preview.duration-.1));}catch(_){}
           }
         },{once:true});
         preview.addEventListener('seeked',function(){
-          if(o.playing||!preview.videoWidth||!preview.videoHeight)return;
+          if(!posterFailed||o.playing||!preview.videoWidth||!preview.videoHeight)return;
           try{
             still.width=Math.min(960,preview.videoWidth);
             still.height=Math.max(1,Math.round(still.width*preview.videoHeight/preview.videoWidth));
@@ -390,9 +413,12 @@
       }
       card.addEventListener('pointerenter',function(e){
         if(e.pointerType!=='mouse'||document.hidden)return;
-        init();clearTimeout(o.timer);
+        // Mouse preview remains opt-in; static images never preload MP4s.
+        activeHover=true;
+        clearTimeout(o.timer);
         o.timer=window.setTimeout(function(){
           if(!card.matches(':hover')||document.hidden||!card.isConnected)return;
+          init(false);
           preview.muted=true;preview.loop=true;
           o.playing=true;
           var p=preview.play();
@@ -400,15 +426,11 @@
                       .catch(function(){o.playing=false;});
         },600);
       });
-      card.addEventListener('pointerleave',stop);
+      card.addEventListener('pointerleave',function(){activeHover=false;stop();});
       card.addEventListener('pointerdown',function(){clearTimeout(o.timer);o.timer=0;});
-      card.addEventListener('focusin',init);
-      if('IntersectionObserver' in window){
-        o.observer=new IntersectionObserver(function(entries){
-          if(entries.some(function(e){return e.isIntersecting;})){init();o.observer?.disconnect();}
-        },{rootMargin:'170px'});
-        o.observer.observe(card);
-      }
+      card.addEventListener('focusin',function(){ /* Image needs no network work. */ });
+      // The JPG is already lazy-loaded by the browser; there is no reason
+      // to request MP4 metadata when the card merely enters the viewport.
       o.stop=stop;
     });
   }
