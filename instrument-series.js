@@ -43,7 +43,7 @@
       '<div class="ins-hero-screen">'+w.hero.map(function(image,i){
         return '<div class="ins-hero-face'+(i===0?' is-active':'')+'" data-ins-hero-face="'+i+'" aria-hidden="'+(i===0?'false':'true')+'">'+
           '<img src="'+E(image.src)+'" alt="'+E(L(w.title)+' · '+L(image.title))+'" '+
-          (i===0?'fetchpriority="high"':'loading="lazy"')+' decoding="async" draggable="false">'+
+          (i===0?'fetchpriority="high"':'fetchpriority="low"')+' decoding="async" draggable="false">'+
         '</div>';
       }).join('')+'</div>'+
       '<figcaption class="ins-hero-meta">'+
@@ -98,6 +98,9 @@
   }
   var previous=renderRoom;
   renderRoom=function(item){return item&&item.slug==='the-instrument'?renderInstrument(item):previous(item);};
+  // On a direct hash-link reload script.js rendered the generic room before
+  // this extension loaded. Repaint once the specialised renderer is ready.
+  if(typeof parseRoute==='function'&&parseRoute()?.slug==='the-instrument')render();
   function close(){
     if(!active)return;
     var trigger=active.trigger,viewer=active.viewer;
