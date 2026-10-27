@@ -1,0 +1,280 @@
+/* Fictive Topography · 2021– . The Folly / instrument reading rhythm,
+   without the generic collection gallery's grey stages or fake artwork.
+   This stylesheet affects only the fictive-topography reading room. */
+
+html:has(.ft-room),
+body:has(.ft-room) {
+  height: auto;
+  min-height: 100%;
+  overflow-x: clip;
+  overflow-y: auto;
+  background: #eeede8;
+}
+.site-root:has(.ft-room) {
+  position: relative;
+  inset: auto;
+  width: 100%;
+  height: auto;
+  min-height: 100svh;
+}
+.room-view.ft-room {
+  --ft-side: clamp(23px, 6vw, 100px);
+  position: relative;
+  inset: auto;
+  display: block;
+  width: 100%;
+  min-height: 100svh;
+  height: auto;
+  overflow: visible;
+  animation: none !important;
+  transform: none !important;
+  background: #eeede8;
+  color: #222922;
+}
+.ft-room .room-head {
+  position: sticky;
+  inset: auto;
+  top: 0;
+  z-index: 80;
+  height: 54px;
+  border-bottom: 1px solid rgba(36, 41, 37, .14);
+  background: rgba(238, 237, 232, .94);
+  color: #232a24;
+  box-shadow: none;
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+}
+.ft-room .room-head > p,
+.ft-room .room-back { color: rgba(36, 41, 37, .53); }
+.ft-room .room-head .language button {color: rgba(36, 41, 37, .42);}
+.ft-room .room-head .language button.is-active,
+.ft-room .room-head .language button:hover {color: #202620;}
+.ft-page {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 0 0 clamp(110px, 17vh, 240px);
+  background: #eeede8;
+}
+.ft-series-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 14px 26px;
+  padding: clamp(66px, 10vh, 118px) var(--ft-side) clamp(47px, 7vh, 84px);
+}
+.ft-series-head h1 {
+  max-width: 100%;
+  margin: 0;
+  color: #222922;
+  font: 400 clamp(37px, 4.3vw, 65px)/1.2 var(--serif), serif;
+  letter-spacing: .045em;
+  overflow-wrap: anywhere;
+}
+.ft-series-head > p {
+  margin: 0;
+  color: rgba(34, 41, 34, .58);
+  font: 400 clamp(13px, 1.05vw, 16px)/1.6 var(--serif), serif;
+  white-space: nowrap;
+}
+.ft-about {
+  padding: clamp(44px, 8vh, 108px) var(--ft-side) clamp(100px, 15vh, 218px);
+  border-top: 1px solid rgba(31, 38, 31, .12);
+}
+.ft-about h2 {
+  margin: 0 0 clamp(24px, 3vw, 40px);
+  font: 400 clamp(21px, 1.8vw, 28px)/1.5 var(--serif), serif;
+  letter-spacing: .03em;
+}
+.ft-series-copy {
+  width: min(100%, 795px);
+}
+.ft-series-copy p {
+  margin: 0;
+  padding: 0;
+  color: rgba(33, 40, 34, .85);
+  font: 400 clamp(15px, 1.18vw, 18px)/2.06 var(--serif), serif;
+  letter-spacing: .012em;
+  text-wrap: pretty;
+}
+.ft-series-copy p + p {margin-top: clamp(17px, 2.5vw, 31px);}
+.ft-contents {
+  max-width: 795px;
+  margin-top: clamp(50px, 7vw, 95px);
+  padding-top: 11px;
+  border-top: 1px solid rgba(34, 39, 34, .16);
+}
+.ft-contents > p {
+  margin: 0 0 12px;
+  color: rgba(37, 45, 38, .46);
+  font: 400 clamp(11px, .92vw, 13px)/1.7 var(--serif), serif;
+}
+.ft-contents ol {list-style: none; margin: 0; padding: 0;}
+.ft-contents li {border-bottom: 1px solid rgba(34, 39, 34, .1);}
+.ft-contents button {
+  display: flex;
+  align-items: baseline;
+  gap: clamp(12px, 1.8vw, 27px);
+  width: 100%;
+  padding: clamp(13px, 1.4vw, 19px) 0;
+  border: 0;
+  background: transparent;
+  color: #252c25;
+  font: 400 clamp(14px, 1.13vw, 17px)/1.75 var(--serif), serif;
+  text-align: left;
+  overflow-wrap: anywhere;
+  cursor: pointer;
+  transition: color .2s ease;
+}
+.ft-contents button > span {
+  flex: none;
+  color: rgba(38, 45, 39, .45);
+  font-size: .82em;
+}
+.ft-contents button:hover {color: #070d08;}
+.ft-work {
+  padding: clamp(45px, 6vw, 92px) 0 clamp(100px, 12vw, 175px);
+  scroll-margin-top: 60px;
+}
+.ft-work-heading {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 14px 40px;
+  padding: 0 var(--ft-side) 0;
+}
+.ft-work-heading > div {min-width: 0;}
+.ft-work-number {
+  margin: 0 0 clamp(16px, 2vw, 27px);
+  color: rgba(38, 45, 39, .46);
+  font: 400 clamp(12px, 1vw, 14px)/1.6 var(--serif), serif;
+}
+.ft-work-heading h2 {
+  max-width: min(1160px, 100%);
+  margin: 0;
+  color: #111512;
+  font: 400 clamp(32px, 3.7vw, 60px)/1.32 var(--serif), serif;
+  letter-spacing: .02em;
+  overflow-wrap: anywhere;
+}
+.ft-work-year {
+  flex: none;
+  color: rgba(28, 35, 29, .7);
+  font: 400 clamp(13px, 1.1vw, 17px)/1.6 var(--serif), serif;
+}
+.ft-work-meta {
+  max-width: 880px;
+  margin: clamp(11px, 1.5vw, 19px) var(--ft-side) clamp(29px, 4.5vw, 65px);
+  color: rgba(39, 46, 39, .58);
+  font: 400 clamp(12px, 1vw, 15px)/1.8 var(--serif), serif;
+  letter-spacing: .026em;
+}
+.ft-photo-pending {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-start;
+  width: min(clamp(360px, 51vw, 765px), calc(100% - 2 * var(--ft-side)));
+  min-height: clamp(200px, 32vw, 460px);
+  margin: 0 var(--ft-side);
+  padding: 0 0 8px;
+  /* Reserved space, deliberately no frame or grey rectangle. */
+  border: 0;
+  outline: 0;
+  box-shadow: none;
+  background: transparent;
+}
+.ft-photo-pending-caption {
+  color: rgba(35, 43, 37, .37);
+  font: 400 clamp(11px, .93vw, 13px)/1.6 var(--serif), serif;
+  letter-spacing: .065em;
+}
+.ft-photo-sequence {
+  width: min(1160px, calc(100% - 2 * var(--ft-side)));
+  margin: 0 var(--ft-side);
+}
+.ft-photo {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+.ft-photo + .ft-photo {margin-top: clamp(29px, 5vw, 74px);}
+.ft-photo img {
+  display: block;
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: min(81svh, 870px);
+  min-height: 0;
+  border: 0;
+  object-fit: contain;
+  box-shadow: none;
+  background: transparent;
+  filter: none;
+}
+.ft-photo figcaption {
+  margin-top: 14px;
+  color: rgba(40, 47, 40, .58);
+  font: 400 clamp(11px, 1vw, 14px)/1.7 var(--serif), serif;
+}
+.ft-work-copy {
+  width: min(850px, calc(100% - 2 * var(--ft-side)));
+  margin: clamp(57px, 7.7vw, 112px) var(--ft-side) 0;
+  padding: 0;
+}
+.ft-work-copy p {
+  max-width: 795px;
+  margin: 0;
+  color: rgba(44, 49, 44, .78);
+  font: 400 clamp(14px, 1.16vw, 17px)/2.12 var(--serif), serif;
+  letter-spacing: .012em;
+  text-align: left;
+  text-wrap: pretty;
+}
+.ft-work-copy p + p {margin-top: clamp(18px, 2.5vw, 34px);}
+.ft-work-copy .ft-work-data {
+  margin-top: clamp(30px, 4vw, 55px);
+  color: rgba(39, 47, 40, .48);
+  font: 400 clamp(11px, .97vw, 14px)/1.85 var(--serif), serif;
+  letter-spacing: .03em;
+}
+.ft-section-space {
+  height: clamp(90px, 12vw, 190px);
+  background: transparent;
+}
+.ft-room button { -webkit-tap-highlight-color: transparent; }
+
+@media (max-width: 700px) {
+  .room-view.ft-room { --ft-side: 22px; }
+  .ft-room .room-head {height: 50px;}
+  .ft-series-head {
+    padding-top: 67px;
+    padding-bottom: 47px;
+  }
+  .ft-series-head h1 {font-size: clamp(34px, 8.4vw, 47px);}
+  .ft-series-head > p {font-size: 12px;}
+  .ft-about {
+    padding-top: 48px;
+    padding-bottom: 107px;
+  }
+  .ft-series-copy p {font-size: 14px;line-height: 2.06;}
+  .ft-contents {margin-top: 56px;}
+  .ft-contents button {font-size: 13px;}
+  .ft-work {padding: 47px 0 95px;scroll-margin-top: 52px;}
+  .ft-work-heading h2 {font-size: clamp(27px, 6.65vw, 39px);}
+  .ft-work-meta {font-size: 11px;margin-bottom: 32px;}
+  .ft-photo-pending {
+    width: calc(100% - 2 * var(--ft-side));
+    min-height: min(61vw, 310px);
+  }
+  .ft-photo-sequence {width: calc(100% - 2 * var(--ft-side));}
+  .ft-photo img {max-height: 75svh;}
+  .ft-work-copy {margin-top: 40px;}
+  .ft-work-copy p {font-size: 13px;line-height: 2.05;}
+  .ft-section-space {height: 70px;}
+}
+@media (prefers-reduced-motion: reduce) {
+  .ft-contents button {transition: none;}
+}
