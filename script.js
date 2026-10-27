@@ -749,10 +749,10 @@ function calendarPanel() {
         "</div>" +
         '<div class="calendar-controls">' +
           '<button type="button" data-action="calendar-window-prev" aria-label="' + escapeHtml(earlierLabel) + '"' +
-            (calendarCursorIsAtStart() ? " disabled" : "") + '>←</button>' +
+            (calendarCursorIsAtStart() ? " disabled" : "") + '>←︎</button>' +
           '<span>' + escapeHtml(formatDate(rangeStart)) + ' — ' + escapeHtml(formatDate(rangeEnd)) + '</span>' +
           '<button type="button" data-action="calendar-window-next" aria-label="' + escapeHtml(laterLabel) + '"' +
-            (calendarCursorIsAtToday() ? " disabled" : "") + '>→</button>' +
+            (calendarCursorIsAtToday() ? " disabled" : "") + '>→︎</button>' +
         "</div>" +
       "</header>" +
       '<div class="calendar-grid calendar-rolling-grid" role="group" aria-label="' +
@@ -1100,7 +1100,7 @@ function renderSeawaterSpaceTimeChart(item) {
 
 /*
   Seawater's reading sequence grows from the two original artworks:
-  painting → two memory paragraphs → tank → vessel → time/space chart.
+  painting →︎ two memory paragraphs →︎ tank →︎ vessel →︎ time/space chart.
   Preserve the existing image viewer, captions, chart and brief annotations.
 */
 const seawaterVesselDescription = {
@@ -1165,7 +1165,7 @@ function renderRoom(item) {
   var groupLabel = item.group === "collection" ? labels[state.lang].collection : item.group === "writing" ? labels[state.lang].writings : labels[state.lang].works;
   var html = '<section class="room-view' + (item.group === "writing" ? " writing-room" : "") + '">' +
     '<header class="room-head">' +
-      '<button type="button" data-action="home" class="room-back">← ' + escapeHtml(labels[state.lang].back) + "</button>" +
+      '<button type="button" data-action="home" class="room-back">←︎ ' + escapeHtml(labels[state.lang].back) + "</button>" +
       '<p>' + escapeHtml(groupLabel) + " / " + escapeHtml(localised(item.title)) + "</p>" +
       languageSwitch() +
     "</header>" +
@@ -1248,12 +1248,12 @@ function renderRoom(item) {
 
   if (item.visit) {
     html += '<div class="room-visit-wrap"><a class="room-visit" href="' + item.visit + '" target="_blank" rel="noreferrer">' +
-      escapeHtml(localised(item.visitLabel)) + '<span aria-hidden="true"> ↗</span></a></div>';
+      escapeHtml(localised(item.visitLabel)) + '<span aria-hidden="true"> ↗︎</span></a></div>';
   }
 
   html += '<footer class="room-footer">' +
     '<button type="button" data-action="route" data-route="' + next.slug + '">' +
-      escapeHtml(localised(next.title)) + '<span aria-hidden="true"> →</span>' +
+      escapeHtml(localised(next.title)) + '<span aria-hidden="true"> →︎</span>' +
     "</button>" +
   "</footer></div></section>";
 
@@ -1676,14 +1676,14 @@ render();
     return '<section class="fragrance-gallery fragrance-gallery-in-essay" data-fragrance-gallery="' + theme.key +
       '" aria-label="' + escapeHtml(localised(theme.label)) + '">' +
       '<div class="fragrance-stage">' +
-        '<button type="button" class="fragrance-arrow fragrance-arrow-prev" data-fragrance-step="-1" aria-label="previous image">←</button>' +
+        '<button type="button" class="fragrance-arrow fragrance-arrow-prev" data-fragrance-step="-1" aria-label="previous image">←︎</button>' +
         '<figure class="fragrance-frame">' +
           '<img src="' + image + '" alt="' + escapeHtml(localised(theme.label)) + " " + (index + 1) + '" loading="lazy" />' +
           '<figcaption><span></span><span>' +
             String(index + 1).padStart(2, "0") + " / " + String(theme.images.length).padStart(2, "0") +
           '</span></figcaption>' +
         '</figure>' +
-        '<button type="button" class="fragrance-arrow fragrance-arrow-next" data-fragrance-step="1" aria-label="next image">→</button>' +
+        '<button type="button" class="fragrance-arrow fragrance-arrow-next" data-fragrance-step="1" aria-label="next image">→︎</button>' +
       '</div>' +
       '<div class="fragrance-filmstrip" aria-label="contact sheet">' + thumbs + '</div>' +
     '</section>';
@@ -1712,7 +1712,7 @@ render();
 
     return '<section class="room-view fragrance-room">' +
       '<header class="room-head">' +
-        '<button type="button" data-action="home" class="room-back">← ' + escapeHtml(labels[state.lang].back) + '</button>' +
+        '<button type="button" data-action="home" class="room-back">←︎ ' + escapeHtml(labels[state.lang].back) + '</button>' +
         '<p>' + escapeHtml(groupLabel) + " / " + escapeHtml(localised(item.title)) + '</p>' +
         languageSwitch() +
       '</header>' +
@@ -1736,7 +1736,7 @@ render();
         renderFragranceQuote(item) +
         '<footer class="room-footer">' +
           '<button type="button" data-action="route" data-route="' + next.slug + '">' +
-            escapeHtml(localised(next.title)) + '<span aria-hidden="true"> →</span>' +
+            escapeHtml(localised(next.title)) + '<span aria-hidden="true"> →︎</span>' +
           '</button>' +
         '</footer>' +
       '</div>' +
@@ -2091,7 +2091,7 @@ render();
 
     if (footerButton.dataset.groupNext !== next.slug) {
       footerButton.dataset.groupNext = next.slug;
-      footerButton.innerHTML = escapeHtml(localised(next.title)) + '<span aria-hidden="true"> →</span>';
+      footerButton.innerHTML = escapeHtml(localised(next.title)) + '<span aria-hidden="true"> →︎</span>';
     }
   }
 
