@@ -24,9 +24,9 @@
   };
 
   var I18N = {
-    zh: { about:"关于虚构地形学", contents:"目录", image:"图像待补", next:"下一件作品", series:"雾件", study:"作品陈述", gallery:"图像", progress:"构想与制作记录" },
-    en: { about:"About Fictive Topography", contents:"Contents", image:"Images forthcoming", next:"Next work", series:"Vaporware", study:"Work statement", gallery:"Images", progress:"Concept and construction" },
-    ja: { about:"虚構地形学について", contents:"目次", image:"画像は後日追加", next:"次の作品", series:"ヴェイパーウェア", study:"作品について", gallery:"画像", progress:"構想・制作記録" }
+    zh: { about:"关于虚构地形学", contents:"目录", image:"图像待补", next:"下一件作品", series:"雾件", study:"作品陈述", gallery:"图像", progress:"构想与制作记录", view:"查看",close:"关闭",play:"播放影像",previous:"上一张",following:"下一张",gif:"动态图像",film:"运动影像" },
+    en: { about:"About Fictive Topography", contents:"Contents", image:"Images forthcoming", next:"Next work", series:"Vaporware", study:"Work statement", gallery:"Images", progress:"Concept and construction", view:"View",close:"Close",play:"Play video",previous:"Previous image",following:"Next image",gif:"Animated image",film:"Moving image" },
+    ja: { about:"虚構地形学について", contents:"目次", image:"画像は後日追加", next:"次の作品", series:"ヴェイパーウェア", study:"作品について", gallery:"画像", progress:"構想・制作記録",view:"表示",close:"閉じる",play:"映像を再生",previous:"前の画像",following:"次の画像",gif:"アニメーション画像",film:"映像" }
   };
 
   var WORKS = [
@@ -60,7 +60,28 @@
           "継ぎ目や補修、手仕事に残る不完全さは、虚構がつくられた過程を隠さない。失われたものに近づこうとしながら、過去を一つの完全な姿へ戻すことはできない。回復できない部分は、その内部の空白として残り続ける。"
         ]
       },
-      images:[]
+      media: [
+        {
+          id:"vaporware-1-images",
+          type:"slides",
+          label:{zh:"图像",en:"Images",ja:"画像"},
+          files:[1,2,3,4,5].map(function(n){
+            return "./works/fictional-topography/vaporware-1/"+n+".jpg";
+          })
+        },
+        {
+          id:"vaporware-1-spin",
+          type:"gif",
+          src:"./works/fictional-topography/vaporware-1/vertical%20spin.gif",
+          file:"vertical spin.gif"
+        },
+        {
+          id:"vaporware-1-hologram",
+          type:"video",
+          src:"./works/fictional-topography/vaporware-1/hologram.mp4",
+          file:"hologram.mp4"
+        }
+      ]
     },
     {
       number:{ zh:"其二", en:"Part Two", ja:"其の二" },
@@ -100,7 +121,32 @@
           "船には2019年以来採集してきた各地の海水を積み込む計画である。実在する海岸から集まった小さな水の断片が、記憶のなかの確かめようのない「55の海」に応答する。中央の制御室は空いたまま、探し続ける行為と、辿り着かなかった場所とをともに運んでいく。"
         ]
       },
-      images:[]
+      media: [
+        {
+          id:"vaporware-2-shuttle",
+          type:"slides",
+          label:{zh:"shuttle",en:"shuttle",ja:"shuttle"},
+          files:[1,2,3,4,5,6].map(function(n){
+            return "./works/fictional-topography/vaporware-2/shuttle-"+n+".jpg";
+          })
+        },
+        {
+          id:"vaporware-2-stages",
+          type:"slides",
+          label:{zh:"stage one / two",en:"stage one / two",ja:"stage one / two"},
+          files:["stage-one-1.jpg","stage-one-2.jpg","stage-two-1.jpg","stage-two-2.jpg"].map(function(name){
+            return "./works/fictional-topography/vaporware-2/"+name;
+          })
+        },
+        {
+          id:"vaporware-2-probe",
+          type:"slides",
+          label:{zh:"probe",en:"probe",ja:"probe"},
+          files:[1,2,3,4,5].map(function(n){
+            return "./works/fictional-topography/vaporware-2/probe-"+n+".jpg";
+          })
+        }
+      ]
     }
   ];
 
@@ -110,21 +156,67 @@
   function t(key) {return I18N[language()][key];}
   function projectTitle(work) {return l(work.number) + " · " + l(work.title);}
 
-  // To attach authentic images later, populate each project's images array:
-  // { src:"./works/fictional-topography/FILE.jpg", caption:{zh:"",en:"",ja:""} }
-  // Nothing is requested over the network while the arrays are empty.
-  function renderImages(work, workIndex) {
-    if (!work.images || !work.images.length) {
-      return '<div class="ft-photo-pending" aria-label="' + e(t("image")) + '">' +
-        '<span class="ft-photo-pending-caption">' + e(t("image")) + '</span></div>';
-    }
-    return '<div class="ft-photo-sequence">' + work.images.map(function (asset, assetIndex) {
-      return '<figure class="ft-photo"><img src="' + e(asset.src) + '" alt="' +
-        e(l(asset.caption) || projectTitle(work)) + '" loading="lazy" decoding="async">' +
-        (asset.caption ? '<figcaption>' + e(l(asset.caption)) + '</figcaption>' : '') +
-        '</figure>';
-    }).join("") + '</div>';
+  // The media order is explicit and matches the actual repo directories.
+  // Captions and interpretative notes intentionally remain unset for now.
+  var MEDIA = Object.create(null);
+  WORKS.forEach(function(work){(work.media||[]).forEach(function(block){MEDIA[block.id]=block;});});
+  function pad(n){return String(n).padStart(2,"0");}
+  function renderSlides(block){
+    var n=block.files.length;
+    return '<section class="ft-media-unit ft-slides" data-ft-slideshow="'+e(block.id)+'" data-ft-active="0">'+
+      '<div class="ft-media-heading"><h3>'+e(l(block.label))+'</h3><span>'+pad(1)+' / '+pad(n)+'</span></div>'+
+      '<div class="ft-slide-screen" aria-label="'+e(l(block.label))+'">'+
+        block.files.map(function(src,i){return '<img class="ft-slide-image'+(i===0?' is-active':'')+'" src="'+
+          e(src)+'" alt="'+e(l(block.label))+' '+pad(i+1)+' / '+pad(n)+'" loading="lazy" decoding="async" '+
+          'data-ft-slide="'+i+'" aria-hidden="'+(i===0?'false':'true')+'">';}).join('')+
+      '</div>'+
+      '<div class="ft-slide-footer">'+
+        '<div class="ft-slide-options" role="group" aria-label="'+e(l(block.label))+'">'+
+          block.files.map(function(src,i){return '<button type="button" class="ft-slide-choice'+(i===0?' is-active':'')+
+            '" data-ft-slide-pick="'+i+'" data-ft-slideshow-id="'+e(block.id)+'" aria-pressed="'+(i===0?'true':'false')+
+            '" aria-label="'+e(l(block.label)+' '+pad(i+1)+' / '+pad(n))+'">'+pad(i+1)+'</button>';}).join('')+
+        '</div>'+
+        '<span class="ft-slide-count" data-ft-count>'+pad(1)+' / '+pad(n)+'</span>'+
+      '</div>'+
+    '</section>';
   }
+  function renderMediaCard(block) {
+    var isVideo=block.type==="video",label=isVideo?t("film"):t("gif");
+    return '<section class="ft-media-unit ft-media-card-unit" data-ft-media-unit="'+e(block.id)+'">'+
+      '<div class="ft-media-heading"><h3>'+e(label)+'</h3></div>'+
+      '<button type="button" class="ft-media-card" data-ft-open="'+e(block.id)+'" aria-label="'+
+        e((isVideo?t("play"):t("view"))+' · '+block.file)+'">'+
+        '<span class="ft-media-card-screen">'+
+          (isVideo?
+            '<video class="ft-media-video" data-ft-preview="'+e(block.id)+'" preload="metadata" muted loop playsinline webkit-playsinline aria-hidden="true" '+
+              'src="'+e(block.src)+'"></video>':
+            '<img class="ft-media-gif" src="'+e(block.src)+'" alt="" loading="lazy" decoding="async">')+
+          '<span class="ft-media-open-mark" aria-hidden="true">↗</span>'+
+        '</span>'+
+        '<span class="ft-media-card-caption"><span class="ft-media-card-count">01 <small>/ 01</small></span>'+
+        '<span class="ft-media-card-name">'+e(block.file)+'</span></span>'+
+      '</button>'+
+    '</section>';
+  }
+  function renderImages(work) {
+    if (!work.media || !work.media.length) {
+      return '<div class="ft-photo-pending" aria-label="'+e(t("image"))+'">'+
+        '<span class="ft-photo-pending-caption">'+e(t("image"))+'</span></div>';
+    }
+    var bits=[], pendingCards=[];
+    function flushCards(){
+      if (!pendingCards.length)return;
+      bits.push('<div class="ft-media-cards">'+pendingCards.join("")+'</div>');
+      pendingCards=[];
+    }
+    work.media.forEach(function(block){
+      if (block.type==="slides"){flushCards();bits.push(renderSlides(block));}
+      else if (block.type==="gif" || block.type==="video"){pendingCards.push(renderMediaCard(block));}
+    });
+    flushCards();
+    return '<div class="ft-media-stack">'+bits.join("")+'</div>';
+  }
+
   function renderWork(work, index) {
     var paragraphs=l(work.paragraphs) || [];
     return '<section class="ft-work" id="ft-work-' + (index+1) + '">' +
@@ -134,7 +226,7 @@
         (work.year ? '<span class="ft-work-year">' + e(work.year) + '</span>' : '') +
       '</header>' +
       '<p class="ft-work-meta">' + e(l(work.meta)) + '</p>' +
-      renderImages(work,index) +
+      renderImages(work) +
       '<div class="ft-work-copy">' + paragraphs.map(function (p) {return '<p>' + e(p) + '</p>';}).join("") +
         (work.detail ? '<p class="ft-work-data">' + e(l(work.detail)) + '</p>' : '') +
       '</div>' +
@@ -156,6 +248,15 @@
         '</section>' +
         WORKS.map(function(work,index){return renderWork(work,index);}).join('<div class="ft-section-space" aria-hidden="true"></div>') +
       '</div>' +
+      '<div class="ft-viewer" data-ft-viewer role="dialog" aria-modal="true" aria-label="'+e(t("view"))+'" hidden>'+
+        '<button type="button" class="ft-viewer-scrim" data-ft-close aria-label="'+e(t("close"))+'"></button>'+
+        '<div class="ft-viewer-inner">'+
+          '<img class="ft-viewer-gif" data-ft-viewer-img alt="" hidden>'+
+          '<video class="ft-viewer-video" data-ft-viewer-video playsinline webkit-playsinline controls preload="none" hidden></video>'+
+          '<div class="ft-viewer-caption"><span data-ft-viewer-label></span>'+
+            '<button type="button" class="ft-viewer-close" data-ft-close>'+e(t("close"))+' ×</button></div>'+
+        '</div>'+
+      '</div>'+
     '</section>';
   }
 
