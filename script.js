@@ -123,11 +123,11 @@ const works = [
   {
     slug: "the-instrument",
     group: "work",
-    title: { zh: "The Instrument", en: "The Instrument", ja: "The Instrument" },
+    title: { zh: "the instrument", en: "the instrument", ja: "the instrument" },
     intro: {
-      zh: "《The Instrument》是一组介于实验仪器、雕塑与私人宇宙论之间的构成主义装置。我将它们视为“神不再眷顾的实验”：在测量与观测的精密形制中，保留对时间、意识与宇宙边界的艺术性追问。",
-      en: "The Instrument is a series of Constructivist apparatuses between laboratory equipment, sculpture and private cosmology. These experiments forsaken by the gods keep questions of time, consciousness and the universe alive within the forms of measurement and observation.",
-      ja: "《The Instrument》は、実験器具、彫刻、私的な宇宙論のあいだに置かれた構成主義的な装置のシリーズである。「神に見放された実験」として、計測と観測の精密な形式のなかに、時間、意識、宇宙の境界をめぐる芸術的な問いを留める。"
+      zh: "《the instrument》是一组介于实验仪器、雕塑与私人宇宙论之间的构成主义装置。我将它们视为“神不再眷顾的实验”：在测量与观测的精密形制中，保留对时间、意识与宇宙边界的艺术性追问。",
+      en: "the instrument is a series of Constructivist apparatuses between laboratory equipment, sculpture and private cosmology. These experiments forsaken by the gods keep questions of time, consciousness and the universe alive within the forms of measurement and observation.",
+      ja: "《the instrument》は、実験器具、彫刻、私的な宇宙論のあいだに置かれた構成主義的な装置のシリーズである。「神に見放された実験」として、計測と観測の精密な形式のなかに、時間、意識、宇宙の境界をめぐる芸術的な問いを留める。"
     },
     images: [
       { src: "./img3-blur.jpg", caption: { zh: "仪器试作 01", en: "instrument study 01", ja: "器械試作 01" } },
@@ -267,7 +267,7 @@ const writings = [
   {
     slug: "ruinwright-manifesto",
     group: "writing",
-    title: { zh: "墟构师宣言", en: "Ruinwright Manifesto", ja: "墟構師宣言" },
+    title: { zh: "墟构师宣言", en: "Manifesto of the Ruinwright", ja: "墟構師宣言" },
     intro: {
       zh: [
         "《墟构师宣言》是我对废墟长期观察、研究与实践的一次整理。它记录了我理解废墟的方式，也建立起一套与之相应的理论框架，讨论我如何观看废墟、如何理解这个时代不断出现的现代废墟，以及这些认识如何进一步进入审美与创作。",
@@ -275,9 +275,9 @@ const writings = [
         "最终，我将对废墟的理解、由此形成的理论，以及在实践中逐渐建立的墟构方法整理在一起，构成《墟构师宣言》。它既是一份个人陈述，也是一套仍在持续修订的工作体系，并作为我面对这个时代“现代废墟”的一部个人法典。"
       ],
       en: [
-        "Ruinwright Manifesto is a consolidation of my long-term observation, study, and practice around ruins. It records the way I understand ruins and gathers the theoretical framework that has grown alongside that understanding, including how I look at ruins, how I understand the modern ruins continually appearing in this era, and how those understandings enter aesthetics and artistic practice.",
-        "As research gradually entered practice, “Ruinwright” shifted from a name into the role through which I work inside ruins. In that role I enter ruins to make work, and have developed “Ruinwork” as a method belonging to my own practice, used in the construction of the Folly Series.",
-        "I eventually brought these understandings of ruins, the theories that emerged from them, and the methods of Ruinwork developed through practice together as the Ruinwright Manifesto. It is both a personal statement and a working system that remains open to revision: a personal code for confronting the “modern ruins” of this era."
+        "Manifesto of the Ruinwright is a consolidation of my long-term observation, study, and practice around ruins. It records the way I understand ruins and gathers the theoretical framework that has grown alongside that understanding, including my reflections on ways of seeing ruins, modern ruins, and their aesthetic relations.",
+        "As research gradually entered practice, “Ruinwright” also shifted from a name into the role through which I work inside ruins. In that role I enter ruins to make work, and have developed “Ruinwork” as a method belonging to my own practice, used in the construction of the Folly Series and related works.",
+        "I eventually brought these understandings of ruins, the theories that emerged from them, and the methods of Ruinwork developed through practice together as the Manifesto of the Ruinwright. It is both a personal statement and a working system that remains open to revision: a personal code for confronting the “modern ruins” of this era."
       ],
       ja: [
         "『墟構師宣言』は、廃墟について長期にわたり行ってきた観察・研究・実践を整理したものである。そこには、私が廃墟をどのように理解してきたか、その理解とともに形づくられた理論的な枠組み、そして廃墟をどのように見るか、この時代に絶えず現れる現代の廃墟をどう理解するか、それらの認識が美学と制作へどう入っていくかが記されている。",
@@ -288,7 +288,7 @@ const writings = [
     visit: "https://ruin-archive.site/manifesto.html",
     visitLabel: {
       zh: "阅读《墟构师宣言》",
-      en: "read the Ruinwright Manifesto",
+      en: "read the Manifesto of the Ruinwright",
       ja: "『墟構師宣言』を読む"
     },
     tenetImages: [
