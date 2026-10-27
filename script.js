@@ -1092,7 +1092,9 @@ function renderSeawaterSpaceTimeChart(item) {
       close: "汇聚",
       open: "展开",
       note: "页面滚动：空间轴的视角改变　／　拖动滑条：时间切面的间距改变。",
-      demo: "16处采样记录，据原始手写名录录入 · 最后一条日期仅记至2025年7月"
+      demo: "据原始手写名录录入 · 最后一条仅记至2025年7月",
+      locations: "采集地点",
+      entries: "条记录"
     },
     en: {
       title: "Space and time",
@@ -1101,7 +1103,9 @@ function renderSeawaterSpaceTimeChart(item) {
       close: "gather",
       open: "unfold",
       note: "Scroll to shift the spatial projection; move the bar to widen the intervals between moments.",
-      demo: "16 samples transcribed from the handwritten ledger · the final date is recorded only as July 2025"
+      demo: "Transcribed from the handwritten ledger · final date recorded only as July 2025",
+      locations: "Sample locations",
+      entries: "records"
     },
     ja: {
       title: "時間と空間",
@@ -1110,10 +1114,32 @@ function renderSeawaterSpaceTimeChart(item) {
       close: "集約",
       open: "展開",
       note: "ページをスクロールすると空間軸の投影が変わり、バーを動かすと時間の断面の間隔が広がる。",
-      demo: "手書き記録から転記した16件の採水記録 · 最後の採取日は2025年7月まで記載"
+      demo: "手書き記録から転記 · 最後の採取日は2025年7月まで記載",
+      locations: "採水地点",
+      entries: "件の記録"
     }
   };
   var t = variants[state.lang] || variants.zh;
+  function degree(value, isLatitude) {
+    var n = Number(value);
+    var bearing = isLatitude ? (n < 0 ? "S" : "N") : (n < 0 ? "W" : "E");
+    return Math.abs(n).toFixed(6) + "°" + bearing;
+  }
+  // One canonical ledger drives both the SVG blocks and this printed list.
+  var ledgerItems = records.map(function (record,index) {
+    var name = typeof record.name === "string" ? record.name : localised(record.name);
+    var coordinate = degree(record.lat, true) + " / " + degree(record.lng, false);
+    return '<li class="seawater-location-item" tabindex="0" data-seawater-record-index="' + index +
+      '" aria-label="' + escapeHtml(name + " · " + record.date + " · " + coordinate) + '">' +
+      '<span class="seawater-location-number">' + String(index+1).padStart(2,"0") + '</span>' +
+      '<span class="seawater-location-place">' +
+        '<span class="seawater-location-name">' + escapeHtml(name) + '</span>' +
+        '<span class="seawater-location-coordinates">' + escapeHtml(coordinate) + '</span>' +
+      '</span>' +
+      '<time class="seawater-location-date" datetime="' + escapeHtml(record.date) + '">' +
+        escapeHtml(record.date) + '</time>' +
+    '</li>';
+  }).join("");
   return '<section class="seawater-space-time" data-seawater-space-time data-chart-lang="' +
       escapeHtml(state.lang) + '" data-chart-records="' + escapeHtml(JSON.stringify(records)) + '">' +
     '<header class="seawater-space-time-head">' +
@@ -1138,6 +1164,13 @@ function renderSeawaterSpaceTimeChart(item) {
     '</div>' +
     '<p class="seawater-space-time-note">' + escapeHtml(t.note) + '</p>' +
     '<p class="seawater-chart-prototype">' + escapeHtml(t.demo) + '</p>' +
+    '<section class="seawater-locations" aria-label="' + escapeHtml(t.locations) + '">' +
+      '<header class="seawater-locations-header">' +
+        '<h3>' + escapeHtml(t.locations) + '</h3>' +
+        '<span>' + records.length + ' ' + escapeHtml(t.entries) + '</span>' +
+      '</header>' +
+      '<ol class="seawater-locations-list">' + ledgerItems + '</ol>' +
+    '</section>' +
   '</section>';
 }
 
