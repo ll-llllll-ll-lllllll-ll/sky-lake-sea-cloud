@@ -36,17 +36,30 @@
   stroke-linejoin:round;
   vector-effect:non-scaling-stroke;
 }
-.seawater-water-body {fill:rgba(49,190,185,.14);stroke:none;}
-.seawater-water-side {fill:rgba(28,169,166,.34);stroke:none;}
-.seawater-water-face {fill:rgba(54,194,185,.36);stroke:none;}
-.seawater-water-top {fill:rgba(121,222,211,.44);stroke:none;}
-.seawater-water-outline {fill:none;stroke:rgba(29,154,151,.16);stroke-width:.58px;}
+/* Weathered glass / suspended seawater: grey-green, translucent at the
+   centre, thinning almost to nothing at all exterior edges via one SVG mask. */
+.seawater-water-volume {
+  opacity:.94;
+  transition:opacity .2s ease;
+}
+.seawater-water-body {fill:rgba(104,126,126,.17);stroke:none;}
+.seawater-water-core {fill:url(#seawater-water-core-gradient);stroke:none;}
+.seawater-water-side {fill:rgba(97,118,117,.20);stroke:none;}
+.seawater-water-face {fill:rgba(116,136,134,.25);stroke:none;}
+.seawater-water-top {fill:rgba(154,169,162,.23);stroke:none;}
+.seawater-water-outline {fill:none;stroke:rgba(94,112,111,.15);stroke-width:.46px;}
+.seawater-water-hit {fill:transparent;stroke:none;pointer-events:fill;}
+.seawater-water-block:hover .seawater-water-volume,
+.seawater-water-block:focus-visible .seawater-water-volume,
+.seawater-water-block.is-linked .seawater-water-volume {opacity:1;}
 .seawater-water-block:hover .seawater-water-face,
-.seawater-water-block:focus-visible .seawater-water-face {fill:rgba(24,184,175,.52);}
-.seawater-water-block:hover .seawater-water-top,
-.seawater-water-block:focus-visible .seawater-water-top {fill:rgba(121,230,216,.60);}
-.seawater-water-block:focus-visible .seawater-water-outline {
-  stroke:rgba(15,117,114,.83);
+.seawater-water-block:focus-visible .seawater-water-face,
+.seawater-water-block.is-linked .seawater-water-face {fill:rgba(100,124,121,.36);}
+.seawater-water-block:hover .seawater-water-outline,
+.seawater-water-block:focus-visible .seawater-water-outline,
+.seawater-water-block.is-linked .seawater-water-outline {
+  stroke:rgba(85,108,106,.45);
+  stroke-width:.65px;
 }
 .seawater-water-label {
   fill:rgba(19,37,34,.87);font-family:var(--serif);
@@ -54,7 +67,8 @@
   paint-order:stroke;stroke:rgba(244,243,238,.85);stroke-width:3px;
 }
 .seawater-water-block:hover .seawater-water-label,
-.seawater-water-block:focus-visible .seawater-water-label {opacity:1;}
+.seawater-water-block:focus-visible .seawater-water-label,
+.seawater-water-block.is-linked .seawater-water-label {opacity:1;}
 .seawater-coord-key text {
   font:10px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
   letter-spacing:.04em;fill:rgba(23,24,19,.34);
@@ -77,12 +91,12 @@
 }
 .seawater-time-slider::-webkit-slider-thumb {
   -webkit-appearance:none;appearance:none;width:14px;height:14px;
-  border:1px solid rgba(15,100,99,.26);border-radius:4px;
-  background:rgba(69,196,188,.80);margin-top:-7px;
+  border:1px solid rgba(69,102,100,.29);border-radius:4px;
+  background:rgba(126,158,153,.74);margin-top:-7px;
 }
 .seawater-time-slider::-moz-range-thumb {
   width:14px;height:14px;border:1px solid rgba(15,100,99,.26);
-  border-radius:4px;background:rgba(69,196,188,.80);
+  border-radius:4px;background:rgba(126,158,153,.74);
 }
 .seawater-time-slider:focus-visible {outline:1px solid rgba(15,126,124,.65);outline-offset:4px;}
 .seawater-time-control-endpoints {
@@ -132,4 +146,118 @@
   .seawater-time-control-endpoints {font-size:10px;}
   .seawater-space-time-note {font-size:11px;}
   .seawater-chart-prototype {font-size:10px;}
+}
+
+
+/* Transcribed sampling ledger, linked by original record index to SVG cubes.
+   Two flowing columns, not cards; on mobile the chronology stays vertical. */
+.room-view[data-room="seawater"] .seawater-locations {
+  box-sizing:border-box;
+  width:100%;
+  max-width:1110px;
+  margin:clamp(61px,8vw,118px) 0 0;
+  padding:clamp(19px,2.3vw,32px) 0 0;
+  border-top:1px solid rgba(36,43,40,.18);
+}
+.seawater-locations-header {
+  display:flex;
+  align-items:baseline;
+  justify-content:space-between;
+  gap:18px;
+  margin:0 0 clamp(24px,3vw,44px);
+}
+.seawater-locations-header h3 {
+  margin:0;
+  color:rgba(31,38,36,.85);
+  font:400 clamp(17px,1.4vw,21px)/1.5 var(--serif),serif;
+  letter-spacing:.025em;
+}
+.seawater-locations-header > span {
+  flex:none;
+  color:rgba(35,43,40,.43);
+  font:400 clamp(11px,.95vw,13px)/1.5 var(--serif),serif;
+  letter-spacing:.02em;
+}
+.seawater-locations-list {
+  display:block;
+  columns:2;
+  column-gap:clamp(25px,5vw,76px);
+  margin:0;
+  padding:0;
+  list-style:none;
+}
+.seawater-location-item {
+  display:grid;
+  grid-template-columns:24px minmax(0,1fr) auto;
+  align-items:baseline;
+  gap:clamp(9px,1.4vw,19px);
+  min-width:0;
+  margin:0;
+  padding:clamp(12px,1.45vw,18px) 0;
+  border-bottom:1px solid rgba(30,40,37,.11);
+  outline:0;
+  break-inside:avoid;
+  -webkit-column-break-inside:avoid;
+  transition:border-color .16s ease,color .16s ease;
+}
+.seawater-location-item:hover,
+.seawater-location-item:focus-visible,
+.seawater-location-item.is-linked {
+  border-bottom-color:rgba(73,95,91,.42);
+}
+.seawater-location-item:focus-visible {
+  outline:1px solid rgba(80,105,100,.35);
+  outline-offset:4px;
+}
+.seawater-location-number {
+  font:400 clamp(10px,.93vw,12px)/1.65 var(--serif),serif;
+  font-variant-numeric:tabular-nums;
+  color:rgba(40,53,49,.37);
+}
+.seawater-location-place {
+  display:flex;
+  flex-direction:column;
+  min-width:0;
+  gap:3px;
+}
+.seawater-location-name {
+  color:rgba(36,46,42,.83);
+  font:400 clamp(13px,1.13vw,16px)/1.6 var(--serif),serif;
+  letter-spacing:.01em;
+}
+.seawater-location-coordinates {
+  color:rgba(50,67,62,.50);
+  font:400 clamp(9px,.84vw,11px)/1.8 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  letter-spacing:.005em;
+  white-space:normal;
+  overflow-wrap:anywhere;
+  font-variant-numeric:tabular-nums;
+}
+.seawater-location-date {
+  color:rgba(44,54,50,.56);
+  font:400 clamp(10px,.9vw,12px)/1.7 var(--serif),serif;
+  font-variant-numeric:tabular-nums;
+  letter-spacing:.015em;
+  white-space:nowrap;
+}
+.seawater-location-item.is-linked .seawater-location-name,
+.seawater-location-item:focus-visible .seawater-location-name {
+  color:rgba(26,68,65,.93);
+}
+@media (max-width:760px) {
+  .room-view[data-room="seawater"] .seawater-locations {
+    margin-top:66px;
+    padding-top:23px;
+  }
+  .seawater-locations-list {columns:1;}
+  .seawater-locations-header {margin-bottom:16px;}
+  .seawater-locations-header h3 {font-size:18px;}
+  .seawater-location-item {grid-template-columns:23px minmax(0,1fr) auto;gap:9px;padding:14px 0;}
+  .seawater-location-name {font-size:14px;}
+  .seawater-location-coordinates {font-size:10px;}
+  .seawater-location-date {font-size:11px;}
+}
+@media (prefers-reduced-motion:reduce) {
+  .seawater-water-volume,
+  .seawater-location-item {transition:none;}
 }
