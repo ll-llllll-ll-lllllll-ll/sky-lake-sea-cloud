@@ -116,28 +116,49 @@
       ' ' + xy(p(timeBend,longitude,0)) + ' L ' + xy(p(1,longitude,0)) + '"/>';
   }
   function cube(g, record, time, longitude, latitude, index, lang) {
-    var p = g.project, dt = 15 / g.width, dy = .074, dz = .062;
+    // Smaller, fuller-looking volumes: X length 18 instead of 30 units.
+    // Keep geographic placement anchored to the original record coordinates.
+    var p = g.project, dt = 9 / g.width, dy = .064, dz = .071;
     function v(x, y, z) { return p(time + x*dt, longitude + y*dy, latitude + z*dz); }
     var a=v(-1,-1,-1), b=v(1,-1,-1), c=v(1,-1,1), d=v(-1,-1,1);
     var e=v(-1,1,-1),  f=v(1,1,-1),  h=v(1,1,1),  j=v(-1,1,1);
     var border = roundedPolygon(hull([a,b,c,d,e,f,h,j]), .13);
     var uid = "sea-water-cube-" + index;
+    var fadeUid = uid + "-fade";
+    var points = [a,b,c,d,e,f,h,j];
+    var xs = points.map(function(point) { return point.x; });
+    var ys = points.map(function(point) { return point.y; });
+    var left = Math.min.apply(null,xs) - 4, top = Math.min.apply(null,ys) - 4;
+    var boxWidth = Math.max.apply(null,xs) - left + 4;
+    var boxHeight = Math.max.apply(null,ys) - top + 4;
     var label = nameFor(record, lang);
     var lat = Number(record.lat), lon = Number(record.lng);
     var detail = label + " · " + record.date + " · " + Math.abs(lat).toFixed(6) +
       "°" + (lat >= 0 ? "N" : "S") + " / " + Math.abs(lon).toFixed(6) +
       "°" + (lon >= 0 ? "E" : "W");
     var center = p(time, longitude, latitude), right = center.x <= 930;
-    return '<g class="seawater-water-block" tabindex="0" role="img" aria-label="' + esc(detail) + '">' +
+    return '<g class="seawater-water-block" tabindex="0" role="img" ' +
+        'data-seawater-record-index="' + index + '" aria-label="' + esc(detail) + '">' +
       '<title>' + esc(detail) + '</title>' +
-      '<defs><clipPath id="' + uid + '"><path d="' + border + '"/></clipPath></defs>' +
-      '<path class="seawater-water-body" d="' + border + '"/>' +
-      '<g clip-path="url(#' + uid + ')">' +
-        '<path class="seawater-water-side" d="' + polygon([b,f,h,c]) + '"/>' +
-        '<path class="seawater-water-top" d="' + polygon([d,c,h,j]) + '"/>' +
-        '<path class="seawater-water-face" d="' + polygon([e,f,h,j]) + '"/>' +
+      '<defs>' +
+        '<clipPath id="' + uid + '"><path d="' + border + '"/></clipPath>' +
+        '<mask id="' + fadeUid + '" maskUnits="userSpaceOnUse" maskContentUnits="userSpaceOnUse" ' +
+          'style="mask-type:alpha" x="' + fix(left) + '" y="' + fix(top) +
+          '" width="' + fix(boxWidth) + '" height="' + fix(boxHeight) + '">' +
+          '<path d="' + border + '" fill="url(#seawater-water-density-mask)"/>' +
+        '</mask>' +
+      '</defs>' +
+      '<g class="seawater-water-volume" mask="url(#' + fadeUid + ')">' +
+        '<path class="seawater-water-body" d="' + border + '"/>' +
+        '<path class="seawater-water-core" d="' + border + '"/>' +
+        '<g clip-path="url(#' + uid + ')">' +
+          '<path class="seawater-water-side" d="' + polygon([b,f,h,c]) + '"/>' +
+          '<path class="seawater-water-top" d="' + polygon([d,c,h,j]) + '"/>' +
+          '<path class="seawater-water-face" d="' + polygon([e,f,h,j]) + '"/>' +
+        '</g>' +
+        '<path class="seawater-water-outline" d="' + border + '"/>' +
       '</g>' +
-      '<path class="seawater-water-outline" d="' + border + '"/>' +
+      '<path class="seawater-water-hit" d="' + border + '"/>' +
       '<text class="seawater-water-label" text-anchor="' + (right ? "start" : "end") +
         '" x="' + fix(center.x+(right?27:-27)) + '" y="' + fix(center.y-15) + '">' +
         esc(label) + '</text>' +
@@ -146,7 +167,25 @@
 
   function draw(chart, records, lang, spatial, temporal) {
     var g = geometry(spatial, temporal), p = g.project;
-    var lines = ['<g class="seawater-mesh" aria-hidden="true">'];
+    // A shared alpha density field softly dissolves all faces together.
+    // No heavy blur or feTurbulence: the SVG stays lightweight on Safari.
+    var lines = [
+      '<defs>' +
+        '<radialGradient id="seawater-water-density-mask" cx="49%" cy="49%" r="72%">' +
+          '<stop offset="0%" stop-color="white" stop-opacity=".92"/>' +
+          '<stop offset="34%" stop-color="white" stop-opacity=".78"/>' +
+          '<stop offset="62%" stop-color="white" stop-opacity=".43"/>' +
+          '<stop offset="83%" stop-color="white" stop-opacity=".16"/>' +
+          '<stop offset="100%" stop-color="white" stop-opacity=".015"/>' +
+        '</radialGradient>' +
+        '<radialGradient id="seawater-water-core-gradient" cx="42%" cy="44%" r="69%">' +
+          '<stop offset="0%" stop-color="#526c6d" stop-opacity=".24"/>' +
+          '<stop offset="45%" stop-color="#829999" stop-opacity=".12"/>' +
+          '<stop offset="100%" stop-color="#b0bfbb" stop-opacity="0"/>' +
+        '</radialGradient>' +
+      '</defs>',
+      '<g class="seawater-mesh" aria-hidden="true">'
+    ];
 
     // YZ positioning remains implicit in the sparse left-hand coordinate face.
     // All three changes of direction use quadratic bends. The outermost
@@ -156,16 +195,21 @@
     for (var y=1; y<=6; y++) lines.push(leftFloorRail(g,y/7));
     lines.push("</g>");
 
-    var valid = records.filter(function (r) {
+    // Preserve canonical record indices so the list and cubes stay linked.
+    var valid = records.map(function (record, index) {
+      return { record: record, index: index };
+    }).filter(function (entry) {
+      var r = entry.record;
       return dateValue(r.date) && Number.isFinite(Number(r.lat)) && Number.isFinite(Number(r.lng));
     });
     if (valid.length) {
-      var times = valid.map(function (r) { return dateValue(r.date); });
+      var times = valid.map(function (entry) { return dateValue(entry.record.date); });
       var min = Math.min.apply(null,times), span = Math.max(1,Math.max.apply(null,times)-min);
-      var placed = valid.map(function (record,index) {
+      var placed = valid.map(function (entry) {
+        var record = entry.record;
         return {
           record: record,
-          index: index,
+          index: entry.index,
           time: (dateValue(record.date)-min)/span,
           longitude: clamp((Number(record.lng)+180)/360,0,1),
           latitude: clamp((Number(record.lat)+90)/180,0,1)
@@ -204,7 +248,31 @@
     var records = [];
     try { records=JSON.parse(chart.dataset.chartRecords||"[]"); } catch (_) {}
     var lang=chart.dataset.chartLang||"zh";
-    var frame=0, priorSpatial=-1,priorTime=-1;
+    var frame=0, priorSpatial=-1,priorTime=-1, activeRecord=-1;
+    function syncLinkedRecord() {
+      chart.querySelectorAll("[data-seawater-record-index]").forEach(function(node) {
+        node.classList.toggle("is-linked",
+          Number(node.getAttribute("data-seawater-record-index")) === activeRecord);
+      });
+    }
+    function linkedTarget(node) {
+      var found = node && node.closest ? node.closest("[data-seawater-record-index]") : null;
+      return found && chart.contains(found) ? found : null;
+    }
+    function activate(event) {
+      var target = linkedTarget(event.target);
+      if (!target) return;
+      var index = Number(target.getAttribute("data-seawater-record-index"));
+      if (!Number.isInteger(index)) return;
+      activeRecord = index;
+      syncLinkedRecord();
+    }
+    function deactivate(event) {
+      if (linkedTarget(event.relatedTarget)) return;
+      if (!linkedTarget(event.target)) return;
+      activeRecord = -1;
+      syncLinkedRecord();
+    }
 
     function spatialProgress() {
       var view=scroll.getBoundingClientRect(), rect=stage.getBoundingClientRect();
@@ -217,10 +285,15 @@
       if (Math.abs(s-priorSpatial)<.002 && Math.abs(t-priorTime)<.0005) return;
       priorSpatial=s;priorTime=t;
       draw(chart,records,lang,s,t);
+      if (activeRecord >= 0) syncLinkedRecord();
     }
     function schedule() { if (!frame) frame=requestAnimationFrame(paint); }
     scroll.addEventListener("scroll",schedule,{passive:true});
     slider.addEventListener("input",schedule,{passive:true});
+    chart.addEventListener("pointerover",activate);
+    chart.addEventListener("pointerout",deactivate);
+    chart.addEventListener("focusin",activate);
+    chart.addEventListener("focusout",deactivate);
     window.addEventListener("resize",schedule,{passive:true});
     var resizeObserver=null;
     if ("ResizeObserver" in window) {
@@ -233,6 +306,10 @@
       if (frame) cancelAnimationFrame(frame);
       scroll.removeEventListener("scroll",schedule);
       slider.removeEventListener("input",schedule);
+      chart.removeEventListener("pointerover",activate);
+      chart.removeEventListener("pointerout",deactivate);
+      chart.removeEventListener("focusin",activate);
+      chart.removeEventListener("focusout",deactivate);
       window.removeEventListener("resize",schedule);
       if (resizeObserver) resizeObserver.disconnect();
     };
