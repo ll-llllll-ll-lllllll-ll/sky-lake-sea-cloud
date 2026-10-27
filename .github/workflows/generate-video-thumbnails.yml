@@ -70,4 +70,8 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git commit -m "Generate optimized JPEG posters for Folly and Instrument clips"
-          git push
+          # The viewer scripts may have changed while FFmpeg was running.
+          # Rebase the image-only commit onto the current main branch so
+          # thumbnail generation never discards newer site edits.
+          git pull --rebase origin main
+          git push origin HEAD:main
