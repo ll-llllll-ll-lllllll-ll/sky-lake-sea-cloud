@@ -1214,8 +1214,9 @@ function renderRoom(item) {
       languageSwitch() +
     "</header>" +
     (item.slug === "room-by-the-lake" ?
-      '<div class="lake-current" aria-hidden="true"><span class="lake-swell lake-swell-one"></span><span class="lake-swell lake-swell-two"></span><span class="lake-surface"></span></div>' : "") +
+      '<div class="lake-current" aria-hidden="true"><span class="lake-wall-left"></span><span class="lake-wall-right"></span><span class="lake-floor"></span></div>' : "") +
     '<div class="room-scroll">' +
+      (item.slug === "room-by-the-lake" ? '<div class="lake-opening">' : "") +
       '<section class="room-lead">' +
         '<p class="room-group">' + escapeHtml(groupLabel) + "</p>" +
         '<h1>' + escapeHtml(localised(item.title)) + "</h1>" +
@@ -1231,7 +1232,10 @@ function renderRoom(item) {
       '<img src="' + image.src + '" alt="" ' + (index ? 'loading="lazy"' : "") + " />" +
       '<figcaption>' + escapeHtml(localised(image.caption)) + "</figcaption>" +
     "</figure>";
+    // The title and first painting form a single floor-level composition.
+    if (item.slug === "room-by-the-lake" && index === 0) html += "</div>";
   });
+  if (item.slug === "room-by-the-lake" && !images.length) html += "</div>";
 
   if (item.slug === "seawater") {
     html += renderSeawaterSpaceTimeChart(item);
