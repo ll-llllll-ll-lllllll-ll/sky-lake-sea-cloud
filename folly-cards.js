@@ -10,7 +10,7 @@
   var LOCAL_VIDEO = './works/ruin-garden/';
   var PHOTOS = ARCHIVE + 'thumbnails/garden-128/';
   var SERIES = [
-    {id:'folly-1',roman:'I',title:{zh:'沉墟心室',en:'Effluent Sedimentation',ja:'沈墟の心室'},
+    {id:'folly-1',roman:'I',title:{zh:'沉墟心室',en:'Sunken Ventricle',ja:'沈墟の心室'},
      media:LOCAL_VIDEO+'folly-1/',poster:PHOTOS+'effluent-sedimentation.webp',
      assets:{structure:['structure-1.jpg','structure-2.jpg','structure-3.jpg'].map(function(f){return LOCAL_VIDEO+'folly-1-assets/'+f;}),detail:['instrument-1.jpg','instrument-2.jpg','instrument-3.jpg'].map(function(f){return LOCAL_VIDEO+'folly-1-assets/'+f;}),film:LOCAL_VIDEO+'folly-1-assets/instrument-1.mp4'},
      year:2025,kind:'linear',endTime:150,
@@ -22,12 +22,12 @@
        {start:84,end:124,zh:'空撑',en:'Futile Support',ja:'空支'},
        {start:124,end:150,zh:'余响',en:'Afterecho',ja:'余韻'}
      ]},
-    {id:'folly-2',roman:'II',title:{zh:'朽塔焦土',en:'Aether Scorched-Earth',ja:'朽塔の焦土'},
+    {id:'folly-2',roman:'II',title:{zh:'朽塔焦土',en:'Rusted Tower · Scorched Earth',ja:'朽塔の焦土'},
      media:LOCAL_VIDEO+'folly-2/',poster:PHOTOS+'aether-scorched-earth.webp',
      assets:{structure:['structure-1.jpeg','structure-2.JPG','structure-3.JPG','structure-4.jpeg'].map(function(f){return LOCAL_VIDEO+'folly-2-assets/'+f;}),detail:['instrument-1.jpg','instrument-2.jpeg','instrument-3.jpeg'].map(function(f){return LOCAL_VIDEO+'folly-2-assets/'+f;}),film:LOCAL_VIDEO+'folly-2-assets/instrument-2.mp4'},
      year:2026,kind:'radial',endTime:255,
      stages:[
-       {start:0,end:28,zh:'狭间',en:'Interval',ja:'狭間'},
+       {start:0,end:28,zh:'狭间',en:'Aether Interval',ja:'狭間'},
        {start:28,end:67,zh:'构合',en:'Assembly',ja:'構合'},
        {start:67,end:105,zh:'震颤',en:'Tremor',ja:'震動'},
        {start:105,end:142,zh:'风蚀',en:'Weathering',ja:'風食'},
@@ -97,7 +97,7 @@
         {garden:'死水心室的构造取自沉墟中失去流动的水域：爆裂的储水形态、残余的心室结构与一潭死水彼此牵连。水体缓慢流失，承托随之消退；原本依靠内部平衡维系的材料在自重中挤压、碎裂、向内收缩，最后仍留在死水里继续腐蚀。',
          instrument:'「锈血心脏」由锈蚀金属碎片与玻璃罩构成，嵌在心室的钢筋与钢索连接之中。心室的下沉牵动滑轮与泵片，将缓慢的坍塌转为急促的敲击；每一次搏动都借来园林衰败的力量，同时耗损维持自身运作的结构。',
          theatre:'死水心室的下沉与锈血心脏的搏动在同一段时间内相互牵动。声音从承重、牵引、碰撞和材料失效中发生，越接近最后一次敲击，乐器便越难继续维持原有形态。',
-         score:'这份图谱由「坍塌结构：死水心室」的钢筋残片结构设计图与「废墟乐器：锈血心脏」循环开关的电路图叠合而成。两套图线在同一平面交错：随着钢筋锈蚀、应力衰减，图谱记录着心室坍缩时构件的位移与机械联动，而坍塌的进程又经感应装置传入电子线路，转化为不断加速的敲击与搏动。位移、断裂与发声逐渐加重「锈血心脏」的运行负荷，使它在愈发急促的跳动中最终熔毁；原本用于设计与记录的图纸，也由此成为心室坍缩的变奏曲乐谱。',
+         score:'这份图谱由「坍塌结构：死水心室」的钢筋残片结构设计图与「废墟乐器：锈血心脏」循环开关的电路图叠合而成。两套图线在同一平面交错：随着钢筋锈蚀、应力衰减，图谱记录着心室坍缩时构件的位移与机械联动，而坍塌的进程又经感应装置传入电子线路，转化为不断加速的敲击与搏动。位移、断裂与发声逐渐加重「锈血心脏」的运行负荷，使它在愈发急促的跳动中最终熔毁；原本用于设计与记录的图纸，也由此成为心室残响的变奏曲乐谱。',
          phases:{
            structure:[
              [
@@ -175,7 +175,7 @@
         {garden:'The stagnant-heart structure grows from a reservoir shell, the remains of a heart chamber and a pool of still water. As the water drains, internal support gives way. Under its own weight the construction compresses, fractures and contracts, leaving parts immersed and exposed to further corrosion.',
          instrument:'The Rust-Blood Heart encloses pieces of corroded metal in glass, connected to the ruined chamber by steel cables, pulleys and a pump blade. The chamber’s slow descent is transmitted as increasingly rapid knocks: each beat borrows energy from the garden’s collapse while consuming the instrument itself.',
          theatre:'The sinking chamber and the beating heart move through the same time. Sound arises from load, tension, collision and structural failure; as the final blow approaches, the instrument loses the conditions that held it together.',
-         score:'This score overlays the structural drawing of the rebar fragments in “Collapsing Structure: Stagnant Heart Chamber” with the circuit diagram of the cycling switch in “Ruin Instrument: Rust-Blood Heart.” Their lines intersect on a single plane: as the steel corrodes and its stresses diminish, the drawing records the shifting components and mechanical linkages of the chamber’s collapse, while sensors carry the progress of that collapse into an electronic circuit, turning it into increasingly rapid knocks and pulses. Each displacement, fracture and sound adds to the load on Rust-Blood Heart, driving its beat faster until it finally melts down. What began as a drawing for design and documentation thus becomes the score for variations on the chamber’s collapse.',
+         score:'This score overlays the structural drawing of the rebar fragments in “Collapsing Structure: Stagnant Heart Chamber” with the circuit diagram of the cycling switch in “Ruin Instrument: Rust-Blood Heart.” Their lines intersect on a single plane: as the steel corrodes and its stresses diminish, the drawing records the shifting components and mechanical linkages of the chamber’s collapse, while sensors carry the progress of that collapse into an electronic circuit, turning it into increasingly rapid knocks and pulses. Each displacement, fracture and sound adds to the load on Rust-Blood Heart, driving its beat faster until it finally melts down. What began as a drawing for design and documentation thus becomes the score of variations on the chamber’s lingering echoes.',
          phases:{
            structure:[
              [
@@ -206,10 +206,10 @@
              ]
            ]
          }},
-        {garden:'Three outward cable anchors and a suspended weight hold the Ruined Tower upright around a glass pivot. As cable tension weakens, its centre of gravity shifts. The ground-level grinding structure repeatedly wears at its supports until the tower can no longer keep its precarious balance.',
+        {garden:'Three outward cable anchors and a suspended weight hold the Rusted Tower upright around a glass pivot. As cable tension weakens, its centre of gravity shifts. The ground-level grinding structure repeatedly wears at its supports until the tower can no longer keep its precarious balance.',
          instrument:'Aether Interval links moving antennas, a theremin-like interference field and a sand plate. Electromagnetic changes become frequency, sound and vibration before briefly appearing in the sand. Falling grains, static charge and electronic noise gradually burden the apparatus.',
          theatre:'The tower, the aether interval and the ground-level grinder perform together. Sand gathers and disperses, cables tremble and the wheel abrades the ground. One order produces sound through the very motions that undermine another.',
-         score:'This score overlays the drawing of the tower’s oscillating structure in “Collapsing Structure: Ruined Tower” with the beat-frequency circuit diagram of “Ruin Instrument: Aether Interval.” Their lines intersect on a single plane: as the tensioned structure loosens and the tower loses its balance, the drawing records the displacement of components and signal interference between the tower’s overlapping antennas. Sensors carry those disrupted signals into the signal circuits and electromagnetic system, where they become sounds of continually shifting frequency. The accumulation of interference and overload steadily increases the strain on Aether Interval, until the instrument finally burns out amid ever noisier vibrations. What began as a drawing for design and documentation thus becomes the score of a cruel scherzo for the tower’s aether.',
+         score:'This score overlays the drawing of the tower’s oscillating structure in “Collapsing Structure: Rusted Tower” with the beat-frequency circuit diagram of “Ruin Instrument: Aether Interval.” Their lines intersect on a single plane: as the tensioned structure loosens and the tower loses its balance, the drawing records the displacement of components and signal interference between the tower’s overlapping antennas. Sensors carry those disrupted signals into the signal circuits and electromagnetic system, where they become sounds of continually shifting frequency. The accumulation of interference and overload steadily increases the strain on Aether Interval, until the instrument finally burns out amid ever noisier vibrations. What began as a drawing for design and documentation thus becomes the score of a cruel scherzo for the tower’s aether.',
          phases:{
            structure:[
              [
@@ -253,7 +253,7 @@
         {garden:'「死水心室」は破裂した貯水槽の形態、心室の残存構造、淀んだ水から組み立てられる。水が失われるにつれ内部の支持も消え、構造は自重で押し潰され、割れ、内側へと縮む。残った部分は水に浸されたまま腐食を続ける。',
          instrument:'錆びた金属片をガラスに封じた「錆血の心臓」は、鋼索と滑車、ポンプ片を通じて心室につながる。ゆっくりした沈下が急速な打撃へと変わり、一度の鼓動ごとに園林の崩壊から力を借りながら、自らの構造も消耗する。',
          theatre:'沈む心室と鼓動する心臓は同じ時間を生きる。音は荷重、張力、衝突、構造の失効から生まれ、最後の一打に近づくほど、楽器は元の姿を維持できなくなる。',
-         score:'この譜面は、「崩壊構造：死水の心室」の鉄筋残片の構造設計図と、「廃墟の楽器：錆血の心臓」の循環スイッチの回路図を重ね合わせて生まれた。二つの図面の線は同じ平面で交わり、鉄筋の腐食と応力の低下に伴って心室が圧潰していく過程で、部材の変位と機械的な連動を記録する。同時に、崩壊の進行は感知装置から電子回路へと伝えられ、次第に速まる打撃と鼓動の音へと変わっていく。変位と断裂、発声を重ねるほど「錆血の心臓」にかかる負荷は増し、鼓動を速めながら、ついには溶け崩れる。こうして設計と記録のために引かれた線は、心室の圧潰をめぐる変奏曲の譜面となる。',
+         score:'この譜面は、「崩壊構造：死水心室」の鉄筋残片の構造設計図と、「廃墟の楽器：錆血の心臓」の循環スイッチの回路図を重ね合わせて生まれた。二つの図面の線は同じ平面で交わり、鉄筋の腐食と応力の低下に伴って心室が圧潰していく過程で、部材の変位と機械的な連動を記録する。同時に、崩壊の進行は感知装置から電子回路へと伝えられ、次第に速まる打撃と鼓動の音へと変わっていく。変位と断裂、発声を重ねるほど「錆血の心臓」にかかる負荷は増し、鼓動を速めながら、ついには溶け崩れる。こうして設計と記録のために引かれた線は、心室に残る響きの変奏曲の譜面となる。',
          phases:{
            structure:[
              [
@@ -861,9 +861,9 @@
   // Each Folly has its own authored score title, distinct from the
   // common category label used by the score controls and page navigation.
   var FOLLY_SCORE_TITLES={
-    zh:['《心室坍缩变奏曲》','《朽塔以太谐虐曲》'],
-    en:['Variations on the Chamber’s Collapse','Tower Aether: A Cruel Scherzo'],
-    ja:['《心室圧潰変奏曲》','《朽塔エーテル諧虐曲》']
+    zh:['《心室残响变奏曲》','《朽塔以太谐虐曲》'],
+    en:['Variations on the Chamber’s Afterecho','Tower Aether: A Cruel Scherzo'],
+    ja:['《心室残響変奏曲》','《朽塔エーテル諧虐曲》']
   };
   function scoreWorkTitle(si){
     return (FOLLY_SCORE_TITLES[state.lang]||FOLLY_SCORE_TITLES.zh)[si];
@@ -966,8 +966,8 @@
   // The overall theatre title may differ from the structure's name.
   var READING_PART_NAMES={
     zh:[['死水心室','锈血心脏','沉墟心室'],['朽塔','以太狭间','朽塔焦土']],
-    en:[['Stagnant Heart Chamber','Rust-Blood Heart','Effluent Sedimentation'],['Ruined Tower','Aether Interval','Aether Scorched-Earth']],
-    ja:[['死水の心室','錆血の心臓','沈墟の心室'],['朽塔','エーテルの狭間','朽塔の焦土']]
+    en:[['Stagnant Heart Chamber','Rust-Blood Heart','Sunken Ventricle'],['Rusted Tower','Aether Interval','Rusted Tower · Scorched Earth']],
+    ja:[['死水心室','錆血の心臓','沈墟の心室'],['朽塔','エーテルの狭間','朽塔の焦土']]
   };
   function readingSectionName(si,i){
     return (READING_PART_NAMES[state.lang]||READING_PART_NAMES.zh)[si][i];
