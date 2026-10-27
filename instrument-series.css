@@ -1096,3 +1096,31 @@ body.ins-modal-open{overflow:hidden!important;}
 .ins-room .ins-arrow{
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M5 19 19 5M9 5h10v10' stroke='%23363834' stroke-width='1.8' fill='none' stroke-linecap='square'/%3E%3C/svg%3E");
 }
+
+
+/* v60 · Remove inherited grey artwork mats from the instrument. */
+/* Background artwork is allowed to retain its own actual pixel colours.
+   These overrides remove only the artificial grey CSS stages. */
+.ins-room .ins-hero-screen,
+.ins-room .ins-hero-visual,
+.ins-room .ins-hero-face,
+.ins-room .ins-card-image,
+.ins-room .ins-card-button,
+.ins-room .ins-hero-switch {
+  background: transparent !important;
+  background-color: transparent !important;
+  border: 0;
+  box-shadow: none;
+}
+.ins-room .ins-hero-screen::before,
+.ins-room .ins-hero-screen::after,
+.ins-room .ins-card-image::before,
+.ins-room .ins-card-image::after {
+  background: none !important;
+  box-shadow: none !important;
+}
+/* The former bordered pending-image tile is also unframed. */
+.ins-room .ins-await {
+  border: 0;
+  background: transparent;
+}
