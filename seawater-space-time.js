@@ -20,7 +20,11 @@
       .replace(/'/g, "&#39;");
   }
   function dateValue(date) {
-    var n = Date.parse(String(date || "") + "T12:00:00Z");
+    var recorded = String(date || "");
+    // Month-only ledger entries stay month-only in the tooltip; the 1st is
+    // used internally solely to give them a position along the time axis.
+    var forPlot = /^\d{4}-\d{2}$/.test(recorded) ? recorded + "-01" : recorded;
+    var n = Date.parse(forPlot + "T12:00:00Z");
     return Number.isFinite(n) ? n : 0;
   }
   function nameFor(record, lang) {
@@ -120,8 +124,8 @@
     var uid = "sea-water-cube-" + index;
     var label = nameFor(record, lang);
     var lat = Number(record.lat), lon = Number(record.lng);
-    var detail = label + " · " + record.date + " · " + Math.abs(lat).toFixed(2) +
-      "°" + (lat >= 0 ? "N" : "S") + " / " + Math.abs(lon).toFixed(2) +
+    var detail = label + " · " + record.date + " · " + Math.abs(lat).toFixed(6) +
+      "°" + (lat >= 0 ? "N" : "S") + " / " + Math.abs(lon).toFixed(6) +
       "°" + (lon >= 0 ? "E" : "W");
     var center = p(time, longitude, latitude), right = center.x <= 930;
     return '<g class="seawater-water-block" tabindex="0" role="img" aria-label="' + esc(detail) + '">' +
