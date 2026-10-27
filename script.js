@@ -313,6 +313,7 @@ const rooms = works.concat(collections, writings);
 const indexYears = {
   "ruin-garden": "2025-",
   "the-instrument": "2023-",
+  "fictional-topography": "2021-",
   "ruin-atlas": "2026-",
   "seawater": "2019-",
   "room-by-the-lake": "2020",
@@ -821,17 +822,6 @@ function indexPanel() {
       '<section class="index-group"><p class="index-heading">' + labels[state.lang].works + "</p>";
 
   works.forEach(function(item) {
-    if (item.slug === "fictional-topography") {
-      var unavailable = {
-        zh: "暂时不可用", en: "Temporarily unavailable", ja: "現在利用できません"
-      }[state.lang];
-      html += '<span class="index-link index-link-unavailable" tabindex="0" ' +
-        'aria-label="' + escapeHtml(localised(item.title) + " · " + unavailable) + '">' +
-        '<span class="index-unavailable-title">' + escapeHtml(localised(item.title)) + '</span>' +
-        '<span class="index-unavailable-note" aria-hidden="true">' + escapeHtml(unavailable) + '</span>' +
-      '</span>';
-      return;
-    }
     html += '<button type="button" class="index-link" data-action="route" data-route="' + item.slug + '">' +
       indexItemLabel(item) + "</button>";
   });
@@ -895,7 +885,7 @@ function renderHome() {
 
 function parseRoute() {
   var slug = location.hash.replace(/^#\/?/, "").split("/")[0];
-  if (!slug || slug === "fictional-topography") return null;
+  if (!slug) return null;
   if (slug === "about") return aboutProfile;
   return rooms.find(function(item) { return item.slug === slug; }) || null;
 }
@@ -1370,7 +1360,6 @@ function goHome() {
 }
 
 function goRoute(route) {
-  if (route === "fictional-topography") return;
   state.indexOpen = false;
   state.calendarOpen = false;
   location.hash = route;
@@ -2230,40 +2219,29 @@ render();
   }
 
   if (!findBySlug(works, "fictional-topography")) {
-    var fictionalTopography = {
+    var fictiveTopography = {
       slug: "fictional-topography",
       group: "work",
       title: {
         zh: "虚构地形学",
-        en: "Fictional Topography",
-        ja: "架空地形学"
+        en: "Fictive Topography",
+        ja: "虚構地形学"
       },
+      // The authored reading room and project statements live in
+      // fictive-topography.js. Do not load the old blurry placeholder images.
       intro: {
-        zh: "这里的地图不负责复原世界，而负责收留遗漏之物。地点被发现、命名、记录，再以图像、声音与文本进入《墟域图·遗构馆》，成为一片不断改写自身的地理。",
-        en: "These maps do not restore the world; they shelter what it leaves out. Sites are found, named and recorded, then enter the Atlas of Ruins through image, sound and text—an unfinished geography rewriting itself.",
-        ja: "この地図は世界を復元するためではなく、こぼれ落ちたものを収めるためにある。場所は発見され、名づけられ、記録され、像・音・言葉として《墟域図・遺構館》へ入り、自らを書き換え続ける地理となる。"
+        zh: "以虚构的空间反向勘测真实：为未曾存在的地形留下坐标。",
+        en: "Surveying the real through imagined spaces: coordinates for places that never existed.",
+        ja: "架空の空間から現実を逆向きに測り、存在しなかった地形に座標を残す。"
       },
-      images: [
-        {
-          src: "./works/fictional-topography/img5-blur.jpg",
-          caption: { zh: "地形记录 01", en: "terrain record 01", ja: "地形記録 01" }
-        },
-        {
-          src: "./works/fictional-topography/img6-blur.jpg",
-          caption: { zh: "地形记录 02", en: "terrain record 02", ja: "地形記録 02" }
-        }
-      ]
+      images: []
     };
-
-    works.push(fictionalTopography);
-    rooms.splice(2, 0, fictionalTopography);
+    works.push(fictiveTopography);
+    rooms.splice(2, 0, fictiveTopography);
   }
 
   function nextWithinGroup(item) {
     var list = item && item.group === "collection" ? collections : item && item.group === "writing" ? writings : works;
-    // Retain Fictional Topography in the index, but never send a visitor
-    // to its unfinished page via the footer's next-work navigation.
-    list = list.filter(function(entry) { return entry.slug !== "fictional-topography"; });
     if (!list.length) return null;
     var index = list.findIndex(function (candidate) { return candidate.slug === item.slug; });
     if (index < 0) return list[0];
