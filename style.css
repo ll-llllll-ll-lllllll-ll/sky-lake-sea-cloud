@@ -3073,3 +3073,179 @@ body {
   .index-panel .index-link-unavailable{font-size:18px;padding:4px 0;}
   .index-panel .index-unavailable-note{left:calc(100% + 10px);font-size:10px;}
 }
+
+
+/* Portfolio index dates + personal about page */
+/* Add a quiet fourth column without changing the existing index backdrop. */
+.index-panel {
+  width: min(1040px, calc(100vw - 64px));
+  grid-template-columns: minmax(0, .93fr) minmax(0, 1.42fr) minmax(0, 1.10fr) minmax(100px, .58fr);
+  column-gap: 24px;
+  row-gap: 30px;
+}
+.index-panel .index-link .index-year {
+  display: inline-block;
+  margin-left: 7px;
+  color: rgba(247, 247, 240, .44);
+  font-family: var(--sans);
+  font-size: 10px;
+  font-weight: 400;
+  line-height: 1;
+  letter-spacing: .025em;
+  vertical-align: baseline;
+  white-space: nowrap;
+}
+.index-panel .index-link:hover .index-year {
+  color: rgba(247, 247, 240, .65);
+}
+.index-panel .index-about-group {
+  align-self: start;
+  padding-top: 24px;
+}
+.index-panel .index-about-link {
+  font-size: clamp(15px, 1.25vw, 18px);
+  letter-spacing: .045em;
+}
+
+/* Unembellished paper room, with a reserved rather than invented portrait. */
+.about-room,
+.about-room .about-scroll {
+  background: #f4f3ee;
+}
+.about-room .room-head {
+  border-bottom-color: rgba(23, 24, 19, .12);
+  background: rgba(244, 243, 238, .94);
+}
+.about-room .room-head .language button {
+  color: rgba(23, 24, 19, .34);
+}
+.about-room .room-head .language button:hover,
+.about-room .room-head .language button.is-active {
+  color: rgba(23, 24, 19, .92);
+}
+.about-layout {
+  box-sizing: border-box;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) clamp(200px, 23vw, 292px);
+  align-items: start;
+  gap: clamp(40px, 8vw, 134px);
+  width: min(1080px, 100%);
+  min-height: calc(100svh - 54px);
+  margin: 0 auto;
+  padding: clamp(90px, 15svh, 175px) clamp(28px, 5vw, 78px) 100px;
+}
+.about-copy {
+  min-width: 0;
+}
+.about-kicker {
+  margin: 0 0 24px;
+  color: rgba(23, 24, 19, .38);
+  font-family: var(--sans);
+  font-size: 10px;
+  letter-spacing: .11em;
+}
+.about-name {
+  margin: 0;
+  font-family: var(--serif);
+  font-size: clamp(31px, 3.2vw, 43px);
+  font-weight: 400;
+  line-height: 1.35;
+  letter-spacing: .015em;
+}
+.about-practice {
+  margin: 16px 0 0;
+  color: rgba(23, 24, 19, .45);
+  font-family: var(--serif);
+  font-size: 12px;
+  letter-spacing: .045em;
+}
+.about-prose {
+  max-width: 530px;
+  margin-top: clamp(65px, 11vh, 130px);
+}
+.about-prose p {
+  margin: 0 0 1.5em;
+  font-family: var(--serif);
+  font-size: clamp(15px, 1.2vw, 17px);
+  font-weight: 400;
+  line-height: 2.05;
+  letter-spacing: .018em;
+}
+.about-portrait {
+  box-sizing: border-box;
+  position: relative;
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  margin: 3px 0 0;
+  overflow: hidden;
+  border: 1px solid rgba(23, 24, 19, .13);
+  background: rgba(23, 24, 19, .018);
+}
+.about-portrait img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: none;
+}
+.about-image-label {
+  position: absolute;
+  left: 13px;
+  bottom: 12px;
+  color: rgba(23, 24, 19, .29);
+  font-family: var(--sans);
+  font-size: 9px;
+  line-height: 1;
+  letter-spacing: .09em;
+}
+@media (max-width: 990px) and (min-width: 761px) {
+  .index-panel {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    width: min(670px, calc(100vw - 64px));
+  }
+  .index-panel .index-about-group {
+    padding-top: 24px;
+  }
+  .about-layout {
+    gap: 45px;
+  }
+}
+@media (max-width: 760px) {
+  .index-panel {
+    grid-template-columns: minmax(0, 1fr);
+    width: min(420px, calc(100vw - 36px));
+    max-height: calc(100svh - 110px);
+    overflow-y: auto;
+    column-gap: 0;
+    row-gap: 28px;
+  }
+  .index-panel .index-link .index-year {
+    margin-left: 6px;
+    font-size: 9px;
+  }
+  .index-panel .index-about-group {
+    padding-top: 20px;
+    border-top: 1px solid rgba(247, 247, 240, .13);
+  }
+  .about-layout {
+    grid-template-columns: 1fr;
+    gap: 0;
+    min-height: 0;
+    width: min(580px, 100%);
+    padding: clamp(62px, 11svh, 102px) 25px 95px;
+  }
+  .about-name {
+    font-size: 34px;
+  }
+  .about-prose {
+    margin-top: 55px;
+  }
+  .about-prose p {
+    font-size: 15px;
+    line-height: 1.95;
+  }
+  .about-portrait {
+    width: min(64vw, 270px);
+    margin-top: 46px;
+  }
+}
