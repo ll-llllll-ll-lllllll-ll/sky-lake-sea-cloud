@@ -107,6 +107,11 @@ const works = [
       en: "A ruin is not something already finished. Matter, wind, plants, gravity and time continue the work; I only arrange a brief encounter among them.",
       ja: "廃墟は、すでに終わったものではない。素材、風、植物、重力、時間が仕事を続け、私はそのあいだに短い出会いを置く。"
     },
+    closing: {
+      zh: "废墟从未在此终结。它的落成，仅仅是让形体定格于某种正在坍塌的姿态，而后续的演变，早已让渡给时间。",
+      en: "The ruin has never come to an end here. Its completion merely holds its form in a posture already collapsing; all that follows has long since been ceded to time.",
+      ja: "廃墟はここで終わったことなどない。その完成は、崩れつつある姿勢に形をひととき定着させるにすぎず、その後の変容は、とうに時間へと委ねられている。"
+    },
     images: [
       { src: "./img1-blur.jpg", caption: { zh: "现场记录 01", en: "site record 01", ja: "現場記録 01" } },
       { src: "./img2-blur.jpg", caption: { zh: "现场记录 02", en: "site record 02", ja: "現場記録 02" } }
