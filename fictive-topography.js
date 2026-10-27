@@ -165,11 +165,11 @@
     var n=block.files.length;
     return '<section class="ft-media-unit ft-slides" data-ft-slideshow="'+e(block.id)+'" data-ft-active="0">'+
       '<div class="ft-media-heading"><h3>'+e(l(block.label))+'</h3><span>'+pad(1)+' / '+pad(n)+'</span></div>'+
-      '<div class="ft-slide-screen" aria-label="'+e(l(block.label))+'">'+
+      '<button type="button" class="ft-slide-screen" data-ft-open-slide="'+e(block.id)+'" aria-label="'+e(t("view")+' · '+l(block.label))+'">'+
         block.files.map(function(src,i){return '<img class="ft-slide-image'+(i===0?' is-active':'')+'" src="'+
           e(src)+'" alt="'+e(l(block.label))+' '+pad(i+1)+' / '+pad(n)+'" loading="lazy" decoding="async" '+
           'data-ft-slide="'+i+'" aria-hidden="'+(i===0?'false':'true')+'">';}).join('')+
-      '</div>'+
+      '</button>'+
       '<div class="ft-slide-footer">'+
         '<div class="ft-slide-options" role="group" aria-label="'+e(l(block.label))+'">'+
           block.files.map(function(src,i){return '<button type="button" class="ft-slide-choice'+(i===0?' is-active':'')+
@@ -301,6 +301,17 @@
     if(count)count.textContent=pad(index+1)+" / "+pad(group.images.length);
     var head=group.el.querySelector(".ft-media-heading > span");
     if(head)head.textContent=pad(index+1)+" / "+pad(group.images.length);
+    if(openMedia===group.id && currentRoom){
+      var viewer=currentRoom.querySelector("[data-ft-viewer]");
+      var block=MEDIA[group.id];
+      if(viewer && block){
+        var full=viewer.querySelector("[data-ft-viewer-img]");
+        full.src=block.files[index];
+        full.alt=l(block.label)+" "+pad(index+1)+" / "+pad(group.images.length);
+        viewer.querySelector("[data-ft-viewer-label]").textContent=
+          l(block.label)+" "+pad(index+1)+" / "+pad(group.images.length);
+      }
+    }
   }
   function pickSlide(group,index,manual){
     if(!group||!group.images.length)return;
@@ -341,9 +352,10 @@
     Object.keys(slideGroups).forEach(function(key){stopTimer(slideGroups[key]);});
     var img=viewer.querySelector("[data-ft-viewer-img]");
     var video=viewer.querySelector("[data-ft-viewer-video]");
-    if(block.type==="gif"){
-      img.src=block.src;
-      img.alt=block.file;
+    if(block.type==="gif" || block.type==="slides"){
+      var group=slideGroups[id],index=group?group.index:0;
+      img.src=block.type==="slides"?block.files[index]:block.src;
+      img.alt=block.type==="slides"?(l(block.label)+" "+pad(index+1)):block.file;
       img.hidden=false;
       video.hidden=true;
     }else if(block.type==="video"){
@@ -361,7 +373,9 @@
       var started=video.play();
       if(started && started.catch)started.catch(function(){video.controls=true;});
     }
-    viewer.querySelector("[data-ft-viewer-label]").textContent=block.file;
+    var group=slideGroups[id];
+    viewer.querySelector("[data-ft-viewer-label]").textContent=block.type==="slides"?
+      (l(block.label)+" "+pad(group?group.index+1:1)+" / "+pad(block.files.length)):block.file;
     viewer.hidden=false;
     document.body.classList.add("ft-modal-open");
     viewer.querySelector("[data-ft-close]").focus({preventScroll:true});
@@ -433,6 +447,11 @@
     }
     var close=target.closest("[data-ft-close]");
     if(close && close.closest(".ft-room")){closeViewer(true);return;}
+    var slideImage=target.closest("[data-ft-open-slide]");
+    if(slideImage && slideImage.closest(".ft-room")){
+      openViewer(slideImage.getAttribute("data-ft-open-slide"),slideImage);
+      return;
+    }
     var open=target.closest("[data-ft-open]");
     if(open && open.closest(".ft-room"))openViewer(open.getAttribute("data-ft-open"),open);
   });
@@ -482,6 +501,15 @@
   });
   document.addEventListener("keydown",function(evt){
     if(openMedia && evt.key==="Escape"){evt.preventDefault();closeViewer(true);return;}
+    if(openMedia && (evt.key==="ArrowRight"||evt.key==="ArrowLeft") &&
+       MEDIA[openMedia] && MEDIA[openMedia].type==="slides"){
+      var fullGroup=slideGroups[openMedia];
+      if(fullGroup){
+        evt.preventDefault();
+        pickSlide(fullGroup,fullGroup.index+(evt.key==="ArrowRight"?1:-1),true);
+      }
+      return;
+    }
     if(!currentRoom||!evt.target.closest)return;
     var slideshow=evt.target.closest("[data-ft-slideshow]");
     if(!slideshow||!currentRoom.contains(slideshow))return;
