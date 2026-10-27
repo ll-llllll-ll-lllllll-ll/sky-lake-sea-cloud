@@ -2197,21 +2197,22 @@ body {
   width: auto;
   max-width: none;
   margin: 0;
-  color: rgba(26, 27, 23, 0.72);
-  font-family: var(--sans);
-  font-size: 14px;
-  font-weight: 300;
+  color: rgba(26, 27, 23, 0.82);
+  /* Match the serif text used throughout the other collection/work rooms. */
+  font-family: var(--serif);
+  font-size: clamp(16px, 1.3vw, 19px);
+  font-weight: 400;
   line-height: 1.95;
-  letter-spacing: 0.006em;
+  letter-spacing: 0.025em;
 }
 
 .writing-intro-name {
-  margin-right: 0.45em;
-  color: rgba(26, 27, 23, 0.94);
-  font-family: var(--serif);
-  font-size: 1.18em;
-  font-weight: 400;
-  white-space: nowrap;
+  margin-right: 0.3em;
+  color: inherit;
+  font-family: inherit;
+  font-size: 1em;
+  font-weight: 500;
+  white-space: normal;
 }
 
 .writing-tenets {
@@ -2315,8 +2316,8 @@ body {
   }
 
   .writing-room .room-intro {
-    font-size: 14px;
-    line-height: 1.88;
+    font-size: 16px;
+    line-height: 1.95;
   }
 
   .writing-tenets {
@@ -3085,18 +3086,15 @@ body {
 }
 .index-panel .index-link .index-year {
   display: inline-block;
-  margin-left: 7px;
-  color: rgba(247, 247, 240, .44);
-  font-family: var(--sans);
-  font-size: 10px;
-  font-weight: 400;
-  line-height: 1;
-  letter-spacing: .025em;
+  margin-left: .36em;
+  color: inherit;
+  font-family: inherit;
+  font-size: .84em;
+  font-weight: inherit;
+  line-height: inherit;
+  letter-spacing: inherit;
   vertical-align: baseline;
   white-space: nowrap;
-}
-.index-panel .index-link:hover .index-year {
-  color: rgba(247, 247, 240, .65);
 }
 .index-panel .index-about-group {
   align-self: start;
@@ -3220,8 +3218,7 @@ body {
     row-gap: 28px;
   }
   .index-panel .index-link .index-year {
-    margin-left: 6px;
-    font-size: 9px;
+    margin-left: .36em;
   }
   .index-panel .index-about-group {
     padding-top: 20px;
