@@ -116,9 +116,9 @@
       ' ' + xy(p(timeBend,longitude,0)) + ' L ' + xy(p(1,longitude,0)) + '"/>';
   }
   function cube(g, record, time, longitude, latitude, index, lang) {
-    // Smaller, fuller-looking volumes: X length 18 instead of 30 units.
+    // Adjusted proportions: X length 26 (between the original 30 and the reduced 18).
     // Keep geographic placement anchored to the original record coordinates.
-    var p = g.project, dt = 9 / g.width, dy = .064, dz = .071;
+    var p = g.project, dt = 13 / g.width, dy = .064, dz = .071;
     function v(x, y, z) { return p(time + x*dt, longitude + y*dy, latitude + z*dz); }
     var a=v(-1,-1,-1), b=v(1,-1,-1), c=v(1,-1,1), d=v(-1,-1,1);
     var e=v(-1,1,-1),  f=v(1,1,-1),  h=v(1,1,1),  j=v(-1,1,1);
@@ -171,17 +171,17 @@
     // No heavy blur or feTurbulence: the SVG stays lightweight on Safari.
     var lines = [
       '<defs>' +
-        '<radialGradient id="seawater-water-density-mask" cx="49%" cy="49%" r="72%">' +
-          '<stop offset="0%" stop-color="white" stop-opacity=".92"/>' +
-          '<stop offset="34%" stop-color="white" stop-opacity=".78"/>' +
-          '<stop offset="62%" stop-color="white" stop-opacity=".43"/>' +
-          '<stop offset="83%" stop-color="white" stop-opacity=".16"/>' +
-          '<stop offset="100%" stop-color="white" stop-opacity=".015"/>' +
+        '<radialGradient id="seawater-water-density-mask" cx="49%" cy="49%" r="75%">' +
+          '<stop offset="0%" stop-color="white" stop-opacity=".98"/>' +
+          '<stop offset="34%" stop-color="white" stop-opacity=".93"/>' +
+          '<stop offset="62%" stop-color="white" stop-opacity=".77"/>' +
+          '<stop offset="83%" stop-color="white" stop-opacity=".55"/>' +
+          '<stop offset="100%" stop-color="white" stop-opacity=".32"/>' +
         '</radialGradient>' +
-        '<radialGradient id="seawater-water-core-gradient" cx="42%" cy="44%" r="69%">' +
-          '<stop offset="0%" stop-color="#526c6d" stop-opacity=".24"/>' +
-          '<stop offset="45%" stop-color="#829999" stop-opacity=".12"/>' +
-          '<stop offset="100%" stop-color="#b0bfbb" stop-opacity="0"/>' +
+        '<radialGradient id="seawater-water-core-gradient" cx="42%" cy="44%" r="70%">' +
+          '<stop offset="0%" stop-color="#4d999b" stop-opacity=".27"/>' +
+          '<stop offset="45%" stop-color="#79b4ad" stop-opacity=".17"/>' +
+          '<stop offset="100%" stop-color="#bad9cd" stop-opacity=".025"/>' +
         '</radialGradient>' +
       '</defs>',
       '<g class="seawater-mesh" aria-hidden="true">'
