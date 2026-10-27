@@ -1168,7 +1168,8 @@ function renderRoom(item) {
   var images = item.images || [];
   var next = rooms[(roomIndex(item) + 1) % rooms.length];
   var groupLabel = item.group === "collection" ? labels[state.lang].collection : item.group === "writing" ? labels[state.lang].writings : labels[state.lang].works;
-  var html = '<section class="room-view' + (item.group === "writing" ? " writing-room" : "") + '">' +
+  var html = '<section class="room-view' + (item.group === "writing" ? " writing-room" : "") +
+    '" data-room="' + escapeHtml(item.slug) + '" data-group="' + escapeHtml(item.group) + '">' +
     '<header class="room-head">' +
       '<button type="button" data-action="home" class="room-back">←︎ ' + escapeHtml(labels[state.lang].back) + "</button>" +
       '<p>' + escapeHtml(groupLabel) + " / " + escapeHtml(localised(item.title)) + "</p>" +
