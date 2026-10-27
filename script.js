@@ -1223,6 +1223,8 @@ function renderRoom(item) {
       '<p>' + escapeHtml(groupLabel) + " / " + escapeHtml(localised(item.title)) + "</p>" +
       languageSwitch() +
     "</header>" +
+    (item.slug === "room-by-the-lake" ?
+      '<div class="lake-current" aria-hidden="true"><span class="lake-swell lake-swell-one"></span><span class="lake-swell lake-swell-two"></span><span class="lake-surface"></span></div>' : "") +
     '<div class="room-scroll">' +
       '<section class="room-lead">' +
         '<p class="room-group">' + escapeHtml(groupLabel) + "</p>" +
@@ -4479,7 +4481,9 @@ render();
   var collectionStageResizeFrame = 0;
 
   function sizeCollectionStages(item) {
-    if (!item || item.group !== "collection") return;
+    // Lake paintings no longer use the rectangular 1.70x/1.50x gallery stage.
+    // Their native proportions are constrained directly by the dark-room CSS.
+    if (!item || item.group !== "collection" || item.slug === "room-by-the-lake") return;
 
     var stages = document.querySelectorAll('.room-view[data-group="collection"] .room-image');
     if (!stages.length) return;
