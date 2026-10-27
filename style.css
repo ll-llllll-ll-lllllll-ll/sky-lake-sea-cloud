@@ -3248,17 +3248,15 @@ body {
 }
 
 
-/* ===== Room by the Lake: unframed dark-water reading room =====
-   This page intentionally opts out of collection's pale 1.7×/1.5×
-   image stage. The painting keeps its colours, native proportions,
-   and uninterrupted edges; only the space around it slowly moves.
-*/
+/* ===== Room by the Lake · folded walls and the dark floor =====
+   Reference: the photographed room has three faint wall planes and a dark
+   floor, rather than an animated body of water. This is constructed entirely
+   from restrained gradients; the artwork image is not recoloured or framed. */
 .room-view[data-room="room-by-the-lake"] {
   isolation: isolate;
-  background: #080f16;
-  color: #e0e4e6;
+  background: #29292a;
+  color: rgba(234,233,230,.93);
 }
-
 .room-view[data-room="room-by-the-lake"] .lake-current {
   position: absolute;
   inset: 0;
@@ -3266,146 +3264,136 @@ body {
   overflow: hidden;
   pointer-events: none;
   background:
-    radial-gradient(ellipse at 54% 89%, rgba(24, 42, 56, .70), transparent 72%),
-    radial-gradient(ellipse at 9% 18%, rgba(20, 32, 43, .72), transparent 70%),
-    linear-gradient(160deg, #070d14 0%, #101b25 54%, #080e15 100%);
+    radial-gradient(ellipse 58% 73% at 48% 50%,rgba(115,111,105,.13),transparent 85%),
+    linear-gradient(180deg,#303034 0%,#454542 49%,#3b3b39 74%,#18191a 100%);
 }
-
-.room-view[data-room="room-by-the-lake"] .lake-current::before {
+/* Left and right wall folds; their edges are deliberately close to vertical
+   and slightly non-parallel, as in an actual corner under low gallery light. */
+.room-view[data-room="room-by-the-lake"] .lake-wall-left,
+.room-view[data-room="room-by-the-lake"] .lake-wall-right,
+.room-view[data-room="room-by-the-lake"] .lake-floor {
   position: absolute;
   inset: 0;
-  content: "";
-  background: linear-gradient(180deg,
-    rgba(2, 6, 10, .50) 0%,
-    rgba(2, 6, 10, .06) 47%,
-    rgba(2, 6, 10, .32) 100%);
-}
-
-.room-view[data-room="room-by-the-lake"] .lake-swell {
-  position: absolute;
-  inset: -28%;
+  display: block;
   pointer-events: none;
-  transform-origin: 50% 60%;
 }
-
-.room-view[data-room="room-by-the-lake"] .lake-swell-one {
+.room-view[data-room="room-by-the-lake"] .lake-wall-left {
+  -webkit-clip-path: polygon(0 0,22.8% 0,23.5% 78.3%,0 87%);
+  clip-path: polygon(0 0,22.8% 0,23.5% 78.3%,0 87%);
   background:
-    radial-gradient(ellipse 38% 26% at 22% 67%, rgba(98, 126, 143, .29), transparent 100%),
-    radial-gradient(ellipse 45% 20% at 65% 41%, rgba(92, 119, 135, .20), transparent 100%),
-    radial-gradient(ellipse 50% 23% at 72% 88%, rgba(19, 49, 65, .46), transparent 100%);
-  animation: lake-swell-west 35s ease-in-out infinite alternate;
+    linear-gradient(90deg,rgba(16,17,19,.18),transparent 60%,rgba(3,4,5,.14)),
+    linear-gradient(170deg,#343436,#3b3b39 61%,#242426);
 }
-
-.room-view[data-room="room-by-the-lake"] .lake-swell-two {
+.room-view[data-room="room-by-the-lake"] .lake-wall-right {
+  -webkit-clip-path: polygon(72.7% 0,100% 0,100% 86%,72% 78.4%);
+  clip-path: polygon(72.7% 0,100% 0,100% 86%,72% 78.4%);
   background:
-    radial-gradient(ellipse 47% 14% at 53% 77%, rgba(142, 159, 164, .14), transparent 100%),
-    radial-gradient(ellipse 33% 29% at 92% 35%, rgba(53, 91, 108, .33), transparent 100%),
-    radial-gradient(ellipse 44% 19% at 14% 41%, rgba(40, 65, 81, .25), transparent 100%);
-  animation: lake-swell-east 47s ease-in-out -9s infinite alternate;
+    linear-gradient(90deg,rgba(0,0,0,.12),transparent 35%,rgba(0,0,0,.24)),
+    linear-gradient(184deg,#383738,#42413e 64%,#292929);
 }
-
-.room-view[data-room="room-by-the-lake"] .lake-surface {
+/* Narrow seams in the vertical fold; no hard graphic outlines. */
+.room-view[data-room="room-by-the-lake"] .lake-current::before {
+  content: "";
   position: absolute;
-  inset: -22% -16%;
+  inset: 0;
+  z-index: 1;
   background:
-    repeating-linear-gradient(174deg,
-      transparent 0 65px,
-      rgba(165, 177, 183, .028) 77px 83px,
-      transparent 100px 168px),
-    radial-gradient(ellipse at 46% 95%, rgba(84, 110, 124, .13), transparent 65%);
-  opacity: .75;
-  transform-origin: center;
-  -webkit-mask-image: linear-gradient(to bottom, transparent, #000 40%, #000 82%, transparent);
-  mask-image: linear-gradient(to bottom, transparent, #000 40%, #000 82%, transparent);
-  animation: lake-surface-drift 31s ease-in-out -7s infinite alternate;
+    linear-gradient(91deg,transparent 22.1%,rgba(9,10,11,.14) 22.9%,rgba(157,151,143,.03) 23.35%,transparent 24.1%),
+    linear-gradient(89deg,transparent 71.4%,rgba(13,14,15,.18) 72.15%,rgba(172,165,153,.025) 72.6%,transparent 73.5%);
+}
+.room-view[data-room="room-by-the-lake"] .lake-floor {
+  z-index: 2;
+  -webkit-clip-path: polygon(0 86%,23.5% 78.3%,72% 78.4%,100% 86%,100% 100%,0 100%);
+  clip-path: polygon(0 86%,23.5% 78.3%,72% 78.4%,100% 86%,100% 100%,0 100%);
+  background:
+    repeating-linear-gradient(176deg,transparent 0 29px,rgba(136,128,119,.018) 30px 32px,transparent 34px 76px),
+    linear-gradient(180deg,#171718 0%,#0b0c0d 42%,#050607 100%);
+}
+/* One almost imperceptible light change. The wall itself never distorts. */
+.room-view[data-room="room-by-the-lake"] .lake-current::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  background:
+    radial-gradient(ellipse 80% 72% at 50% 51%,transparent 38%,rgba(2,3,4,.28) 100%),
+    linear-gradient(180deg,rgba(8,8,10,.32),transparent 35%,rgba(2,3,4,.11) 67%,rgba(0,0,0,.34));
+  opacity: .92;
+  animation: lake-wall-light 28s ease-in-out infinite alternate;
+}
+@keyframes lake-wall-light {
+  0% {opacity: .96;}
+  50% {opacity: .87;}
+  100% {opacity: .93;}
 }
 
-@keyframes lake-swell-west {
-  0%   { transform: translate3d(-5%, 2%, 0) rotate(-3deg) scale(1); }
-  48%  { transform: translate3d(4%, -4%, 0) rotate(2deg) scale(1.11); }
-  100% { transform: translate3d(8%, 3%, 0) rotate(-1deg) scale(1.02); }
-}
-
-@keyframes lake-swell-east {
-  0%   { transform: translate3d(6%, -5%, 0) rotate(2deg) scale(1.05); }
-  52%  { transform: translate3d(-3%, 4%, 0) rotate(-3deg) scale(1.14); }
-  100% { transform: translate3d(-7%, -2%, 0) rotate(1deg) scale(1); }
-}
-
-@keyframes lake-surface-drift {
-  0%   { transform: translate3d(-3%, 0, 0) skewY(-2deg) scale(1.02); opacity: .54; }
-  50%  { transform: translate3d(4%, -2%, 0) skewY(1deg) scale(1.08); opacity: .85; }
-  100% { transform: translate3d(-1%, 3%, 0) skewY(-1deg) scale(1.04); opacity: .66; }
-}
-
-/* Remove the gallery's white backdrop rather than placing a dark rectangle
-   over it: the animated field remains visible through the scrolling content. */
+/* Keep the opening within one screen so the painting sits low in its room
+   rather than requiring a full scroll to reach the image. */
 .room-view[data-room="room-by-the-lake"] .room-scroll {
   position: absolute;
   z-index: 1;
   background: transparent;
 }
-
+.room-view[data-room="room-by-the-lake"] .lake-opening {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100svh - 54px);
+  padding-bottom: clamp(23px,4.3svh,48px);
+}
+.room-view[data-room="room-by-the-lake"] .lake-opening > .room-lead {
+  display: block;
+  flex: none;
+  min-height: 0;
+  padding: clamp(46px,8svh,94px) max(7vw,26px) clamp(15px,3svh,30px);
+}
 .room-view[data-room="room-by-the-lake"] .room-head {
   z-index: 20;
   border: 0;
-  background: rgba(6, 12, 18, .48);
+  background: rgba(28,28,29,.36);
   box-shadow: none;
-  -webkit-backdrop-filter: blur(12px);
-  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
 }
-
 .room-view[data-room="room-by-the-lake"] .room-head > p {
-  color: rgba(228, 232, 234, .68);
+  color: rgba(231,230,227,.68);
 }
-
 .room-view[data-room="room-by-the-lake"] .room-back {
-  color: rgba(228, 232, 234, .72);
+  color: rgba(231,230,227,.70);
 }
-
 .room-view[data-room="room-by-the-lake"] .room-head .language button {
-  color: rgba(228, 232, 234, .45);
+  color: rgba(231,230,227,.45);
 }
-
 .room-view[data-room="room-by-the-lake"] .room-head .language button:hover,
 .room-view[data-room="room-by-the-lake"] .room-head .language button.is-active {
-  color: rgba(247, 249, 249, .95);
+  color: rgba(247,246,243,.95);
 }
-
-.room-view[data-room="room-by-the-lake"] .room-lead {
-  min-height: 36svh;
-  align-content: end;
-  padding: clamp(104px, 17svh, 195px) max(7vw, 26px) clamp(27px, 5vh, 62px);
-}
-
 .room-view[data-room="room-by-the-lake"] .room-group {
-  color: rgba(223, 231, 235, .43);
+  color: rgba(226,223,220,.43);
 }
-
 .room-view[data-room="room-by-the-lake"] .room-lead h1 {
   max-width: 100%;
-  color: rgba(242, 245, 244, .95);
-  font-size: clamp(34px, 4.4vw, 64px);
+  color: rgba(246,243,239,.94);
+  font-size: clamp(34px,4.4vw,64px);
   line-height: 1.13;
 }
-
 .room-view[data-room="room-by-the-lake"] .room-intro {
-  margin-top: clamp(24px, 4vh, 43px);
-  color: rgba(212, 221, 226, .68);
-  font-size: clamp(14px, 1.15vw, 16px);
+  margin-top: clamp(17px,2.9vh,34px);
+  color: rgba(226,223,220,.64);
+  font-size: clamp(14px,1.15vw,16px);
 }
 
-/* No grey backing sheet, border, drop shadow, afterimage or clipping. */
+/* Eliminate the general collection's image mats and sizing variables. */
 .room-view[data-room="room-by-the-lake"] .room-image,
 .room-view[data-room="room-by-the-lake"] .room-image.is-contain {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  width: min(92vw, 1400px);
+  justify-content: flex-end;
+  width: min(92vw,1400px);
   height: auto;
   min-height: 0;
-  margin: clamp(36px, 6vh, 72px) auto clamp(110px, 19vh, 220px);
+  margin: clamp(66px,10vh,150px) auto clamp(85px,17vh,180px);
   padding: 0;
   overflow: visible;
   border: 0;
@@ -3414,23 +3402,28 @@ body {
   box-shadow: none;
   isolation: auto;
 }
-
+.room-view[data-room="room-by-the-lake"] .lake-opening > .room-image {
+  flex: 1 1 auto;
+  margin: auto auto 0;
+  padding: 0;
+  justify-content: flex-end;
+}
 .room-view[data-room="room-by-the-lake"] .room-image::before,
 .room-view[data-room="room-by-the-lake"] .room-image::after {
   display: none !important;
   content: none !important;
 }
-
 .room-view[data-room="room-by-the-lake"] .room-image img,
 .room-view[data-room="room-by-the-lake"] .room-image.is-contain img {
+  position: relative;
   display: block;
   flex: 0 1 auto;
   width: auto;
   height: auto;
   min-width: 0;
   min-height: 0;
-  max-width: min(88vw, 1250px);
-  max-height: min(82svh, 950px);
+  max-width: min(84vw,1160px);
+  max-height: min(78svh,900px);
   padding: 0;
   border: 0;
   border-radius: 0;
@@ -3439,29 +3432,34 @@ body {
   filter: none;
   object-fit: contain;
 }
-
+.room-view[data-room="room-by-the-lake"] .lake-opening > .room-image img {
+  max-width: min(74vw,1060px);
+  max-height: min(48svh,580px);
+  /* A subtle contact shadow, not a grey image frame or gallery mat. */
+  filter: drop-shadow(0 9px 8px rgba(0,0,0,.33));
+}
 .room-view[data-room="room-by-the-lake"] .room-image figcaption {
   position: static;
   align-self: center;
-  width: min(88vw, 1250px);
-  margin: 17px 0 0;
+  width: min(84vw,1160px);
+  margin: 15px 0 0;
   transform: none;
-  color: rgba(220, 227, 230, .48);
+  color: rgba(230,227,223,.53);
   font-size: 10px;
   line-height: 1.55;
-  letter-spacing: .04em;
+  letter-spacing: .035em;
   text-align: left;
 }
-
-/* The exhibition image is supplementary, with a little more air around it. */
+.room-view[data-room="room-by-the-lake"] .lake-opening .room-image figcaption {
+  width: min(74vw,1060px);
+}
 .room-view[data-room="room-by-the-lake"] .room-image:not(:first-of-type) {
-  margin-top: clamp(75px, 12vh, 140px);
+  margin-top: clamp(75px,13vh,160px);
 }
 .room-view[data-room="room-by-the-lake"] .room-image:not(:first-of-type) img {
-  max-width: min(79vw, 1080px);
-  max-height: min(75svh, 825px);
+  max-width: min(80vw,1080px);
+  max-height: min(74svh,800px);
 }
-
 .room-view[data-room="room-by-the-lake"] .room-footer {
   position: relative;
   z-index: 1;
@@ -3469,26 +3467,27 @@ body {
   background: transparent;
 }
 .room-view[data-room="room-by-the-lake"] .room-footer button {
-  color: rgba(220, 229, 232, .76);
+  color: rgba(228,226,223,.75);
 }
 .room-view[data-room="room-by-the-lake"] .room-footer button:hover {
   color: #fff;
 }
 
 @media (max-width: 760px) {
-  .room-view[data-room="room-by-the-lake"] .room-head {
-    height: 50px;
+  .room-view[data-room="room-by-the-lake"] .room-head {height: 50px;}
+  .room-view[data-room="room-by-the-lake"] .lake-opening {
+    min-height: calc(100svh - 50px);
+    padding-bottom: clamp(23px,4svh,40px);
   }
-  .room-view[data-room="room-by-the-lake"] .room-lead {
-    min-height: 32svh;
-    padding: clamp(86px, 13svh, 145px) 22px 30px;
+  .room-view[data-room="room-by-the-lake"] .lake-opening > .room-lead {
+    padding: clamp(40px,7svh,76px) 22px 14px;
   }
   .room-view[data-room="room-by-the-lake"] .room-lead h1 {
-    font-size: clamp(31px, 9vw, 45px);
+    font-size: clamp(31px,9vw,45px);
   }
   .room-view[data-room="room-by-the-lake"] .room-intro {
-    width: min(100%, 470px);
-    margin-top: 25px;
+    width: min(100%,470px);
+    margin-top: 19px;
     font-size: 14px;
   }
   .room-view[data-room="room-by-the-lake"] .room-image,
@@ -3496,39 +3495,41 @@ body {
     width: 100%;
     height: auto;
     min-height: 0;
-    margin: 30px auto 13vh;
+    margin: 55px auto 12vh;
+    padding: 0 12px;
+  }
+  .room-view[data-room="room-by-the-lake"] .lake-opening > .room-image {
+    flex: 1 1 auto;
+    margin: auto auto 0;
     padding: 0 12px;
   }
   .room-view[data-room="room-by-the-lake"] .room-image img,
   .room-view[data-room="room-by-the-lake"] .room-image.is-contain img {
     max-width: 100%;
-    max-height: 78svh;
+    max-height: 73svh;
   }
-  .room-view[data-room="room-by-the-lake"] .room-image figcaption {
+  .room-view[data-room="room-by-the-lake"] .lake-opening > .room-image img {
+    max-width: 100%;
+    max-height: min(43svh,450px);
+  }
+  .room-view[data-room="room-by-the-lake"] .room-image figcaption,
+  .room-view[data-room="room-by-the-lake"] .lake-opening .room-image figcaption {
     width: 100%;
     max-width: 100%;
-    margin-top: 14px;
+    margin-top: 12px;
     font-size: 9px;
   }
   .room-view[data-room="room-by-the-lake"] .room-image:not(:first-of-type) {
-    margin-top: 10vh;
+    margin-top: 8vh;
   }
   .room-view[data-room="room-by-the-lake"] .room-image:not(:first-of-type) img {
     max-width: 100%;
-    max-height: 73svh;
-  }
-  .room-view[data-room="room-by-the-lake"] .lake-swell {
-    inset: -36%;
-  }
-  .room-view[data-room="room-by-the-lake"] .lake-surface {
-    opacity: .43;
+    max-height: 68svh;
   }
 }
-
 @media (prefers-reduced-motion: reduce) {
-  .room-view[data-room="room-by-the-lake"] .lake-swell,
-  .room-view[data-room="room-by-the-lake"] .lake-surface {
+  .room-view[data-room="room-by-the-lake"] .lake-current::after {
     animation: none !important;
-    transform: none !important;
+    opacity: .91;
   }
 }
