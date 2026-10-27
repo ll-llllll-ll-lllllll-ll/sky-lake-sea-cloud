@@ -1651,8 +1651,10 @@ html:lang(zh-Hans) .calendar-current {
 .room-view[data-group="collection"] .room-image.is-contain img {
   width: var(--image-width, auto);
   height: var(--image-height, auto);
-  max-width: none;
-  max-height: none;
+  /* Before JS resolves the artwork dimensions, keep the original image
+     inside its provisional stage rather than painting at full pixel size. */
+  max-width: 100%;
+  max-height: 100%;
   flex: 0 0 auto;
 }
 
@@ -1683,8 +1685,9 @@ html:lang(zh-Hans) .calendar-current {
   .room-view[data-group="collection"] .room-image.is-contain img {
     width: var(--image-width, auto);
     height: var(--image-height, auto);
-    max-width: none;
-    max-height: none;
+    /* Keep unloaded / lazy-loaded images contained on small screens too. */
+    max-width: 100%;
+    max-height: 100%;
   }
 
   .room-view[data-group="collection"] .room-image figcaption {
