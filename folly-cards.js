@@ -1022,7 +1022,7 @@
     '</section>';
   }
   function pageMarkup(item) {
-    lastFollyIntro=localised(item.intro);
+    lastFollyIntro=localised(item.closing || item.intro);
     return '<section class="room-view fc-room"><header class="room-head">'+
       '<button type="button" data-action="home" class="room-back">←︎ '+esc(labels[state.lang].back)+'</button>'+
       '<p>'+esc(labels[state.lang].works)+' / '+esc(localised(item.title))+'</p>'+languageSwitch()+'</header>'+
