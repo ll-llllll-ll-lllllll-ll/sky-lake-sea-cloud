@@ -815,26 +815,39 @@ function indexItemLabel(item) {
     (year ? ' <span class="index-year">' + escapeHtml(year) + '</span>' : "");
 }
 
+/* The index is chronological within each column, without changing the
+   underlying work/collection arrays or the order used by page navigation.
+   Range and ongoing dates are sorted by their original start year. */
+function indexByNewest(items) {
+  return items.slice().sort(function(a,b) {
+    var yearA = parseInt(indexYears[a.slug], 10);
+    var yearB = parseInt(indexYears[b.slug], 10);
+    var startA = Number.isFinite(yearA) ? yearA : -Infinity;
+    var startB = Number.isFinite(yearB) ? yearB : -Infinity;
+    return startB - startA;
+  });
+}
+
 function indexPanel() {
   var html = '<aside class="index-layer" ' + (state.indexOpen ? "" : "hidden") + ' aria-label="' + escapeHtml(labels[state.lang].index) + '">' +
     '<button class="index-backdrop" type="button" data-action="close-index" aria-label="close"></button>' +
     '<div class="index-panel">' +
       '<section class="index-group"><p class="index-heading">' + labels[state.lang].works + "</p>";
 
-  works.forEach(function(item) {
+  indexByNewest(works).forEach(function(item) {
     html += '<button type="button" class="index-link" data-action="route" data-route="' + item.slug + '">' +
       indexItemLabel(item) + "</button>";
   });
 
   html += '</section><section class="index-group"><p class="index-heading">' + labels[state.lang].collection + "</p>";
 
-  collections.forEach(function(item) {
+  indexByNewest(collections).forEach(function(item) {
     html += '<button type="button" class="index-link" data-action="route" data-route="' + item.slug + '">' +
       indexItemLabel(item) + "</button>";
   });
 
   html += '</section><section class="index-group"><p class="index-heading">' + labels[state.lang].writings + "</p>";
-  writings.forEach(function(item) {
+  indexByNewest(writings).forEach(function(item) {
     html += '<button type="button" class="index-link" data-action="route" data-route="' + item.slug + '">' +
       indexItemLabel(item) + "</button>";
   });
