@@ -352,6 +352,9 @@
     Object.keys(slideGroups).forEach(function(key){stopTimer(slideGroups[key]);});
     var img=viewer.querySelector("[data-ft-viewer-img]");
     var video=viewer.querySelector("[data-ft-viewer-video]");
+    // Make the overlay visible before attempting user-gesture playback
+    // (Safari may decline play() on an element within a hidden ancestor).
+    viewer.hidden=false;
     if(block.type==="gif" || block.type==="slides"){
       var group=slideGroups[id],index=group?group.index:0;
       img.src=block.type==="slides"?block.files[index]:block.src;
@@ -376,7 +379,6 @@
     var group=slideGroups[id];
     viewer.querySelector("[data-ft-viewer-label]").textContent=block.type==="slides"?
       (l(block.label)+" "+pad(group?group.index+1:1)+" / "+pad(block.files.length)):block.file;
-    viewer.hidden=false;
     document.body.classList.add("ft-modal-open");
     viewer.querySelector("[data-ft-close]").focus({preventScroll:true});
   }
