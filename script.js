@@ -1054,7 +1054,7 @@ function renderSeawaterSpaceTimeChart(item) {
       close: "汇聚",
       open: "展开",
       note: "页面滚动：空间轴的视角改变　／　拖动滑条：时间切面的间距改变。",
-      demo: "示意定位 · 采样地点与时间尚待实际名录核对"
+      demo: "16处采样记录，据原始手写名录录入 · 最后一条日期仅记至2025年7月"
     },
     en: {
       title: "Space and time",
@@ -1063,7 +1063,7 @@ function renderSeawaterSpaceTimeChart(item) {
       close: "gather",
       open: "unfold",
       note: "Scroll to shift the spatial projection; move the bar to widen the intervals between moments.",
-      demo: "Diagrammatic locations · sample coordinates and dates await verification"
+      demo: "16 samples transcribed from the handwritten ledger · the final date is recorded only as July 2025"
     },
     ja: {
       title: "時間と空間",
@@ -1072,7 +1072,7 @@ function renderSeawaterSpaceTimeChart(item) {
       close: "集約",
       open: "展開",
       note: "ページをスクロールすると空間軸の投影が変わり、バーを動かすと時間の断面の間隔が広がる。",
-      demo: "図式上の位置 · 採集地点と日付は実際の記録との照合待ち"
+      demo: "手書き記録から転記した16件の採水記録 · 最後の採取日は2025年7月まで記載"
     }
   };
   var t = variants[state.lang] || variants.zh;
@@ -1557,68 +1557,169 @@ render();
     // Keep artwork captions and the chart's annotations, without older essays.
     seawater.notes = [];
 
-    // Prototype points for the time/space chart. Replace these with the actual
-    // seawater ledger once the complete list of ~20 samples is ready.
+    // 16 entries transcribed from the original handwritten seawater ledger.
+    // Preserve recorded coordinates, including coastal points. The final
+    // entry supplies only a month (2025-07): do not invent a calendar day.
     seawater.spaceTimeRecords = [
       {
-        date: "2023-02-14",
-        lat: 36.0,
-        lng: 135.0,
-        name: { zh: "日本海", en: "Sea of Japan", ja: "日本海" }
+        "date": "2023-02-23",
+        "lat": 33.245667,
+        "lng": -77.778917,
+        "name": {
+          "zh": "北大西洋",
+          "en": "North Atlantic",
+          "ja": "北大西洋"
+        }
       },
       {
-        date: "2023-07-23",
-        lat: 35.0,
-        lng: 123.0,
-        name: { zh: "黄海", en: "Yellow Sea", ja: "黄海" }
+        "date": "2023-08-07",
+        "lat": 37.549028,
+        "lng": -122.847917,
+        "name": {
+          "zh": "北太平洋",
+          "en": "North Pacific",
+          "ja": "北太平洋"
+        }
       },
       {
-        date: "2023-11-18",
-        lat: 28.0,
-        lng: 126.0,
-        name: { zh: "东海", en: "East China Sea", ja: "東シナ海" }
+        "date": "2023-12-26",
+        "lat": 47.00838,
+        "lng": -124.187756,
+        "name": {
+          "zh": "北太平洋",
+          "en": "North Pacific",
+          "ja": "北太平洋"
+        }
       },
       {
-        date: "2024-04-08",
-        lat: 34.4,
-        lng: 134.4,
-        name: { zh: "濑户内海", en: "Seto Inland Sea", ja: "瀬戸内海" }
+        "date": "2024-01-17",
+        "lat": 40.572331,
+        "lng": -73.975015,
+        "name": {
+          "zh": "北大西洋",
+          "en": "North Atlantic",
+          "ja": "北大西洋"
+        }
       },
       {
-        date: "2024-09-21",
-        lat: 36.0,
-        lng: 18.0,
-        name: { zh: "地中海", en: "Mediterranean Sea", ja: "地中海" }
+        "date": "2024-03-27",
+        "lat": 31.214175,
+        "lng": 121.783933,
+        "name": {
+          "zh": "东海",
+          "en": "East China Sea",
+          "ja": "東シナ海"
+        }
       },
       {
-        date: "2025-03-02",
-        lat: 40.0,
-        lng: -30.0,
-        name: { zh: "北大西洋", en: "North Atlantic", ja: "北大西洋" }
+        "date": "2024-03-30",
+        "lat": 35.522447,
+        "lng": 119.628333,
+        "name": {
+          "zh": "黄海",
+          "en": "Yellow Sea",
+          "ja": "黄海"
+        }
       },
       {
-        date: "2025-08-14",
-        lat: 46.0,
-        lng: -5.0,
-        name: { zh: "比斯开湾", en: "Bay of Biscay", ja: "ビスケー湾" }
+        "date": "2024-04-01",
+        "lat": 36.076083,
+        "lng": 120.60675,
+        "name": {
+          "zh": "黄海",
+          "en": "Yellow Sea",
+          "ja": "黄海"
+        }
       },
       {
-        date: "2026-02-11",
-        lat: 14.0,
-        lng: 114.0,
-        name: { zh: "南海", en: "South China Sea", ja: "南シナ海" }
+        "date": "2024-04-01",
+        "lat": 40.617972,
+        "lng": 120.810667,
+        "name": {
+          "zh": "渤海",
+          "en": "Bohai Sea",
+          "ja": "渤海"
+        }
       },
       {
-        date: "2026-08-17",
-        lat: 80.0,
-        lng: 0.0,
-        name: { zh: "北冰洋", en: "Arctic Ocean", ja: "北極海" }
+        "date": "2024-04-02",
+        "lat": 39.061411,
+        "lng": 121.912862,
+        "name": {
+          "zh": "黄海",
+          "en": "Yellow Sea",
+          "ja": "黄海"
+        }
       },
       {
-        date: "2026-10-03",
-        lat: 40.0,
-        lng: -160.0,
-        name: { zh: "北太平洋", en: "North Pacific", ja: "北太平洋" }
+        "date": "2024-04-05",
+        "lat": 36.733,
+        "lng": 121.652111,
+        "name": {
+          "zh": "黄海",
+          "en": "Yellow Sea",
+          "ja": "黄海"
+        }
+      },
+      {
+        "date": "2024-04-08",
+        "lat": 20.054539,
+        "lng": 110.568111,
+        "name": {
+          "zh": "南海",
+          "en": "South China Sea",
+          "ja": "南シナ海"
+        }
+      },
+      {
+        "date": "2024-06-22",
+        "lat": 30.817861,
+        "lng": 121.533472,
+        "name": {
+          "zh": "东海",
+          "en": "East China Sea",
+          "ja": "東シナ海"
+        }
+      },
+      {
+        "date": "2024-07-03",
+        "lat": 33.734694,
+        "lng": -118.818694,
+        "name": {
+          "zh": "北太平洋",
+          "en": "North Pacific",
+          "ja": "北太平洋"
+        }
+      },
+      {
+        "date": "2024-07-06",
+        "lat": 34.029972,
+        "lng": -118.560611,
+        "name": {
+          "zh": "北太平洋",
+          "en": "North Pacific",
+          "ja": "北太平洋"
+        }
+      },
+      {
+        "date": "2025-03-05",
+        "lat": 22.292833,
+        "lng": 114.169806,
+        "name": {
+          "zh": "南海",
+          "en": "South China Sea",
+          "ja": "南シナ海"
+        }
+      },
+      {
+        "date": "2025-07",
+        "lat": 35.299972,
+        "lng": 139.474611,
+        "name": {
+          "zh": "北太平洋",
+          "en": "North Pacific",
+          "ja": "北太平洋"
+        }
       }
     ];
 
