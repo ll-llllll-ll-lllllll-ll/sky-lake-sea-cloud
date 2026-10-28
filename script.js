@@ -321,30 +321,6 @@ const indexYears = {
   "ruinwright-manifesto": "2025-"
 };
 
-/* Independent biography. Set image to a file path when a photo is ready. */
-const aboutProfile = {
-  slug: "about",
-  group: "about",
-  title: { zh: "关于", en: "about", ja: "私について" },
-  name: { zh: "罗清源", en: "Luo Qingyuan", ja: "羅清源" },
-  practice: { zh: "艺术创作者", en: "artist", ja: "美術作家" },
-  paragraphs: {
-    zh: [
-      "我的创作游走于雕塑、装置、影像、绘画，以及持续展开的记录与收集之间。",
-      "我常从一处现场、一件失去用途的器物，或一段无法确认的记忆开始工作。废墟、风化、仪器与时间反复进入这些实践；材料在其中暂时获得形体，而后续的变化，仍继续发生。"
-    ],
-    en: [
-      "My practice moves between sculpture, installation, moving image, painting, and ongoing acts of recording and collecting.",
-      "I often begin with a place, an object left without a use, or a memory that cannot be verified. Ruins, weathering, instruments and time recur throughout this work; materials briefly take form, while what follows remains open to change."
-    ],
-    ja: [
-      "彫刻、インスタレーション、映像、絵画、そして継続的な記録と採集のあいだを行き来しながら制作している。",
-      "制作は、一つの現場、用途を失ったもの、確かめることのできない記憶から始まることが多い。廃墟、風化、器具、時間が繰り返し現れ、素材はひととき形を得る。その後の変化もまた、続いていく。"
-    ]
-  },
-  image: ""
-};
-
 const state = {
   lang: readLanguage(),
   indexOpen: false,
@@ -852,10 +828,7 @@ function indexPanel() {
       indexItemLabel(item) + "</button>";
   });
 
-  html += '</section><section class="index-group index-about-group">' +
-    '<button type="button" class="index-link index-about-link" data-action="route" data-route="about">' +
-    escapeHtml(labels[state.lang].about) + "</button>" +
-    "</section></div></aside>";
+  html += "</section></div></aside>";
   return html;
 }
 
@@ -899,7 +872,6 @@ function renderHome() {
 function parseRoute() {
   var slug = location.hash.replace(/^#\/?/, "").split("/")[0];
   if (!slug) return null;
-  if (slug === "about") return aboutProfile;
   return rooms.find(function(item) { return item.slug === slug; }) || null;
 }
 
@@ -1356,36 +1328,6 @@ function renderRoom(item) {
   return item.slug === "seawater" ? rearrangeSeawaterStory(html) : html;
 }
 
-function renderAboutRoom() {
-  var title = localised(aboutProfile.title);
-  var name = localised(aboutProfile.name);
-  var image = aboutProfile.image
-    ? '<img src="' + escapeHtml(aboutProfile.image) + '" alt="' + escapeHtml(name) + '" loading="lazy" />'
-    : '<span class="about-image-label" aria-hidden="true">image</span>';
-  var paragraphs = localised(aboutProfile.paragraphs) || [];
-
-  return '<section class="room-view about-room" data-room="about" data-group="about">' +
-    '<header class="room-head">' +
-      '<button type="button" data-action="home" class="room-back">←︎ ' + escapeHtml(labels[state.lang].back) + '</button>' +
-      '<p>' + escapeHtml(title) + '</p>' +
-      languageSwitch() +
-    '</header>' +
-    '<div class="room-scroll about-scroll">' +
-      '<article class="about-layout">' +
-        '<div class="about-copy">' +
-          '<p class="about-kicker">' + escapeHtml(title) + '</p>' +
-          '<h1 class="about-name">' + escapeHtml(name) + '</h1>' +
-          '<p class="about-practice">' + escapeHtml(localised(aboutProfile.practice)) + '</p>' +
-          '<div class="about-prose">' + paragraphs.map(function(p) {
-            return '<p>' + escapeHtml(p) + '</p>';
-          }).join("") + '</div>' +
-        '</div>' +
-        '<figure class="about-portrait">' + image + '</figure>' +
-      '</article>' +
-    '</div>' +
-  '</section>';
-}
-
 function render() {
   var room = parseRoute();
   document.documentElement.lang = state.lang === "zh" ? "zh-Hans" : state.lang;
@@ -1394,8 +1336,7 @@ function render() {
     state.indexOpen = false;
     state.calendarOpen = false;
     document.title = localised(room.title) + " — sky-sea-lake-cloud";
-    app.innerHTML = '<main class="site-root">' +
-      (room.slug === "about" ? renderAboutRoom() : renderRoom(room)) + "</main>";
+    app.innerHTML = '<main class="site-root">' + renderRoom(room) + "</main>";
   } else {
     document.title = "sky-sea-lake-cloud";
     app.innerHTML = '<main class="site-root">' + renderHome() + "</main>";
