@@ -33,6 +33,14 @@
   function c(){return COPY[lang()];}
   function e(s){return escapeHtml(String(s==null?"":s));}
   function pad(n){return String(n).padStart(2,"0");}
+  function manifestoLanguages(){
+    return '<nav class="language mp-language" aria-label="Language">'+
+      ["zh","en","ja"].map(function(code){
+        return '<button type="button" data-action="language" data-lang="'+code+'" class="'+
+          (state.lang===code?"is-active":"")+'">'+(code==="zh"?"中":code==="en"?"EN":"JP")+'</button>';
+      }).join('<span class="mp-lang-divider" aria-hidden="true">/</span>')+
+    '</nav>';
+  }
   function url(i){return BASE+"#section-01-sub-"+pad(i);}
   function markup(item){
     var words=l(item.intro)||[];
@@ -56,7 +64,7 @@
         '<label class="mp-tone"><span aria-hidden="true">☼</span>'+
           '<input type="range" data-mp-tone min="0" max="100" step="1" value="45" aria-label="'+e(c().tone)+'">'+
           '<span aria-hidden="true">☾</span></label>'+
-        languageSwitch()+
+        manifestoLanguages()+
       '</div>'+
     '</header>';
     var tiles=SECTIONS.map(function(name,i){
