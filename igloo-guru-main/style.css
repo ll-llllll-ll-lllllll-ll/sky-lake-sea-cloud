@@ -45,6 +45,8 @@ header {
 
 .logo-img {
     border-radius: 50%;
+    object-fit: cover;
+    flex: 0 0 auto;
 }
 
 .logo-text {
@@ -60,14 +62,14 @@ header {
     cursor: pointer;
     transition: all 0.3s ease;
     /* 修改为本地的默认猫头图片 */
-    background-image: url('images/cat-head.jpg');
+    background-image: url('./images/cat-head.jpg');
     background-size: cover;
     background-position: center;
 }
 
     .cat-head-hover:hover {
         /* 修改为本地鼠标悬停时的猫头图片 */
-        background-image: url('images/cat-head-hover.jpg');
+        background-image: url('./images/cat-head-hover.jpg');
         transform: scale(1.1) rotate(5deg);
     }
 
@@ -301,7 +303,7 @@ footer {
     background-size: cover;
     background-position: center;
     /* 使用你之前定义的，鼠标悬停时显示的那个猫头图片 */
-    background-image: url('images/cat-head-hover.jpg');
+    background-image: url('./images/cat-head-hover.jpg');
     transform: translate(-50%, -50%) scale(0); /* 初始状态：居中且缩小到无 */
     opacity: 0; /* 初始状态：透明 */
     z-index: 1000; /* 确保它显示在最前面 */
