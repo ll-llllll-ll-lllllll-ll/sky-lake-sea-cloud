@@ -348,6 +348,19 @@
     var w=map.clientWidth,h=map.clientHeight;
     if(!w||!h)return;
     svg.setAttribute("viewBox","0 0 "+w+" "+h);
+    // Reserve three non-intersecting vertical channels before drawing:
+    // each later downleg must be to the RIGHT of the previous horizontal
+    // run, including the diagonal's inward shift.
+    var earlySources=[0,1,2].map(function(i){
+      var card=current.querySelector('[data-mp-tenet="'+i+'"]');
+      return card?card.getBoundingClientRect().right-mr.left-1:0;
+    });
+    var earlyElbows=[];
+    earlySources.forEach(function(x,i){
+      var minimum=Math.max(tr.right-mr.left+54,x+42);
+      if(i>0)minimum=Math.max(minimum,earlyElbows[i-1]+58);
+      earlyElbows.push(minimum);
+    });
     var out="";
     current.querySelectorAll("[data-mp-tenet]").forEach(function(card,i){
       var tile=card.querySelector(".mp-tenet-tile");
@@ -371,7 +384,7 @@
         // chapter underline even at shorter browser heights.
         lane=Math.min(railBottom+gutter[i],ey-68);
         lane=Math.max(sy+10,lane);
-        routeX=Math.max(tr.right-mr.left+80+i*21,sx+42);
+        routeX=earlyElbows[i];
         diagonal=23+i*2;
       }else{
         var thirdTile=current.querySelector('[data-mp-tenet="2"] .mp-tenet-tile');
