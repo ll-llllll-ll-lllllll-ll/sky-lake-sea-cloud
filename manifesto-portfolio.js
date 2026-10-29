@@ -138,55 +138,189 @@
       el.classList.toggle("is-selected",Number(el.dataset.mpConnector)===selected);
     });
   }
-  // Each route is a single connected stroke. Corners are replaced with
-  // faceted reconnections; several straight sections briefly deviate and
-  // return, as if a crack joined two pieces of a broken stone joint.
-  // There are no decorative branches extending away from the route.
-  function fracturedPath(nodes,seed){
-    var output=[],last=null;
-    function point(p){
-      if(!Number.isFinite(p.x)||!Number.isFinite(p.y))return;
-      if(last && Math.hypot(p.x-last.x,p.y-last.y)<.1)return;
-      output.push((output.length?"L ":"M ")+p.x.toFixed(2)+" "+p.y.toFixed(2));
-      last=p;
+  // A slow, bounded weathering process across the ENTIRE ten-line atlas.
+  // Starts at 1–10 randomly placed faults; never exceeds 50 in total.
+  // Existing faults mature gradually. No branching or free-standing shards.
+  var faultSeed=(Math.random()*0xFFFFFFFF)>>>0;
+  function random(){
+    faultSeed=(faultSeed+0x6D2B79F5)>>>0;
+    var v=faultSeed;
+    v=Math.imul(v^(v>>>15),v|1);
+    v^=v+Math.imul(v^(v>>>7),v|61);
+    return ((v^(v>>>14))>>>0)/4294967296;
+  }
+  var faults=[],faultElapsed=0,faultNext=0,faultTimer=null,faultLast=0;
+  var routeShapes=new Array(10);
+  var faultsSeeded=false;
+  var MAX_FAULTS=50;
+  var FAULT_GROW_MS=48000;
+  function chooseFault(time){
+    // Corners are favoured, but each corner can split only once.
+    // Straight-line faults are limited and spaced along their segment.
+    for(var attempt=0;attempt<100;attempt++){
+      var line=Math.floor(random()*10);
+      var bend=random()<.72;
+      var joint=bend?1+Math.floor(random()*4):-1;
+      var segment=bend?-1:Math.floor(random()*5);
+      var position=.23+random()*.52;
+      var collision=faults.some(function(f){
+        if(f.line!==line)return false;
+        if(bend && f.kind==="bend")return f.joint===joint;
+        if(!bend && f.kind==="edge")
+          return f.segment===segment && Math.abs(f.position-position)<.23;
+        return false;
+      });
+      if(collision)continue;
+      faults.push({
+        line:line,kind:bend?"bend":"edge",joint:joint,
+        segment:segment,position:position,
+        span:8+random()*7,
+        depth:1.9+random()*2.6,
+        direction:random()<.5?-1:1,
+        character:random(),
+        born:time
+      });
+      return true;
     }
-    function mix(p,q,t){return {x:p.x+(q.x-p.x)*t,y:p.y+(q.y-p.y)*t};}
-    nodes.slice(0,-1).forEach(function(p,j){
-      var q=nodes[j+1],dx=q.x-p.x,dy=q.y-p.y;
-      var len=Math.hypot(dx,dy);
-      if(len<.5)return;
-      var ux=dx/len,uy=dy/len,nx=-uy,ny=ux;
-      var bevel=Math.min(11+(seed+j)%5,len*.2);
-      var start={x:p.x+(j?ux*bevel:0),y:p.y+(j?uy*bevel:0)};
-      var end={x:q.x-(j<nodes.length-2?ux*bevel:0),
-               y:q.y-(j<nodes.length-2?uy*bevel:0)};
-      if(last){
-        // The omitted right-angle vertex is bridged by an irregular
-        // angular seam instead of a conventional 90-degree elbow.
-        var middle=mix(last,start,.49);
-        var length=Math.hypot(start.x-last.x,start.y-last.y);
-        var jitter=((seed+j)%2?1:-1)*Math.min(3.2,length*.2);
-        var across={x:-(start.y-last.y)/Math.max(length,.01),
-                    y:(start.x-last.x)/Math.max(length,.01)};
-        point({x:middle.x+across.x*jitter,y:middle.y+across.y*jitter});
+    return false;
+  }
+  function seedFaults(){
+    if(faultsSeeded)return;
+    faultsSeeded=true;
+    var count=1+Math.floor(random()*10);
+    for(var i=0;i<count;i++)chooseFault(-FAULT_GROW_MS*(.35+random()*.9));
+    faultNext=11000+random()*7500;
+  }
+  function vector(p,q){
+    var dx=q.x-p.x,dy=q.y-p.y,len=Math.hypot(dx,dy);
+    return len>.0001?{x:dx/len,y:dy/len}:{x:0,y:0};
+  }
+  function between(p,q,t){return {x:p.x+(q.x-p.x)*t,y:p.y+(q.y-p.y)*t};}
+  function buildPath(nodes,line,now){
+    var distances=[0];
+    for(var k=1;k<nodes.length;k++)
+      distances[k]=distances[k-1]+Math.hypot(nodes[k].x-nodes[k-1].x,nodes[k].y-nodes[k-1].y);
+    var total=distances[distances.length-1];
+    if(total<.1)return "";
+    function at(distance){
+      distance=Math.max(0,Math.min(total,distance));
+      for(var k=0;k<nodes.length-1;k++){
+        if(distance<=distances[k+1] || k===nodes.length-2){
+          var width=distances[k+1]-distances[k];
+          return between(nodes[k],nodes[k+1],width>0?(distance-distances[k])/width:0);
+        }
       }
-      point(start);
-      var usable=Math.hypot(end.x-start.x,end.y-start.y);
-      if(usable>66 && (j===1||j===3||j===4||(j===0&&seed%3===1))){
-        var t=.35+((seed*7+j*3)%24)/100;
-        var c=mix(start,end,t);
-        var outward=(seed+j)%2?1:-1;
-        var notch= Math.min(10,usable*.09);
-        point({x:c.x-ux*notch,y:c.y-uy*notch});
-        point({x:c.x-ux*3+nx*4*outward,
-               y:c.y-uy*3+ny*4*outward});
-        point({x:c.x+ux*2-nx*3.6*outward,
-               y:c.y+uy*2-ny*3.6*outward});
-        point({x:c.x+ux*notch,y:c.y+uy*notch});
+      return nodes[nodes.length-1];
+    }
+    var features=[];
+    faults.forEach(function(f){
+      if(f.line!==line)return;
+      var progress=Math.min(1,Math.max(0,(now-f.born)/FAULT_GROW_MS));
+      if(progress<=.005)return;
+      // A new fault grows slowly; the edge is a gently displaced seam,
+      // never an alternating ECG-like spike.
+      var extent=.25+.75*progress;
+      var depth=f.depth*extent;
+      if(f.kind==="bend"){
+        var j=f.joint;
+        if(j<=0||j>=nodes.length-1)return;
+        var left=distances[j]-distances[j-1],right=distances[j+1]-distances[j];
+        var half=Math.min(f.span*(.50+.50*progress),left*.29,right*.29);
+        if(half<2)return;
+        var incoming=vector(nodes[j],nodes[j-1]);
+        var outgoing=vector(nodes[j],nodes[j+1]);
+        // The smaller angle is between the two vectors pointing away
+        // from this corner: every fracture is inset into that angle.
+        var inner={x:incoming.x+outgoing.x,y:incoming.y+outgoing.y};
+        var m=Math.hypot(inner.x,inner.y);
+        if(m<.01)return;
+        inner.x/=m;inner.y/=m;
+        var a=at(distances[j]-half),b=at(distances[j]+half);
+        var tip={x:nodes[j].x+inner.x*depth,y:nodes[j].y+inner.y*depth};
+        // Slightly asymmetrical facets like displaced marble joints.
+        var q1=between(a,tip,.62+f.character*.1);
+        var q2=between(tip,b,.26+f.character*.15);
+        features.push({start:distances[j]-half,end:distances[j]+half,
+          points:[q1,tip,q2,b]});
+      }else{
+        var seg=f.segment;
+        if(seg<0||seg>=nodes.length-1)return;
+        var length=distances[seg+1]-distances[seg];
+        if(length<45)return;
+        var center=distances[seg]+length*f.position;
+        var half=Math.min(f.span*(.55+.45*progress),length*.1);
+        if(center-half<=distances[seg]+5||center+half>=distances[seg+1]-5)return;
+        var u=vector(nodes[seg],nodes[seg+1]);
+        var normal={x:-u.y*f.direction,y:u.x*f.direction};
+        var q1=at(center-half*.37),q2=at(center+half*.23),q3=at(center+half*.67);
+        // A single, low-frequency bend; all offsets lean toward the
+        // same side, with no mirrored zigzag return.
+        q1={x:q1.x+normal.x*depth*.43,y:q1.y+normal.y*depth*.43};
+        q2={x:q2.x+normal.x*depth,y:q2.y+normal.y*depth};
+        q3={x:q3.x+normal.x*depth*.51,y:q3.y+normal.y*depth*.51};
+        features.push({start:center-half,end:center+half,
+          points:[q1,q2,q3,at(center+half)]});
       }
-      point(end);
     });
-    return output.join(" ");
+    features.sort(function(a,b){return a.start-b.start;});
+    var commands=[],previous=null;
+    function add(p){
+      if(previous&&Math.hypot(previous.x-p.x,previous.y-p.y)<.02)return;
+      commands.push((commands.length?"L ":"M ")+p.x.toFixed(2)+" "+p.y.toFixed(2));
+      previous=p;
+    }
+    function extend(from,to){
+      if(to<=from+.01)return;
+      for(var k=1;k<distances.length-1;k++){
+        if(distances[k]>from+.01 && distances[k]<to-.01)add(nodes[k]);
+      }
+      add(at(to));
+    }
+    add(nodes[0]);
+    var cursor=0;
+    features.forEach(function(feature){
+      // Never draw two faults on top of each other.
+      if(feature.start<cursor+1.5 || feature.end>total)return;
+      extend(cursor,feature.start);
+      feature.points.forEach(add);
+      cursor=feature.end;
+    });
+    extend(cursor,total);
+    return commands.join(" ");
+  }
+  function ageFaults(){
+    if(!current||!current.isConnected||document.hidden)return;
+    var now=Date.now();
+    if(!faultLast)faultLast=now;
+    faultElapsed+=Math.min(2500,Math.max(0,now-faultLast));
+    faultLast=now;
+    var added=false;
+    while(faults.length<MAX_FAULTS && faultElapsed>=faultNext){
+      if(!chooseFault(faultNext))break;
+      faultNext+=11000+random()*7500;
+      added=true;
+    }
+    if(!noMotion && (added||faults.some(function(f){
+      return faultElapsed-f.born<FAULT_GROW_MS;
+    })))updateFaultPaths();
+  }
+  function updateFaultPaths(){
+    if(!current||!current.isConnected)return;
+    var svg=current.querySelector("[data-mp-svg]");
+    if(!svg)return;
+    svg.querySelectorAll(".mp-connector").forEach(function(g){
+      var i=Number(g.dataset.mpConnector),nodes=routeShapes[i];
+      if(!nodes)return;
+      var path=buildPath(nodes,i,faultElapsed);
+      g.querySelectorAll("path").forEach(function(el){el.setAttribute("d",path);});
+    });
+  }
+  function startFaultClock(){
+    if(faultTimer)clearInterval(faultTimer);
+    faultTimer=null;
+    if(!current||noMotion||window.matchMedia("(max-width:1199px)").matches)return;
+    faultLast=Date.now();
+    faultTimer=setInterval(ageFaults,1200);
   }
 
   function draw(){
@@ -198,6 +332,7 @@
     if(!map||!svg||!toc)return;
     if(window.matchMedia("(max-width:1199px)").matches){
       svg.replaceChildren();
+      routeShapes=new Array(10);
       return;
     }
     var mr=map.getBoundingClientRect(), tr=toc.getBoundingClientRect();
@@ -219,9 +354,18 @@
       // Destination is BELOW the entire chapter row, never at text midline.
       // The terminal segment runs right-to-left like a fine underline.
       var ex=Math.max(10,b.left-mr.left+4),ey=b.bottom-mr.top+2;
-      var lane=Math.max(railBottom+9,Math.min(railBottom+18+i*10,ey-80));
-      var diagonal=25+(i%3)*5;
-      var routeX=tr.right-mr.left+67+i*7;
+      // First three routes follow the user's revised wiring: the first
+      // descends lowest, the second slightly higher, and the third higher
+      // still. Each bends beyond the third framed image, not at the left
+      // margin where the three stems were previously tangled.
+      var thirdTile=current.querySelector('[data-mp-tenet="2"] .mp-tenet-tile');
+      var thirdRight=thirdTile?thirdTile.getBoundingClientRect().right-mr.left:tr.right-mr.left+115;
+      var bendBase=Math.max(tr.right-mr.left+80,thirdRight+15);
+      var lane=i<3?
+        Math.max(railBottom+40,Math.min(railBottom+[122,96,70][i],ey-78)):
+        Math.max(railBottom+17,Math.min(railBottom+38+(i-3)*12,ey-70));
+      var routeX=i<3?bendBase+i*19:bendBase+52+(i-3)*11;
+      var diagonal=25+(i%3)*4;
       var nodes=[
         {x:sx,y:sy},
         {x:sx,y:lane},
@@ -230,7 +374,8 @@
         {x:routeX-diagonal,y:ey},
         {x:ex,y:ey}
       ];
-      var path=fracturedPath(nodes,i);
+      routeShapes[i]=nodes;
+      var path=buildPath(nodes,i,faultElapsed);
       out+='<g class="mp-connector" data-mp-connector="'+i+'">'+
         '<path class="mp-connector-depth" d="'+path+'"/>'+
         '<path class="mp-connector-main" d="'+path+'"/>'+
@@ -265,8 +410,10 @@
     var next=document.querySelector(".writing-room.mp-room");
     if(next===current)return;
     if(resizeWatcher){resizeWatcher.disconnect();resizeWatcher=null;}
+    if(faultTimer){clearInterval(faultTimer);faultTimer=null;}
     current=next;chosen=0;hovered=-1;
     if(!current)return;
+    seedFaults();
     if("ResizeObserver" in window){
       resizeWatcher=new ResizeObserver(schedule);
       resizeWatcher.observe(current.querySelector("[data-mp-map]"));
@@ -275,10 +422,18 @@
       if(!img.complete)img.addEventListener("load",schedule,{once:true});
     });
     highlight();schedule();
+    startFaultClock();
   }
   var app=document.getElementById("app");
   if(app && "MutationObserver" in window)new MutationObserver(install).observe(app,{childList:true,subtree:false});
-  window.addEventListener("resize",schedule,{passive:true});
+  window.addEventListener("resize",function(){schedule();startFaultClock();},{passive:true});
+  document.addEventListener("visibilitychange",function(){
+    faultLast=Date.now();
+    if(!document.hidden && current) {
+      schedule();
+      startFaultClock();
+    }
+  });
   document.addEventListener("click",function(ev){
     var button=ev.target&&ev.target.closest&&ev.target.closest("[data-mp-tenet],[data-mp-row]");
     if(!button||!current||!current.contains(button))return;
