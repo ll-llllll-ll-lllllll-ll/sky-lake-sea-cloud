@@ -153,30 +153,28 @@
 }
 .writing-room.mp-room .mp-connector path {
   fill:none;
-  stroke-linecap:square;
+  stroke-linecap:butt;
   stroke-linejoin:miter;
+  stroke-miterlimit:12;
+  vector-effect:non-scaling-stroke;
+  shape-rendering:geometricPrecision;
 }
-.writing-room.mp-room .mp-connector-depth {
-  /* Barely visible relief, not the old triple-stroked cable. */
-  stroke:rgba(98,94,84,.30);
-  stroke-width:1.5;
-  transform:translate(.28px,.24px);
+.writing-room.mp-room .mp-connector-depth,
+.writing-room.mp-room .mp-connector-light {
+  /* Offset shadow/highlight strokes softened each fracture into a cable.
+     A single fine stroke preserves the sharp marble-like facets. */
+  display:none;
 }
 .writing-room.mp-room .mp-connector-main {
-  stroke:rgba(115,110,101,.77);
-  stroke-width:1.05;
-}
-.writing-room.mp-room .mp-connector-light {
-  stroke:rgba(255,255,255,.56);
-  stroke-width:.34;
-  transform:translate(-.22px,-.22px);
+  stroke:rgba(103,100,93,.79);
+  stroke-width:1.12px;
 }
 .writing-room.mp-room .mp-connector.is-selected {
   opacity:.91;
 }
 .writing-room.mp-room .mp-connector.is-selected .mp-connector-main {
   stroke:rgba(51,50,46,.88);
-  stroke-width:1.24;
+  stroke-width:1.28px;
 }
 .writing-room.mp-room .mp-toc-reading {
   position:relative;
