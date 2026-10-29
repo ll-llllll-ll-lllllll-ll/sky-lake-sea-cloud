@@ -168,60 +168,59 @@
     var cards=Array.from(current.querySelectorAll("[data-mp-tenet]"));
     if(cards.length!==10)return;
     var right=function(i){return cards[i].getBoundingClientRect().right-mr.left-1;};
-    // 01–03 from ideal-effect.png: parallel but nonoverlapping channels.
-    // Their diagonals all point toward three closely spaced downlegs.
-    var base=Math.max(right(0)+49,
-      Math.min(tr.right-mr.left+20,right(2)-96));
-    var legs=[base,base+17,base+34];
-    var sy=railBottom+1,firstOffset=14,secondRise=52;
-    var secondAtLane=right(1)+(legs[1]-right(1))*firstOffset/secondRise;
-    var firstTurn=Math.max(right(0)+19,Math.min(legs[0]-27,secondAtLane-11));
-    var thirdTurn=Math.max(legs[2]+22,right(2)-37);
+    // Parallel atlas fan, calibrated to ideal-effect:
+    // each route has a fixed 15px horizontal track pitch and 10px vertical
+    // pitch; all regular diagonals are exactly 45 degrees. The first two
+    // enter the fan from the left, the rest from the right.
+    var stepX=15,stepY=10,diagonal=30;
+    var sy=railBottom+1;
+    var bundleX=right(1)+26;
     var out="";
     cards.forEach(function(card,i){
-      var tile=card.querySelector(".mp-tenet-tile");
       var dest=current.querySelector('[data-mp-row="'+i+'"]');
-      if(!tile||!dest)return;
+      if(!dest)return;
       var b=dest.getBoundingClientRect();
-      var ex=Math.max(10,b.left-mr.left+4),ey=b.bottom-mr.top+2;
-      var nodes;
+      var ex=Math.max(10,b.left-mr.left+4);
+      var ey=b.bottom-mr.top+2;
+      var endX=bundleX+i*stepX;
+      var startX=right(i);
+      var nodes=[];
       if(i===0){
+        // 01: level first, then a 45° right-descending chamfer.
+        // Its horizontal run ends before the second card's stem.
+        var cornerX=right(1)-14;
+        var lane=sy+6;
+        var rise=endX-cornerX;
         nodes=[
-          {x:right(0),y:sy},
-          {x:right(0),y:sy+firstOffset},
-          {x:firstTurn,y:sy+firstOffset},
-          {x:legs[0],y:sy+54},
-          {x:legs[0],y:ey},
+          {x:startX,y:sy},
+          {x:startX,y:lane},
+          {x:cornerX,y:lane},
+          {x:endX,y:lane+rise},
+          {x:endX,y:ey},
           {x:ex,y:ey}
         ];
       }else if(i===1){
+        // 02: its own lower parallel 45° chamfer.
+        var y1=sy+13;
+        var startChamfer=endX-diagonal;
         nodes=[
-          {x:right(1),y:sy},
-          {x:legs[1],y:sy+secondRise},
-          {x:legs[1],y:ey},
-          {x:ex,y:ey}
-        ];
-      }else if(i===2){
-        nodes=[
-          {x:right(2),y:sy},
-          {x:thirdTurn,y:sy},
-          {x:legs[2],y:sy+70},
-          {x:legs[2],y:ey},
+          {x:startX,y:sy},
+          {x:startX,y:y1},
+          {x:startChamfer,y:y1},
+          {x:endX,y:y1+diagonal},
+          {x:endX,y:ey},
           {x:ex,y:ey}
         ];
       }else{
-        // 04–10: restore the stable pre-fracture wiring geometry.
-        // No extra rightward elbow, no growing fractures.
-        var sx=right(i);
-        var lane=Math.max(railBottom+9,Math.min(railBottom+18+i*10,ey-80));
-        var routeX=tr.right-mr.left+67+i*7;
-        var diagonal=25+(i%3)*5;
+        // 03–10: all turn left at successively lower, evenly-spaced lanes.
+        // No rightward U-turns or drifting 25/30/35px diagonal variations.
+        var y2=sy+7+i*stepY;
         nodes=[
-          {x:sx,y:sy},
-          {x:sx,y:lane},
-          {x:routeX,y:lane},
-          {x:routeX-diagonal,y:lane+diagonal},
-          {x:routeX-diagonal,y:ey},
+          {x:startX,y:sy},
+          {x:startX,y:y2},
+          {x:endX+diagonal,y:y2},
+          {x:endX,y:y2+diagonal},
+          {x:endX,y:ey},
           {x:ex,y:ey}
         ];
       }
