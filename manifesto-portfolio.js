@@ -138,6 +138,57 @@
       el.classList.toggle("is-selected",Number(el.dataset.mpConnector)===selected);
     });
   }
+  // Each route is a single connected stroke. Corners are replaced with
+  // faceted reconnections; several straight sections briefly deviate and
+  // return, as if a crack joined two pieces of a broken stone joint.
+  // There are no decorative branches extending away from the route.
+  function fracturedPath(nodes,seed){
+    var output=[],last=null;
+    function point(p){
+      if(!Number.isFinite(p.x)||!Number.isFinite(p.y))return;
+      if(last && Math.hypot(p.x-last.x,p.y-last.y)<.1)return;
+      output.push((output.length?"L ":"M ")+p.x.toFixed(2)+" "+p.y.toFixed(2));
+      last=p;
+    }
+    function mix(p,q,t){return {x:p.x+(q.x-p.x)*t,y:p.y+(q.y-p.y)*t};}
+    nodes.slice(0,-1).forEach(function(p,j){
+      var q=nodes[j+1],dx=q.x-p.x,dy=q.y-p.y;
+      var len=Math.hypot(dx,dy);
+      if(len<.5)return;
+      var ux=dx/len,uy=dy/len,nx=-uy,ny=ux;
+      var bevel=Math.min(11+(seed+j)%5,len*.2);
+      var start={x:p.x+(j?ux*bevel:0),y:p.y+(j?uy*bevel:0)};
+      var end={x:q.x-(j<nodes.length-2?ux*bevel:0),
+               y:q.y-(j<nodes.length-2?uy*bevel:0)};
+      if(last){
+        // The omitted right-angle vertex is bridged by an irregular
+        // angular seam instead of a conventional 90-degree elbow.
+        var middle=mix(last,start,.49);
+        var length=Math.hypot(start.x-last.x,start.y-last.y);
+        var jitter=((seed+j)%2?1:-1)*Math.min(3.2,length*.2);
+        var across={x:-(start.y-last.y)/Math.max(length,.01),
+                    y:(start.x-last.x)/Math.max(length,.01)};
+        point({x:middle.x+across.x*jitter,y:middle.y+across.y*jitter});
+      }
+      point(start);
+      var usable=Math.hypot(end.x-start.x,end.y-start.y);
+      if(usable>66 && (j===1||j===3||j===4||(j===0&&seed%3===1))){
+        var t=.35+((seed*7+j*3)%24)/100;
+        var c=mix(start,end,t);
+        var outward=(seed+j)%2?1:-1;
+        var notch= Math.min(10,usable*.09);
+        point({x:c.x-ux*notch,y:c.y-uy*notch});
+        point({x:c.x-ux*3+nx*4*outward,
+               y:c.y-uy*3+ny*4*outward});
+        point({x:c.x+ux*2-nx*3.6*outward,
+               y:c.y+uy*2-ny*3.6*outward});
+        point({x:c.x+ux*notch,y:c.y+uy*notch});
+      }
+      point(end);
+    });
+    return output.join(" ");
+  }
+
   function draw(){
     scheduled=0;
     if(!current||!current.isConnected)return;
@@ -150,6 +201,8 @@
       return;
     }
     var mr=map.getBoundingClientRect(), tr=toc.getBoundingClientRect();
+    var atlas=current.querySelector(".mp-tenet-atlas");
+    var railBottom=atlas.getBoundingClientRect().bottom-mr.top;
     var w=map.clientWidth,h=map.clientHeight;
     if(!w||!h)return;
     svg.setAttribute("viewBox","0 0 "+w+" "+h);
@@ -159,18 +212,25 @@
       var dest=current.querySelector('[data-mp-row="'+i+'"]');
       if(!tile||!dest)return;
       var a=tile.getBoundingClientRect(),b=dest.getBoundingClientRect();
-      var sx=a.left+a.width*.5-mr.left,sy=a.bottom-mr.top+1;
-      var ex=Math.max(12,b.left-mr.left+5),ey=b.top+b.height*.5-mr.top;
-      var lane=sy+22+i*11;
-      var indexRight=tr.right-mr.left;
-      var corner=Math.max(indexRight+62,Math.min(sx-16,indexRight+128+i*7));
-      var step=Math.max(16,Math.min(45,corner-indexRight-18));
-      var x2=corner-step,y2=lane+step;
-      // Reach the actual chapter label rather than terminating at a
-      // convenient routing lane when an early entry sits above the chamfer.
-      var path="M "+sx.toFixed(2)+" "+sy.toFixed(2)+" V "+lane.toFixed(2)+
-        " H "+corner.toFixed(2)+" L "+x2.toFixed(2)+" "+y2.toFixed(2)+
-        " V "+ey.toFixed(2)+" H "+ex.toFixed(2);
+      // The former SVG was drawn behind the solid atlas background, hiding
+      // the upper stems of the first three routes. Begin exactly at the
+      // frame's lower-right edge, just outside the caption's text.
+      var sx=a.right-mr.left-2,sy=a.bottom-mr.top-1;
+      // Destination is BELOW the entire chapter row, never at text midline.
+      // The terminal segment runs right-to-left like a fine underline.
+      var ex=Math.max(10,b.left-mr.left+4),ey=b.bottom-mr.top+2;
+      var lane=Math.max(railBottom+9,Math.min(railBottom+18+i*10,ey-80));
+      var diagonal=25+(i%3)*5;
+      var routeX=tr.right-mr.left+67+i*7;
+      var nodes=[
+        {x:sx,y:sy},
+        {x:sx,y:lane},
+        {x:routeX,y:lane},
+        {x:routeX-diagonal,y:lane+diagonal},
+        {x:routeX-diagonal,y:ey},
+        {x:ex,y:ey}
+      ];
+      var path=fracturedPath(nodes,i);
       out+='<g class="mp-connector" data-mp-connector="'+i+'">'+
         '<path class="mp-connector-depth" d="'+path+'"/>'+
         '<path class="mp-connector-main" d="'+path+'"/>'+
