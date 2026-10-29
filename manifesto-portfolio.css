@@ -12,6 +12,28 @@
 .writing-room.mp-room .room-scroll {
   background:#f4f3ee;
 }
+.writing-room.mp-room .mp-intro-final {
+  display:flex;
+  flex-direction:column;
+  align-items:flex-start;
+  min-width:0;
+}
+.writing-room.mp-room .mp-intro-visit {
+  display:inline-block;
+  margin-top:clamp(25px,3.5vw,46px);
+  padding:0 0 6px;
+  border-bottom:1px solid rgba(26,27,23,.25);
+  color:rgba(26,27,23,.66);
+  font:400 clamp(13px,1.1vw,16px)/1.7 var(--serif);
+  letter-spacing:.025em;
+  text-decoration:none;
+  transition:color .18s ease,border-color .18s ease;
+}
+.writing-room.mp-room .mp-intro-visit:hover,
+.writing-room.mp-room .mp-intro-visit:focus-visible {
+  color:rgba(26,27,23,.94);
+  border-color:rgba(26,27,23,.75);
+}
 .writing-room.mp-room .mp-additions {
   position:relative;
   width:100%;
@@ -116,7 +138,9 @@
 }
 .writing-room.mp-room .mp-connectors {
   position:absolute;
-  z-index:1;
+  /* The former under-atlas layer hid the first few connectors as they left
+     the frames. Display the line over the atlas, still non-interactive. */
+  z-index:4;
   inset:0;
   width:100%;
   height:100%;
@@ -124,7 +148,7 @@
   pointer-events:none;
 }
 .writing-room.mp-room .mp-connector {
-  opacity:.35;
+  opacity:.46;
   transition:opacity .18s ease;
 }
 .writing-room.mp-room .mp-connector path {
@@ -170,9 +194,9 @@
 }
 .writing-room.mp-room .mp-toc-kicker {
   margin:0 0 25px;
-  color:var(--mp-faint);
-  font:400 10px/1.5 var(--sans);
-  letter-spacing:.16em;
+  color:var(--mp-ink);
+  font:400 clamp(17px,1.45vw,22px)/1.5 var(--serif);
+  letter-spacing:.035em;
 }
 .writing-room.mp-room .mp-toc-group > p {
   margin:0 0 9px;
@@ -238,13 +262,18 @@
   align-items:baseline;
   justify-content:space-between;
   gap:20px;
+  color:var(--mp-ink);
+  font:400 clamp(17px,1.45vw,22px)/1.5 var(--serif);
+  letter-spacing:.035em;
+}
+.writing-room.mp-room .mp-preview-kicker [data-mp-count] {
   color:var(--mp-muted);
-  font:400 11px/1.4 var(--serif);
-  letter-spacing:.045em;
+  font-size:.68em;
+  font-variant-numeric:tabular-nums;
 }
 .writing-room.mp-room .mp-preview-figure {
   display:grid;
-  grid-template-columns:minmax(160px,360px) minmax(0,1fr);
+  grid-template-columns:minmax(128px,288px) minmax(0,1fr);
   align-items:end;
   gap:clamp(23px,3.5vw,57px);
   width:100%;
@@ -253,7 +282,7 @@
 .writing-room.mp-room .mp-preview-figure > img {
   display:block;
   width:100%;
-  max-height:clamp(270px,31vw,430px);
+  max-height:clamp(216px,24.8vw,344px);
   object-fit:contain;
   filter:none;
   border:0;
@@ -312,7 +341,7 @@
     gap:24px;
     justify-items:start;
   }
-  .writing-room.mp-room .mp-preview-figure > img {max-width:310px;}
+  .writing-room.mp-room .mp-preview-figure > img {max-width:248px;}
 }
 @media (max-width:760px) {
   .writing-room.mp-room .mp-tenet-atlas {grid-auto-columns:clamp(138px,43vw,178px);}
@@ -339,8 +368,8 @@
     gap:25px;
   }
   .writing-room.mp-room .mp-preview-figure > img {
-    max-width:min(100%,370px);
-    max-height:380px;
+    max-width:min(100%,296px);
+    max-height:304px;
   }
   .writing-room.mp-room .mp-preview-figure figcaption span {
     font-size:21px;
