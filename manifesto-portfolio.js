@@ -239,11 +239,11 @@
         inner.x/=m;inner.y/=m;
         var a=at(distances[j]-half),b=at(distances[j]+half);
         var tip={x:nodes[j].x+inner.x*depth,y:nodes[j].y+inner.y*depth};
-        // Slightly asymmetrical facets like displaced marble joints.
-        var q1=between(a,tip,.62+f.character*.1);
-        var q2=between(tip,b,.26+f.character*.15);
+        // Short angular cleavage into the INNER corner. Avoid a chain
+        // of nearly-collinear vertices, which looked rounded once aged.
+        // The two facet edges meet in one sharp tip, like a chipped slab.
         features.push({start:distances[j]-half,end:distances[j]+half,
-          points:[q1,tip,q2,b]});
+          points:[tip,b]});
       }else{
         var seg=f.segment;
         if(seg<0||seg>=nodes.length-1)return;
@@ -255,11 +255,11 @@
         var u=vector(nodes[seg],nodes[seg+1]);
         var normal={x:-u.y*f.direction,y:u.x*f.direction};
         var q1=at(center-half*.37),q2=at(center+half*.23),q3=at(center+half*.67);
-        // A single, low-frequency bend; all offsets lean toward the
-        // same side, with no mirrored zigzag return.
-        q1={x:q1.x+normal.x*depth*.43,y:q1.y+normal.y*depth*.43};
+        // Three hard facets form one displaced stone seam; no curves,
+        // blur, or small oscillations that turn into a rounded squiggle.
+        q1={x:q1.x+normal.x*depth*.45,y:q1.y+normal.y*depth*.45};
         q2={x:q2.x+normal.x*depth,y:q2.y+normal.y*depth};
-        q3={x:q3.x+normal.x*depth*.51,y:q3.y+normal.y*depth*.51};
+        q3={x:q3.x+normal.x*depth*.48,y:q3.y+normal.y*depth*.48};
         features.push({start:center-half,end:center+half,
           points:[q1,q2,q3,at(center+half)]});
       }
@@ -354,25 +354,35 @@
       var dest=current.querySelector('[data-mp-row="'+i+'"]');
       if(!tile||!dest)return;
       var a=tile.getBoundingClientRect(),b=dest.getBoundingClientRect();
-      // The former SVG was drawn behind the solid atlas background, hiding
-      // the upper stems of the first three routes. Begin exactly at the
-      // frame's lower-right edge, just outside the caption's text.
-      var sx=a.right-mr.left-2,sy=a.bottom-mr.top-1;
-      // Destination is BELOW the entire chapter row, never at text midline.
-      // The terminal segment runs right-to-left like a fine underline.
+      // Tenets 1–3: the wires emerge BELOW the complete card (including
+      // the caption), matching the stepped paths in the reference image.
+      // Every wire has its own starting column, gutter height and elbow.
+      // Descending order 3,2,1 prevents any higher stem from being crossed
+      // by a lower neighbour's horizontal run.
+      var cardRect=card.getBoundingClientRect();
+      var firstThree=i<3;
+      var sx=firstThree ? cardRect.right-mr.left-1 : a.right-mr.left-2;
+      var sy=firstThree ? railBottom+1 : a.bottom-mr.top-1;
       var ex=Math.max(10,b.left-mr.left+4),ey=b.bottom-mr.top+2;
-      // First three routes follow the user's revised wiring: the first
-      // descends lowest, the second slightly higher, and the third higher
-      // still. Each bends beyond the third framed image, not at the left
-      // margin where the three stems were previously tangled.
-      var thirdTile=current.querySelector('[data-mp-tenet="2"] .mp-tenet-tile');
-      var thirdRight=thirdTile?thirdTile.getBoundingClientRect().right-mr.left:tr.right-mr.left+115;
-      var bendBase=Math.max(tr.right-mr.left+80,thirdRight+15);
-      var lane=i<3?
-        Math.max(railBottom+40,Math.min(railBottom+[122,96,70][i],ey-78)):
-        Math.max(railBottom+17,Math.min(railBottom+38+(i-3)*12,ey-70));
-      var routeX=i<3?bendBase+i*19:bendBase+52+(i-3)*11;
-      var diagonal=25+(i%3)*4;
+      var lane,routeX,diagonal;
+      if(firstThree){
+        var gutter=[76,50,24];
+        // Keep enough room beneath the atlas while reaching the correct
+        // chapter underline even at shorter browser heights.
+        lane=Math.min(railBottom+gutter[i],ey-68);
+        lane=Math.max(sy+10,lane);
+        routeX=Math.max(tr.right-mr.left+80+i*21,sx+42);
+        diagonal=23+i*2;
+      }else{
+        var thirdTile=current.querySelector('[data-mp-tenet="2"] .mp-tenet-tile');
+        var thirdRight=thirdTile?
+          thirdTile.getBoundingClientRect().right-mr.left:tr.right-mr.left+115;
+        var bendBase=Math.max(tr.right-mr.left+80,thirdRight+15);
+        lane=Math.max(railBottom+17,
+          Math.min(railBottom+38+(i-3)*12,ey-70));
+        routeX=Math.max(bendBase+52+(i-3)*11,sx+24);
+        diagonal=25+(i%3)*4;
+      }
       var nodes=[
         {x:sx,y:sy},
         {x:sx,y:lane},
