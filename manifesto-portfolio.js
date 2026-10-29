@@ -138,7 +138,7 @@
   }
   function apply(){
     if(!room)return;
-    var t=settings.tone, background=t<=45?blend("f3f2ed","e8e1cf",t/45):blend("e8e1cf","20231f",(t-45)/55);
+    var t=settings.tone, background=t<=45?blend("f3f2ed","e6e0d0",t/45):blend("e6e0d0","20231f",(t-45)/55);
     var ink=t<=45?"#3c3a36":blend("3c3a36","e5e2d9",(t-45)/55);
     var muted=t<=45?"#80796f":blend("80796f","aba79f",(t-45)/55);
     var line=t<=45?"#aea594":blend("aea594","62665e",(t-45)/55);
@@ -188,7 +188,7 @@
       var bend=Math.max(sr.right-mr.left+72,Math.min(sx-14,sr.right-mr.left+120+i*8));
       var diag=clamp(bend-(sr.right-mr.left)-18,18,44);
       var cx=bend-diag,cy=lane+diag;
-      var endX=sr.right-mr.left-9;
+      var endX=Math.max(12,b.left-mr.left+7);
       var d="M "+sx.toFixed(1)+" "+sy.toFixed(1)+" V "+lane.toFixed(1)+" H "+bend.toFixed(1)+" L "+cx.toFixed(1)+" "+cy.toFixed(1)+" V "+Math.max(cy,ey).toFixed(1)+" H "+endX.toFixed(1);
       out+='<g class="mp-route" data-route="'+i+'"><path class="mp-route-depth" d="'+d+'"/><path class="mp-route-main" d="'+d+'"/><path class="mp-route-glint" d="'+d+'"/></g>';
     });
