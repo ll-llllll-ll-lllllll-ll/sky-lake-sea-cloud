@@ -41,6 +41,10 @@
   font-weight:400;
   letter-spacing:.09em;
   white-space:nowrap;
+  min-width:0;
+  max-width:clamp(150px,22vw,365px);
+  overflow:hidden;
+  text-overflow:ellipsis;
 }
 .mp-room .mp-back {
   flex:none;
@@ -153,6 +157,12 @@
 }
 .mp-room .language button.is-active,
 .mp-room .language button:hover {color:var(--mp-ink);}
+.mp-room .mp-language .mp-lang-divider {
+  color:var(--mp-muted);
+  opacity:.48;
+  font:300 10px/1 "IBM Plex Mono",monospace;
+}
+
 
 .mp-room .mp-scroll {
   position:absolute;
@@ -495,7 +505,11 @@
 @media (max-width:560px) {
   .room-view.mp-room {--mp-header-h:55px;}
   .mp-room .mp-brand {font-size:15px;}
-  .mp-room .mp-step {display:none;}
+  .mp-room .mp-step {gap:3px;}
+  .mp-room .mp-step > span {display:none;}
+  .mp-room .mp-step output {min-width:19px;}
+  .mp-room .mp-step button {padding:3px 1px;}
+  .mp-room .mp-brand {max-width:29vw;}
   .mp-room .mp-tone input {width:55px;}
   .mp-room .mp-tone span {font-size:10px;}
   .mp-room .language {gap:3px;}
