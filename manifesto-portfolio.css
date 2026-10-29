@@ -3,7 +3,7 @@
    ten ceramic frames, original heading order, and adjustable controls.
    All rules are scoped to .mp-room; Folly / instrument are unaffected. */
 .room-view.mp-room {
-  --mp-paper:#e8e1cf;
+  --mp-paper:#e6e0d0;
   --mp-ink:#3c3a36;
   --mp-muted:#80796f;
   --mp-line:#aea594;
