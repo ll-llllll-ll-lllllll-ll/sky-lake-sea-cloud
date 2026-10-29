@@ -138,11 +138,206 @@
       el.classList.toggle("is-selected",Number(el.dataset.mpConnector)===selected);
     });
   }
-  // A slow, bounded weathering process across the ENTIRE ten-line atlas.
-  // Starts at 1–10 randomly placed faults; never exceeds 50 in total.
-  // Existing faults mature gradually. No branching or free-standing shards.
-  // Restore the original deterministic straight / 45-degree wiring.
-  // Fracture animation is suspended until the base geometry is approved.
+  // Slow marble-like weathering, scoped to the approved ten wire paths.
+  // Original route nodes stay unchanged; only tiny inline segments deviate.
+  var seed=(Math.random()*4294967296)>>>0;
+  function rand(){
+    seed=(seed+0x6D2B79F5)>>>0;
+    var v=seed;v=Math.imul(v^(v>>>15),v|1);
+    v^=v+Math.imul(v^(v>>>7),v|61);
+    return ((v^(v>>>14))>>>0)/4294967296;
+  }
+  var faults=[],candidates=[],elapsed=0,nextFault=0,
+      clock=null,lastTick=0,seeded=false,routes=new Array(10);
+  var MAX_FAULTS=50,FAULT_MATURE_MS=48000;
+  function stopClock(){
+    if(clock!==null){clearInterval(clock);clock=null;}
+    lastTick=0;
+  }
+  function clearWeather(){
+    stopClock();faults=[];candidates=[];elapsed=0;nextFault=0;
+    seeded=false;routes=new Array(10);seed=(Math.random()*4294967296)>>>0;
+  }
+  function updateCandidates(){
+    candidates=[];
+    routes.forEach(function(nodes,line){
+      if(!nodes)return;
+      for(var j=1;j<nodes.length-1;j++){
+        var before=Math.hypot(nodes[j].x-nodes[j-1].x,nodes[j].y-nodes[j-1].y);
+        var after=Math.hypot(nodes[j+1].x-nodes[j].x,nodes[j+1].y-nodes[j].y);
+        if(before>=19&&after>=19)candidates.push({
+          key:line+"b"+j,line:line,kind:"bend",joint:j
+        });
+      }
+      for(var k=0;k<nodes.length-1;k++){
+        var len=Math.hypot(nodes[k+1].x-nodes[k].x,nodes[k+1].y-nodes[k].y);
+        if(len<95)continue;
+        [0.24,0.49,0.74].forEach(function(position,n){
+          candidates.push({
+            key:line+"e"+k+"-"+n,line:line,kind:"edge",
+            segment:k,position:position
+          });
+        });
+      }
+    });
+  }
+  function addFault(born){
+    var available=candidates.filter(function(c){
+      return !faults.some(function(f){return f.key===c.key;});
+    });
+    if(!available.length)return false;
+    var bends=available.filter(function(c){return c.kind==="bend";});
+    var edges=available.filter(function(c){return c.kind==="edge";});
+    var pool=bends.length&&(rand()<.70||!edges.length)?bends:edges.length?edges:bends;
+    var chosen=pool[Math.floor(rand()*pool.length)];
+    faults.push({
+      key:chosen.key,line:chosen.line,kind:chosen.kind,joint:chosen.joint,
+      segment:chosen.segment,position:chosen.position,
+      span:7+rand()*5,depth:1.5+rand()*2.15,
+      direction:rand()<.5?-1:1,born:born
+    });
+    return true;
+  }
+  function seedWeather(){
+    if(seeded||!candidates.length)return;
+    seeded=true;
+    var n=1+Math.floor(rand()*10);
+    for(var i=0;i<n;i++)addFault(-FAULT_MATURE_MS*(.4+rand()*.6));
+    nextFault=11000+rand()*7500;
+  }
+  function vector(p,q){
+    var dx=q.x-p.x,dy=q.y-p.y,len=Math.hypot(dx,dy);
+    return len>.0001?{x:dx/len,y:dy/len}:{x:0,y:0};
+  }
+  function between(p,q,t){return {x:p.x+(q.x-p.x)*t,y:p.y+(q.y-p.y)*t};}
+  function buildPath(nodes,line,now){
+    var distances=[0];
+    for(var k=1;k<nodes.length;k++)
+      distances[k]=distances[k-1]+Math.hypot(nodes[k].x-nodes[k-1].x,nodes[k].y-nodes[k-1].y);
+    var total=distances[distances.length-1];
+    if(total<.1)return "";
+    function at(distance){
+      distance=Math.max(0,Math.min(total,distance));
+      for(var k=0;k<nodes.length-1;k++){
+        if(distance<=distances[k+1] || k===nodes.length-2){
+          var width=distances[k+1]-distances[k];
+          return between(nodes[k],nodes[k+1],width>0?(distance-distances[k])/width:0);
+        }
+      }
+      return nodes[nodes.length-1];
+    }
+    var features=[];
+    faults.forEach(function(f){
+      if(f.line!==line)return;
+      var progress=Math.min(1,Math.max(0,(now-f.born)/FAULT_MATURE_MS));
+      if(progress<=.005)return;
+      // A new fault grows slowly; the edge is a gently displaced seam,
+      // never an alternating ECG-like spike.
+      var extent=.22+.78*progress;
+      var depth=f.depth*extent;
+      if(f.kind==="bend"){
+        var j=f.joint;
+        if(j<=0||j>=nodes.length-1)return;
+        var left=distances[j]-distances[j-1],right=distances[j+1]-distances[j];
+        var half=Math.min(f.span*(.52+.48*progress),left*.24,right*.24);
+        if(half<2)return;
+        var incoming=vector(nodes[j],nodes[j-1]);
+        var outgoing=vector(nodes[j],nodes[j+1]);
+        // The smaller angle is between the two vectors pointing away
+        // from this corner: every fracture is inset into that angle.
+        var inner={x:incoming.x+outgoing.x,y:incoming.y+outgoing.y};
+        var m=Math.hypot(inner.x,inner.y);
+        if(m<.01)return;
+        inner.x/=m;inner.y/=m;
+        var a=at(distances[j]-half),b=at(distances[j]+half);
+        var tip={x:nodes[j].x+inner.x*depth,y:nodes[j].y+inner.y*depth};
+        // Short angular cleavage into the INNER corner. Avoid a chain
+        // of nearly-collinear vertices, which looked rounded once aged.
+        // The two facet edges meet in one sharp tip, like a chipped slab.
+        features.push({start:distances[j]-half,end:distances[j]+half,
+          points:[tip,b]});
+      }else{
+        var seg=f.segment;
+        if(seg<0||seg>=nodes.length-1)return;
+        var length=distances[seg+1]-distances[seg];
+        if(length<45)return;
+        var center=distances[seg]+length*f.position;
+        var half=Math.min(f.span*(.55+.45*progress),length*.085);
+        if(center-half<=distances[seg]+5||center+half>=distances[seg+1]-5)return;
+        var u=vector(nodes[seg],nodes[seg+1]);
+        var normal={x:-u.y*f.direction,y:u.x*f.direction};
+        var q1=at(center-half*.37),q2=at(center+half*.23),q3=at(center+half*.67);
+        // Three hard facets form one displaced stone seam; no curves,
+        // blur, or small oscillations that turn into a rounded squiggle.
+        q1={x:q1.x+normal.x*depth*.45,y:q1.y+normal.y*depth*.45};
+        q2={x:q2.x+normal.x*depth,y:q2.y+normal.y*depth};
+        q3={x:q3.x+normal.x*depth*.48,y:q3.y+normal.y*depth*.48};
+        features.push({start:center-half,end:center+half,
+          points:[q1,q2,q3,at(center+half)]});
+      }
+    });
+    features.sort(function(a,b){return a.start-b.start;});
+    var commands=[],previous=null;
+    function add(p){
+      if(previous&&Math.hypot(previous.x-p.x,previous.y-p.y)<.02)return;
+      commands.push((commands.length?"L ":"M ")+p.x.toFixed(2)+" "+p.y.toFixed(2));
+      previous=p;
+    }
+    function extend(from,to){
+      if(to<=from+.01)return;
+      for(var k=1;k<distances.length-1;k++){
+        if(distances[k]>from+.01 && distances[k]<to-.01)add(nodes[k]);
+      }
+      add(at(to));
+    }
+    add(nodes[0]);
+    var cursor=0;
+    features.forEach(function(feature){
+      // Never draw two faults on top of each other.
+      if(feature.start<cursor+1.5 || feature.end>total)return;
+      extend(cursor,feature.start);
+      feature.points.forEach(add);
+      cursor=feature.end;
+    });
+    extend(cursor,total);
+    return commands.join(" ");
+  }
+  function updatePaths(){
+    if(!current||!current.isConnected)return;
+    var svg=current.querySelector("[data-mp-svg]");
+    if(!svg)return;
+    svg.querySelectorAll(".mp-connector").forEach(function(g){
+      var i=Number(g.dataset.mpConnector),nodes=routes[i];
+      var p=g.querySelector(".mp-connector-main");
+      if(nodes&&p)p.setAttribute("d",buildPath(nodes,i,elapsed));
+    });
+  }
+  function advanceWeather(){
+    if(!current||!current.isConnected||document.hidden)return;
+    var now=Date.now();
+    if(!lastTick)lastTick=now;
+    elapsed+=Math.min(2500,Math.max(0,now-lastTick));
+    lastTick=now;
+    var added=false;
+    while(faults.length<MAX_FAULTS&&elapsed>=nextFault){
+      if(!addFault(nextFault)){nextFault=elapsed+20000;break;}
+      nextFault+=11000+rand()*7500;added=true;
+    }
+    var maturing=faults.some(function(f){return elapsed-f.born<FAULT_MATURE_MS;});
+    if(added||maturing)updatePaths();
+    if(faults.length>=MAX_FAULTS&&!maturing)stopClock();
+  }
+  function startClock(){
+    if(clock!==null||!current||document.hidden||noMotion||
+       window.matchMedia("(max-width:1199px)").matches||
+       (faults.length>=MAX_FAULTS&&faults.every(function(f){
+         return elapsed-f.born>=FAULT_MATURE_MS;
+       })))return;
+    lastTick=Date.now();
+    clock=setInterval(advanceWeather,1200);
+  }
+
+  // Approved clean 45-degree base routes (left untouched).
   function linePath(nodes) {
     return nodes.map(function(p,i) {
       return (i ? "L " : "M ") + p.x.toFixed(2) + " " + p.y.toFixed(2);
@@ -158,6 +353,7 @@
     if(!map||!svg||!toc||!atlas)return;
     if(window.matchMedia("(max-width:1199px)").matches){
       svg.replaceChildren();
+      stopClock();
       return;
     }
     var mr=map.getBoundingClientRect(),tr=toc.getBoundingClientRect();
@@ -221,11 +417,16 @@
           {x:ex,y:ey}
         ];
       }
+      routes[i]=nodes;
       var d=linePath(nodes);
       out+='<g class="mp-connector" data-mp-connector="'+i+'">'+
         '<path class="mp-connector-main" d="'+d+'"/></g>';
     });
     svg.innerHTML=out;
+    updateCandidates();
+    seedWeather();
+    updatePaths();
+    startClock();
     highlight();
   }
 
@@ -255,6 +456,8 @@
     var next=document.querySelector(".writing-room.mp-room");
     if(next===current)return;
     if(resizeWatcher){resizeWatcher.disconnect();resizeWatcher=null;}
+    stopClock();
+    if(!next)clearWeather();
     current=next;chosen=0;hovered=-1;
     if(!current)return;
     if("ResizeObserver" in window){
@@ -269,6 +472,10 @@
   var app=document.getElementById("app");
   if(app && "MutationObserver" in window)new MutationObserver(install).observe(app,{childList:true,subtree:false});
   window.addEventListener("resize",schedule,{passive:true});
+  document.addEventListener("visibilitychange",function(){
+    if(document.hidden)stopClock();
+    else if(current){lastTick=Date.now();schedule();}
+  });
   document.addEventListener("click",function(ev){
     var button=ev.target&&ev.target.closest&&ev.target.closest("[data-mp-tenet],[data-mp-row]");
     if(!button||!current||!current.contains(button))return;
