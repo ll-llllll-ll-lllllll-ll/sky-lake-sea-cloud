@@ -161,7 +161,9 @@
       var line=Math.floor(random()*10);
       var bend=random()<.72;
       var joint=bend?1+Math.floor(random()*4):-1;
-      var segment=bend?-1:Math.floor(random()*5);
+      // Choose long stretches only, so every counted fault can actually
+      // be drawn and no tiny corner-adjacent segment swallows a notch.
+      var segment=bend?-1:(random()<.5?3:4);
       var position=.23+random()*.52;
       var collision=faults.some(function(f){
         if(f.line!==line)return false;
@@ -300,9 +302,14 @@
       faultNext+=11000+random()*7500;
       added=true;
     }
-    if(!noMotion && (added||faults.some(function(f){
+    var stillMaturing=faults.some(function(f){
       return faultElapsed-f.born<FAULT_GROW_MS;
-    })))updateFaultPaths();
+    });
+    if(!noMotion && (added||stillMaturing))updateFaultPaths();
+    if(faults.length===MAX_FAULTS && !stillMaturing && faultTimer){
+      clearInterval(faultTimer);
+      faultTimer=null;
+    }
   }
   function updateFaultPaths(){
     if(!current||!current.isConnected)return;
