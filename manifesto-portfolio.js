@@ -200,14 +200,11 @@
           {x:ex,y:ey}
         ];
       }else if(i===1){
-        // 02: its own lower parallel 45° chamfer.
-        var y1=sy+13;
-        var startChamfer=endX-diagonal;
+        // 02: a single uninterrupted 45° diagonal from the second card.
+        // Remove the former short down/right elbow circled in the reference.
         nodes=[
           {x:startX,y:sy},
-          {x:startX,y:y1},
-          {x:startChamfer,y:y1},
-          {x:endX,y:y1+diagonal},
+          {x:endX,y:sy+(endX-startX)},
           {x:endX,y:ey},
           {x:ex,y:ey}
         ];
