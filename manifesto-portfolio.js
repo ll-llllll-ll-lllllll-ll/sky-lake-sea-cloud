@@ -61,7 +61,7 @@
     '</header>';
     var tiles=SECTIONS.map(function(name,i){
       var caption=l(name),image=images[i]||"";
-      return '<button type="button" class="mp-tenet" data-mp-tenet="'+i+'" aria-label="'+e((ORDINAL[lang()]||ORDINAL.zh)[i]+" · "+caption)+'" aria-pressed="'+(i===0?"true":"false")+'">'+
+      return '<button type="button" class="mp-tenet" data-mp-tenet="'+i+'" aria-label="'+e((ORDINAL[lang()]||ORDINAL.zh)[i]+" · "+caption)+'" aria-pressed="false">'+
         '<span class="mp-tenet-ordinal">'+e(ORDINAL[lang()][i])+'</span>'+
         '<span class="mp-ceramic"><span class="mp-ceramic-inner">'+
         (image?'<img src="'+e(image)+'" alt="" loading="'+(i<4?"eager":"lazy")+'" decoding="async">':"")+
@@ -120,7 +120,7 @@
   };
   if(typeof parseRoute==="function"&&parseRoute()&&parseRoute().slug==="ruinwright-manifesto")render();
 
-  var room=null, observer=null, raf=0, active=0, hovered=-1;
+  var room=null, observer=null, raf=0, active=-1, hovered=-1;
   var settings={font:15,leading:2.3,tone:45};
   function clamp(x,a,b){return Math.max(a,Math.min(b,x));}
   function hexColor(s){return s.match(/\w\w/g).map(function(v){return parseInt(v,16);});}
@@ -205,11 +205,13 @@
     var next=document.querySelector(".mp-room");
     if(next===room)return;
     if(observer){observer.disconnect();observer=null;}
-    room=next;active=0;hovered=-1;
+    room=next;active=-1;hovered=-1;
     if(!room)return;
     apply();highlight();
-    observer=new ResizeObserver(schedule);
-    observer.observe(room.querySelector("[data-mp-map]"));
+    if("ResizeObserver" in window){
+      observer=new ResizeObserver(schedule);
+      observer.observe(room.querySelector("[data-mp-map]"));
+    }
     room.querySelectorAll(".mp-ceramic img").forEach(function(img){
       if(!img.complete)img.addEventListener("load",schedule,{once:true});
     });
