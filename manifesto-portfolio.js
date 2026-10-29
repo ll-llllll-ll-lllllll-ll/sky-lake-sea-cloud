@@ -96,7 +96,7 @@
     if(match){
       var paragraphs=match[1].match(/<p class="room-intro">[\s\S]*?<\/p>/g);
       if(paragraphs && paragraphs.length===3){
-        var visitText=typeof localised==="function"?localised(item.visitLabel):"";
+        var visitText=title(item.visitLabel||{zh:"阅读《墟构师宣言》",en:"Read the Manifesto of the Ruinwright",ja:"本文を読む"});
         var link='<a class="mp-intro-visit" href="'+escape(item.visit)+
           '" target="_blank" rel="noopener noreferrer">'+escape(visitText)+' ↗</a>';
         var revised=paragraphs[0]+paragraphs[1]+
