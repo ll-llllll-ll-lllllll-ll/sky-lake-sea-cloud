@@ -436,7 +436,11 @@
   window.addEventListener("resize",function(){schedule();startFaultClock();},{passive:true});
   document.addEventListener("visibilitychange",function(){
     faultLast=Date.now();
-    if(!document.hidden && current) {
+    if(document.hidden){
+      if(faultTimer){clearInterval(faultTimer);faultTimer=null;}
+      return;
+    }
+    if(current){
       schedule();
       startFaultClock();
     }
