@@ -144,10 +144,11 @@
       var corner=Math.max(indexRight+62,Math.min(sx-16,indexRight+128+i*7));
       var step=Math.max(16,Math.min(45,corner-indexRight-18));
       var x2=corner-step,y2=lane+step;
-      var endY=Math.max(y2,ey);
+      // Reach the actual chapter label rather than terminating at a
+      // convenient routing lane when an early entry sits above the chamfer.
       var path="M "+sx.toFixed(2)+" "+sy.toFixed(2)+" V "+lane.toFixed(2)+
         " H "+corner.toFixed(2)+" L "+x2.toFixed(2)+" "+y2.toFixed(2)+
-        " V "+endY.toFixed(2)+" H "+ex.toFixed(2);
+        " V "+ey.toFixed(2)+" H "+ex.toFixed(2);
       out+='<g class="mp-connector" data-mp-connector="'+i+'">'+
         '<path class="mp-connector-depth" d="'+path+'"/>'+
         '<path class="mp-connector-main" d="'+path+'"/>'+
