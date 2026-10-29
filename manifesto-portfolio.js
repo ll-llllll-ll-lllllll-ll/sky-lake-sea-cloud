@@ -141,279 +141,98 @@
   // A slow, bounded weathering process across the ENTIRE ten-line atlas.
   // Starts at 1–10 randomly placed faults; never exceeds 50 in total.
   // Existing faults mature gradually. No branching or free-standing shards.
-  var faultSeed=(Math.random()*0xFFFFFFFF)>>>0;
-  function random(){
-    faultSeed=(faultSeed+0x6D2B79F5)>>>0;
-    var v=faultSeed;
-    v=Math.imul(v^(v>>>15),v|1);
-    v^=v+Math.imul(v^(v>>>7),v|61);
-    return ((v^(v>>>14))>>>0)/4294967296;
+  // Restore the original deterministic straight / 45-degree wiring.
+  // Fracture animation is suspended until the base geometry is approved.
+  function linePath(nodes) {
+    return nodes.map(function(p,i) {
+      return (i ? "L " : "M ") + p.x.toFixed(2) + " " + p.y.toFixed(2);
+    }).join(" ");
   }
-  var faults=[],faultElapsed=0,faultNext=0,faultTimer=null,faultLast=0;
-  var routeShapes=new Array(10);
-  var faultsSeeded=false;
-  var MAX_FAULTS=50;
-  var FAULT_GROW_MS=48000;
-  function chooseFault(time){
-    // Corners are favoured, but each corner can split only once.
-    // Straight-line faults are limited and spaced along their segment.
-    for(var attempt=0;attempt<100;attempt++){
-      var line=Math.floor(random()*10);
-      var bend=random()<.72;
-      var joint=bend?1+Math.floor(random()*4):-1;
-      // Choose long stretches only, so every counted fault can actually
-      // be drawn and no tiny corner-adjacent segment swallows a notch.
-      var segment=bend?-1:(random()<.5?3:4);
-      var position=.23+random()*.52;
-      var collision=faults.some(function(f){
-        if(f.line!==line)return false;
-        if(bend && f.kind==="bend")return f.joint===joint;
-        if(!bend && f.kind==="edge")
-          return f.segment===segment && Math.abs(f.position-position)<.23;
-        return false;
-      });
-      if(collision)continue;
-      faults.push({
-        line:line,kind:bend?"bend":"edge",joint:joint,
-        segment:segment,position:position,
-        span:8+random()*7,
-        depth:1.9+random()*2.6,
-        direction:random()<.5?-1:1,
-        character:random(),
-        born:time
-      });
-      return true;
-    }
-    return false;
-  }
-  function seedFaults(){
-    if(faultsSeeded)return;
-    faultsSeeded=true;
-    var count=1+Math.floor(random()*10);
-    for(var i=0;i<count;i++)chooseFault(-FAULT_GROW_MS*(.35+random()*.9));
-    faultNext=11000+random()*7500;
-  }
-  function vector(p,q){
-    var dx=q.x-p.x,dy=q.y-p.y,len=Math.hypot(dx,dy);
-    return len>.0001?{x:dx/len,y:dy/len}:{x:0,y:0};
-  }
-  function between(p,q,t){return {x:p.x+(q.x-p.x)*t,y:p.y+(q.y-p.y)*t};}
-  function buildPath(nodes,line,now){
-    var distances=[0];
-    for(var k=1;k<nodes.length;k++)
-      distances[k]=distances[k-1]+Math.hypot(nodes[k].x-nodes[k-1].x,nodes[k].y-nodes[k-1].y);
-    var total=distances[distances.length-1];
-    if(total<.1)return "";
-    function at(distance){
-      distance=Math.max(0,Math.min(total,distance));
-      for(var k=0;k<nodes.length-1;k++){
-        if(distance<=distances[k+1] || k===nodes.length-2){
-          var width=distances[k+1]-distances[k];
-          return between(nodes[k],nodes[k+1],width>0?(distance-distances[k])/width:0);
-        }
-      }
-      return nodes[nodes.length-1];
-    }
-    var features=[];
-    faults.forEach(function(f){
-      if(f.line!==line)return;
-      var progress=Math.min(1,Math.max(0,(now-f.born)/FAULT_GROW_MS));
-      if(progress<=.005)return;
-      // A new fault grows slowly; the edge is a gently displaced seam,
-      // never an alternating ECG-like spike.
-      var extent=.25+.75*progress;
-      var depth=f.depth*extent;
-      if(f.kind==="bend"){
-        var j=f.joint;
-        if(j<=0||j>=nodes.length-1)return;
-        var left=distances[j]-distances[j-1],right=distances[j+1]-distances[j];
-        var half=Math.min(f.span*(.50+.50*progress),left*.29,right*.29);
-        if(half<2)return;
-        var incoming=vector(nodes[j],nodes[j-1]);
-        var outgoing=vector(nodes[j],nodes[j+1]);
-        // The smaller angle is between the two vectors pointing away
-        // from this corner: every fracture is inset into that angle.
-        var inner={x:incoming.x+outgoing.x,y:incoming.y+outgoing.y};
-        var m=Math.hypot(inner.x,inner.y);
-        if(m<.01)return;
-        inner.x/=m;inner.y/=m;
-        var a=at(distances[j]-half),b=at(distances[j]+half);
-        var tip={x:nodes[j].x+inner.x*depth,y:nodes[j].y+inner.y*depth};
-        // Short angular cleavage into the INNER corner. Avoid a chain
-        // of nearly-collinear vertices, which looked rounded once aged.
-        // The two facet edges meet in one sharp tip, like a chipped slab.
-        features.push({start:distances[j]-half,end:distances[j]+half,
-          points:[tip,b]});
-      }else{
-        var seg=f.segment;
-        if(seg<0||seg>=nodes.length-1)return;
-        var length=distances[seg+1]-distances[seg];
-        if(length<45)return;
-        var center=distances[seg]+length*f.position;
-        var half=Math.min(f.span*(.55+.45*progress),length*.1);
-        if(center-half<=distances[seg]+5||center+half>=distances[seg+1]-5)return;
-        var u=vector(nodes[seg],nodes[seg+1]);
-        var normal={x:-u.y*f.direction,y:u.x*f.direction};
-        var q1=at(center-half*.37),q2=at(center+half*.23),q3=at(center+half*.67);
-        // Three hard facets form one displaced stone seam; no curves,
-        // blur, or small oscillations that turn into a rounded squiggle.
-        q1={x:q1.x+normal.x*depth*.45,y:q1.y+normal.y*depth*.45};
-        q2={x:q2.x+normal.x*depth,y:q2.y+normal.y*depth};
-        q3={x:q3.x+normal.x*depth*.48,y:q3.y+normal.y*depth*.48};
-        features.push({start:center-half,end:center+half,
-          points:[q1,q2,q3,at(center+half)]});
-      }
-    });
-    features.sort(function(a,b){return a.start-b.start;});
-    var commands=[],previous=null;
-    function add(p){
-      if(previous&&Math.hypot(previous.x-p.x,previous.y-p.y)<.02)return;
-      commands.push((commands.length?"L ":"M ")+p.x.toFixed(2)+" "+p.y.toFixed(2));
-      previous=p;
-    }
-    function extend(from,to){
-      if(to<=from+.01)return;
-      for(var k=1;k<distances.length-1;k++){
-        if(distances[k]>from+.01 && distances[k]<to-.01)add(nodes[k]);
-      }
-      add(at(to));
-    }
-    add(nodes[0]);
-    var cursor=0;
-    features.forEach(function(feature){
-      // Never draw two faults on top of each other.
-      if(feature.start<cursor+1.5 || feature.end>total)return;
-      extend(cursor,feature.start);
-      feature.points.forEach(add);
-      cursor=feature.end;
-    });
-    extend(cursor,total);
-    return commands.join(" ");
-  }
-  function ageFaults(){
-    if(!current||!current.isConnected||document.hidden)return;
-    var now=Date.now();
-    if(!faultLast)faultLast=now;
-    faultElapsed+=Math.min(2500,Math.max(0,now-faultLast));
-    faultLast=now;
-    var added=false;
-    while(faults.length<MAX_FAULTS && faultElapsed>=faultNext){
-      if(!chooseFault(faultNext))break;
-      faultNext+=11000+random()*7500;
-      added=true;
-    }
-    var stillMaturing=faults.some(function(f){
-      return faultElapsed-f.born<FAULT_GROW_MS;
-    });
-    if(!noMotion && (added||stillMaturing))updateFaultPaths();
-    if(faults.length===MAX_FAULTS && !stillMaturing && faultTimer){
-      clearInterval(faultTimer);
-      faultTimer=null;
-    }
-  }
-  function updateFaultPaths(){
-    if(!current||!current.isConnected)return;
-    var svg=current.querySelector("[data-mp-svg]");
-    if(!svg)return;
-    svg.querySelectorAll(".mp-connector").forEach(function(g){
-      var i=Number(g.dataset.mpConnector),nodes=routeShapes[i];
-      if(!nodes)return;
-      var path=buildPath(nodes,i,faultElapsed);
-      g.querySelectorAll("path").forEach(function(el){el.setAttribute("d",path);});
-    });
-  }
-  function startFaultClock(){
-    if(faultTimer)clearInterval(faultTimer);
-    faultTimer=null;
-    if(!current||noMotion||window.matchMedia("(max-width:1199px)").matches)return;
-    faultLast=Date.now();
-    faultTimer=setInterval(ageFaults,1200);
-  }
-
   function draw(){
     scheduled=0;
     if(!current||!current.isConnected)return;
     var map=current.querySelector("[data-mp-map]");
     var svg=current.querySelector("[data-mp-svg]");
     var toc=current.querySelector(".mp-toc");
-    if(!map||!svg||!toc)return;
+    var atlas=current.querySelector(".mp-tenet-atlas");
+    if(!map||!svg||!toc||!atlas)return;
     if(window.matchMedia("(max-width:1199px)").matches){
       svg.replaceChildren();
-      routeShapes=new Array(10);
       return;
     }
-    var mr=map.getBoundingClientRect(), tr=toc.getBoundingClientRect();
-    var atlas=current.querySelector(".mp-tenet-atlas");
+    var mr=map.getBoundingClientRect(),tr=toc.getBoundingClientRect();
     var railBottom=atlas.getBoundingClientRect().bottom-mr.top;
     var w=map.clientWidth,h=map.clientHeight;
     if(!w||!h)return;
     svg.setAttribute("viewBox","0 0 "+w+" "+h);
-    // Reserve three non-intersecting vertical channels before drawing:
-    // each later downleg must be to the RIGHT of the previous horizontal
-    // run, including the diagonal's inward shift.
-    var earlySources=[0,1,2].map(function(i){
-      var card=current.querySelector('[data-mp-tenet="'+i+'"]');
-      return card?card.getBoundingClientRect().right-mr.left-1:0;
-    });
-    var earlyElbows=[];
-    earlySources.forEach(function(x,i){
-      var minimum=Math.max(tr.right-mr.left+54,x+42);
-      if(i>0)minimum=Math.max(minimum,earlyElbows[i-1]+58);
-      earlyElbows.push(minimum);
-    });
+    var cards=Array.from(current.querySelectorAll("[data-mp-tenet]"));
+    if(cards.length!==10)return;
+    var right=function(i){return cards[i].getBoundingClientRect().right-mr.left-1;};
+    // 01–03 from ideal-effect.png: parallel but nonoverlapping channels.
+    // Their diagonals all point toward three closely spaced downlegs.
+    var base=Math.max(right(0)+49,
+      Math.min(tr.right-mr.left+20,right(2)-96));
+    var legs=[base,base+17,base+34];
+    var sy=railBottom+1,firstOffset=14,secondRise=52;
+    var secondAtLane=right(1)+(legs[1]-right(1))*firstOffset/secondRise;
+    var firstTurn=Math.max(right(0)+19,Math.min(legs[0]-27,secondAtLane-11));
+    var thirdTurn=Math.max(legs[2]+22,right(2)-37);
     var out="";
-    current.querySelectorAll("[data-mp-tenet]").forEach(function(card,i){
+    cards.forEach(function(card,i){
       var tile=card.querySelector(".mp-tenet-tile");
       var dest=current.querySelector('[data-mp-row="'+i+'"]');
       if(!tile||!dest)return;
-      var a=tile.getBoundingClientRect(),b=dest.getBoundingClientRect();
-      // Tenets 1–3: the wires emerge BELOW the complete card (including
-      // the caption), matching the stepped paths in the reference image.
-      // Every wire has its own starting column, gutter height and elbow.
-      // Descending order 3,2,1 prevents any higher stem from being crossed
-      // by a lower neighbour's horizontal run.
-      var cardRect=card.getBoundingClientRect();
-      var firstThree=i<3;
-      var sx=firstThree ? cardRect.right-mr.left-1 : a.right-mr.left-2;
-      var sy=firstThree ? railBottom+1 : a.bottom-mr.top-1;
+      var b=dest.getBoundingClientRect();
       var ex=Math.max(10,b.left-mr.left+4),ey=b.bottom-mr.top+2;
-      var lane,routeX,diagonal;
-      if(firstThree){
-        var gutter=[76,50,24];
-        // Keep enough room beneath the atlas while reaching the correct
-        // chapter underline even at shorter browser heights.
-        lane=Math.min(railBottom+gutter[i],ey-68);
-        lane=Math.max(sy+10,lane);
-        routeX=earlyElbows[i];
-        diagonal=23+i*2;
+      var nodes;
+      if(i===0){
+        nodes=[
+          {x:right(0),y:sy},
+          {x:right(0),y:sy+firstOffset},
+          {x:firstTurn,y:sy+firstOffset},
+          {x:legs[0],y:sy+54},
+          {x:legs[0],y:ey},
+          {x:ex,y:ey}
+        ];
+      }else if(i===1){
+        nodes=[
+          {x:right(1),y:sy},
+          {x:legs[1],y:sy+secondRise},
+          {x:legs[1],y:ey},
+          {x:ex,y:ey}
+        ];
+      }else if(i===2){
+        nodes=[
+          {x:right(2),y:sy},
+          {x:thirdTurn,y:sy},
+          {x:legs[2],y:sy+70},
+          {x:legs[2],y:ey},
+          {x:ex,y:ey}
+        ];
       }else{
-        var thirdTile=current.querySelector('[data-mp-tenet="2"] .mp-tenet-tile');
-        var thirdRight=thirdTile?
-          thirdTile.getBoundingClientRect().right-mr.left:tr.right-mr.left+115;
-        var bendBase=Math.max(tr.right-mr.left+80,thirdRight+15);
-        lane=Math.max(railBottom+17,
-          Math.min(railBottom+38+(i-3)*12,ey-70));
-        routeX=Math.max(bendBase+52+(i-3)*11,sx+24);
-        diagonal=25+(i%3)*4;
+        // 04–10: restore the stable pre-fracture wiring geometry.
+        // No extra rightward elbow, no growing fractures.
+        var sx=right(i);
+        var lane=Math.max(railBottom+9,Math.min(railBottom+18+i*10,ey-80));
+        var routeX=tr.right-mr.left+67+i*7;
+        var diagonal=25+(i%3)*5;
+        nodes=[
+          {x:sx,y:sy},
+          {x:sx,y:lane},
+          {x:routeX,y:lane},
+          {x:routeX-diagonal,y:lane+diagonal},
+          {x:routeX-diagonal,y:ey},
+          {x:ex,y:ey}
+        ];
       }
-      var nodes=[
-        {x:sx,y:sy},
-        {x:sx,y:lane},
-        {x:routeX,y:lane},
-        {x:routeX-diagonal,y:lane+diagonal},
-        {x:routeX-diagonal,y:ey},
-        {x:ex,y:ey}
-      ];
-      routeShapes[i]=nodes;
-      var path=buildPath(nodes,i,faultElapsed);
+      var d=linePath(nodes);
       out+='<g class="mp-connector" data-mp-connector="'+i+'">'+
-        '<path class="mp-connector-depth" d="'+path+'"/>'+
-        '<path class="mp-connector-main" d="'+path+'"/>'+
-        '<path class="mp-connector-light" d="'+path+'"/></g>';
+        '<path class="mp-connector-main" d="'+d+'"/></g>';
     });
     svg.innerHTML=out;
     highlight();
   }
+
   function schedule(){
     if(scheduled)cancelAnimationFrame(scheduled);
     scheduled=requestAnimationFrame(draw);
@@ -440,10 +259,8 @@
     var next=document.querySelector(".writing-room.mp-room");
     if(next===current)return;
     if(resizeWatcher){resizeWatcher.disconnect();resizeWatcher=null;}
-    if(faultTimer){clearInterval(faultTimer);faultTimer=null;}
     current=next;chosen=0;hovered=-1;
     if(!current)return;
-    seedFaults();
     if("ResizeObserver" in window){
       resizeWatcher=new ResizeObserver(schedule);
       resizeWatcher.observe(current.querySelector("[data-mp-map]"));
@@ -452,22 +269,10 @@
       if(!img.complete)img.addEventListener("load",schedule,{once:true});
     });
     highlight();schedule();
-    startFaultClock();
   }
   var app=document.getElementById("app");
   if(app && "MutationObserver" in window)new MutationObserver(install).observe(app,{childList:true,subtree:false});
-  window.addEventListener("resize",function(){schedule();startFaultClock();},{passive:true});
-  document.addEventListener("visibilitychange",function(){
-    faultLast=Date.now();
-    if(document.hidden){
-      if(faultTimer){clearInterval(faultTimer);faultTimer=null;}
-      return;
-    }
-    if(current){
-      schedule();
-      startFaultClock();
-    }
-  });
+  window.addEventListener("resize",schedule,{passive:true});
   document.addEventListener("click",function(ev){
     var button=ev.target&&ev.target.closest&&ev.target.closest("[data-mp-tenet],[data-mp-row]");
     if(!button||!current||!current.contains(button))return;
