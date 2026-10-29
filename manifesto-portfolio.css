@@ -148,7 +148,7 @@
   pointer-events:none;
 }
 .writing-room.mp-room .mp-connector {
-  opacity:.46;
+  opacity:.39;
   transition:opacity .18s ease;
 }
 .writing-room.mp-room .mp-connector path {
@@ -157,25 +157,26 @@
   stroke-linejoin:miter;
 }
 .writing-room.mp-room .mp-connector-depth {
-  stroke:rgba(92,83,69,.48);
-  stroke-width:2.7;
-  transform:translate(.65px,.6px);
+  /* Barely visible relief, not the old triple-stroked cable. */
+  stroke:rgba(98,94,84,.30);
+  stroke-width:1.5;
+  transform:translate(.28px,.24px);
 }
 .writing-room.mp-room .mp-connector-main {
-  stroke:rgba(118,110,96,.78);
-  stroke-width:1.6;
+  stroke:rgba(115,110,101,.77);
+  stroke-width:1.05;
 }
 .writing-room.mp-room .mp-connector-light {
-  stroke:rgba(255,255,255,.83);
-  stroke-width:.65;
-  transform:translate(-.55px,-.55px);
+  stroke:rgba(255,255,255,.56);
+  stroke-width:.34;
+  transform:translate(-.22px,-.22px);
 }
 .writing-room.mp-room .mp-connector.is-selected {
-  opacity:.93;
+  opacity:.91;
 }
 .writing-room.mp-room .mp-connector.is-selected .mp-connector-main {
-  stroke:rgba(39,38,33,.9);
-  stroke-width:1.85;
+  stroke:rgba(51,50,46,.88);
+  stroke-width:1.24;
 }
 .writing-room.mp-room .mp-toc-reading {
   position:relative;
