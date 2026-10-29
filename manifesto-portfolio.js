@@ -58,7 +58,7 @@
     }).join("");
     var directory='<aside class="mp-toc" aria-label="'+escape(t.contents)+'">'+
       '<p class="mp-toc-kicker">'+escape(t.contents)+'</p>'+
-      '<div class="mp-toc-group"><p>'+escape(t.manifesto)+'</p>'+
+      '<div class="mp-toc-group">'+
         toc(ROOT+"#section-00","1.1.0",t.prologue,"mp-toc-main")+
         toc(ROOT+"#section-00-sub-00","1.1.1",t.modern,"mp-toc-secondary")+
         toc(ROOT+"#section-00-sub-01","1.1.2",t.work,"mp-toc-secondary")+
@@ -89,6 +89,28 @@
     if(!item || item.slug!=="ruinwright-manifesto")return html;
     var marker=/<section class="writing-tenets" aria-label="Ruinwright ten tenets">[\s\S]*?<\/section>/;
     if(!marker.test(html))return html;
+    // Keep the original three-column introduction. The external reading link
+    // belongs immediately below its third paragraph, not beneath the atlas.
+    var introduction=/<div class="room-intro-stack">([\s\S]*?)<\/div>/;
+    var match=html.match(introduction);
+    if(match){
+      var paragraphs=match[1].match(/<p class="room-intro">[\s\S]*?<\/p>/g);
+      if(paragraphs && paragraphs.length===3){
+        var visitText=typeof localised==="function"?localised(item.visitLabel):"";
+        var link='<a class="mp-intro-visit" href="'+escape(item.visit)+
+          '" target="_blank" rel="noopener noreferrer">'+escape(visitText)+' ↗</a>';
+        var revised=paragraphs[0]+paragraphs[1]+
+          '<div class="mp-intro-final">'+paragraphs[2]+link+'</div>';
+        html=html.replace(match[0],'<div class="room-intro-stack">'+revised+'</div>');
+      }
+    }
+    // Remove the two redundant labels while keeping the existing heading and
+    // language switch, and delete the old bottom visit/next-work buttons.
+    html=html.replace(/(<header class="room-head">[\s\S]*?<p>)[\s\S]*?(<\/p>)/,
+      '$1'+escape(title(item.title))+'$2');
+    html=html.replace(/<p class="room-group">[\s\S]*?<\/p>/,"");
+    html=html.replace(/<div class="room-visit-wrap">[\s\S]*?<\/div>/,"");
+    html=html.replace(/<footer class="room-footer">[\s\S]*?<\/footer>/,"");
     return html.replace('class="room-view writing-room"','class="room-view writing-room mp-room"')
       .replace(marker,addition(item));
   };
