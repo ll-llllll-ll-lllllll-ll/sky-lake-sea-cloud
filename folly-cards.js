@@ -188,13 +188,13 @@
              ],
              [
                "The chamber collapses inward, leaving remnants in still water.",
-               "Compression, fractures and subsidence undo its initial outline; immersion and corrosion continue after the collapse."
+               "Compression, fractures, and subsidence undo its initial outline; immersion and corrosion continue after the collapse."
              ]
            ],
            detail:[
              [
                "The Rust-Blood Heart is placed at the end of the chamber’s force-transmission path.",
-               "Rusted fragments are sealed in glass and connected to cables, pulleys and a pump blade, awaiting the pull of the garden."
+               "Rusted fragments are sealed in glass and connected to cables, pulleys, and a pump blade, awaiting the pull of the garden."
              ],
              [
                "The chamber’s descent becomes a succession of pulses.",
@@ -208,7 +208,7 @@
          }},
         {garden:'Three outward cable anchors and a suspended weight hold the Rusted Tower upright around a glass pivot. As cable tension weakens, its center of gravity shifts. The ground-level grinding structure repeatedly wears at its supports until the tower can no longer keep its precarious balance.',
          instrument:'Aether Interval links moving antennas, a theremin-like interference field and a sand plate. Electromagnetic changes become frequency, sound and vibration before briefly appearing in the sand. Falling grains, static charge and electronic noise gradually burden the apparatus.',
-         theatre:'The tower, the aether interval and the ground-level grinder perform together. Sand gathers and disperses, cables tremble, and the wheel abrades the ground. One order produces sound through the very motions that undermine another.',
+         theatre:'The tower, the aether interval, and the ground-level grinder perform together. Sand gathers and disperses, cables tremble, and the wheel abrades the ground. One order produces sound through the very motions that undermine another.',
          score:'This score overlays the drawing of the tower’s oscillating structure in “Collapsing Structure: Rusted Tower” with the beat-frequency circuit diagram of “Ruin Instrument: Aether Interval.” Their lines intersect on a single plane: as the tensioned structure loosens and the tower loses its balance, the drawing records the displacement of components and signal interference between the tower’s overlapping antennas. Sensors carry those disrupted signals into the signal circuits and electromagnetic system, where they become sounds of continually shifting frequency. The accumulation of interference and overload steadily increases the strain on Aether Interval, until the instrument finally burns out amid ever noisier vibrations. What began as a drawing for design and documentation thus becomes the score of a cruel scherzo for the tower’s aether.',
          phases:{
            structure:[
