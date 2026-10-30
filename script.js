@@ -89,8 +89,8 @@ const calendarIntro = {
     "我的艺术创作理念也是如此：看完世界后，仍可以回到这里。所谓纯粹的心灵，并不是从未见过复杂，而是在洞见复杂之后，仍愿意抬头看一眼天空。"
   ],
   "en": [
-    "A calendar occupied by sky, oceans, lakes and clouds—things that change in an instant and cannot be arranged. Each day's scenery changes of its own accord, like the weather, and the homepage plays a different ambient film in the background. In this seemingly aimless calendar, the gaze briefly slips “out of focus”: it moves away from the concerns of everyday life and settles once more on the natural scenes that had receded into its background.",
-    "Here, these scenes serve to recalibrate the senses. What I call “purity” is not emptiness, but an “anchor” that allows looking to return, for a moment, to a point before explanation and judgement.",
+    "A calendar occupied by sky, oceans, lakes, and clouds—things that change in an instant and cannot be arranged. Each day's scenery changes of its own accord, like the weather, and the homepage plays a different ambient film in the background. In this seemingly aimless calendar, the gaze briefly slips “out of focus”: it moves away from the concerns of everyday life and settles once more on the natural scenes that had receded into its background.",
+    "Here, these scenes serve to recalibrate the senses. What I call “purity” is not emptiness, but an “anchor” that allows looking to return, for a moment, to a point before explanation and judgment.",
     "My approach to making art follows much the same thought: after seeing the world, one can still return here. A pure heart is not one that has never encountered complexity, but one that, having looked deeply into it, is still willing to look up at the sky."
   ],
   "ja": [
@@ -142,8 +142,8 @@ const seawaterMemoryText = {
     "一边担心原始记忆会随着时间彻底消失，一边又担心任何试图把它画下来、做出来、命名出来的动作，都会替换掉那段记忆本身。于是，我将这段无法被证实的记忆，用一幅朦胧的画记录了下来。"
   ],
   "en": [
-    "It begins with a childhood memory suspended between reality and fiction: when I was about eleven, I remember seeing a leaking tote tank in a corner beneath the stairs, and vaguely hearing someone say “seawater from 55 oceans.” Years later, looking back for evidence, I could find no record of it. I do not know whether this memory comes from an experience that really happened or was pieced together anew over years of recollection. Perhaps such a work did exist; perhaps it was merely a passer-by reading too much into a tank of water. Strangely, when the memory suddenly returned to me years later, the more I tried to confirm it, the less real it seemed.",
-    "I feared that the original memory might vanish entirely with time, yet also feared that any attempt to paint it, make it or name it would replace the memory itself. So I recorded this unverifiable memory in a hazy painting."
+    "It begins with a childhood memory suspended between reality and fiction: when I was about eleven, I remember seeing a leaking tote tank in a corner beneath the stairs, and vaguely hearing someone say “seawater from 55 oceans.” Years later, looking back for evidence, I could find no record of it. I do not know whether this memory comes from an experience that really happened or was pieced together anew over years of recollection. Perhaps such a work did exist; perhaps it was merely a passerby reading too much into a tank of water. Strangely, when the memory suddenly returned to me years later, the more I tried to confirm it, the less real it seemed.",
+    "I feared that the original memory might vanish entirely with time, yet also feared that any attempt to paint it, make it, or name it would replace the memory itself. So I recorded this unverifiable memory in a hazy painting."
   ],
   "ja": [
     "始まりは、現実と虚構のあいだに宙づりになった幼い頃の記憶である。十一歳くらいのとき、階段下の隅で水の漏れているトートタンク（大型液体コンテナ）を見かけ、「55の海の海水」という言葉をぼんやり耳にした覚えがある。何年もたってから確かめようと調べても、関連する記録は何も見つからなかった。この記憶が実際の体験に由来するのか、それとも長い歳月の回想のなかでつなぎ直されたものなのか、私には分からない。実際にそういう作品があったのかもしれないし、通りすがりの誰かが一槽の水を深読みしただけなのかもしれない。奇妙なのは、何年も後になって突然その記憶がよみがえったとき、確かめようとするほどかえって現実味を失っていったことだ。",
@@ -158,7 +158,7 @@ const collections = [
     title: { zh: "墟域图·遗构馆", en: "Ruin Archive", ja: "墟域図・遺構館" },
     intro: {
       zh: "一张由城市、废墟与断裂共同构成的文明地表。",
-      en: "A surface of civilisation composed of cities, ruins and fractures.",
+      en: "A surface of civilization composed of cities, ruins, and fractures.",
       ja: "都市、廃墟、断裂によって構成された文明の地表。"
     },
     visit: "https://ruin-archive.site/",
@@ -172,7 +172,7 @@ const collections = [
       {
         titleHtml: {
           zh: "<strong>墟域图·</strong>——文明墨迹图",
-          en: "<strong>Ruin Atlas ·</strong>—Civilisation Ink Map",
+          en: "<strong>Ruin Atlas ·</strong>—Civilization Ink Map",
           ja: "<strong>墟域図·</strong>——文明の墨跡図"
         },
         bodyHtml: {
@@ -183,7 +183,7 @@ const collections = [
           ],
           en: [
             "The black points on the map come from urban areas in the real world. I referred to <a href='https://www.naturalearthdata.com/downloads/10m-cultural-vectors/10m-urban-area/' target='_blank' rel='noreferrer'>Natural Earth’s Urban Areas data</a>, greatly simplifying the precise outlines of cities and estimating them as point-like forms of different sizes according to their area. They finally stain a modified terrain map like ink blots. The underlying map is likewise derived from <a href='https://www.naturalearthdata.com/downloads/50m-raster-data/50m-gray-earth/' target='_blank' rel='noreferrer'>Natural Earth’s Gray Earth data</a>.",
-            "The ruin records in the archive appear as points as well. They sit in the corners, edges and gaps of cities, or are simply swallowed by the city once again. Modern ruins often exist in precisely this condition—still products of civilisation, yet not fully returned to a purely natural state.",
+            "The ruin records in the archive appear as points as well. They sit in the corners, edges and gaps of cities, or are simply swallowed by the city once again. Modern ruins often exist in precisely this condition—still products of civilization, yet not fully returned to a purely natural state.",
             "As wandering and recording continue, the number of these marks keeps growing. They settle among the traces left by cities, and the atlas expands with them, becoming a Ruin Atlas that is still in the process of growing."
           ],
           ja: [
@@ -1459,14 +1459,14 @@ render();
   ],
   "en": [
     "Corners of the Hall of Fragrance gathers the aesthetic corners of everyday life that have quietly slipped beyond control: grotesque sculptures, facilities severed from their context, and familiar scenes and objects that we habitually overlook, yet sometimes find unsettling. Such sights are sometimes jokingly called “children’s cult horror.”",
-    "As cities are built at breakneck speed, these things become ornaments in the background of everyday life. They need not belong to any grand narrative, nor have been conceived as works in their own right; they may never even draw anyone’s attention or strike a chord. Yet they are made in batches, often before the need for them has fully taken shape, and remain half-finished in meaning. What draws me to them is the way something intended merely to decorate the urban backdrop can, through a slight departure from familiar proportions, materials or placement, begin to look back at the people who live among it.",
+    "As cities are built at breakneck speed, these things become ornaments in the background of everyday life. They need not belong to any grand narrative, nor have been conceived as works in their own right; they may never even draw anyone’s attention or strike a chord. Yet they are made in batches, often before the need for them has fully taken shape, and remain half-finished in meaning. What draws me to them is the way something intended merely to decorate the urban backdrop can, through a slight departure from familiar proportions, materials, or placement, begin to look back at the people who live among it.",
     "This absurdity need not arise from the forceful personal taste of any one designer. It can emerge when each participant steps away from the larger intention and carries out their part of the functional ornament, following requirements and habits inherited without much question. Where understanding between people is missing, an aesthetic attributable to no single author may begin to appear of its own accord. It grows out of a man-made environment, yet seems to have wandered beyond human control and intention.",
     "And I, the observer, am also part of this failure to understand. Precisely because I cannot fully enter what these scenes originally meant, I find in them an uncanniness they were never supposed to disclose, alongside a beauty no one quite designed.",
-    "To strengthen this “returning gaze,” I deliberately use a camera whose own power to look has been weakened—a film camera close to a toy camera. It makes no claim to sharp images or accurate colour, nor does it let me use photographic technique to assert control over the scene. Instead of standing over a strange object with a precision instrument, I become slower, more vulnerable, even a little unreliable; the balance of power between the scene and me shifts. As my control as an author diminishes, the facilities, sculptures, ornament and residues of daily life in the photograph can acquire a presence of their own.",
+    "To strengthen this “returning gaze,” I deliberately use a camera whose own power to look has been weakened—a film camera close to a toy camera. It makes no claim to sharp images or accurate color, nor does it let me use photographic technique to assert control over the scene. Instead of standing over a strange object with a precision instrument, I become slower, more vulnerable, even a little unreliable; the balance of power between the scene and me shifts. As my control as an author diminishes, the facilities, sculptures, ornament, and residues of daily life in the photograph can acquire a presence of their own.",
     "The toy camera’s lightness of vision takes me back to the feeling of childhood “secret bases.” Why do children turn unoccupied corners into secret bases? Some places seem always to be choosing their own visitors. They are neither playgrounds designed for children nor ready-made stories of childhood assembled by adults. It is in these inconspicuous places, seldom truly looked at, that certain facilities, decorations and objects begin to take on a strange life of their own.",
-    "So the most important thing is not necessarily at the centre of the picture. It is more like a feeling left somewhere beyond the frame: those things seem not to need my explanation or await my judgement. They simply go on existing, turning their gaze back on me in ways I cannot entirely control.",
+    "So the most important thing is not necessarily at the center of the picture. It is more like a feeling left somewhere beyond the frame: those things seem not to need my explanation or await my judgment. They simply go on existing, turning their gaze back on me in ways I cannot entirely control.",
     "In these places I feel directly the strangeness and absurdity of reality that once struck me to the core as a child. I photograph them not to put them back in order as a reasonable world. On the contrary, I would rather preserve that distance which cannot be fully explained: as though entering a secret base that does not truly belong to me, and for a moment allowing its neglected ornaments to see me first.",
-    "Finally, I often think of the description of the “Palace of the Moorish Kings in Seville”: the activity of people in its rooms is absorbed by the ornament’s “noiseless clamour.” For me, the scenes in Corners of the Hall of Fragrance have a similar force. Ornament is not simply something we look at. Once it slips beyond the designer’s original control, use and explanation, it begins to organise our feelings, even seeming to look back at us from somewhere beyond the frame."
+    "Finally, I often think of the description of the “Palace of the Moorish Kings in Seville”: the activity of people in its rooms is absorbed by the ornament’s “noiseless clamour.” For me, the scenes in Corners of the Hall of Fragrance have a similar force. Ornament is not simply something we look at. Once it slips beyond the designer’s original control, use, and explanation, it begins to organize our feelings, even seeming to look back at us from somewhere beyond the frame."
   ],
   "ja": [
     "『芬芳の間の片隅』は、日常のなかでいつのまにか制御を離れた、美的な片隅を集めたものだ。奇妙な彫刻、文脈を失った設備、見慣れているがゆえに普段は見過ごされ、ときおり不気味に感じられる生活の風景や物たち。俗に「子ども向けカルトホラー」などと冗談めかして呼ばれることもある。",
