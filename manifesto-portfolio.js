@@ -26,6 +26,82 @@
     en:{contents:"Contents",manifesto:"MANIFESTO",prologue:"Prologue: After Architecture",modern:"Modern Ruins",work:"Ruinwork and the Ruinwright",tenets:"Tenets of the Ruinwright",selected:"Selected tenet",read:"Read full tenet",images:"Tenet atlas"},
     ja:{contents:"目次",manifesto:"宣言 / MANIFESTO",prologue:"序章――建築のあとで",modern:"現代の廃墟",work:"墟構と墟構師",tenets:"墟構師の建造十則",selected:"選択中の章",read:"本文を読む",images:"十則の図版"}
   };
+  // Complete directory after the ten construction tenets.
+  // Titles and the section/subsection order follow manifesto.txt,
+  // manifesto.en.txt and manifesto.ja.txt in folly-archive.
+  // Section IDs match manifesto.js's zero-based document anchors.
+  var LATER_CHAPTERS=[
+    {code:"1.2.11",section:1,sub:10,title:{
+      zh:"墟构师的边界",en:"The Boundaries of the Ruinwright",ja:"墟構師の境界"}},
+    {code:"2.1.0",section:2,groupStart:true,title:{
+      zh:"破碎画框——从“如画”走向“崇高”",
+      en:"The Broken Frame — From the Picturesque to the Sublime",
+      ja:"壊れた額縁――「ピクチャレスク」から「崇高」へ"}},
+    {code:"2.1.1",section:2,sub:0,title:{
+      zh:"如画美：残境入框",
+      en:"Picturesque Beauty: Bringing the Ruined Scene into the Frame",
+      ja:"ピクチャレスクの美――廃墟を額縁に収める"}},
+    {code:"2.1.2",section:2,sub:1,title:{
+      zh:"《废墟园林》：放生画框",
+      en:"The Folly Series: Releasing the Frame",
+      ja:"『フォリー』――額縁を解き放つ"}},
+    {code:"2.1.3",section:2,sub:2,title:{
+      zh:"心灵废墟：碎裂框架",
+      en:"Ruins of the Mind: A Fractured Frame",
+      ja:"心の廃墟――砕けた額縁"}},
+    {code:"2.1.4",section:2,sub:3,title:{
+      zh:"现代心灵的镜子：空框幻影",
+      en:"A Mirror of the Modern Mind: The Phantom of the Empty Frame",
+      ja:"現代の心を映す鏡――空の額縁の幻影"}},
+    {code:"2.2.0",section:3,title:{
+      zh:"废墟意象——欲望的去向",
+      en:"Ruin Imagery — Where Desire Goes",
+      ja:"廃墟のイメージ――欲望の行方"}},
+    {code:"2.2.1",section:3,sub:0,title:{
+      zh:"破碎棱镜：洞悉断裂面",
+      en:"The Broken Prism: Reading the Fracture Plane",
+      ja:"壊れたプリズム――破断面を読み解く"}},
+    {code:"2.2.2",section:3,sub:1,title:{
+      zh:"废墟浪漫派：残片的柔情",
+      en:"The Ruin Romantic: Tenderness of Fragments",
+      ja:"廃墟のロマン主義者――断片の優しさ"}},
+    {code:"2.2.3",section:3,sub:2,title:{
+      zh:"愚者之姿：碎片乌托邦",
+      en:"The Bearing of the Fool: A Utopia of Fragments",
+      ja:"愚者の姿――断片のユートピア"}},
+    {code:"2.3.0",section:4,title:{
+      zh:"绝响——谢幕后的演奏",
+      en:"Final Resonance — Playing After the Curtain Falls",
+      ja:"絶響――幕が下りたあとの演奏"}},
+    {code:"2.3.1",section:4,sub:0,title:{
+      zh:"后戏剧空间：舞台的后台",
+      en:"Postdramatic Space: Backstage",
+      ja:"ポストドラマ的空間――舞台裏"}},
+    {code:"2.3.2",section:4,sub:1,title:{
+      zh:"崩解成乐器：解构演奏法",
+      en:"Becoming an Instrument through Disintegration: A Deconstructive Performance Method",
+      ja:"崩解して楽器となる――解体的演奏法"}},
+    {code:"2.3.3",section:4,sub:2,title:{
+      zh:"走音至回归：燃尽音符",
+      en:"From Detuning to Return: The Note That Burns Itself Out",
+      ja:"調子を外れ、そして還る――燃え尽きる音符"}},
+    {code:"2.3.4",section:4,sub:3,title:{
+      zh:"临界的崩塌：自毁终章",
+      en:"Collapse at the Threshold: A Self-Destructive Finale",
+      ja:"崩壊の臨界――自壊の終章"}},
+    {code:"2.4.0",section:5,title:{
+      zh:"终章——墟构之后",
+      en:"Epilogue — After Ruinwork",
+      ja:"終章――墟構のあとに"}},
+    {code:"3.1.0",section:6,groupStart:true,title:{
+      zh:"参考文献",en:"Bibliography",ja:"参考文献"}}
+  ];
+  function chapterAnchor(entry){
+    var id="section-"+String(entry.section).padStart(2,"0");
+    if(entry.sub!==undefined)id+="-sub-"+String(entry.sub).padStart(2,"0");
+    return "#"+id;
+  }
+
   var ROOT="https://ruin-archive.site/manifesto.html";
   var prior=renderRoom;
   function lang(){return TXT[state.lang]?state.lang:"zh";}
@@ -64,6 +140,13 @@
         toc(ROOT+"#section-00-sub-01","1.1.2",t.work,"mp-toc-secondary")+
         toc(ROOT+"#section-01","1.2.0",t.tenets,"mp-toc-main")+
         rows+
+        '<div class="mp-toc-continuation">'+
+          LATER_CHAPTERS.map(function(entry){
+            return toc(ROOT+chapterAnchor(entry),entry.code,title(entry.title),
+              (entry.sub===undefined?"mp-toc-main":"mp-toc-secondary")+
+              (entry.groupStart?" mp-toc-group-start":""));
+          }).join("")+
+        '</div>'+
       '</div>'+
     '</aside>';
     var viewer='<section class="mp-preview" data-mp-preview aria-label="'+escape(t.selected)+'">'+
