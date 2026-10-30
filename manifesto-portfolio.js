@@ -283,7 +283,7 @@
       }
     });
   }
-  function addFault(born,preferredGroup){
+  function addFault(born,preferredGroup,limitForThisEvent){
     if(faults.length>=MAX_FAULTS)return false;
     var used=new Set(faults.map(function(f){return f.key;}));
     var existingBySegment={};
@@ -332,7 +332,10 @@
     if(!chosenPool.length)chosenPool=available;
     var chosen=chosenPool[Math.floor(rand()*chosenPool.length)];
     var group=[chosen];
-    var groupWanted=chosen.kind==="edge"&&chosen.corridor&&rand()<.38;
+    var capacity=Math.max(1,Math.min(MAX_FAULTS-faults.length,
+      limitForThisEvent===undefined?MAX_FAULTS:limitForThisEvent));
+    var groupWanted=capacity>1&&chosen.kind==="edge"&&
+      chosen.corridor&&rand()<.38;
     if(groupWanted){
       var neighbors=available.filter(function(c){
         return c.kind==="edge"&&c.corridor===chosen.corridor&&
@@ -343,7 +346,7 @@
         return Math.abs(a.line-chosen.line)-Math.abs(b.line-chosen.line)||
           Math.abs(a.axisValue-chosen.axisValue)-Math.abs(b.axisValue-chosen.axisValue);
       });
-      var count=Math.min(2+Math.floor(rand()*3),MAX_FAULTS-faults.length);
+      var count=Math.min(2+Math.floor(rand()*3),capacity);
       var takenLines=new Set([chosen.line]);
       neighbors.forEach(function(c){
         if(group.length>=count||takenLines.has(c.line))return;
@@ -393,9 +396,10 @@
     // Show the two previously requested square joints first, then
     // explicitly seed the three currently missing parallel-line regions.
     var opening=[first,second,"top","spine","underline"];
-    for(var i=0;i<n && faults.length<MAX_FAULTS;i++){
+    for(var i=0;i<n && faults.length<n;i++){
       var preferred=opening[i]||null;
-      addFault(-FAULT_MATURE_MS*(.4+rand()*.6),preferred);
+      addFault(-FAULT_MATURE_MS*(.4+rand()*.6),
+        preferred,n-faults.length);
     }
     nextFault=11000+rand()*7500;
   }
