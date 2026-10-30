@@ -290,7 +290,9 @@
     faults.forEach(function(f){
       if(f.kind!=="edge")return;
       var key=f.line+":"+f.segment;
-      (existingBySegment[key]||(existingBySegment[key]=[])).push(f.position);
+      (existingBySegment[key]||(existingBySegment[key]=[])).push({
+        position:f.position,halfSpan:f.span
+      });
     });
     function allowed(c){
       if(used.has(c.key))return false;
@@ -298,10 +300,12 @@
         var positions=existingBySegment[c.line+":"+c.segment]||[];
         var nodes=routes[c.line],a=nodes[c.segment],b=nodes[c.segment+1];
         var length=Math.hypot(b.x-a.x,b.y-a.y);
-        // At least 18px between separate faults, so even 200 chips
-        // cannot become a continuous sawtooth.
-        if(positions.some(function(p){return Math.abs(p-c.position)*length<18;}))
-          return false;
+        // Longer linked pits need more space than an individual hairline.
+        // Leave clearance around old cuts as well as future ones.
+        if(positions.some(function(p){
+          var minGap=Math.max(19,Math.min(43,p.halfSpan+19));
+          return Math.abs(p.position-c.position)*length<minGap;
+        }))return false;
       }
       return true;
     }
@@ -358,7 +362,14 @@
       });
     }
     var linked=group.length>1;
-    var sharedDepth=2.2+rand()*2.3,sharedSpan=5.2+rand()*1.5;
+    // A linked event is a FAMILY of uneven stone cutouts, not identical
+    // stamps. Some extend far along the line; neighbors may be shallow.
+    var wideEvent=rand()<.34;
+    var sharedSpan=wideEvent?12+rand()*5:7+rand()*5;
+    var sharedDepth=2.1+rand()*3.2;
+    var longMember=linked?Math.floor(rand()*group.length):-1;
+    var shallowMember=linked?(longMember+1+
+      Math.floor(rand()*(group.length-1)))%group.length:-1;
     var direction=rand()<.5?-1:1;
     group.forEach(function(c,i){
       var position=c.position;
@@ -371,16 +382,25 @@
         if(Number.isFinite(projected)&&projected*len>20&&
            (1-projected)*len>20)position=projected;
       }
+      var sizeRatio=i===longMember?1.1+rand()*.32:
+        i===shallowMember?.38+rand()*.26:.65+rand()*.52;
+      var depthRatio=i===shallowMember?.26+rand()*.3:
+        i===longMember?.85+rand()*.32:.5+rand()*.68;
+      var span=linked?Math.min(19,Math.max(3.4,sharedSpan*sizeRatio)):
+        c.kind==="edge"?4+rand()*2.5:7+rand()*5;
+      var depth=linked?Math.min(6.1,Math.max(.7,sharedDepth*depthRatio)):
+        c.kind==="edge"?0.9+rand()*1.5:1.5+rand()*2.15;
       faults.push({
         key:c.key,line:c.line,kind:c.kind,joint:c.joint,
         priority:c.priority||"",segment:c.segment,
         position:position,corridor:c.corridor||"",
         profile:linked?"notch":"crack",linked:linked,
-        // Each parallel line shares the same shallow displaced segment.
-        span:linked?sharedSpan*(.92+rand()*.16):
-          c.kind==="edge"?4+rand()*2.5:7+rand()*5,
-        depth:linked?sharedDepth*(.88+rand()*.23):
-          c.kind==="edge"?0.9+rand()*1.5:1.5+rand()*2.15,
+        span:span,depth:depth,
+        // Neighboring pits share an event but not the exact shoulders:
+        // unequal angled entry/exit and slightly inclined inner faces.
+        entryRatio:.20+rand()*.57,
+        exitRatio:.23+rand()*.59,
+        slope:(rand()-.5)*.32,
         direction:linked?direction:(rand()<.5?-1:1),born:born
       });
     });
@@ -460,7 +480,7 @@
         var length=distances[seg+1]-distances[seg];
         if(length<45)return;
         var center=distances[seg]+length*f.position;
-        var half=Math.min(f.span*(.55+.45*progress),length*.085);
+        var half=Math.min(f.span*(.55+.45*progress),length*.22,19);
         if(center-half<=distances[seg]+5||center+half>=distances[seg+1]-5)return;
         var u=vector(nodes[seg],nodes[seg+1]);
         var normal={x:-u.y*f.direction,y:u.x*f.direction};
@@ -468,10 +488,14 @@
           // Archive-doc-like connected segment pit: one flat, short recess
           // joined to the original line by two sharp faceted ramps.
           // No branches, rounds, curves, or changes to either endpoint.
-          var entry=at(center-half*.42),exit=at(center+half*.42);
+          var entry=at(center-half*(f.entryRatio||.42));
+          var exit=at(center+half*(f.exitRatio||.42));
+          var slope=f.slope||0;
           features.push({start:center-half,end:center+half,points:[
-            {x:entry.x+normal.x*depth,y:entry.y+normal.y*depth},
-            {x:exit.x+normal.x*depth,y:exit.y+normal.y*depth},
+            {x:entry.x+normal.x*depth*(1-slope),
+             y:entry.y+normal.y*depth*(1-slope)},
+            {x:exit.x+normal.x*depth*(1+slope),
+             y:exit.y+normal.y*depth*(1+slope)},
             at(center+half)
           ]});
           return;
