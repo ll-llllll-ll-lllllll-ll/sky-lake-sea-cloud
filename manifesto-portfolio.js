@@ -239,6 +239,8 @@
     stopClock();faults=[];candidates=[];elapsed=0;nextFault=0;
     seeded=false;routes=new Array(10);seed=(Math.random()*4294967296)>>>0;
   }
+  // Candidate placement is derived from the actual route geometry.
+  // The three parallel families remain stable even when the viewport changes.
   function updateCandidates(){
     candidates=[];
     routes.forEach(function(nodes,line){
@@ -246,74 +248,138 @@
       for(var j=1;j<nodes.length-1;j++){
         var before=Math.hypot(nodes[j].x-nodes[j-1].x,nodes[j].y-nodes[j-1].y);
         var after=Math.hypot(nodes[j+1].x-nodes[j].x,nodes[j+1].y-nodes[j].y);
-        if(before>=19&&after>=19){
-          var incoming={
-            x:(nodes[j].x-nodes[j-1].x)/before,
-            y:(nodes[j].y-nodes[j-1].y)/before
-          };
-          var outgoing={
-            x:(nodes[j+1].x-nodes[j].x)/after,
-            y:(nodes[j+1].y-nodes[j].y)/after
-          };
-          // Two groups circled in the screenshot:
-          // upper: frame stems turn onto the horizontal rail;
-          // lower: vertical bundle turns into each chapter underline.
-          // Only actual 90-degree corners qualify as priority corners.
-          var rightAngle=Math.abs(
-            incoming.x*outgoing.x+incoming.y*outgoing.y
-          )<.045;
-          var priority=rightAngle && j===nodes.length-2 ?
-            "lower" : rightAngle && j===1 && line>=2 ? "upper" : "";
-          candidates.push({
-            key:line+"b"+j,line:line,kind:"bend",joint:j,
-            priority:priority
-          });
-        }
+        if(before<19||after<19)continue;
+        var dot=((nodes[j].x-nodes[j-1].x)*(nodes[j+1].x-nodes[j].x)+
+          (nodes[j].y-nodes[j-1].y)*(nodes[j+1].y-nodes[j].y))/(before*after);
+        var rightAngle=Math.abs(dot)<.045;
+        var priority=rightAngle&&j===nodes.length-2 ?
+          "lower" : rightAngle&&j===1&&line>=2 ? "upper" : "";
+        candidates.push({
+          key:line+"b"+j,line:line,kind:"bend",joint:j,priority:priority
+        });
       }
       for(var k=0;k<nodes.length-1;k++){
-        var len=Math.hypot(nodes[k+1].x-nodes[k].x,nodes[k+1].y-nodes[k].y);
-        // Keep the long rails populated with distinct fracture sites.
-        // These locations are spaced apart, with clearance at corners.
+        var p=nodes[k],q=nodes[k+1],dx=q.x-p.x,dy=q.y-p.y;
+        var len=Math.hypot(dx,dy);
         if(len<58)continue;
-        var margin=21,pitch=17;
-        var count=Math.floor((len-2*margin)/pitch)+1;
+        var horizontal=Math.abs(dy)<.5,vertical=Math.abs(dx)<.5;
+        var orientation=horizontal?"horizontal":vertical?"vertical":"diagonal";
+        // This classification is structural, not based on fixed viewport pixels:
+        // top fan, inner vertical spine, and individual chapter underlines.
+        var corridor=horizontal&&k===nodes.length-2?"underline":
+          vertical&&k===nodes.length-3?"spine":
+          horizontal&&((line>=2&&k===1)||(line===0&&k===1))?"top":"";
+        var margin=21,pitch=17,count=Math.floor((len-2*margin)/pitch)+1;
         for(var n=0;n<count;n++){
           var position=(margin+n*pitch)/len;
           candidates.push({
-            key:line+"e"+k+"-"+n,line:line,kind:"edge",
-            segment:k,position:position
+            key:line+"e"+k+"-"+n,line:line,kind:"edge",segment:k,
+            position:position,corridor:corridor,orientation:orientation,
+            // Shared world coordinates let neighboring lines fracture together.
+            axisValue:horizontal?p.x+dx*position:
+              vertical?p.y+dy*position:null
           });
         }
       }
     });
   }
   function addFault(born,preferredGroup){
+    if(faults.length>=MAX_FAULTS)return false;
     var used=new Set(faults.map(function(f){return f.key;}));
-    var available=candidates.filter(function(c){return !used.has(c.key);});
-    if(!available.length)return false;
-    // Always weather the two circled sets of square corners BEFORE the
-    // other bends and straight runs. Do not change the base route nodes.
-    var priority=available.filter(function(c){return !!c.priority;});
-    var targeted=preferredGroup ?
-      priority.filter(function(c){return c.priority===preferredGroup;}) : [];
-    var pool;
-    if(targeted.length)pool=targeted;
-    else if(priority.length)pool=priority;
-    else{
-      var bends=available.filter(function(c){return c.kind==="bend";});
-      var edges=available.filter(function(c){return c.kind==="edge";});
-      pool=bends.length&&(rand()<.70||!edges.length)?
-        bends:edges.length?edges:bends;
+    var existingBySegment={};
+    faults.forEach(function(f){
+      if(f.kind!=="edge")return;
+      var key=f.line+":"+f.segment;
+      (existingBySegment[key]||(existingBySegment[key]=[])).push(f.position);
+    });
+    function allowed(c){
+      if(used.has(c.key))return false;
+      if(c.kind==="edge"){
+        var positions=existingBySegment[c.line+":"+c.segment]||[];
+        var nodes=routes[c.line],a=nodes[c.segment],b=nodes[c.segment+1];
+        var length=Math.hypot(b.x-a.x,b.y-a.y);
+        // At least 18px between separate faults, so even 200 chips
+        // cannot become a continuous sawtooth.
+        if(positions.some(function(p){return Math.abs(p-c.position)*length<18;}))
+          return false;
+      }
+      return true;
     }
-    var chosen=pool[Math.floor(rand()*pool.length)];
-    faults.push({
-      key:chosen.key,line:chosen.line,kind:chosen.kind,joint:chosen.joint,
-      priority:chosen.priority||"",segment:chosen.segment,
-      position:chosen.position,
-      // Numerous straight-run chips remain smaller than corner cleavages.
-      span:chosen.kind==="edge"?4+rand()*2.5:7+rand()*5,
-      depth:chosen.kind==="edge"?0.9+rand()*1.5:1.5+rand()*2.15,
-      direction:rand()<.5?-1:1,born:born
+    var available=candidates.filter(allowed);
+    if(!available.length)return false;
+    var named=["top","spine","underline"];
+    var missing=named.filter(function(name){
+      return !faults.some(function(f){return f.corridor===name;});
+    });
+    var chosenPool=[];
+    if(preferredGroup==="upper"||preferredGroup==="lower"){
+      chosenPool=available.filter(function(c){return c.priority===preferredGroup;});
+    }else if(named.indexOf(preferredGroup)>=0){
+      chosenPool=available.filter(function(c){return c.corridor===preferredGroup;});
+    }
+    if(!chosenPool.length && missing.length && rand()<.70){
+      var missingName=missing[Math.floor(rand()*missing.length)];
+      chosenPool=available.filter(function(c){return c.corridor===missingName;});
+    }
+    if(!chosenPool.length){
+      var prioritised=available.filter(function(c){return !!c.priority;});
+      var parallel=available.filter(function(c){return !!c.corridor;});
+      var choice=rand();
+      if(prioritised.length&&choice<.27)chosenPool=prioritised;
+      else if(parallel.length&&choice<.83)chosenPool=parallel;
+      else chosenPool=available;
+    }
+    if(!chosenPool.length)chosenPool=available;
+    var chosen=chosenPool[Math.floor(rand()*chosenPool.length)];
+    var group=[chosen];
+    var groupWanted=chosen.kind==="edge"&&chosen.corridor&&rand()<.38;
+    if(groupWanted){
+      var neighbors=available.filter(function(c){
+        return c.kind==="edge"&&c.corridor===chosen.corridor&&
+          c.orientation===chosen.orientation&&c.line!==chosen.line&&
+          Math.abs(c.line-chosen.line)<=3&&
+          Math.abs(c.axisValue-chosen.axisValue)<=12;
+      }).sort(function(a,b){
+        return Math.abs(a.line-chosen.line)-Math.abs(b.line-chosen.line)||
+          Math.abs(a.axisValue-chosen.axisValue)-Math.abs(b.axisValue-chosen.axisValue);
+      });
+      var count=Math.min(2+Math.floor(rand()*3),MAX_FAULTS-faults.length);
+      var takenLines=new Set([chosen.line]);
+      neighbors.forEach(function(c){
+        if(group.length>=count||takenLines.has(c.line))return;
+        // Adjacent tracks only: there is no jumped-over middle line.
+        if(!group.some(function(existing){return Math.abs(existing.line-c.line)===1;}))
+          return;
+        group.push(c);
+        takenLines.add(c.line);
+      });
+    }
+    var linked=group.length>1;
+    var sharedDepth=2.2+rand()*2.3,sharedSpan=5.2+rand()*1.5;
+    var direction=rand()<.5?-1:1;
+    group.forEach(function(c,i){
+      var position=c.position;
+      if(linked && i>0){
+        var p=routes[c.line][c.segment],q=routes[c.line][c.segment+1];
+        var a=c.orientation==="horizontal"?p.x:p.y;
+        var b=c.orientation==="horizontal"?q.x:q.y;
+        var projected=(chosen.axisValue+(rand()-.5)*4-a)/(b-a);
+        var len=Math.hypot(q.x-p.x,q.y-p.y);
+        if(Number.isFinite(projected)&&projected*len>20&&
+           (1-projected)*len>20)position=projected;
+      }
+      faults.push({
+        key:c.key,line:c.line,kind:c.kind,joint:c.joint,
+        priority:c.priority||"",segment:c.segment,
+        position:position,corridor:c.corridor||"",
+        profile:linked?"notch":"crack",linked:linked,
+        // Each parallel line shares the same shallow displaced segment.
+        span:linked?sharedSpan*(.92+rand()*.16):
+          c.kind==="edge"?4+rand()*2.5:7+rand()*5,
+        depth:linked?sharedDepth*(.88+rand()*.23):
+          c.kind==="edge"?0.9+rand()*1.5:1.5+rand()*2.15,
+        direction:linked?direction:(rand()<.5?-1:1),born:born
+      });
     });
     return true;
   }
@@ -324,8 +390,11 @@
     // When at least two cracks are born, show one in each circled area.
     var first=rand()<.5?"upper":"lower";
     var second=first==="upper"?"lower":"upper";
-    for(var i=0;i<n;i++){
-      var preferred=i===0?first:i===1?second:null;
+    // Show the two previously requested square joints first, then
+    // explicitly seed the three currently missing parallel-line regions.
+    var opening=[first,second,"top","spine","underline"];
+    for(var i=0;i<n && faults.length<MAX_FAULTS;i++){
+      var preferred=opening[i]||null;
       addFault(-FAULT_MATURE_MS*(.4+rand()*.6),preferred);
     }
     nextFault=11000+rand()*7500;
@@ -391,6 +460,18 @@
         if(center-half<=distances[seg]+5||center+half>=distances[seg+1]-5)return;
         var u=vector(nodes[seg],nodes[seg+1]);
         var normal={x:-u.y*f.direction,y:u.x*f.direction};
+        if(f.profile==="notch"){
+          // Archive-doc-like connected segment pit: one flat, short recess
+          // joined to the original line by two sharp faceted ramps.
+          // No branches, rounds, curves, or changes to either endpoint.
+          var entry=at(center-half*.42),exit=at(center+half*.42);
+          features.push({start:center-half,end:center+half,points:[
+            {x:entry.x+normal.x*depth,y:entry.y+normal.y*depth},
+            {x:exit.x+normal.x*depth,y:exit.y+normal.y*depth},
+            at(center+half)
+          ]});
+          return;
+        }
         var q1=at(center-half*.37),q2=at(center+half*.23),q3=at(center+half*.67);
         // Three hard facets form one displaced stone seam; no curves,
         // blur, or small oscillations that turn into a rounded squiggle.
