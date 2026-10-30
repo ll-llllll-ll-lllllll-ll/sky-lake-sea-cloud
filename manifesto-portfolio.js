@@ -165,9 +165,29 @@
       for(var j=1;j<nodes.length-1;j++){
         var before=Math.hypot(nodes[j].x-nodes[j-1].x,nodes[j].y-nodes[j-1].y);
         var after=Math.hypot(nodes[j+1].x-nodes[j].x,nodes[j+1].y-nodes[j].y);
-        if(before>=19&&after>=19)candidates.push({
-          key:line+"b"+j,line:line,kind:"bend",joint:j
-        });
+        if(before>=19&&after>=19){
+          var incoming={
+            x:(nodes[j].x-nodes[j-1].x)/before,
+            y:(nodes[j].y-nodes[j-1].y)/before
+          };
+          var outgoing={
+            x:(nodes[j+1].x-nodes[j].x)/after,
+            y:(nodes[j+1].y-nodes[j].y)/after
+          };
+          // Two groups circled in the screenshot:
+          // upper: frame stems turn onto the horizontal rail;
+          // lower: vertical bundle turns into each chapter underline.
+          // Only actual 90-degree corners qualify as priority corners.
+          var rightAngle=Math.abs(
+            incoming.x*outgoing.x+incoming.y*outgoing.y
+          )<.045;
+          var priority=rightAngle && j===nodes.length-2 ?
+            "lower" : rightAngle && j===1 && line>=2 ? "upper" : "";
+          candidates.push({
+            key:line+"b"+j,line:line,kind:"bend",joint:j,
+            priority:priority
+          });
+        }
       }
       for(var k=0;k<nodes.length-1;k++){
         var len=Math.hypot(nodes[k+1].x-nodes[k].x,nodes[k+1].y-nodes[k].y);
@@ -181,18 +201,29 @@
       }
     });
   }
-  function addFault(born){
-    var available=candidates.filter(function(c){
-      return !faults.some(function(f){return f.key===c.key;});
-    });
+  function addFault(born,preferredGroup){
+    var used=new Set(faults.map(function(f){return f.key;}));
+    var available=candidates.filter(function(c){return !used.has(c.key);});
     if(!available.length)return false;
-    var bends=available.filter(function(c){return c.kind==="bend";});
-    var edges=available.filter(function(c){return c.kind==="edge";});
-    var pool=bends.length&&(rand()<.70||!edges.length)?bends:edges.length?edges:bends;
+    // Always weather the two circled sets of square corners BEFORE the
+    // other bends and straight runs. Do not change the base route nodes.
+    var priority=available.filter(function(c){return !!c.priority;});
+    var targeted=preferredGroup ?
+      priority.filter(function(c){return c.priority===preferredGroup;}) : [];
+    var pool;
+    if(targeted.length)pool=targeted;
+    else if(priority.length)pool=priority;
+    else{
+      var bends=available.filter(function(c){return c.kind==="bend";});
+      var edges=available.filter(function(c){return c.kind==="edge";});
+      pool=bends.length&&(rand()<.70||!edges.length)?
+        bends:edges.length?edges:bends;
+    }
     var chosen=pool[Math.floor(rand()*pool.length)];
     faults.push({
       key:chosen.key,line:chosen.line,kind:chosen.kind,joint:chosen.joint,
-      segment:chosen.segment,position:chosen.position,
+      priority:chosen.priority||"",segment:chosen.segment,
+      position:chosen.position,
       span:7+rand()*5,depth:1.5+rand()*2.15,
       direction:rand()<.5?-1:1,born:born
     });
@@ -202,7 +233,13 @@
     if(seeded||!candidates.length)return;
     seeded=true;
     var n=1+Math.floor(rand()*10);
-    for(var i=0;i<n;i++)addFault(-FAULT_MATURE_MS*(.4+rand()*.6));
+    // When at least two cracks are born, show one in each circled area.
+    var first=rand()<.5?"upper":"lower";
+    var second=first==="upper"?"lower":"upper";
+    for(var i=0;i<n;i++){
+      var preferred=i===0?first:i===1?second:null;
+      addFault(-FAULT_MATURE_MS*(.4+rand()*.6),preferred);
+    }
     nextFault=11000+rand()*7500;
   }
   function vector(p,q){
