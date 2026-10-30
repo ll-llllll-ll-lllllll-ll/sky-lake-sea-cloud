@@ -140,13 +140,11 @@
         toc(ROOT+"#section-00-sub-01","1.1.2",t.work,"mp-toc-secondary")+
         toc(ROOT+"#section-01","1.2.0",t.tenets,"mp-toc-main")+
         rows+
-        '<div class="mp-toc-continuation">'+
-          LATER_CHAPTERS.map(function(entry){
-            return toc(ROOT+chapterAnchor(entry),entry.code,title(entry.title),
-              (entry.sub===undefined?"mp-toc-main":"mp-toc-secondary")+
-              (entry.groupStart?" mp-toc-group-start":""));
-          }).join("")+
-        '</div>'+
+        LATER_CHAPTERS.map(function(entry){
+          return toc(ROOT+chapterAnchor(entry),entry.code,title(entry.title),
+            (entry.sub===undefined?"mp-toc-main mp-toc-chapter-start":"mp-toc-secondary")+
+            (entry.groupStart?" mp-toc-group-start":""));
+        }).join("")+
       '</div>'+
     '</aside>';
     var viewer='<section class="mp-preview" data-mp-preview aria-label="'+escape(t.selected)+'">'+
