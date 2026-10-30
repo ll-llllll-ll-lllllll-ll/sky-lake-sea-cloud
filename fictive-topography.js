@@ -50,9 +50,9 @@
           "结构中的接缝、修补与手工留下的不完整，继续暴露着虚构的过程。它试图接近已经消失的事物，却无法将过去恢复成一个完整的整体；那些无法复原的部分，仍作为形体内部的空缺留在那里。"
         ],
         en:[
-          "◬ 233-12_021 (Unsourced Subassembly) grew out of Fictive Topography. A space once confined to language, images and simulation gradually acquired a material body: a fabricated world one can approach and circle around, yet never securely place. It seems to have been detached from somewhere else. The designation preserves a number, while its origin remains absent.",
+          "◬ 233-12_021 (Unsourced Subassembly) grew out of Fictive Topography. A space once confined to language, images, and simulation gradually acquired a material body: a fabricated world one can approach and circle around, yet never securely place. It seems to have been detached from somewhere else. The designation preserves a number, while its origin remains absent.",
           "This self-contained space compresses scattered traces of an entire world. Its fragments are joined into something that seems to have survived a history, carrying both a reassuring familiarity and an unease that cannot be named. It may recall a time that was never ours, or a place in which we have never lived.",
-          "Joints, repairs and the incompleteness of handmade construction keep the fiction visible. The work reaches towards what has vanished without restoring it to a coherent whole. What cannot be recovered remains as an absence within the structure itself."
+          "Joints, repairs, and the incompleteness of handmade construction keep the fiction visible. The work reaches toward what has vanished without restoring it to a coherent whole. What cannot be recovered remains as an absence within the structure itself."
         ],
         ja:[
           "《◬ 233-12_021（出所不明のサブアセンブリ）》は、虚構地形学から派生した作品である。言葉や図像、シミュレーションのなかにあった空間が少しずつ物質的な姿を得て、近づき、周囲を歩くことのできる合成世界となった。それでも来歴は定かでない。どこかから切り離された部品のように番号だけを残し、出所は空白のままである。",
@@ -110,7 +110,7 @@
         ],
         en:[
           "Ship of Fools — Probe began with a memory difficult to verify: a leaking container in the corner of an abandoned art museum, said to hold “seawater from 55 oceans.” The fear of losing that memory is inseparable from the fear that painting or reconstructing it might replace the indistinct impression with something newly made. The probe took shape within this unresolved tension.",
-          "An empty control chamber sits at its centre. A three-axis stabilising mechanism continually seeks to maintain its attitude, while timber, metal joints and handmade surfaces retain traces of repair and wear. A precise system revolves around a centre deliberately left vacant, as though the reconstruction of memory could never quite be completed.",
+          "An empty control chamber sits at its center. A three-axis stabilizing mechanism continually seeks to maintain its attitude, while timber, metal joints, and handmade surfaces retain traces of repair and wear. A precise system revolves around a center deliberately left vacant, as though the reconstruction of memory could never quite be completed.",
           "In the proposed voyage, auxiliary propulsion would first carry the probe across the surf and breakwater zone. Once beyond the nearshore water, the propulsion unit would separate and return to land, leaving the vessel to drift with the currents. This staging, borrowed from spaceflight, lets an object built to search for a memory finally surrender its direction to the sea.",
           "The vessel is intended to carry seawater samples collected since 2019, real fragments of distant shores answering the unverifiable “55 oceans” of the remembered scene. Its central chamber remains empty; the act of searching and the place never reached are carried together into the voyage."
         ],
