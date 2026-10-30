@@ -81,7 +81,7 @@
   ];
   var SECTION_TERMS={
     zh:{front:'正面 / 全貌',back:'背面',instrument:'仪器',body:'主体细部',moving:'影像卡片',movement:'废墟剧场',score:'废墟乐谱',scoreOpen:'展开图谱',scoreClose:'返回图谱',scoreFold:'折叠 / 展开',scoreReset:'复位',frame:'记谱帧'},
-    en:{front:'Full view',back:'Back view',instrument:'Instrument',body:'Body detail',moving:'Film Card',movement:'Ruin Theatre',score:'Ruin Score',scoreOpen:'Enlarge score',scoreClose:'Return to score',scoreFold:'Fold / unfold',scoreReset:'Reset',frame:'Score frame'},
+    en:{front:'Full view',back:'Back view',instrument:'Instrument',body:'Body detail',moving:'Film Card',movement:'Ruin Theater',score:'Ruin Score',scoreOpen:'Enlarge score',scoreClose:'Return to score',scoreFold:'Fold / unfold',scoreReset:'Reset',frame:'Score frame'},
     ja:{front:'全景',back:'背面',instrument:'器械',body:'本体細部',moving:'映像カード',movement:'廃墟劇場',score:'廃墟の楽譜',scoreOpen:'譜面を拡大',scoreClose:'譜面に戻る',scoreFold:'折る / 開く',scoreReset:'リセット',frame:'譜面フレーム'}
   };
   function term(key){return (SECTION_TERMS[state.lang]||SECTION_TERMS.zh)[key];}
@@ -169,12 +169,12 @@
       ]
     },
     en:{
-      heads:['Collapsing Structure','Ruin Instrument','Ruin Theatre'],
+      heads:['Collapsing Structure','Ruin Instrument','Ruin Theater'],
       stage:{structure:[['Construction','Sagging','Inward Collapse'],['Upright','Loosening','Imbalance','Collapse']],detail:[['Placement','Pulsation','Meltdown'],['Suspension','Sensing','Shattering']]},
       works:[
         {garden:'The stagnant-heart structure grows from a reservoir shell, the remains of a heart chamber and a pool of still water. As the water drains, internal support gives way. Under its own weight the construction compresses, fractures and contracts, leaving parts immersed and exposed to further corrosion.',
          instrument:'The Rust-Blood Heart encloses pieces of corroded metal in glass, connected to the ruined chamber by steel cables, pulleys and a pump blade. The chamber’s slow descent is transmitted as increasingly rapid knocks: each beat borrows energy from the garden’s collapse while consuming the instrument itself.',
-         theatre:'The sinking chamber and the beating heart move through the same time. Sound arises from load, tension, collision and structural failure; as the final blow approaches, the instrument loses the conditions that held it together.',
+         theatre:'The sinking chamber and the beating heart move through the same time. Sound arises from load, tension, collision, and structural failure; as the final blow approaches, the instrument loses the conditions that held it together.',
          score:'This score overlays the structural drawing of the rebar fragments in “Collapsing Structure: Stagnant Heart Chamber” with the circuit diagram of the cycling switch in “Ruin Instrument: Rust-Blood Heart.” Their lines intersect on a single plane: as the steel corrodes and its stresses diminish, the drawing records the shifting components and mechanical linkages of the chamber’s collapse, while sensors carry the progress of that collapse into an electronic circuit, turning it into increasingly rapid knocks and pulses. Each displacement, fracture and sound adds to the load on Rust-Blood Heart, driving its beat faster until it finally melts down. What began as a drawing for design and documentation thus becomes the score of variations on the chamber’s lingering echoes.',
          phases:{
            structure:[
@@ -206,9 +206,9 @@
              ]
            ]
          }},
-        {garden:'Three outward cable anchors and a suspended weight hold the Rusted Tower upright around a glass pivot. As cable tension weakens, its centre of gravity shifts. The ground-level grinding structure repeatedly wears at its supports until the tower can no longer keep its precarious balance.',
+        {garden:'Three outward cable anchors and a suspended weight hold the Rusted Tower upright around a glass pivot. As cable tension weakens, its center of gravity shifts. The ground-level grinding structure repeatedly wears at its supports until the tower can no longer keep its precarious balance.',
          instrument:'Aether Interval links moving antennas, a theremin-like interference field and a sand plate. Electromagnetic changes become frequency, sound and vibration before briefly appearing in the sand. Falling grains, static charge and electronic noise gradually burden the apparatus.',
-         theatre:'The tower, the aether interval and the ground-level grinder perform together. Sand gathers and disperses, cables tremble and the wheel abrades the ground. One order produces sound through the very motions that undermine another.',
+         theatre:'The tower, the aether interval and the ground-level grinder perform together. Sand gathers and disperses, cables tremble, and the wheel abrades the ground. One order produces sound through the very motions that undermine another.',
          score:'This score overlays the drawing of the tower’s oscillating structure in “Collapsing Structure: Rusted Tower” with the beat-frequency circuit diagram of “Ruin Instrument: Aether Interval.” Their lines intersect on a single plane: as the tensioned structure loosens and the tower loses its balance, the drawing records the displacement of components and signal interference between the tower’s overlapping antennas. Sensors carry those disrupted signals into the signal circuits and electromagnetic system, where they become sounds of continually shifting frequency. The accumulation of interference and overload steadily increases the strain on Aether Interval, until the instrument finally burns out amid ever noisier vibrations. What began as a drawing for design and documentation thus becomes the score of a cruel scherzo for the tower’s aether.',
          phases:{
            structure:[
@@ -221,7 +221,7 @@
                "Cable fatigue and repeated disturbance from the ground-level grinder open gaps in what had been a taut arrangement."
              ],
              [
-               "The centre of gravity shifts and the tower loses balance.",
+               "The center of gravity shifts and the tower loses balance.",
                "Load and counter-tension no longer cancel one another; the tilt at the base grows as the original supports begin to drive the fall."
              ],
              [
