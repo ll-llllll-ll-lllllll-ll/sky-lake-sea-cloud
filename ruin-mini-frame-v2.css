@@ -298,14 +298,10 @@
 }
 
 
+/* Never display any old archive-doc interior crack paths, including
+   if a previously cached script left one in the miniature SVG. */
 .room-view[data-room="ruin-atlas"] .ruin-mini-archive-hairline-crack {
-  fill: none;
-  stroke: var(--ruin-mini-line-strong, rgba(102,102,96,.68));
-  stroke-width: .72px;
-  stroke-opacity: .62;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  vector-effect: non-scaling-stroke;
+  display: none !important;
 }
 
 .room-view[data-room="ruin-atlas"] #ruin-mini-stack-record .ruin-mini-archive-doc {
