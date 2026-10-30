@@ -3353,8 +3353,8 @@ render();
             ? (roll<.20 ? "top" : (roll<.32 ? "left" : "right"))
             : (roll<.36 ? "top" : (roll<.68 ? "left" : "right"));
           var sharedT=isRecord ? .20+rand()*.30 : .24+rand()*.52;
-          var baseWidth=side==="top" ? 14+rand()*10 : 15+rand()*12;
-          var baseDepth=side==="top" ? 3.2+rand()*2.0 : 2.8+rand()*1.8;
+          var baseWidth=side==="top" ? 20+rand()*14 : 23+rand()*16;
+          var baseDepth=side==="top" ? 4.8+rand()*3.0 : 4.2+rand()*2.8;
           var scales=indices.length===3 ? [.66,1,.72] : indices.length===2 ? [1,.72] : [1];
 
           indices.forEach(function(index,i){
@@ -3379,8 +3379,8 @@ render();
             put(map,idx,{
               side:extraSide,
               t:.18+rand()*.64,
-              width:8+rand()*10,
-              depth:1.8+rand()*2.1
+              width:12+rand()*15,
+              depth:3.0+rand()*2.8
             });
           }
         }
@@ -3395,18 +3395,19 @@ render();
         if (rect.width < 8 || rect.height < 8) return;
 
         var w=rect.width,h=rect.height;
-        var seedLabel=(isGarden?"mini-garden-":"mini-record-")+index+"-cut-v3:"+fractureIteration;
+        var seedLabel=(isGarden?"mini-garden-":"mini-record-")+index+"-cut-v4:"+fractureIteration;
         var rand=seededRandom(hashString(seedLabel));
 
-        // Smaller corner chamfers than the previous pass.
-        var tl=(3.5+rand()*7.0)*scale;
-        var tr=(3.0+rand()*7.5)*scale;
-        var br=(rand()<.28 ? 2.5+rand()*5.5 : 0)*scale;
-        var bl=(rand()<.24 ? 2.5+rand()*5.0 : 0)*scale;
-        tl=Math.min(tl,w*.13,h*.075);
-        tr=Math.min(tr,w*.13,h*.075);
-        br=Math.min(br,w*.10,h*.060);
-        bl=Math.min(bl,w*.10,h*.060);
+        // Slightly larger faceted corners make the miniature archive-doc
+        // damage legible without changing its paper silhouette or layering.
+        var tl=(5.0+rand()*9.0)*scale;
+        var tr=(4.5+rand()*10.0)*scale;
+        var br=(rand()<.28 ? 3.2+rand()*7.0 : 0)*scale;
+        var bl=(rand()<.24 ? 3.2+rand()*6.5 : 0)*scale;
+        tl=Math.min(tl,w*.16,h*.09);
+        tr=Math.min(tr,w*.16,h*.09);
+        br=Math.min(br,w*.12,h*.075);
+        bl=Math.min(bl,w*.12,h*.075);
 
         var damage=(isGarden?archiveDamagePlan.garden:archiveDamagePlan.record).get(index)||null;
 
@@ -3415,13 +3416,13 @@ render();
           if(!damage||damage.side!==side) return [a,b];
           var dx=b[0]-a[0],dy=b[1]-a[1],len=Math.hypot(dx,dy)||1;
           var t=Math.max(.10,Math.min(.90,damage.t));
-          var half=Math.min(.16,Math.max(.025,(damage.width*scale*.5)/len));
+          var half=Math.min(.22,Math.max(.035,(damage.width*scale*.5)/len));
           var t0=Math.max(.02,t-half),t1=Math.min(.98,t+half);
           var n;
           if(side==="top") n=[0,1];
           else if(side==="right") n=[-1,0];
           else n=[1,0];
-          var depth=Math.min((damage.depth*scale),side==="top"?h*.055:w*.09);
+          var depth=Math.min((damage.depth*scale),side==="top"?h*.075:w*.14);
           var asym=.78+rand()*.42;
           var samples=[
             [0,0],
@@ -3492,36 +3493,9 @@ render();
         }).join(" ")+" Z");
         svg.appendChild(path);
 
-        // A short interior continuation grows from some chips. It is subtle:
-        // the source system treats the missing edge as primary and the hairline
-        // continuation as secondary.
-        if(damage&&rand()<.58){
-          var crack=document.createElementNS(NS,"path");
-          var side=damage.side;
-          var startX,startY,angle,length;
-          if(side==="top"){
-            startX=w*damage.t;
-            startY=Math.min(h*.08,damage.depth*scale);
-            angle=(.34+rand()*.30)*Math.PI;
-          }else if(side==="right"){
-            startX=w-Math.min(w*.09,damage.depth*scale);
-            startY=h*damage.t;
-            angle=(.72+rand()*.18)*Math.PI;
-          }else{
-            startX=Math.min(w*.09,damage.depth*scale);
-            startY=h*(1-damage.t);
-            angle=(-.18-rand()*.18)*Math.PI;
-          }
-          length=(6+rand()*14)*scale;
-          var midX=startX+Math.cos(angle)*length*.52+(rand()-.5)*2*scale;
-          var midY=startY+Math.sin(angle)*length*.52+(rand()-.5)*2*scale;
-          var endX=startX+Math.cos(angle)*length;
-          var endY=startY+Math.sin(angle)*length;
-          crack.setAttribute("d","M"+startX.toFixed(2)+" "+startY.toFixed(2)+
-            " Q"+midX.toFixed(2)+" "+midY.toFixed(2)+" "+endX.toFixed(2)+" "+endY.toFixed(2));
-          crack.setAttribute("class","ruin-mini-archive-hairline-crack");
-          svg.appendChild(crack);
-        }
+        // Archive-docs show only missing edges and beveled corners.
+        // Do not generate interior crack paths; those belong to the
+        // independent index-drawer stone, not the archive sheets.
 
         doc.insertBefore(svg,doc.firstChild);
       }
