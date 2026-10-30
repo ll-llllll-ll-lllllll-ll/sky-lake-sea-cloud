@@ -236,6 +236,14 @@
 .writing-room.mp-room .mp-toc-group > a.mp-toc-secondary {
   padding-left:12px;
 }
+.writing-room.mp-room .mp-toc-group > a.mp-toc-chapter-start {
+  margin-top:13px;
+}
+.writing-room.mp-room .mp-toc-group > a.mp-toc-group-start {
+  margin-top:26px;
+  padding-top:16px;
+  border-top:1px solid var(--mp-line);
+}
 .writing-room.mp-room .mp-toc-row {
   padding-left:19px;
 }
