@@ -290,8 +290,10 @@
 
 .room-view[data-room="ruin-atlas"] .ruin-mini-archive-cut-outline path {
   fill: none;
-  stroke: var(--ruin-mini-line-strong, rgba(102,102,96,.74));
-  stroke-width: 1.16px;
+  /* Share the index-drawer's stone-outline color, but allow the smaller
+     archive-doc silhouettes a stronger, more legible hairline. */
+  stroke: var(--index-stone-outline, var(--ruin-mini-line-strong, rgba(102,102,96,.74)));
+  stroke-width: 1.5px;
   vector-effect: non-scaling-stroke;
   stroke-linecap: square;
   stroke-linejoin: miter;
