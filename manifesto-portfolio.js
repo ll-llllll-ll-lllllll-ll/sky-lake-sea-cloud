@@ -149,7 +149,7 @@
   }
   var faults=[],candidates=[],elapsed=0,nextFault=0,
       clock=null,lastTick=0,seeded=false,routes=new Array(10);
-  var MAX_FAULTS=50,FAULT_MATURE_MS=48000;
+  var MAX_FAULTS=200,FAULT_MATURE_MS=48000;
   function stopClock(){
     if(clock!==null){clearInterval(clock);clock=null;}
     lastTick=0;
@@ -191,13 +191,18 @@
       }
       for(var k=0;k<nodes.length-1;k++){
         var len=Math.hypot(nodes[k+1].x-nodes[k].x,nodes[k+1].y-nodes[k].y);
-        if(len<95)continue;
-        [0.24,0.49,0.74].forEach(function(position,n){
+        // Keep the long rails populated with distinct fracture sites.
+        // These locations are spaced apart, with clearance at corners.
+        if(len<58)continue;
+        var margin=21,pitch=17;
+        var count=Math.floor((len-2*margin)/pitch)+1;
+        for(var n=0;n<count;n++){
+          var position=(margin+n*pitch)/len;
           candidates.push({
             key:line+"e"+k+"-"+n,line:line,kind:"edge",
             segment:k,position:position
           });
-        });
+        }
       }
     });
   }
@@ -224,7 +229,9 @@
       key:chosen.key,line:chosen.line,kind:chosen.kind,joint:chosen.joint,
       priority:chosen.priority||"",segment:chosen.segment,
       position:chosen.position,
-      span:7+rand()*5,depth:1.5+rand()*2.15,
+      // Numerous straight-run chips remain smaller than corner cleavages.
+      span:chosen.kind==="edge"?4+rand()*2.5:7+rand()*5,
+      depth:chosen.kind==="edge"?0.9+rand()*1.5:1.5+rand()*2.15,
       direction:rand()<.5?-1:1,born:born
     });
     return true;
@@ -408,6 +415,13 @@
     var stepX=15,stepY=10,diagonal=30;
     var sy=railBottom+1;
     var bundleX=right(1)+26;
+    // English titles must wrap within the left corridor, ending before
+    // the first bundle downleg instead of passing through connector lines.
+    if(lang()==="en"){
+      toc.style.maxWidth=Math.max(180,Math.floor(bundleX-tr.left-26))+"px";
+    }else{
+      toc.style.maxWidth="";
+    }
     var out="";
     cards.forEach(function(card,i){
       var dest=current.querySelector('[data-mp-row="'+i+'"]');
