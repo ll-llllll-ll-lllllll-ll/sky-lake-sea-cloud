@@ -5231,3 +5231,50 @@ html:has(.fc-room){
 @media(prefers-reduced-motion:reduce){
   .fc-room .fc-card .fc-thumbnail{transition:none!important;}
 }
+
+/* v88 · Quiet artwork records. They sit underneath the descriptive prose
+   without cards, background panels, or framed metadata containers. */
+.fc-room .fc-reading-part .fc-work-facts{
+  display:grid;
+  gap:5px;
+  width:min(100%,770px);
+  max-width:100%;
+  margin:clamp(18px,2.4vw,32px) 0 0;
+  padding:0;
+  font:400 clamp(11px,.88vw,13px)/1.85 var(--serif),serif;
+  letter-spacing:.012em;
+  color:rgba(38,45,39,.71);
+}
+.fc-room .fc-reading-part .fc-work-fact{
+  display:grid;
+  grid-template-columns:clamp(66px,7vw,92px) minmax(0,1fr);
+  column-gap:clamp(8px,1.3vw,19px);
+  align-items:start;
+}
+.fc-room .fc-reading-part .fc-work-fact dt{
+  margin:0;
+  font:inherit;
+  color:rgba(38,45,39,.48);
+  white-space:nowrap;
+}
+.fc-room .fc-reading-part .fc-work-fact dd{
+  margin:0;
+  font:inherit;
+  min-width:0;
+  overflow-wrap:break-word;
+}
+.fc-room .fc-reading-garden .fc-garden-copy{
+  margin-bottom:0;
+}
+@media(max-width:700px){
+  .fc-room .fc-reading-part .fc-work-facts{
+    margin-top:20px;
+    gap:6px;
+    font-size:11px;
+    line-height:1.85;
+  }
+  .fc-room .fc-reading-part .fc-work-fact{
+    grid-template-columns:56px minmax(0,1fr);
+    column-gap:10px;
+  }
+}
