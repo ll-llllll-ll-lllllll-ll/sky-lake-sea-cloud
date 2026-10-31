@@ -982,6 +982,93 @@
       '<span class="fc-reading-part-title">'+esc(readingSectionName(si,i))+'</span>'+
       '</h3></div>';
   }
+  // Public-facing primary materials only; technical fabrication remains
+  // documented separately instead of crowding the Folly reading.
+  var WORK_FACTS={
+    zh:{
+      labels:{dimensions:'尺寸',materials:'主要材料'},
+      works:[
+        {
+          structure:{
+            dimensions:'高约 200 cm（自平台上表面起）；平台直径：水上约 200 cm、水下最大约 260 cm；水塘约 10 m²，最大水深约 40 cm',
+            materials:'现场建筑残料、水泥、钢质构件、积水'
+          },
+          instrument:{
+            dimensions:'玻璃容器高 20 cm、直径 8 cm（外置电路另计）',
+            materials:'废墟锈铁残片、玻璃、电磁铁、控制电路'
+          }
+        },
+        {
+          structure:{
+            dimensions:'塔高约 190 cm；沙盘直径约 400 cm；三根拉线自塔基水平延伸约 330 cm，近似 120° 分布',
+            materials:'现场沙土、混凝土、钢管、钢缆、玻璃及金属构件'
+          },
+          instrument:{
+            dimensions:'高约 60 cm；中央最大水平截面为边长约 23 cm 的等边三角形',
+            materials:'亚克力、天线、电磁铁、特雷门琴'
+          }
+        }
+      ]
+    },
+    en:{
+      labels:{dimensions:'Dimensions',materials:'Primary materials'},
+      works:[
+        {
+          structure:{
+            dimensions:'Approx. 200 cm high above the platform; platform diameter approx. 200 cm above water and 260 cm at its widest underwater point; pond area approx. 10 m², maximum water depth approx. 40 cm',
+            materials:'On-site construction debris, cement, steel components, and standing water'
+          },
+          instrument:{
+            dimensions:'Glass vessel: H 20 × Ø 8 cm (external circuitry excluded)',
+            materials:'Rusted iron fragments found in the ruin, glass, electromagnets, and control circuitry'
+          }
+        },
+        {
+          structure:{
+            dimensions:'Tower height approx. 190 cm; sand field diameter approx. 400 cm; three guy wires extend approx. 330 cm horizontally from the tower base, spaced roughly 120° apart',
+            materials:'On-site sand, concrete, steel tubing, steel cables, glass, and metal fittings'
+          },
+          instrument:{
+            dimensions:'H approx. 60 cm; widest central cross-section is an equilateral triangle with sides approx. 23 cm long',
+            materials:'Acrylic, antennas, electromagnets, and theremin'
+          }
+        }
+      ]
+    },
+    ja:{
+      labels:{dimensions:'寸法',materials:'主な素材'},
+      works:[
+        {
+          structure:{
+            dimensions:'台座上面からの高さ約 200 cm。台座直径は水上約 200 cm、水中最大約 260 cm。池の面積約 10 m²、最大水深約 40 cm',
+            materials:'現場の建築廃材、セメント、鋼製部材、滞留水'
+          },
+          instrument:{
+            dimensions:'ガラス容器：高さ 20 cm、直径 8 cm（外部回路を除く）',
+            materials:'廃墟で見つけた錆びた鉄片、ガラス、電磁石、制御回路'
+          }
+        },
+        {
+          structure:{
+            dimensions:'塔の高さ約 190 cm。砂場の直径約 400 cm。3 本の張線は塔の基部から水平方向に約 330 cm 延び、およそ 120° 間隔で配置',
+            materials:'現場の砂、コンクリート、鋼管、鋼索、ガラス、金属接合部材'
+          },
+          instrument:{
+            dimensions:'高さ約 60 cm。中央の最大水平断面は一辺約 23 cm の正三角形',
+            materials:'アクリル、アンテナ、電磁石、テルミン'
+          }
+        }
+      ]
+    }
+  };
+  function workFactsMarkup(si,kind){
+    var locale=WORK_FACTS[state.lang]||WORK_FACTS.zh;
+    var record=locale.works[si][kind];
+    return '<dl class="fc-work-facts" aria-label="'+esc(locale.labels.dimensions+' / '+locale.labels.materials)+'">'+
+      '<div class="fc-work-fact"><dt>'+esc(locale.labels.dimensions)+'</dt><dd>'+esc(record.dimensions)+'</dd></div>'+
+      '<div class="fc-work-fact"><dt>'+esc(locale.labels.materials)+'</dt><dd>'+esc(record.materials)+'</dd></div>'+
+    '</dl>';
+  }
   function sectionMarkup(s, si) {
     return '<section class="fc-series-block" data-fc-series-block="'+si+
       '" id="fc-chapter-'+(si+1)+'" style="--fc-video-aspect:16 / 9;--fc-ratio-number:1.77778">'+
@@ -994,12 +1081,14 @@
           readingPartHeading(0,si)+
           assetPairMarkup(s,si,'structure')+
           '<p class="fc-reading-copy fc-garden-copy">'+esc(reading(si).garden)+'</p>'+
+           workFactsMarkup(si,'structure')+
         '</section>'+
         '<section class="fc-reading-part fc-reading-instrument" aria-label="'+esc(readingSectionLabel(si,1))+'">'+
           readingPartHeading(1,si)+
           instrumentMarkup(s,si)+
           assetPairMarkup(s,si,'detail')+
           '<p class="fc-reading-copy fc-instrument-full">'+esc(reading(si).instrument)+'</p>'+
+           workFactsMarkup(si,'instrument')+
         '</section>'+
       '</div>'+
       '<section class="fc-reading-part fc-reading-theatre" aria-label="'+esc(readingSectionLabel(si,2))+'">'+
