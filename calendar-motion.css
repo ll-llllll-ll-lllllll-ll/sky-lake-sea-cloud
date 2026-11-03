@@ -231,3 +231,34 @@
     white-space:nowrap;
   }
 }
+
+/* Safari / WebKit: writing-mode on a flex ancestor is not sufficient for a
+   native button. The control AND its text box must explicitly be vertical. */
+.home-view .home-day-calligraphy.has-calendar-trigger > .home-day-calligraphy-title {
+  -webkit-appearance:none;
+  appearance:none;
+  display:block;
+  width:auto;
+  height:auto;
+  margin:0;
+  padding:0;
+  border:0;
+  background:transparent;
+  -webkit-writing-mode:vertical-rl;
+  writing-mode:vertical-rl;
+  text-orientation:upright;
+  white-space:nowrap;
+  text-align:start;
+}
+.home-view .home-day-calligraphy .home-day-title-vertical-text {
+  display:block;
+  -webkit-writing-mode:vertical-rl;
+  writing-mode:vertical-rl;
+  text-orientation:upright;
+  white-space:nowrap;
+}
+.home-view .home-day-calligraphy.is-latin > .home-day-calligraphy-title,
+.home-view .home-day-calligraphy.is-latin .home-day-title-vertical-text {
+  text-orientation:mixed;
+}
+
