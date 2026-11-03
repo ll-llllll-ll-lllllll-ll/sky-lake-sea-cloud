@@ -5278,3 +5278,52 @@ html:has(.fc-room){
     column-gap:10px;
   }
 }
+
+/* v89 · A restrained physical-object label beneath Folly I's paper score.
+   Matches the existing dimensions/materials notes without a new panel. */
+.fc-room .fc-inline-score[data-fc-inline-score="0"] .fc-score-object-facts{
+  display:grid;
+  gap:3px;
+  width:min(100%,640px);
+  max-width:100%;
+  margin:clamp(9px,1.3vw,18px) auto 0;
+  padding:0;
+  border:0;
+  background:transparent;
+  color:rgba(38,45,39,.70);
+  font:400 clamp(11px,.88vw,13px)/1.85 var(--serif),serif;
+  letter-spacing:.012em;
+}
+.fc-room .fc-inline-score[data-fc-inline-score="0"] .fc-score-object-fact{
+  display:grid;
+  grid-template-columns:clamp(58px,6vw,82px) minmax(0,1fr);
+  align-items:baseline;
+  column-gap:clamp(8px,1.3vw,18px);
+  width:min(100%,580px);
+  margin:0 auto;
+  padding:0;
+}
+.fc-room .fc-inline-score[data-fc-inline-score="0"] .fc-score-object-fact dt{
+  margin:0;
+  font:inherit;
+  color:rgba(38,45,39,.48);
+  white-space:nowrap;
+}
+.fc-room .fc-inline-score[data-fc-inline-score="0"] .fc-score-object-fact dd{
+  margin:0;
+  min-width:0;
+  font:inherit;
+  overflow-wrap:break-word;
+}
+@media(max-width:700px){
+  .fc-room .fc-inline-score[data-fc-inline-score="0"] .fc-score-object-facts{
+    margin-top:10px;
+    font-size:11px;
+    line-height:1.85;
+  }
+  .fc-room .fc-inline-score[data-fc-inline-score="0"] .fc-score-object-fact{
+    grid-template-columns:48px minmax(0,1fr);
+    column-gap:10px;
+  }
+}
+
