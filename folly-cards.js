@@ -742,9 +742,12 @@
               else URL.revokeObjectURL(url);
             })
             .catch(function(){
-              if(img.isConnected&&(img.dataset.frame||'15')===key)
+              // A user may have moved to a different frame while fetch/decode
+              // was pending. Never let an obsolete request override that frame.
+              if(img.isConnected&&(img.dataset.frame||'15')===key){
+                img.dataset.fcScoreRetryStage='raw';
                 img.src='https://raw.githubusercontent.com/ll-llllll-ll-lllllll-ll/sky-lake-sea-cloud/main/works/ruin-garden/score-1/score-1-'+frame+'.webp';
-              img.dataset.fcScoreRetryStage='raw';
+              }
             });
           return;
         }
