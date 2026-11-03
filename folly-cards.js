@@ -339,6 +339,14 @@
   // authored mobile sequence exists; do not silently fall back to Ruin Archive.
   var FILES_I=Array.from({length:15},function(_,i){return LOCAL_VIDEO+'score-1/score-1-'+(i+1)+'.webp';});
   var FILES_I_MOBILE=FILES_I;
+  // These 15 originals are 2480x4137 WebPs (~40 MB decoded per frame).
+  // Decoding all of them together can exceed Safari's image memory budget.
+  // Keep ONLY the active <img> on WebKit; other browsers keep the canvas cache.
+  var scoreUA=navigator.userAgent||'';
+  var scoreIOS=/iPad|iPhone|iPod/.test(scoreUA)||
+    (navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+  var SCORE_WEBKIT_SINGLE_FRAME=scoreIOS||
+    (/Safari\//.test(scoreUA)&&!/Chrome|Chromium|Edg|OPR|Firefox|CriOS|FxiOS/.test(scoreUA));
   var FOLD_BASE=LOCAL_VIDEO+'score-2/';
   // Five actual PNG assets from this site's newly uploaded Folly II score.
   var selection={series:0,index:0,focus:[0,0],open:false,muted:true,paused:false,scoreInspect:false,scoreZoom:1,scorePanX:0,scorePanY:0,folds:[0,0,0],lastTime:0,manualFrame:null,instrument:false};
@@ -608,6 +616,7 @@
       ringTop:MECHANICAL_CFG.ringBottom+(MECHANICAL_CFG.ringTop-MECHANICAL_CFG.ringBottom)*engagement};
   }
   function paintMechanicalCanvas(cluster,frame){
+    if(SCORE_WEBKIT_SINGLE_FRAME)return false;
     var canvas=cluster?.querySelector('[data-fc-mechanical-canvas]');
     var image=mechanicalFrames[frame-1];
     if(!canvas||!image||!image.naturalWidth||!image.naturalHeight)return false;
@@ -630,6 +639,8 @@
     return true;
   }
   function ensureMechanicalFrames(){
+    // WebKit: do not concurrently decode fifteen 10-megapixel images.
+    if(SCORE_WEBKIT_SINGLE_FRAME)return Promise.resolve(false);
     if(mechanicalReady)return mechanicalReady;
     var token=++mechanicalDecodeToken,urls=FILES_I;
     var frames=new Array(urls.length).fill(null),cursor=0;
@@ -662,10 +673,83 @@
     });
     return mechanicalReady;
   }
+
+  // Safari score recovery: WebP files in this repository use VP8X with an
+  // embedded ICC profile. If Safari rejects one, retry using only its original
+  // VP8 image chunk (no recompression, no invented intermediate frames).
+  // This is a fallback: normal browsers use the original WebP unmodified.
+  var scoreTemporaryUrls=[];
+  function releaseScoreTemporaryUrls(){
+    scoreTemporaryUrls.forEach(function(url){try{URL.revokeObjectURL(url);}catch(_){}});
+    scoreTemporaryUrls=[];
+  }
+  function simpleWebPFromResponse(buffer){
+    var src=new Uint8Array(buffer),view=new DataView(buffer);
+    function four(at){return String.fromCharCode(src[at],src[at+1],src[at+2],src[at+3]);}
+    if(src.length<32||four(0)!=='RIFF'||four(8)!=='WEBP')
+      throw new Error('Not a RIFF WebP');
+    var found=-1,size=0;
+    for(var at=12;at+8<=src.length;){
+      var length=view.getUint32(at+4,true),end=at+8+length+(length%2);
+      if(end>src.length)break;
+      if(four(at)==='VP8 '||four(at)==='VP8L'){found=at;size=end-at;break;}
+      at=end;
+    }
+    if(found<0)throw new Error('Unsupported WebP container');
+    var output=new Uint8Array(size+12),outView=new DataView(output.buffer);
+    output.set([82,73,70,70],0); // RIFF
+    outView.setUint32(4,output.length-8,true);
+    output.set([87,69,66,80],8); // WEBP
+    output.set(src.subarray(found,found+size),12);
+    var url=URL.createObjectURL(new Blob([output],{type:'image/webp'}));
+    scoreTemporaryUrls.push(url);
+    return url;
+  }
+  function watchSafariScoreImageErrors(){
+    if(!SCORE_WEBKIT_SINGLE_FRAME||!scene)return;
+    scene.querySelectorAll('[data-fc-score-shadow-img], [data-fc-inspect-img]').forEach(function(img){
+      function failed(){
+        if(!img.isConnected)return;
+        var frame=clamp(Number(img.dataset.frame)||15,1,FILES_I.length);
+        var key=String(frame);
+        if(img.dataset.fcScoreRetryFrame!==key){
+          img.dataset.fcScoreRetryFrame=key;
+          img.dataset.fcScoreRetryStage='';
+        }
+        if(!img.dataset.fcScoreRetryStage){
+          img.dataset.fcScoreRetryStage='simplify';
+          var original=mechanicalImage(frame);
+          fetch(original,{cache:'force-cache'})
+            .then(function(response){
+              if(!response.ok)throw new Error('Missing score image');
+              return response.arrayBuffer();
+            })
+            .then(simpleWebPFromResponse)
+            .then(function(url){
+              if(img.isConnected&&(img.dataset.frame||'15')===key)img.src=url;
+              else URL.revokeObjectURL(url);
+            })
+            .catch(function(){
+              if(img.isConnected&&(img.dataset.frame||'15')===key)
+                img.src='https://raw.githubusercontent.com/ll-llllll-ll-lllllll-ll/sky-lake-sea-cloud/main/works/ruin-garden/score-1/score-1-'+frame+'.webp';
+              img.dataset.fcScoreRetryStage='raw';
+            });
+          return;
+        }
+        if(img.dataset.fcScoreRetryStage==='simplify'){
+          img.dataset.fcScoreRetryStage='raw';
+          img.src='https://raw.githubusercontent.com/ll-llllll-ll-lllllll-ll/sky-lake-sea-cloud/main/works/ruin-garden/score-1/score-1-'+frame+'.webp';
+        }
+      }
+      img.addEventListener('error',failed);
+      // Safari can settle an eager image error before a deferred section wires.
+      if(img.complete&&!img.naturalWidth)failed();
+    });
+  }
   var mechanicalCanvasObserver=null;
   function watchMechanicalScoreSizes(){
     if(mechanicalCanvasObserver){mechanicalCanvasObserver.disconnect();mechanicalCanvasObserver=null;}
-    if(!scene||!('ResizeObserver' in window))return;
+    if(SCORE_WEBKIT_SINGLE_FRAME||!scene||!('ResizeObserver' in window))return;
     mechanicalCanvasObserver=new ResizeObserver(function(entries){
       entries.forEach(function(entry){
         var cluster=entry.target.closest('.fc-mechanical-v2');
@@ -684,6 +768,7 @@
     mechanicalDecodeToken++;
     mechanicalFrames=[];
     mechanicalReady=null;
+    releaseScoreTemporaryUrls();
   }
   function mechanicalLeverMarkup(interactive){
     return '<div class="fc-mechanical-v2-lever" data-fc-stage="1" '+
@@ -701,7 +786,8 @@
     var mechanical=s.kind==='linear';
     if(mechanical){
       var sheet='<div class="fc-shadow-scan fc-mechanical-v2-sheet" data-fc-mechanical-sheet>'+
-        '<img data-fc-score-shadow-img src="'+mechanicalImage(15)+'" loading="lazy" decoding="async" alt="">'+
+        '<img data-fc-score-shadow-img src="'+mechanicalImage(15)+'" loading="'+
+           (SCORE_WEBKIT_SINGLE_FRAME?'eager':'lazy')+'" decoding="async" alt="">'+
         '<canvas data-fc-mechanical-canvas class="fc-mechanical-v2-canvas" aria-hidden="true"></canvas>'+
         mechanicalLeverMarkup(true)+'</div>';
       var arcs='<svg class="fc-mechanical-v2-arcs" viewBox="-100 -100 200 200" aria-hidden="true" '+
@@ -872,14 +958,14 @@
   // alongside the paper collapse; it is not the lever travel distance.
   var FOLLY_I_SCORE_FACTS={
     zh:{frames:'帧数',frameUnit:'帧',dimensions:'尺寸',
-      brief:'高 3 cm × 宽 20 cm；厚度 24 → 3 mm',
-      value:'高 3 cm × 宽 20 cm；厚度 24 → 3 mm（随纸面坍塌同步变化）'},
+      brief:'高 30 cm × 宽 20 cm；厚度 24 → 3 mm',
+      value:'高 30 cm × 宽 20 cm；厚度 24 → 3 mm（随纸面坍塌同步变化）'},
     en:{frames:'Frames',frameUnit:'frames',dimensions:'Dimensions',
-      brief:'H 3 × W 20 cm; thickness 24 → 3 mm',
-      value:'H 3 × W 20 cm; thickness 24 → 3 mm (in sync with the paper’s collapse)'},
+      brief:'H 30 × W 20 cm; thickness 24 → 3 mm',
+      value:'H 30 × W 20 cm; thickness 24 → 3 mm (in sync with the paper’s collapse)'},
     ja:{frames:'コマ数',frameUnit:'コマ',dimensions:'寸法',
-      brief:'高さ 3 cm × 幅 20 cm；厚さ 24 → 3 mm',
-      value:'高さ 3 cm × 幅 20 cm；厚さ 24 → 3 mm（紙面の崩壊に連動）'}
+      brief:'高さ 30 cm × 幅 20 cm；厚さ 24 → 3 mm',
+      value:'高さ 30 cm × 幅 20 cm；厚さ 24 → 3 mm（紙面の崩壊に連動）'}
   };
   function scoreFactsMarkup(si){
     if(si!==0)return '';
@@ -2846,6 +2932,7 @@
     initializeImageSwaps();
     setupPhotoReadingLayout();
     watchMechanicalScoreSizes();
+    watchSafariScoreImageErrors();
     // Existing 2-second MP4 stills and instrument videos remain deferred;
     // no new HTTP request is issued until a particular chapter is nearby.
     if('IntersectionObserver' in window){
