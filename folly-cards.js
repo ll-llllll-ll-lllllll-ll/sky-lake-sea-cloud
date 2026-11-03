@@ -459,14 +459,20 @@
     hoverFilm.seekFraction=fraction;
     card.classList.add('is-hovering');
     var ticket=hoverFilm.request;
+    var film=card.querySelector('.fc-hover-video');
+    if(!film){stopHoverFilm();return;}
+    // Warm only the video metadata while the mouse settles. Previously
+    // network loading began AFTER the dwell timer, extending the wait.
+    hoverFilm.video=film;
+    film.loop=isInstrument;
+    film.muted=true;
+    film.playsInline=true;
+    film.preload='metadata';
+    film.src=isInstrument?SERIES[si].assets.film:source(SERIES[si],index);
+    try{film.load();}catch(_){}
     hoverFilm.timer=window.setTimeout(function(){
       hoverFilm.timer=0;
       if(ticket!==hoverFilm.request||selection.open||!card.isConnected)return;
-      var film=card.querySelector('.fc-hover-video');
-      if(!film)return;
-      hoverFilm.video=film;
-      film.loop=isInstrument;film.muted=true;film.preload='metadata';
-      film.src=isInstrument?SERIES[si].assets.film:source(SERIES[si],index);
       film.onended=function(){
         if(ticket!==hoverFilm.request||selection.open||isInstrument)return;
         var next=index+1;
@@ -495,11 +501,17 @@
       };
       function begin(){
         if(ticket!==hoverFilm.request||selection.open||!card.isConnected)return;
-        if(hoverFilm.seekFraction!==null)seekPreviewFraction(film,hoverFilm.seekFraction);
-        else{
-          try{film.currentTime=Math.min(2,Math.max(0,film.duration-.3));}catch(_){}
+        // Playing immediately avoids a second range request to seek 2 seconds
+        // into the video. Explicit scrubbing still seeks on metadata.
+        if(hoverFilm.seekFraction!==null){
+          if(film.readyState>=1)seekPreviewFraction(film,hoverFilm.seekFraction);
+          else film.addEventListener('loadedmetadata',function(){
+            if(ticket===hoverFilm.request&&hoverFilm.video===film)
+              seekPreviewFraction(film,hoverFilm.seekFraction);
+          },{once:true});
         }
-        var promise=film.play();
+        var promise;
+        try{promise=film.play();}catch(_){return;}
         if(promise?.then)promise.then(function(){
           if(ticket!==hoverFilm.request){film.pause();return;}
           hoverFilm.active=true;
@@ -508,9 +520,9 @@
           else if(!isInstrument)followHoverFilm();
         }).catch(function(){/* A browser may restrict muted preview autoplay. */});
       }
-      if(film.readyState>=1)begin();
-      else film.addEventListener('loadedmetadata',begin,{once:true});
-      film.load();
+      // Submit the playback request at 1s, without waiting for the
+      // loadedmetadata event; the browser resolves it when ready.
+      begin();
     },delay);
   }
   // The rail's range input is a gallery navigator at rest. During a
@@ -2185,7 +2197,7 @@
            (hoverFilm.followRail&&hoverFilm.si===si))return;
         // Intentional dwell: no instant play when a moving gallery passes
         // beneath the pointer. Pressing anywhere always takes control.
-        startHoverFilm(card,si,index,980);
+        startHoverFilm(card,si,index,1000);
       });
       card.addEventListener('pointerleave',function(){
         if(hoverFilm.card!==card)return;
