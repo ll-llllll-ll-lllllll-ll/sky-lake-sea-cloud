@@ -868,6 +868,24 @@
   function scoreWorkTitle(si){
     return (FOLLY_SCORE_TITLES[state.lang]||FOLLY_SCORE_TITLES.zh)[si];
   }
+  // Physical dimensions of Folly I's paper score. Thickness changes
+  // alongside the paper collapse; it is not the lever travel distance.
+  var FOLLY_I_SCORE_FACTS={
+    zh:{year:'年份',dimensions:'尺寸',
+      value:'高 3 cm × 宽 20 cm；厚度 24 → 3 mm（随纸面坍塌同步变化）'},
+    en:{year:'Year',dimensions:'Dimensions',
+      value:'H 3 × W 20 cm; thickness 24 → 3 mm (in sync with the paper’s collapse)'},
+    ja:{year:'制作年',dimensions:'寸法',
+      value:'高さ 3 cm × 幅 20 cm；厚さ 24 → 3 mm（紙面の崩壊に連動）'}
+  };
+  function scoreFactsMarkup(si){
+    if(si!==0)return '';
+    var copy=FOLLY_I_SCORE_FACTS[state.lang]||FOLLY_I_SCORE_FACTS.zh;
+    return '<dl class="fc-score-object-facts" aria-label="'+esc(copy.year+' / '+copy.dimensions)+'">'+
+      '<div class="fc-score-object-fact"><dt>'+esc(copy.year)+'</dt><dd>2025</dd></div>'+
+      '<div class="fc-score-object-fact"><dt>'+esc(copy.dimensions)+'</dt><dd>'+esc(copy.value)+'</dd></div>'+
+    '</dl>';
+  }
   function inlineScoreMarkup(s,si){
     var pointerLabel={
       zh:['显示指针','隐藏指针'],en:['Show pointers','Hide pointers'],
@@ -877,6 +895,7 @@
       '<div class="fc-inline-score-main">'+
         '<div class="fc-inline-score-device">'+scoreMarkup(s)+'</div>'+
         '<h3 class="fc-score-caption">'+esc(scoreWorkTitle(si))+'</h3>'+
+        scoreFactsMarkup(si)+
         '<div class="fc-score-controls-bottom">'+
           (s.kind==='radial'?'<div class="fc-score-minimal-actions"><button type="button" data-fc-action="score-fold" data-fc-series="'+si+'">'+esc(term('scoreFold'))+' ↕</button></div>':'')+
           '<button type="button" class="fc-pointer-switch" data-fc-action="score-pointer" data-fc-series="'+si+'" role="switch" aria-checked="false" data-fc-label-off="'+esc(pointerLabel[0])+'" data-fc-label-on="'+esc(pointerLabel[1])+'">'+
