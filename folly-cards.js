@@ -872,10 +872,13 @@
   // alongside the paper collapse; it is not the lever travel distance.
   var FOLLY_I_SCORE_FACTS={
     zh:{year:'年份',dimensions:'尺寸',
+      brief:'高 3 cm × 宽 20 cm；厚度 24 → 3 mm',
       value:'高 3 cm × 宽 20 cm；厚度 24 → 3 mm（随纸面坍塌同步变化）'},
     en:{year:'Year',dimensions:'Dimensions',
+      brief:'H 3 × W 20 cm; thickness 24 → 3 mm',
       value:'H 3 × W 20 cm; thickness 24 → 3 mm (in sync with the paper’s collapse)'},
     ja:{year:'制作年',dimensions:'寸法',
+      brief:'高さ 3 cm × 幅 20 cm；厚さ 24 → 3 mm',
       value:'高さ 3 cm × 幅 20 cm；厚さ 24 → 3 mm（紙面の崩壊に連動）'}
   };
   function scoreFactsMarkup(si){
@@ -883,7 +886,8 @@
     var copy=FOLLY_I_SCORE_FACTS[state.lang]||FOLLY_I_SCORE_FACTS.zh;
     return '<dl class="fc-score-object-facts" aria-label="'+esc(copy.year+' / '+copy.dimensions)+'">'+
       '<div class="fc-score-object-fact"><dt>'+esc(copy.year)+'</dt><dd>2025</dd></div>'+
-      '<div class="fc-score-object-fact"><dt>'+esc(copy.dimensions)+'</dt><dd>'+esc(copy.value)+'</dd></div>'+
+      '<div class="fc-score-object-fact"><dt>'+esc(copy.dimensions)+'</dt>'+
+      '<dd>'+factDisclosure(copy.brief,copy.value)+'</dd></div>'+
     '</dl>';
   }
   function inlineScoreMarkup(s,si){
@@ -1080,12 +1084,107 @@
       ]
     }
   };
+  // Short public-facing labels and optional material detail. The existing
+  // WORK_FACTS.dimensions texts remain the complete, measured descriptions.
+  // Internal foam and other unpublished fabrication notes stay off the page.
+  var WORK_FACTS_BRIEF={
+    zh:[
+      {
+        structure:{
+          dimensions:'高约 200 cm；平台最大直径约 260 cm',
+          materials:'建筑残料、水泥、钢质构件、积水',
+          materialsFull:'现场黄沙、砖块、钢筋与积水；另有水泥、钢缆、螺纹钢、连接件和铁球'
+        },
+        instrument:{
+          dimensions:'高 20 cm；直径 8 cm（玻璃容器）',
+          materials:'锈铁残片、玻璃、电子元件',
+          materialsFull:'废墟中的锈铁片及铁制工件残片、玻璃容器、电磁铁、外置滑动变阻器、循环开关电路与电线'
+        }
+      },
+      {
+        structure:{
+          dimensions:'塔高约 190 cm；沙盘直径约 400 cm',
+          materials:'现场沙土、混凝土、钢缆、玻璃',
+          materialsFull:'现场沙土、混凝土块、钢管、钢缆、玻璃球、滑轮及连接件'
+        },
+        instrument:{
+          dimensions:'高约 60 cm；中央截面边长约 23 cm',
+          materials:'亚克力、天线、电子元件',
+          materialsFull:'亚克力、特雷门琴、电磁铁与天线'
+        }
+      }
+    ],
+    en:[
+      {
+        structure:{
+          dimensions:'H approx. 200 cm; maximum platform Ø approx. 260 cm',
+          materials:'Found construction debris, cement, steel, and standing water',
+          materialsFull:'On-site sand, bricks, reinforcing steel, and standing water; cement, steel cables, threaded steel rods, connectors, and iron balls'
+        },
+        instrument:{
+          dimensions:'H 20 × Ø 8 cm (glass vessel)',
+          materials:'Rusted iron fragments, glass, and electronics',
+          materialsFull:'Rusted iron sheets and broken iron fittings found in the ruin, glass vessel, electromagnets, external slide rheostat, cyclic switching circuit, and wiring'
+        }
+      },
+      {
+        structure:{
+          dimensions:'Tower H approx. 190 cm; sand field Ø approx. 400 cm',
+          materials:'On-site sand, concrete, steel cables, and glass',
+          materialsFull:'On-site sand, concrete blocks, steel tubing, steel cables, glass sphere, pulleys, and connectors'
+        },
+        instrument:{
+          dimensions:'H approx. 60 cm; central triangle side approx. 23 cm',
+          materials:'Acrylic, antennas, and electronics',
+          materialsFull:'Acrylic, theremin, electromagnets, and antennas'
+        }
+      }
+    ],
+    ja:[
+      {
+        structure:{
+          dimensions:'高さ約 200 cm、台座の最大直径約 260 cm',
+          materials:'建築廃材、セメント、鋼製部材、滞留水',
+          materialsFull:'現場の砂、煉瓦、鉄筋、滞留水。加えてセメント、鋼索、ねじ付き鉄筋、接合部材、鉄球'
+        },
+        instrument:{
+          dimensions:'高さ 20 cm、直径 8 cm（ガラス容器）',
+          materials:'錆びた鉄片、ガラス、電子部品',
+          materialsFull:'廃墟で見つけた錆びた鉄板や鉄製部品の破片、ガラス容器、電磁石、外付けスライド抵抗器、周期スイッチ回路、配線'
+        }
+      },
+      {
+        structure:{
+          dimensions:'塔の高さ約 190 cm、砂場の直径約 400 cm',
+          materials:'現場の砂、コンクリート、鋼索、ガラス',
+          materialsFull:'現場の砂、コンクリートブロック、鋼管、鋼索、ガラス球、滑車、接合部材'
+        },
+        instrument:{
+          dimensions:'高さ約 60 cm、中央断面の三角形の一辺約 23 cm',
+          materials:'アクリル、アンテナ、電子部品',
+          materialsFull:'アクリル、テルミン、電磁石、アンテナ'
+        }
+      }
+    ]
+  };
+  // <details> is keyboard-operable and restores the shorter record on
+  // a second click. No additional JavaScript or reflow animation is needed.
+  function factDisclosure(shortText,fullText){
+    return '<details class="fc-fact-disclosure">'+
+      '<summary><span class="fc-fact-short">'+esc(shortText)+'</span>'+
+      '<span class="fc-fact-ellipsis" aria-hidden="true">…</span></summary>'+
+      '<div class="fc-fact-expanded">'+esc(fullText)+'</div>'+
+    '</details>';
+  }
   function workFactsMarkup(si,kind){
     var locale=WORK_FACTS[state.lang]||WORK_FACTS.zh;
     var record=locale.works[si][kind];
+    var summary=(WORK_FACTS_BRIEF[state.lang]||WORK_FACTS_BRIEF.zh)[si][kind];
     return '<dl class="fc-work-facts" aria-label="'+esc(locale.labels.dimensions+' / '+locale.labels.materials)+'">'+
-      '<div class="fc-work-fact"><dt>'+esc(locale.labels.dimensions)+'</dt><dd>'+esc(record.dimensions)+'</dd></div>'+
-      '<div class="fc-work-fact"><dt>'+esc(locale.labels.materials)+'</dt><dd>'+esc(record.materials)+'</dd></div>'+
+      '<div class="fc-work-fact"><dt>'+esc(locale.labels.dimensions)+'</dt>'+
+      '<dd>'+factDisclosure(summary.dimensions,record.dimensions)+'</dd></div>'+
+      '<div class="fc-work-fact"><dt>'+esc(locale.labels.materials)+'</dt>'+
+      '<dd>'+factDisclosure(summary.materials,summary.materialsFull)+'</dd></div>'+
     '</dl>';
   }
   function sectionMarkup(s, si) {
