@@ -5327,3 +5327,82 @@ html:has(.fc-room){
   }
 }
 
+/* v90 · Folly record disclosures. The short text stays quietly visible;
+   the adjacent ellipsis reveals the complete dimensions or material notes.
+   Native details/summary supports pointer, keyboard, and screen readers. */
+.fc-room .fc-fact-disclosure{
+  display:block;
+  width:100%;
+  min-width:0;
+  padding:0;
+  margin:0;
+  border:0;
+  background:transparent;
+}
+.fc-room .fc-fact-disclosure > summary{
+  display:inline-flex;
+  max-width:100%;
+  align-items:baseline;
+  flex-wrap:wrap;
+  column-gap:6px;
+  padding:0;
+  margin:0;
+  border:0;
+  background:transparent;
+  list-style:none;
+  cursor:pointer;
+  color:inherit;
+  font:inherit;
+}
+.fc-room .fc-fact-disclosure > summary::-webkit-details-marker{
+  display:none;
+}
+.fc-room .fc-fact-disclosure > summary::marker{
+  content:'';
+}
+.fc-room .fc-fact-disclosure .fc-fact-short{
+  min-width:0;
+  overflow-wrap:anywhere;
+}
+.fc-room .fc-fact-disclosure .fc-fact-ellipsis{
+  display:inline-block;
+  flex:none;
+  font:400 16px/1 var(--serif),serif;
+  letter-spacing:.07em;
+  color:rgba(38,45,39,.46);
+  transition:color .18s ease;
+}
+.fc-room .fc-fact-disclosure > summary:hover .fc-fact-ellipsis,
+.fc-room .fc-fact-disclosure[open] .fc-fact-ellipsis{
+  color:rgba(38,45,39,.85);
+}
+.fc-room .fc-fact-disclosure > summary:focus-visible{
+  outline:1px solid rgba(40,48,41,.55);
+  outline-offset:3px;
+}
+.fc-room .fc-fact-disclosure .fc-fact-expanded{
+  display:block;
+  max-width:100%;
+  margin:4px 0 7px;
+  padding:0;
+  color:rgba(38,45,39,.62);
+  font:inherit;
+  line-height:1.95;
+  overflow-wrap:break-word;
+}
+.fc-room .fc-score-object-facts .fc-fact-expanded{
+  margin-top:5px;
+}
+@media(max-width:700px){
+  .fc-room .fc-fact-disclosure > summary{
+    column-gap:5px;
+  }
+  .fc-room .fc-fact-disclosure .fc-fact-ellipsis{
+    font-size:15px;
+  }
+  .fc-room .fc-fact-disclosure .fc-fact-expanded{
+    margin-top:5px;
+    line-height:1.9;
+  }
+}
+
