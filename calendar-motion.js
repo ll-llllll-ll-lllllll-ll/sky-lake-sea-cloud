@@ -30,9 +30,15 @@
       var titleButton = document.createElement("button");
       titleButton.type = "button";
       titleButton.className = title.className;
-      titleButton.textContent = title.textContent;
+      // Safari can reset writing-mode inside native buttons. Keep a
+      // dedicated vertical text box within the clickable calendar control.
+      var titleText = title.textContent.trim();
+      var verticalText = document.createElement("span");
+      verticalText.className = "home-day-title-vertical-text";
+      verticalText.textContent = titleText;
+      titleButton.appendChild(verticalText);
       titleButton.dataset.action = "toggle-calendar";
-      titleButton.setAttribute("aria-label", title.textContent.trim() + " · " + labels[state.lang].calendar);
+      titleButton.setAttribute("aria-label", titleText + " · " + labels[state.lang].calendar);
       title.replaceWith(titleButton);
       title = titleButton;
     }
