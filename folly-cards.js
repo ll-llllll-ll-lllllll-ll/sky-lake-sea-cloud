@@ -1533,7 +1533,10 @@
           var fallback=cluster.querySelector('[data-fc-score-shadow-img]');
           if(fallback && fallback.dataset.frame!==String(state.frame)){
             fallback.dataset.frame=String(state.frame);
-            fallback.src=mechanicalImage(state.frame);
+            var frameURL=mechanicalImage(state.frame);
+            // Avoid aborting/restarting Safari's initial eager image load
+            // when the first paint selects the already-displayed frame 15.
+            if(fallback.getAttribute('src')!==frameURL)fallback.src=frameURL;
           }
         }
         var arcs=cluster.querySelector('[data-fc-arcs]');
