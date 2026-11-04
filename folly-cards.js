@@ -838,7 +838,7 @@
       '<div class="fc-score-shadow" data-fc-score-shadow>'+
         '<div class="fc-score2-sheet" data-fc-score2-sheet role="slider" tabindex="0" '+
           'aria-label="Folly II · 22 score frames" aria-valuemin="1" aria-valuemax="22" aria-valuenow="22">'+
-          '<img data-fc-score2-img data-frame="22" src="'+scoreIIImage(22)+'" alt="" draggable="false" decoding="async"></div>'+
+          '<img data-fc-score2-img data-frame="22" src="'+scoreIIImage(22)+'" alt="" draggable="false" loading="lazy" decoding="async"></div>'+
       '</div>'+
       '<div class="fc-score-hud" data-fc-score-hud aria-hidden="true">'+
         '<i class="fc-score2-pointer" data-fc-score2-pointer></i>'+
@@ -1032,7 +1032,7 @@
             '<button class="fc-film-pause-sign" type="button" data-fc-action="play" aria-label="'+esc(i18n('pause'))+'">Ⅱ</button></div>'+
           '<button type="button" class="fc-projection-arrow fc-arrow-next" data-fc-action="next" aria-label="'+esc(i18n('next'))+'">→︎</button>'+
         '</div>'+
-        scoreMarkup(s)+
+        (s.kind==='radial'?'':scoreMarkup(s))+
         '<div class="fc-projection-bottom"><span class="fc-time-index"><strong data-fc-time-index>01</strong><small data-fc-total> / '+pad(s.stages.length)+'</small></span>'+
           '<span class="fc-now-title" data-fc-now-title>'+esc(label(s.stages[0]))+'</span>'+
           '<div class="fc-play-actions"><button type="button" data-fc-action="play" aria-label="'+esc(i18n('pause'))+'">Ⅱ</button>'+
@@ -1043,7 +1043,7 @@
           '<div class="fc-inspection-body">'+(s.kind==='linear'?
               '<div class="fc-inspect-mechanical"><img data-fc-inspect-img src="'+mechanicalImage(15)+'" alt="">'+
                 '<input class="fc-inspect-lever" data-fc-inspect-lever type="range" min="1" max="15" step="1" value="15" orient="vertical" aria-label="15 score frames"></div>':
-              '<div class="fc-inspect-mechanical fc-inspect-score2"><img data-fc-inspect-score2-img data-frame="22" src="'+scoreIIImage(22)+'" alt="">'+
+              '<div class="fc-inspect-mechanical fc-inspect-score2"><img data-fc-inspect-score2-img data-frame="22" src="'+scoreIIImage(22)+'" loading="lazy" decoding="async" alt="">'+
                 '<input class="fc-inspect-lever" data-fc-inspect-lever type="range" min="1" max="22" step="1" value="22" orient="vertical" aria-label="22 score frames"></div>')+
           '</div><div class="fc-inspection-foot">'+
             '<button type="button" data-fc-action="zoom-out" aria-label="Zoom out">−</button>'+
