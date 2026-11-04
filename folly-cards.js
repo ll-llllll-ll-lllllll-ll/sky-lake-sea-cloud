@@ -37,9 +37,9 @@
      ]}
   ];
   var COPY = {
-    zh:{group:'废墟园林 / 图景',instruction:'向右翻阅散落的瞬间',seek:'滑动阶段',open:'观看这一瞬间',close:'回到图景',prev:'上一阶段',next:'下一阶段',sound:'打开声音',mute:'静音',play:'继续',pause:'暂停',score:'检视图谱',reset:'复位',loading:'影像就位中',missing:'这一阶段的影像尚未就位',allEnd:'本卷已至尾声',hintI:'图谱随时间逆行 · 悬停校准指针',hintII:'三角翼可折叠 · 悬停校准指针',loadingPoster:'',zoom:'放大'},
-    en:{group:'FOLLY / TABLEAUX',instruction:'Move right through scattered moments.',seek:'Move through stages',open:'Open this moment',close:'Return to the tableaux',prev:'Previous stage',next:'Next stage',sound:'Sound on',mute:'Mute',play:'Resume',pause:'Pause',score:'Inspect the score',reset:'Reset',loading:'Preparing the moving image',missing:'This fragment is not available yet',allEnd:'The sequence has ended',hintI:'Score runs in reverse · Hover to calibrate',hintII:'Three folding wings · Hover to calibrate',loadingPoster:'',zoom:'Zoom'},
-    ja:{group:'フォリー / 風景の断片',instruction:'右へ進み、散らばった瞬間をたどる。',seek:'段階を移動',open:'この瞬間を見る',close:'風景に戻る',prev:'前の段階',next:'次の段階',sound:'音声オン',mute:'消音',play:'再開',pause:'一時停止',score:'楽譜を検視',reset:'リセット',loading:'映像を準備中',missing:'この断片はまだありません',allEnd:'この巻は終わりました',hintI:'楽譜は逆行 · ホバーで校正',hintII:'三つの翼を折る · ホバーで校正',loadingPoster:'',zoom:'拡大'}
+    zh:{group:'废墟园林 / 图景',instruction:'向右翻阅散落的瞬间',seek:'滑动阶段',open:'观看这一瞬间',close:'回到图景',prev:'上一阶段',next:'下一阶段',sound:'打开声音',mute:'静音',play:'继续',pause:'暂停',score:'检视图谱',reset:'复位',loading:'影像就位中',missing:'这一阶段的影像尚未就位',allEnd:'本卷已至尾声',hintI:'图谱随时间逆行 · 悬停校准指针',hintII:'二十二帧图谱随影片逆向更替 · 指针可选',loadingPoster:'',zoom:'放大'},
+    en:{group:'FOLLY / TABLEAUX',instruction:'Move right through scattered moments.',seek:'Move through stages',open:'Open this moment',close:'Return to the tableaux',prev:'Previous stage',next:'Next stage',sound:'Sound on',mute:'Mute',play:'Resume',pause:'Pause',score:'Inspect the score',reset:'Reset',loading:'Preparing the moving image',missing:'This fragment is not available yet',allEnd:'The sequence has ended',hintI:'Score runs in reverse · Hover to calibrate',hintII:'22 score frames run in reverse · Optional pointer',loadingPoster:'',zoom:'Zoom'},
+    ja:{group:'フォリー / 風景の断片',instruction:'右へ進み、散らばった瞬間をたどる。',seek:'段階を移動',open:'この瞬間を見る',close:'風景に戻る',prev:'前の段階',next:'次の段階',sound:'音声オン',mute:'消音',play:'再開',pause:'一時停止',score:'楽譜を検視',reset:'リセット',loading:'映像を準備中',missing:'この断片はまだありません',allEnd:'この巻は終わりました',hintI:'楽譜は逆行 · ホバーで校正',hintII:'22コマの譜面が逆順に進む · 指針は任意',loadingPoster:'',zoom:'拡大'}
   };
   // Short interim captions stay close to the physical artefacts. They can be
   // replaced with the artist's full Chinese/English/Japanese texts later.
@@ -73,9 +73,9 @@
         ja:'器械と本体の細部を分けて並べる。次の短い映像では、静止した各部が時間の中に戻される。'
       },
       score:{
-        zh:'折翼图谱与同步指针保留在影像下方。横向滑动时，图谱和双指针随影片阶段改变；亦可独立折叠、校准与展开检视。',
-        en:'The folding score and paired needles remain below the images. They follow each fragment of the film and can also be folded, calibrated and inspected on their own.',
-        ja:'折り畳み譜と二本の指針を映像の下に置く。映像の段階に連動しながら、独立して折ることも、位置を合わせて確かめることもできる。'
+        zh:'二十二帧图谱与影片共享同一段时间。横向滑动影像或移动时间滑轨时，图谱依照逆向排列的帧序逐张更替；指针可以独立显示或隐藏。',
+        en:'The twenty-two score frames share the film’s timeline. Scrolling the film strip or moving its slider advances the notation in reverse numerical order; the pointer can be shown or hidden independently.',
+        ja:'二十二コマの譜面は映像と時間軸を共有する。フィルムを横に送るかスライダーを動かすと、譜面が番号の逆順に切り替わる。指針は独立して表示・非表示を切り替えられる。'
       }
     }
   ];
@@ -348,7 +348,11 @@
   var SCORE_WEBKIT_SINGLE_FRAME=scoreIOS||
     (/Safari\//.test(scoreUA)&&!/Chrome|Chromium|Edg|OPR|Firefox|CriOS|FxiOS/.test(scoreUA));
   var FOLD_BASE=LOCAL_VIDEO+'score-2/';
-  // Five actual PNG assets from this site's newly uploaded Folly II score.
+  // Folly II: 22 authored WebPs replace the folded score. As with Folly I,
+  // the film begins on frame 22 and ends on frame 1 (22.webp → 1.webp).
+  var FILES_II=Array.from({length:22},function(_,i){return FOLD_BASE+(i+1)+'.webp';});
+  function scoreIIImage(frame){return FILES_II[clamp(frame,1,FILES_II.length)-1];}
+  // Retain the five older folding PNGs in the repository as source archives.
   var selection={series:0,index:0,focus:[0,0],open:false,muted:true,paused:false,scoreInspect:false,scoreZoom:1,scorePanX:0,scorePanY:0,folds:[0,0,0],lastTime:0,manualFrame:null,instrument:false};
   var scene=null,player=null,serial=0,queue=[],previewInFlight=0,previewComplete=new Set(),mountedToken=0;
   // Only one in-card film is allowed to play. The still-image extraction uses
@@ -587,9 +591,9 @@
   }
 
   function current(){return SERIES[selection.series];}
-  function sourceScoreFrame(fraction){
-    var frame=15-Math.round(clamp(fraction,0,1)*14);
-    return clamp(frame,1,15);
+  function sourceScoreFrame(fraction,total){
+    var count=total||FILES_I.length;
+    return clamp(count-Math.round(clamp(fraction,0,1)*(count-1)),1,count);
   }
   function mechanicalImage(frame){
     return window.matchMedia('(max-width: 700px)').matches?FILES_I_MOBILE[frame-1]:FILES_I[frame-1];
@@ -719,10 +723,15 @@
   }
   function watchSafariScoreImageErrors(){
     if(!SCORE_WEBKIT_SINGLE_FRAME||!scene)return;
-    scene.querySelectorAll('[data-fc-score-shadow-img], [data-fc-inspect-img]').forEach(function(img){
+    scene.querySelectorAll('[data-fc-score-shadow-img], [data-fc-inspect-img], [data-fc-score2-img], [data-fc-inspect-score2-img]').forEach(function(img){
       function failed(){
         if(!img.isConnected)return;
-        var frame=clamp(Number(img.dataset.frame)||15,1,FILES_I.length);
+        var isSecond=img.hasAttribute('data-fc-score2-img')||img.hasAttribute('data-fc-inspect-score2-img');
+        var count=isSecond?FILES_II.length:FILES_I.length;
+        var frame=clamp(Number(img.dataset.frame)||count,1,count);
+        var original=isSecond?scoreIIImage(frame):mechanicalImage(frame);
+        var raw='https://raw.githubusercontent.com/ll-llllll-ll-lllllll-ll/sky-lake-sea-cloud/main/works/ruin-garden/'+
+          (isSecond?'score-2/'+frame+'.webp':'score-1/score-1-'+frame+'.webp');
         var key=String(frame);
         if(img.dataset.fcScoreRetryFrame!==key){
           img.dataset.fcScoreRetryFrame=key;
@@ -730,7 +739,6 @@
         }
         if(!img.dataset.fcScoreRetryStage){
           img.dataset.fcScoreRetryStage='simplify';
-          var original=mechanicalImage(frame);
           fetch(original,{cache:'force-cache'})
             .then(function(response){
               if(!response.ok)throw new Error('Missing score image');
@@ -746,14 +754,14 @@
               // was pending. Never let an obsolete request override that frame.
               if(img.isConnected&&(img.dataset.frame||'15')===key){
                 img.dataset.fcScoreRetryStage='raw';
-                img.src='https://raw.githubusercontent.com/ll-llllll-ll-lllllll-ll/sky-lake-sea-cloud/main/works/ruin-garden/score-1/score-1-'+frame+'.webp';
+                img.src=raw;
               }
             });
           return;
         }
         if(img.dataset.fcScoreRetryStage==='simplify'){
           img.dataset.fcScoreRetryStage='raw';
-          img.src='https://raw.githubusercontent.com/ll-llllll-ll-lllllll-ll/sky-lake-sea-cloud/main/works/ruin-garden/score-1/score-1-'+frame+'.webp';
+          img.src=raw;
         }
       }
       img.addEventListener('error',failed);
@@ -825,21 +833,15 @@
         '<button class="fc-score-expand" type="button" data-fc-action="inspect">'+esc(i18n('score'))+' ↗︎</button>'+
       '</div>';
     }
-    // Ruin Archive's Folly II apparatus: an independently folded lower
-    // three-wing score, with separate glass/calibration and twin live needles.
-    // Only the artwork is replaced; the Folly film/player remains untouched.
-    var corners='<svg class="fc-f2-corners" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">'+
-      '<path d="M 1.8 1.8 H 18 M 1.8 1.8 L 10 18 M 98.2 1.8 H 82 M 98.2 1.8 L 90 18 M 50 98.2 L 42 82 M 50 98.2 L 58 82"></path></svg>';
-    return '<div class="fc-score-cluster fc-score-radial fc-folly2-score" data-fc-f2-state="open">'+
-      '<div class="fc-score-shadow" data-fc-score-shadow>'+foldMarkup(true)+
-        '<div class="fc-f2-shadow-corners" aria-hidden="true">'+corners+'</div>'+
+    // The actual twenty-two-frame print shares the film timeline with Folly I.
+    return '<div class="fc-score-cluster fc-score-linear fc-score2-sequence" data-fc-frame="22">'+
+      '<div class="fc-score-shadow" data-fc-score-shadow>'+
+        '<div class="fc-score2-sheet" data-fc-score2-sheet role="slider" tabindex="0" '+
+          'aria-label="Folly II · 22 score frames" aria-valuemin="1" aria-valuemax="22" aria-valuenow="22">'+
+          '<img data-fc-score2-img data-frame="22" src="'+scoreIIImage(22)+'" alt="" draggable="false" decoding="async"></div>'+
       '</div>'+
-      '<div class="fc-score-hud" data-fc-score-hud>'+
-        '<div class="fc-f2-live-triangle" data-fc-f2-calibrate>'+
-          '<div class="fc-f2-glass" aria-hidden="true"></div>'+
-          '<div class="fc-radial-needles" aria-hidden="true"><i data-fc-needle="0"></i><i data-fc-needle="1"></i></div>'+
-          '<div class="fc-f2-live-corners" aria-hidden="true">'+corners+'</div>'+
-        '</div>'+
+      '<div class="fc-score-hud" data-fc-score-hud aria-hidden="true">'+
+        '<i class="fc-score2-pointer" data-fc-score2-pointer></i>'+
       '</div>'+
       '<p class="fc-score-manual">'+esc(i18n('hintII'))+'</p>'+
       '<button class="fc-score-expand" type="button" data-fc-action="inspect">'+esc(i18n('score'))+' ↗︎</button>'+
@@ -983,8 +985,11 @@
       value:'高さ 30 cm × 幅 20 cm；厚さ 24 → 3 mm（紙面の崩壊に連動）'}
   };
   function scoreFactsMarkup(si){
-    if(si!==0)return '';
     var copy=FOLLY_I_SCORE_FACTS[state.lang]||FOLLY_I_SCORE_FACTS.zh;
+    if(si===1)return '<dl class="fc-score-object-facts" aria-label="'+esc(copy.frames)+'">'+
+      '<div class="fc-score-object-fact"><dt>'+esc(copy.frames)+'</dt>'+
+      '<dd>'+FILES_II.length+' '+esc(copy.frameUnit)+'</dd></div></dl>';
+    if(si!==0)return '';
     var frames=FILES_I.length;
     return '<dl class="fc-score-object-facts" aria-label="'+esc(copy.frames+' / '+copy.dimensions)+'">'+
       '<div class="fc-score-object-fact"><dt>'+esc(copy.frames)+'</dt><dd>'+
@@ -1004,7 +1009,7 @@
         '<h3 class="fc-score-caption">'+esc(scoreWorkTitle(si))+'</h3>'+
         scoreFactsMarkup(si)+
         '<div class="fc-score-controls-bottom">'+
-          (s.kind==='radial'?'<div class="fc-score-minimal-actions"><button type="button" data-fc-action="score-fold" data-fc-series="'+si+'">'+esc(term('scoreFold'))+' ↕</button></div>':'')+
+          ''+
           '<button type="button" class="fc-pointer-switch" data-fc-action="score-pointer" data-fc-series="'+si+'" role="switch" aria-checked="false" data-fc-label-off="'+esc(pointerLabel[0])+'" data-fc-label-on="'+esc(pointerLabel[1])+'">'+
             '<span class="fc-pointer-switch-track" aria-hidden="true"><i></i></span>'+
             '<span class="fc-pointer-switch-text">'+esc(pointerLabel[0])+'</span>'+
@@ -1038,8 +1043,8 @@
           '<div class="fc-inspection-body">'+(s.kind==='linear'?
               '<div class="fc-inspect-mechanical"><img data-fc-inspect-img src="'+mechanicalImage(15)+'" alt="">'+
                 '<input class="fc-inspect-lever" data-fc-inspect-lever type="range" min="1" max="15" step="1" value="15" orient="vertical" aria-label="15 score frames"></div>':
-              '<div class="fc-inspect-fold">'+foldMarkup(false)+
-                '<div class="fc-inspect-wings">'+[1,2,3].map(function(i){return '<button type="button" data-fc-action="wing" data-fc-wing-index="'+(i-1)+'">'+pad(i)+'</button>';}).join('')+'</div></div>')+
+              '<div class="fc-inspect-mechanical fc-inspect-score2"><img data-fc-inspect-score2-img data-frame="22" src="'+scoreIIImage(22)+'" alt="">'+
+                '<input class="fc-inspect-lever" data-fc-inspect-lever type="range" min="1" max="22" step="1" value="22" orient="vertical" aria-label="22 score frames"></div>')+
           '</div><div class="fc-inspection-foot">'+
             '<button type="button" data-fc-action="zoom-out" aria-label="Zoom out">−</button>'+
             '<button type="button" data-fc-action="zoom-in" aria-label="Zoom in">+</button>'+
@@ -1557,13 +1562,18 @@
         pulse.style.transform='translate(-50%,-50%) scale('+(beat>0?(1-Math.pow(beat,2)*.4):1).toFixed(3)+')';
       }
     }else{
-      // The score's mechanical fold is a physical event, NOT a time scrub.
-      // During playback only the two instrument needles follow film time.
-      overlay.querySelectorAll('[data-fc-needle="0"]').forEach(function(n){
-        n.style.transform='rotate('+(-65+95*ratio).toFixed(3)+'deg)';
-      });
-      overlay.querySelectorAll('[data-fc-needle="1"]').forEach(function(n){
-        n.style.transform='rotate('+(-55+129*Math.min(1,ratio*1.2)).toFixed(3)+'deg)';
+      var frame=sourceScoreFrame(ratio,FILES_II.length);
+      overlay.querySelectorAll('.fc-score2-sequence').forEach(function(cluster){
+        cluster.dataset.fcFrame=String(frame);
+        var img=cluster.querySelector('[data-fc-score2-img]');
+        if(img&&img.dataset.frame!==String(frame)){
+          img.dataset.frame=String(frame);
+          img.src=scoreIIImage(frame);
+        }
+        var surface=cluster.querySelector('[data-fc-score2-sheet]');
+        if(surface)surface.setAttribute('aria-valuenow',String(frame));
+        var pointer=cluster.querySelector('[data-fc-score2-pointer]');
+        if(pointer)pointer.style.left=(12+76*ratio).toFixed(3)+'%';
       });
     }
   }
@@ -1921,12 +1931,16 @@
       if(img&&img.dataset.frame!==String(frame)){img.src=mechanicalImage(frame);img.dataset.frame=String(frame);}
       if(lever&&document.activeElement!==lever)lever.value=frame;
     }else{
-      overlay.querySelectorAll('.fc-inspection [data-fc-wing]').forEach(function(el){
-        el.style.setProperty('--fc-fold-angle',selection.folds[Number(el.dataset.fcWing)]+'deg');
-      });
-      overlay.querySelectorAll('.fc-inspection .fc-fold-stage').forEach(function(el){
-        el.classList.toggle('is-folded',selection.folds.every(function(a){return a>175;}));
-      });
+      var frame=selection.manualFrame==null
+        ?sourceScoreFrame(selection.lastTime/current().endTime,FILES_II.length)
+        :selection.manualFrame;
+      var lever=overlay.querySelector('[data-fc-inspect-lever]');
+      var img=overlay.querySelector('[data-fc-inspect-score2-img]');
+      if(img&&img.dataset.frame!==String(frame)){
+        img.dataset.frame=String(frame);
+        img.src=scoreIIImage(frame);
+      }
+      if(lever&&document.activeElement!==lever)lever.value=String(frame);
     }
     var target=overlay.querySelector('.fc-inspection .fc-inspect-mechanical, .fc-inspection .fc-inspect-fold');
     if(target)target.style.transform='translate('+selection.scorePanX+'px,'+selection.scorePanY+'px) scale('+selection.scoreZoom+')';
@@ -2327,9 +2341,11 @@
     if(lever)lever.addEventListener('input',function(){
       if(selection.series!==si)return;
       selection.manualFrame=Number(lever.value);
-      var img=overlay.querySelector('[data-fc-inspect-img]');
-      img.src=mechanicalImage(selection.manualFrame);
-      img.dataset.frame=String(selection.manualFrame);
+      var img=overlay.querySelector(si===0?'[data-fc-inspect-img]':'[data-fc-inspect-score2-img]');
+      if(img){
+        img.dataset.frame=String(selection.manualFrame);
+        img.src=si===0?mechanicalImage(selection.manualFrame):scoreIIImage(selection.manualFrame);
+      }
     });
     overlay.querySelectorAll('.fc-inspection [data-fc-drag-wing]').forEach(function(wing){
       var wi=Number(wing.dataset.fcDragWing),start=null,deg=[0,120,-120][wi]*Math.PI/180;
@@ -2385,7 +2401,6 @@
   function wireInlineScore(si){
     var score=block(si)?.querySelector('[data-fc-inline-score]');
     if(!score)return;
-    if(si===1)installFolly2Score(score);
     if(si===0){
       var knob=score.querySelector('.fc-mechanical-v2-knob');
       var sheet=score.querySelector('[data-fc-mechanical-sheet]');
@@ -2487,8 +2502,18 @@
     // In Folly I the small central ring is the authored input, as in
     // Ruin Archive; the rest of the printed score does not act as a giant
     // invisible scrub surface. Folly II keeps its existing interactions.
-    var notationSurface=si===0?null:score.querySelector('.fc-score-shadow .fc-shadow-scan');
+    var notationSurface=si===1?score.querySelector('[data-fc-score2-sheet]'):null;
     if(notationSurface){
+      notationSurface.addEventListener('keydown',function(ev){
+        var delta={ArrowUp:1,ArrowRight:1,ArrowDown:-1,ArrowLeft:-1}[ev.key];
+        var frame=sourceScoreFrame(inlineTime[si]/SERIES[si].endTime,FILES_II.length);
+        if(delta!=null)frame=clamp(frame+delta,1,FILES_II.length);
+        else if(ev.key==='Home')frame=1;
+        else if(ev.key==='End')frame=FILES_II.length;
+        else return;
+        seekFilmFromScore(si,SERIES[si].endTime*(FILES_II.length-frame)/(FILES_II.length-1));
+        ev.preventDefault();
+      });
       var scoreGesture=null;
       function scrubArtwork(ev){
         var rect=notationSurface.getBoundingClientRect();
