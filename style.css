@@ -3400,3 +3400,17 @@ body {
     opacity: .91;
   }
 }
+
+/* Keep visible page content unselectable, including Safari long-press menus. */
+html, body, body * {
+  -webkit-user-select: none !important;
+  user-select: none !important;
+  -webkit-touch-callout: none !important;
+}
+
+/* Preserve caret/selection for editable controls, where present. */
+input, textarea, [contenteditable="true"], [contenteditable=""] {
+  -webkit-user-select: text !important;
+  user-select: text !important;
+  -webkit-touch-callout: default !important;
+}
