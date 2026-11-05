@@ -968,6 +968,7 @@
     // Frame artwork now scales with CSS; no canvas resize/repaint observer.
   }
   function releaseMechanicalScoreAssets(){
+    cancelScore2PointerRewind();
     releaseScoreTemporaryUrls();
     releaseScoreFrameAssets();
   }
@@ -1842,7 +1843,82 @@
     manualWings[si]=null;
     updateInlineScore(si,s.endTime*ratio);
   }
+  // Pointer-on for Folly II is a ritual return to the first of its
+  // twenty-one authored frames. During the rewind the real frame art stays
+  // visible; only after reaching frame 1 does compiled.png fade in.
+  var score2PointerRewind={raf:0,token:0};
+  function cancelScore2PointerRewind(){
+    score2PointerRewind.token++;
+    if(score2PointerRewind.raf)cancelAnimationFrame(score2PointerRewind.raf);
+    score2PointerRewind.raf=0;
+  }
+  function revealScore2Compiled(score,token){
+    if(token!==score2PointerRewind.token||
+       !score.isConnected||score.dataset.fcPointers!=='on')return;
+    var image=score.querySelector('[data-fc-score2-compiled]');
+    if(!image)return;
+    function reveal(){
+      if(token===score2PointerRewind.token&&score.isConnected&&
+         score.dataset.fcPointers==='on'&&image.naturalWidth)
+        score.dataset.fcCompiledActive='on';
+    }
+    if(image.complete&&image.naturalWidth){reveal();return;}
+    image.addEventListener('load',reveal,{once:true});
+    // Fetch was begun on pointer enable and runs concurrently with the
+    // rewind. decode() may be unavailable on older Safari.
+    if(image.decode)image.decode().then(reveal).catch(function(){});
+  }
+  function beginScore2PointerRewind(score){
+    cancelScore2PointerRewind();
+    var token=score2PointerRewind.token;
+    score.dataset.fcCompiledActive='off';
+    var image=score.querySelector('[data-fc-score2-compiled]');
+    if(image){
+      image.loading='eager';
+      if(image.decode)image.decode().catch(function(){});
+    }
+    var end=SERIES[1].endTime;
+    var from=clamp(inlineTime[1]/end,0,1);
+    var startFrame=sourceScore2Frame(from);
+    if(startFrame<=1){
+      seekFilmFromScore(1,0,{fromPointerRewind:true});
+      revealScore2Compiled(score,token);
+      return;
+    }
+    var reduced=window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+    var duration=reduced?0:Math.min(1550,790+from*710);
+    var firstTime=null,previousFrame=startFrame;
+    function tick(now){
+      if(token!==score2PointerRewind.token||!score.isConnected||
+         score.dataset.fcPointers!=='on')return;
+      if(firstTime===null)firstTime=now;
+      var p=duration===0?1:clamp((now-firstTime)/duration,0,1);
+      var ease=1-Math.pow(1-p,2.4);
+      var step=Math.max(1,Math.round(startFrame-(startFrame-1)*ease));
+      if(step!==previousFrame){
+        previousFrame=step;
+        seekFilmFromScore(1,end*(step-1)/(FILES_II.length-1),
+          {fromPointerRewind:true});
+      }
+      if(p<1){
+        score2PointerRewind.raf=requestAnimationFrame(tick);
+      }else{
+        score2PointerRewind.raf=0;
+        seekFilmFromScore(1,0,{fromPointerRewind:true});
+        revealScore2Compiled(score,token);
+      }
+    }
+    score2PointerRewind.raf=requestAnimationFrame(tick);
+  }
   function seekFilmFromScore(si,absolute,opts){
+    // A direct drag interrupts the automated return; keep compiled notation
+    // visible if the user elects to intervene while pointer mode is enabled.
+    if(si===1&&score2PointerRewind.raf&&!(opts&&opts.fromPointerRewind)){
+      cancelScore2PointerRewind();
+      var score=block(1)?.querySelector('[data-fc-inline-score]');
+      if(score?.dataset.fcPointers==='on')
+        revealScore2Compiled(score,score2PointerRewind.token);
+    }
     var s=SERIES[si],rail=railFor(si);
     if(!s||!rail)return;
     var at=clamp(absolute,0,s.endTime),ratio=at/s.endTime;
@@ -3338,11 +3414,22 @@
         setScoreExpanded(which,expandedScore!==which);return;
       }
       if(action==='score-pointer'){
-        var score=block(Number(node.dataset.fcSeries))?.querySelector('[data-fc-inline-score]');
+        var which=Number(node.dataset.fcSeries);
+        var score=block(which)?.querySelector('[data-fc-inline-score]');
         if(!score)return;
         var on=score.dataset.fcPointers!=='on';
         score.dataset.fcPointers=on?'on':'off';
-        if(!on)folly2ScoreControllers.get(score)?.resetLock();
+        if(which===1){
+          if(on)beginScore2PointerRewind(score);
+          else{
+            cancelScore2PointerRewind();
+            score.dataset.fcCompiledActive='off';
+          }
+        }else{
+          // Folly I's existing score-hud is repainted immediately at the
+          // current time; it must never reposition or reset the film.
+          updateInlineScore(0,inlineTime[0]);
+        }
         node.setAttribute('aria-checked',String(on));
         var caption=node.querySelector('.fc-pointer-switch-text');
         if(caption)caption.textContent=node.getAttribute(on?'data-fc-label-on':'data-fc-label-off');
