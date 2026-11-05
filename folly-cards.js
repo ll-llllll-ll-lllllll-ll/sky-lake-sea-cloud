@@ -1886,7 +1886,13 @@
       return;
     }
     var reduced=window.matchMedia('(prefers-reduced-motion:reduce)').matches;
-    var duration=reduced?0:Math.min(1550,790+from*710);
+    // ~110 ms per authored step at maximum travel. A fixed 1.5-second
+    // rewind can outrun WebP decoding and look like an abrupt jump.
+    var duration=reduced?0:Math.min(2800,520+110*(startFrame-1));
+    // The first two predecessors are cheap optimized WebPs; warming them
+    // increases the chance of seeing each physical step without stalling.
+    getScoreFrame(1,Math.max(1,startFrame-1),true);
+    if(startFrame>2)getScoreFrame(1,startFrame-2,false);
     var firstTime=null,previousFrame=startFrame;
     function tick(now){
       if(token!==score2PointerRewind.token||!score.isConnected||
