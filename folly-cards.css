@@ -5700,3 +5700,202 @@ html:has(.fc-room){
 .fc-room .fc-inspect-mechanical > .fc-inspect-lever{
   z-index:5;
 }
+
+
+/* v99 · Score II calibrated diagonal lever and enlarged 3:2 score.
+   Increase the available actual layout size by 150%; do not use transform
+   scale(), which would detach pointer geometry from its hit-testing area. */
+.fc-room .fc-inline-score[data-fc-inline-score="1"]{
+  width:min(calc(100% - 2 * clamp(24px,7vw,120px)),1575px);
+  max-width:1575px;
+}
+.fc-room .fc-inline-score[data-fc-inline-score="1"] .fc-inline-score-device{
+  height:clamp(615px,67.5vw,930px);
+  min-height:0;
+  overflow:visible;
+}
+.fc-room .fc-inline-score[data-fc-inline-score="1"] .fc-inline-score-device > .fc-score2-sequence{
+  width:min(96%,1290px);
+  max-width:96%;
+  max-height:90%;
+  height:auto;
+  min-width:0;
+  min-height:0;
+  aspect-ratio:3/2;
+}
+.fc-room .fc-inline-score[data-fc-inline-score="1"].is-expanded .fc-inline-score-device{
+  height:min(77dvh,930px);
+}
+.fc-room .fc-inline-score[data-fc-inline-score="1"].is-expanded .fc-inline-score-device > .fc-score2-sequence{
+  width:min(94%,1500px);
+  max-height:92%;
+}
+.fc-room .fc-score2-diagonal{
+  position:absolute;
+  right:clamp(12px,4.2vw,78px);
+  bottom:clamp(17px,4.4vw,82px);
+  z-index:12;
+  width:clamp(180px,23vw,310px);
+  aspect-ratio:260/160;
+  height:auto;
+  overflow:visible;
+  pointer-events:none;
+  color:rgba(91,94,89,.74);
+}
+.fc-room .fc-score2-diagonal svg{
+  display:block;
+  width:100%;
+  height:100%;
+  overflow:visible;
+  pointer-events:none;
+}
+.fc-room .fc-score2-diagonal svg path{
+  fill:none;
+  stroke:currentColor;
+  stroke-width:1.25px;
+  stroke-dasharray:5 7;
+  stroke-linecap:round;
+  vector-effect:non-scaling-stroke;
+}
+.fc-room .fc-score2-diagonal .fc-score2-handle,
+.fc-room .fc-score2-diagonal .fc-score2-trailer{
+  position:absolute;
+  display:block;
+  box-sizing:border-box;
+  left:8.46%;
+  top:13.75%;
+  padding:0;
+  border-radius:50%;
+  transform:translate(-50%,-50%);
+  transition:none;
+}
+.fc-room .fc-score2-diagonal .fc-score2-handle{
+  z-index:3;
+  width:clamp(31px,2.9vw,43px);
+  height:clamp(31px,2.9vw,43px);
+  border:2px solid rgba(92,98,92,.80);
+  background:rgba(252,253,249,.91);
+  box-shadow:0 0 0 2px rgba(255,255,252,.18);
+  cursor:grab;
+  touch-action:none;
+  pointer-events:auto;
+  -webkit-appearance:none;
+  appearance:none;
+}
+.fc-room .fc-score2-diagonal .fc-score2-handle::after{
+  content:"";
+  position:absolute;
+  inset:-12px;
+  border-radius:50%;
+}
+.fc-room .fc-score2-diagonal .fc-score2-handle:hover,
+.fc-room .fc-score2-diagonal .fc-score2-handle.is-dragging{
+  border-color:rgba(50,55,50,.94);
+  box-shadow:0 0 0 3px rgba(255,255,248,.55);
+}
+.fc-room .fc-score2-diagonal .fc-score2-handle.is-dragging{
+  cursor:grabbing;
+}
+.fc-room .fc-score2-diagonal .fc-score2-handle:focus-visible{
+  outline:2px solid rgba(41,49,43,.82);
+  outline-offset:5px;
+}
+.fc-room .fc-score2-diagonal .fc-score2-trailer{
+  z-index:2;
+  left:91.54%;
+  top:86.25%;
+  width:clamp(13px,1.3vw,19px);
+  height:clamp(13px,1.3vw,19px);
+  border:1.6px solid rgba(91,96,88,.78);
+  background:rgba(248,249,244,.7);
+  pointer-events:none;
+}
+.fc-room .fc-score2-diagonal .fc-score2-trailer::after{
+  content:"";
+  position:absolute;
+  left:50%;top:50%;
+  width:3px;height:3px;border-radius:50%;
+  background:rgba(94,100,91,.55);
+  transform:translate(-50%,-50%);
+}
+@media(max-width:700px){
+  .fc-room .fc-inline-score[data-fc-inline-score="1"] .fc-inline-score-device{
+    height:clamp(480px,108vw,640px);
+  }
+  .fc-room .fc-inline-score[data-fc-inline-score="1"] .fc-inline-score-device > .fc-score2-sequence{
+    width:97%;
+    max-width:97%;
+    max-height:82%;
+  }
+  .fc-room .fc-score2-diagonal{
+    width:clamp(146px,39vw,205px);
+    right:0;
+    bottom:2%;
+  }
+  .fc-room .fc-score2-diagonal .fc-score2-handle{width:33px;height:33px;}
+  .fc-room .fc-score2-diagonal .fc-score2-trailer{width:14px;height:14px;}
+}
+
+/* Folly's final paragraph is replaced by two quiet links to this site's
+   own Ruin Archive and Manifesto rooms, following the existing hash router. */
+.fc-room .fc-related-reading{
+  width:min(calc(100% - 2 * clamp(24px,7vw,120px)),1060px);
+  margin:clamp(80px,12vh,170px) auto clamp(95px,14vh,200px);
+  padding:clamp(28px,4vw,48px) 0 0;
+  border-top:1px solid rgba(38,44,39,.23);
+  background:transparent;
+}
+.fc-room .fc-related-heading{
+  margin:0 0 clamp(26px,4vw,55px);
+  color:rgba(39,45,40,.51);
+  font:400 11px/1.5 var(--sans),sans-serif;
+  letter-spacing:.12em;
+}
+.fc-room .fc-related-grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  column-gap:clamp(35px,7vw,110px);
+  row-gap:40px;
+}
+.fc-room .fc-related-entry{
+  display:flex;
+  flex-direction:column;
+  align-items:flex-start;
+  min-width:0;
+  padding:0;
+  margin:0;
+}
+.fc-room .fc-related-entry h3{
+  margin:0 0 19px;
+  color:#272c27;
+  font:400 clamp(21px,2vw,29px)/1.45 var(--serif),serif;
+  letter-spacing:.025em;
+}
+.fc-room .fc-related-entry p{
+  max-width:460px;
+  margin:0 0 23px;
+  color:rgba(39,45,39,.72);
+  font:400 clamp(13px,1.05vw,16px)/2 var(--serif),serif;
+}
+.fc-room .fc-related-entry a{
+  display:inline-block;
+  margin-top:auto;
+  padding-bottom:5px;
+  border-bottom:1px solid rgba(40,46,40,.32);
+  color:rgba(30,37,31,.82);
+  font:400 12px/1.7 var(--serif),serif;
+  text-decoration:none;
+  transition:border-color .22s,color .22s;
+}
+.fc-room .fc-related-entry a:hover{
+  color:#172018;
+  border-color:rgba(28,38,30,.88);
+}
+.fc-room .fc-related-entry a:focus-visible{
+  outline:1px solid rgba(30,40,32,.9);outline-offset:5px;
+}
+@media(max-width:700px){
+  .fc-room .fc-related-reading{margin-top:85px;padding-top:27px;}
+  .fc-room .fc-related-grid{grid-template-columns:1fr;gap:38px;}
+  .fc-room .fc-related-entry h3{font-size:23px;margin-bottom:13px;}
+}
