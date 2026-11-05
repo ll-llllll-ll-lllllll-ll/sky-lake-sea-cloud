@@ -976,7 +976,7 @@
     var mechanical=s.kind==='linear';
     if(mechanical){
       var sheet='<div class="fc-shadow-scan fc-mechanical-v2-sheet" data-fc-mechanical-sheet>'+
-        '<img data-fc-score-shadow-img src="'+mechanicalImage(15)+'" loading="'+
+        '<img data-fc-score-shadow-img src="'+scoreSource(0,15)+'" loading="'+
            (SCORE_WEBKIT_SINGLE_FRAME?'eager':'lazy')+'" decoding="async" alt="">'+
         '<canvas data-fc-mechanical-canvas class="fc-mechanical-v2-canvas" aria-hidden="true"></canvas>'+
         mechanicalLeverMarkup(true)+'</div>';
@@ -1005,7 +1005,7 @@
       '<div class="fc-score-shadow" data-fc-score-shadow>'+
         '<div class="fc-score2-sheet" data-fc-score2-sheet role="slider" tabindex="0" '+
           'aria-label="Folly II · 22 score frames" aria-valuemin="1" aria-valuemax="22" aria-valuenow="1">'+
-          '<img data-fc-score2-img data-frame="1" src="'+scoreIIImage(1)+'" alt="" draggable="false" loading="lazy" decoding="async">'+
+          '<img data-fc-score2-img data-frame="1" src="'+scoreSource(1,1)+'" alt="" draggable="false" loading="lazy" decoding="async">'+
           '<canvas data-fc-score2-canvas aria-hidden="true"></canvas></div>'+
       '</div>'+
       '<div class="fc-score-hud" data-fc-score-hud aria-hidden="true">'+
@@ -1209,9 +1209,9 @@
           '<div class="fc-inspection-head"><span>FOLLY '+s.roman+' / SCORE</span>'+
             '<button type="button" data-fc-action="stop-inspect" aria-label="'+esc(i18n('close'))+'">×</button></div>'+
           '<div class="fc-inspection-body">'+(s.kind==='linear'?
-              '<div class="fc-inspect-mechanical"><img data-fc-inspect-img src="'+mechanicalImage(15)+'" alt="">'+
+              '<div class="fc-inspect-mechanical"><img data-fc-inspect-img src="'+scoreSource(0,15)+'" alt="">'+
                 '<input class="fc-inspect-lever" data-fc-inspect-lever type="range" min="1" max="15" step="1" value="15" orient="vertical" aria-label="15 score frames"></div>':
-              '<div class="fc-inspect-mechanical fc-inspect-score2"><img data-fc-inspect-score2-img data-frame="1" src="'+scoreIIImage(1)+'" loading="lazy" decoding="async" alt="">'+
+              '<div class="fc-inspect-mechanical fc-inspect-score2"><img data-fc-inspect-score2-img data-frame="1" src="'+scoreSource(1,1)+'" loading="lazy" decoding="async" alt="">'+
                 '<canvas data-fc-score2-canvas aria-hidden="true"></canvas>'+
                 '<input class="fc-inspect-lever" data-fc-inspect-lever type="range" min="1" max="22" step="1" value="1" orient="vertical" aria-label="22 score frames"></div>')+
           '</div><div class="fc-inspection-foot">'+
