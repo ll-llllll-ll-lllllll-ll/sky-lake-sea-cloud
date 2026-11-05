@@ -721,6 +721,168 @@
     scoreTemporaryUrls.push(url);
     return url;
   }
+  // Folly II frame engine. A persistent canvas keeps the last painted frame
+  // on-screen until the requested frame has finished decoding. Originals are
+  // large (6000x4000); decode one at a time, downsample once, and retain small
+  // temporary WebP/PNG thumbnails for smooth repeated scrubbing. The live
+  // decoded canvas cache stays bounded, especially on Safari/iOS.
+  var score2CanvasCache=new Map(),score2ThumbUrls=new Map();
+  var score2Queue=[],score2Queued=new Set(),score2LoadingFrame=0,score2Generation=0;
+  var score2CacheLimit=SCORE_WEBKIT_SINGLE_FRAME?5:8;
+  var score2RenderWidth=SCORE_WEBKIT_SINGLE_FRAME?1440:1920;
+  function releaseScore2Frames(){
+    score2Generation++;
+    score2Queue=[];
+    score2Queued.clear();
+    score2LoadingFrame=0;
+    score2CanvasCache.clear();
+    score2ThumbUrls.forEach(function(url){try{URL.revokeObjectURL(url);}catch(_){}});
+    score2ThumbUrls.clear();
+  }
+  function rememberScore2Frame(frame,canvas){
+    if(score2CanvasCache.has(frame))score2CanvasCache.delete(frame);
+    score2CanvasCache.set(frame,canvas);
+    while(score2CanvasCache.size>score2CacheLimit)
+      score2CanvasCache.delete(score2CanvasCache.keys().next().value);
+  }
+  function paintScore2Canvas(canvas,frame){
+    var rendered=score2CanvasCache.get(frame);
+    if(!canvas||!rendered)return false;
+    if(canvas.dataset.fcPaintedFrame===String(frame))return true;
+    var w=rendered.width,h=rendered.height;
+    if(canvas.width!==w||canvas.height!==h){canvas.width=w;canvas.height=h;}
+    var ctx=canvas.getContext('2d',{alpha:true});
+    if(!ctx)return false;
+    ctx.clearRect(0,0,w,h);
+    ctx.drawImage(rendered,0,0,w,h);
+    canvas.dataset.fcPaintedFrame=String(frame);
+    var holder=canvas.closest('.fc-score2-sequence, .fc-inspect-score2');
+    if(holder)holder.classList.add('fc-score2-ready');
+    // Access to a recently painted frame counts as recent use in the LRU.
+    rememberScore2Frame(frame,rendered);
+    return true;
+  }
+  function flushScore2Frame(frame){
+    if(!scene)return;
+    scene.querySelectorAll('[data-fc-score2-canvas]').forEach(function(canvas){
+      if(canvas.isConnected&&canvas.dataset.fcWantedFrame===String(frame))
+        paintScore2Canvas(canvas,frame);
+    });
+  }
+  function queueScore2Frame(frame,urgent){
+    frame=clamp(frame,1,FILES_II.length);
+    if(score2CanvasCache.has(frame))return;
+    if(score2Queued.has(frame)){
+      if(urgent){
+        score2Queue=score2Queue.filter(function(n){return n!==frame;});
+        score2Queue.unshift(frame);
+      }
+      return;
+    }
+    if(score2LoadingFrame===frame)return;
+    score2Queued.add(frame);
+    if(urgent)score2Queue.unshift(frame);
+    else score2Queue.push(frame);
+    pumpScore2Frames();
+  }
+  function setScore2Frame(canvas,frame){
+    if(!canvas)return;
+    frame=clamp(frame,1,FILES_II.length);
+    var previous=Number(canvas.dataset.fcWantedFrame)||0;
+    canvas.dataset.fcWantedFrame=String(frame);
+    if(!paintScore2Canvas(canvas,frame))queueScore2Frame(frame,true);
+    if(frame!==previous){
+      // Preload neighboring frames in reading order without waiting for a
+      // second user gesture. No source changes occur on the visible artwork.
+      var direction=previous&&frame>previous?1:-1;
+      for(var step=1;step<=2;step++){
+        var near=frame+direction*step,other=frame-direction*step;
+        if(near>=1&&near<=FILES_II.length)queueScore2Frame(near,false);
+        if(other>=1&&other<=FILES_II.length)queueScore2Frame(other,false);
+      }
+    }
+  }
+  function warmScore2Frames(){
+    // Work on every source exactly once while Folly II is in view.
+    // The compressed results are kept; full-res decoded originals are not.
+    for(var f=FILES_II.length;f>=1;f--)queueScore2Frame(f,false);
+  }
+  function pumpScore2Frames(){
+    if(score2LoadingFrame||!score2Queue.length)return;
+    var frame=score2Queue.shift();
+    score2Queued.delete(frame);
+    if(score2CanvasCache.has(frame)){pumpScore2Frames();return;}
+    score2LoadingFrame=frame;
+    var generation=score2Generation,attempt=0;
+    var source=score2ThumbUrls.get(frame)||scoreIIImage(frame);
+    var isThumbnail=score2ThumbUrls.has(frame);
+    var finished=false;
+    function complete(){
+      if(finished)return;
+      finished=true;
+      if(generation!==score2Generation)return;
+      score2LoadingFrame=0;
+      window.setTimeout(pumpScore2Frames,34);
+    }
+    function loaded(img){
+      if(generation!==score2Generation){complete();return;}
+      if(!img.naturalWidth||!img.naturalHeight){complete();return;}
+      try{
+        var w=Math.min(score2RenderWidth,img.naturalWidth);
+        var h=Math.round(w*img.naturalHeight/img.naturalWidth);
+        var reduced=document.createElement('canvas');
+        reduced.width=w;reduced.height=h;
+        var ctx=reduced.getContext('2d',{alpha:true});
+        if(!ctx)throw Error('Score frame canvas unavailable');
+        ctx.imageSmoothingEnabled=true;
+        ctx.imageSmoothingQuality='high';
+        ctx.drawImage(img,0,0,w,h);
+        rememberScore2Frame(frame,reduced);
+        flushScore2Frame(frame);
+        if(!isThumbnail&&!score2ThumbUrls.has(frame)&&reduced.toBlob){
+          // Idle encoding ensures the first display never waits for export.
+          var encode=function(){
+            if(generation!==score2Generation)return;
+            try{
+              reduced.toBlob(function(blob){
+                if(generation!==score2Generation||!blob)return;
+                if(!score2ThumbUrls.has(frame))
+                  score2ThumbUrls.set(frame,URL.createObjectURL(blob));
+              },'image/webp',.90);
+            }catch(_){}
+          };
+          if('requestIdleCallback' in window)requestIdleCallback(encode,{timeout:2800});
+          else window.setTimeout(encode,240);
+        }
+      }catch(_){
+        // Retain the previous canvas image on any decode or drawing error.
+      }
+      complete();
+    }
+    function load(url){
+      var img=new Image();
+      img.decoding='async';
+      img.onload=function(){
+        var ready=img.decode?img.decode().catch(function(){}):Promise.resolve();
+        Promise.resolve(ready).then(function(){loaded(img);});
+      };
+      img.onerror=function(){
+        if(generation!==score2Generation){complete();return;}
+        if(!isThumbnail&&SCORE_WEBKIT_SINGLE_FRAME&&attempt++===0){
+          // Match the existing Safari ICC/VP8X fallback for Folly I.
+          fetch(scoreIIImage(frame),{cache:'force-cache'})
+            .then(function(response){
+              if(!response.ok)throw Error('WebP fetch failed');
+              return response.arrayBuffer();
+            }).then(simpleWebPFromResponse)
+            .then(function(url){load(url);})
+            .catch(complete);
+        }else complete();
+      };
+      img.src=url;
+    }
+    load(source);
+  }
   function watchSafariScoreImageErrors(){
     if(!SCORE_WEBKIT_SINGLE_FRAME||!scene)return;
     scene.querySelectorAll('[data-fc-score-shadow-img], [data-fc-inspect-img], [data-fc-score2-img], [data-fc-inspect-score2-img]').forEach(function(img){
@@ -792,6 +954,7 @@
     mechanicalFrames=[];
     mechanicalReady=null;
     releaseScoreTemporaryUrls();
+    releaseScore2Frames();
   }
   function mechanicalLeverMarkup(interactive){
     return '<div class="fc-mechanical-v2-lever" data-fc-stage="1" '+
@@ -838,7 +1001,8 @@
       '<div class="fc-score-shadow" data-fc-score-shadow>'+
         '<div class="fc-score2-sheet" data-fc-score2-sheet role="slider" tabindex="0" '+
           'aria-label="Folly II · 22 score frames" aria-valuemin="1" aria-valuemax="22" aria-valuenow="22">'+
-          '<img data-fc-score2-img data-frame="22" src="'+scoreIIImage(22)+'" alt="" draggable="false" loading="lazy" decoding="async"></div>'+
+          '<img data-fc-score2-img data-frame="22" src="'+scoreIIImage(22)+'" alt="" draggable="false" loading="lazy" decoding="async">'+
+          '<canvas data-fc-score2-canvas aria-hidden="true"></canvas></div>'+
       '</div>'+
       '<div class="fc-score-hud" data-fc-score-hud aria-hidden="true">'+
         '<i class="fc-score2-pointer" data-fc-score2-pointer></i>'+
@@ -1044,6 +1208,7 @@
               '<div class="fc-inspect-mechanical"><img data-fc-inspect-img src="'+mechanicalImage(15)+'" alt="">'+
                 '<input class="fc-inspect-lever" data-fc-inspect-lever type="range" min="1" max="15" step="1" value="15" orient="vertical" aria-label="15 score frames"></div>':
               '<div class="fc-inspect-mechanical fc-inspect-score2"><img data-fc-inspect-score2-img data-frame="22" src="'+scoreIIImage(22)+'" loading="lazy" decoding="async" alt="">'+
+                '<canvas data-fc-score2-canvas aria-hidden="true"></canvas>'+
                 '<input class="fc-inspect-lever" data-fc-inspect-lever type="range" min="1" max="22" step="1" value="22" orient="vertical" aria-label="22 score frames"></div>')+
           '</div><div class="fc-inspection-foot">'+
             '<button type="button" data-fc-action="zoom-out" aria-label="Zoom out">−</button>'+
@@ -1565,11 +1730,7 @@
       var frame=sourceScoreFrame(ratio,FILES_II.length);
       overlay.querySelectorAll('.fc-score2-sequence').forEach(function(cluster){
         cluster.dataset.fcFrame=String(frame);
-        var img=cluster.querySelector('[data-fc-score2-img]');
-        if(img&&img.dataset.frame!==String(frame)){
-          img.dataset.frame=String(frame);
-          img.src=scoreIIImage(frame);
-        }
+        setScore2Frame(cluster.querySelector('[data-fc-score2-canvas]'),frame);
         var surface=cluster.querySelector('[data-fc-score2-sheet]');
         if(surface)surface.setAttribute('aria-valuenow',String(frame));
         var pointer=cluster.querySelector('[data-fc-score2-pointer]');
@@ -1935,11 +2096,7 @@
         ?sourceScoreFrame(selection.lastTime/current().endTime,FILES_II.length)
         :selection.manualFrame;
       var lever=overlay.querySelector('[data-fc-inspect-lever]');
-      var img=overlay.querySelector('[data-fc-inspect-score2-img]');
-      if(img&&img.dataset.frame!==String(frame)){
-        img.dataset.frame=String(frame);
-        img.src=scoreIIImage(frame);
-      }
+      setScore2Frame(overlay.querySelector('.fc-inspect-score2 [data-fc-score2-canvas]'),frame);
       if(lever&&document.activeElement!==lever)lever.value=String(frame);
     }
     var target=overlay.querySelector('.fc-inspection .fc-inspect-mechanical, .fc-inspection .fc-inspect-fold');
@@ -2341,10 +2498,14 @@
     if(lever)lever.addEventListener('input',function(){
       if(selection.series!==si)return;
       selection.manualFrame=Number(lever.value);
-      var img=overlay.querySelector(si===0?'[data-fc-inspect-img]':'[data-fc-inspect-score2-img]');
-      if(img){
-        img.dataset.frame=String(selection.manualFrame);
-        img.src=si===0?mechanicalImage(selection.manualFrame):scoreIIImage(selection.manualFrame);
+      if(si===0){
+        var img=overlay.querySelector('[data-fc-inspect-img]');
+        if(img){
+          img.dataset.frame=String(selection.manualFrame);
+          img.src=mechanicalImage(selection.manualFrame);
+        }
+      }else{
+        setScore2Frame(overlay.querySelector('.fc-inspect-score2 [data-fc-score2-canvas]'),selection.manualFrame);
       }
     });
     overlay.querySelectorAll('.fc-inspection [data-fc-drag-wing]').forEach(function(wing){
@@ -2985,6 +3146,7 @@
           var si=Number(entry.target.dataset.fcSeriesBlock);
           prioritizePreviews(si,selection.focus[si]);
           if(si===0)ensureMechanicalFrames();
+          if(si===1)warmScore2Frames();
         });
       },{rootMargin:'320px 0px'});
       SERIES.forEach(function(_,si){
@@ -2994,6 +3156,7 @@
     }else{
       prioritizePreviews(0,0);
       ensureMechanicalFrames();
+      warmScore2Frames();
     }
   }
   function wireEvents(){
