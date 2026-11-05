@@ -816,16 +816,17 @@
     var generation=score2Generation,attempt=0;
     var source=score2ThumbUrls.get(frame)||scoreIIImage(frame);
     var isThumbnail=score2ThumbUrls.has(frame);
-    var finished=false;
+    var finished=false,watchdog=0;
     function complete(){
       if(finished)return;
       finished=true;
+      if(watchdog)clearTimeout(watchdog);
       if(generation!==score2Generation)return;
       score2LoadingFrame=0;
       window.setTimeout(pumpScore2Frames,34);
     }
     function loaded(img){
-      if(generation!==score2Generation){complete();return;}
+      if(finished||generation!==score2Generation){complete();return;}
       if(!img.naturalWidth||!img.naturalHeight){complete();return;}
       try{
         var w=Math.min(score2RenderWidth,img.naturalWidth);
@@ -867,7 +868,7 @@
         Promise.resolve(ready).then(function(){loaded(img);});
       };
       img.onerror=function(){
-        if(generation!==score2Generation){complete();return;}
+        if(finished||generation!==score2Generation){complete();return;}
         if(!isThumbnail&&SCORE_WEBKIT_SINGLE_FRAME&&attempt++===0){
           // Match the existing Safari ICC/VP8X fallback for Folly I.
           fetch(scoreIIImage(frame),{cache:'force-cache'})
@@ -881,6 +882,8 @@
       };
       img.src=url;
     }
+    // An incomplete image request must never block the remaining 21 frames.
+    watchdog=window.setTimeout(complete,15000);
     load(source);
   }
   function watchSafariScoreImageErrors(){
