@@ -1169,6 +1169,12 @@
   function scoreWorkTitle(si){
     return (FOLLY_SCORE_TITLES[state.lang]||FOLLY_SCORE_TITLES.zh)[si];
   }
+  function scoreHeadingTitle(si){
+    // Keep each work's established title unchanged; prepend its category.
+    // The existing Chinese/Japanese titles already include book-title marks.
+    var prefix={zh:'废墟乐谱：',en:'Ruin Score: ',ja:'廃墟楽譜：'}[state.lang]||'废墟乐谱：';
+    return prefix+scoreWorkTitle(si);
+  }
   // Physical dimensions of Folly I's paper score. Thickness changes
   // alongside the paper collapse; it is not the lever travel distance.
   var FOLLY_I_SCORE_FACTS={
@@ -1259,7 +1265,7 @@
     return '<section class="fc-inline-score" data-fc-inline-score="'+si+'" data-fc-pointers="off">'+
       '<div class="fc-inline-score-main">'+
         '<div class="fc-inline-score-device">'+scoreMarkup(s)+(si===1?score2LeverMarkup():'')+'</div>'+
-        '<h3 class="fc-score-caption">'+esc(scoreWorkTitle(si))+'</h3>'+
+        '<h3 class="fc-score-caption">'+esc(scoreHeadingTitle(si))+'</h3>'+
         scoreFactsMarkup(si)+
         '<div class="fc-score-controls-bottom">'+
           ''+
