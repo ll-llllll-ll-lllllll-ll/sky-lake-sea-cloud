@@ -42,7 +42,12 @@ jobs:
           for folder, count, naming, max_width in groups:
               destination = root / folder / "optimized"
               destination.mkdir(parents=True, exist_ok=True)
+              if folder == "score-2":
+                  # This image was intentionally omitted from the 21-frame score.
+                  (destination / "8.webp").unlink(missing_ok=True)
               for index in range(1, count + 1):
+                  if folder == "score-2" and index == 8:
+                      continue
                   filename = naming.format(index)
                   source = root / folder / filename
                   if not source.is_file():
