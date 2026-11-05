@@ -6230,3 +6230,39 @@ html:has(.fc-room){
     transition:none;
   }
 }
+
+
+/* v107 · Five-pixel Folly II HUD adjustment, compiled-score shadow,
+   and unrestricted score-pointer overshoot.
+   Both radial needles share this parent: translate(5px,5px) moves them
+   right/down together without altering either pivot or rotation formula. */
+.fc-room .fc-inline-score .fc-score2-sequence .fc-score2-native-center{
+  transform:translate(5px,5px);
+}
+/* The image's own transparency defines the cast shadow. This is active
+   ONLY once the rewind is complete and compiled.png is visible. */
+.fc-room .fc-inline-score[data-fc-pointers="on"][data-fc-compiled-active="on"]
+.fc-score2-sequence .fc-score2-compiled{
+  filter:drop-shadow(0 13px 12px rgba(25,27,24,.25))
+         drop-shadow(4px 5px 6px rgba(25,27,24,.12));
+}
+/* No rectangular HUD or triangular clipping mask: indicators can travel
+   beyond the sheet. Scope these rules to the two inline score clusters,
+   leaving the actual image-buffer and video-card clipping untouched. */
+.fc-room .fc-inline-score .fc-mechanical-v2,
+.fc-room .fc-inline-score .fc-score2-sequence,
+.fc-room .fc-inline-score .fc-mechanical-v2 > .fc-score-hud,
+.fc-room .fc-inline-score .fc-score2-sequence > .fc-score-hud,
+.fc-room .fc-inline-score .fc-mechanical-v2 > .fc-score-hud .fc-score-notation,
+.fc-room .fc-inline-score .fc-mechanical-v2 > .fc-score-hud .fc-mechanical-v2-graphics,
+.fc-room .fc-inline-score .fc-score2-sequence .fc-score2-native-center,
+.fc-room .fc-inline-score .fc-score2-sequence .folly2-score-pointer-layer.fc-score2-native-pointer-layer{
+  overflow:visible!important;
+  clip-path:none!important;
+  -webkit-clip-path:none!important;
+}
+.fc-room .fc-inline-score .fc-mechanical-v2 .fc-mechanical-v2-arcs{
+  overflow:visible!important;
+  clip-path:none!important;
+  -webkit-clip-path:none!important;
+}
