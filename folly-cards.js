@@ -386,6 +386,14 @@
         railOriginLocks[si]=true;
         var diff=target-rail.scrollLeft;
         if(Math.abs(diff)>.4)rail.scrollLeft+=diff*(reduced?1:.095);
+        // Autoplay deliberately suppresses the rail's scroll listener, so
+        // the synchronized score MUST be driven from the film clock here.
+        // Its discrete images and the score-II push-pull lever now advance
+        // even while the preview rail glides under pointer control.
+        updateInlineScore(si,absolute);
+        var slider=block(si)?.querySelector('[data-fc-slider]');
+        if(slider&&document.activeElement!==slider)
+          slider.value=String(Math.round(clamp(absolute/SERIES[si].endTime,0,1)*1000));
         hoverFilm.card?.style.setProperty('--fc-card-progress',Math.round(frac*100)+'%');
       }
       hoverRailMotion=requestAnimationFrame(tick);
