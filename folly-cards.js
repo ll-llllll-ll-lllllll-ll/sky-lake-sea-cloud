@@ -351,9 +351,6 @@
   // the film begins on 1.webp and ends on 22.webp. Folly I stays reversed.
   // Number 8 is intentionally omitted; every timeline position remains contiguous.
   var SCORE2_FRAMES=[1,2,3,4,5,6,7,9,10,11,12,13,14,15,16,17,18,19,20,21,22];
-  // Temporary calibration only; the artist will confirm the final coordinate.
-  // x/y are percentages within compiled.png's 3:2 display box.
-  var SCORE2_COMPILED_POINTER={x:49,y:73,travelX:10,travelY:-7};
   var FILES_II=SCORE2_FRAMES.map(function(number){return FOLD_BASE+number+'.webp';});
   function scoreIIImage(frame){return FILES_II[clamp(frame,1,FILES_II.length)-1];}
   // Retain the five older folding PNGs in the repository as source archives.
@@ -1003,7 +1000,7 @@
         '<canvas data-fc-mechanical-canvas class="fc-mechanical-v2-canvas" aria-hidden="true"></canvas>'+
         mechanicalLeverMarkup(true)+'</div>';
       var arcs='<svg class="fc-mechanical-v2-arcs" viewBox="-100 -100 200 200" aria-hidden="true" '+
-        'xmlns="http://www.w3.org/2000/svg"><g data-fc-arcs>'+
+        'xmlns="http://www.w3.org/2000/svg"><g data-fc-arcs style="transform-origin:-17px -52.5px">'+
         '<path transform="translate(-10,-50) rotate(160)" d="M -7.07,-7.07 A 10,10 0 0,1 7.07,-7.07"/>'+
         '<path transform="translate(-15,-55) rotate(-150)" d="M -14.14,-14.14 A 20,20 0 0,1 14.14,-14.14"/>'+
         '<path transform="translate(-10,-55) rotate(160)" d="M -21.21,-21.21 A 30,30 0 0,1 21.21,-21.21"/>'+
@@ -1034,8 +1031,15 @@
         '<img class="fc-score2-compiled" data-fc-score2-compiled '+
           'src="'+FOLD_BASE+'compiled.png" alt="" loading="lazy" decoding="async" draggable="false">'+
       '</div>'+
+      // Ported directly from Ruin Atlas / attachment viewer:
+      // the paired radial Folly II needles, not a free-floating circle.
       '<div class="fc-score-hud" data-fc-score-hud aria-hidden="true">'+
-        '<i class="fc-score2-pointer" data-fc-score2-pointer></i>'+
+        '<div class="fc-score2-native-center">'+
+          '<div class="folly2-score-pointer-layer fc-score2-native-pointer-layer">'+
+            '<i class="folly2-score-playhead" data-fc-folly2-playhead></i>'+
+            '<i class="folly2-score-playhead folly2-score-playhead-2" data-fc-folly2-playhead-2></i>'+
+          '</div>'+
+        '</div>'+
       '</div>'+
       '<p class="fc-score-manual">'+esc(i18n('hintII'))+'</p>'+
       '<button class="fc-score-expand" type="button" data-fc-action="inspect">'+esc(i18n('score'))+' ↗︎</button>'+
@@ -1812,21 +1816,31 @@
         // the SAME artwork coordinate space. Never change the fallback source
         // in the paint loop; that had caused a second, drifting image layer.
         showScoreFrame(cluster,0,state.frame);
-        var hudX=(12+76*ratio).toFixed(3)+'%';
-        var hudY=(94-22*ratio).toFixed(3)+'%';
-        cluster.style.setProperty('--fc-folly1-hud-x',hudX);
-        cluster.style.setProperty('--fc-folly1-hud-y',hudY);
+        // Direct port of Ruin Atlas attachment viewer / bindVideoUI:
+        // 12%-88% scan, 72%-94% pulse path, in the image's real CSS pixels.
+        // The scan begins at left:0 to avoid the source desktop's extra offset.
+        var geometry=cluster.querySelector('.fc-mechanical-v2-graphics');
+        var w=geometry?geometry.clientWidth:0;
+        var h=geometry?geometry.clientHeight:0;
+        if(w&&h){
+          var x=w*(.12+.76*ratio);
+          var scan=cluster.querySelector('[data-fc-line]');
+          if(scan)scan.style.transform='translateX('+x.toFixed(3)+'px)';
+          var pulse=cluster.querySelector('[data-fc-pulse]');
+          if(pulse){
+            var pulseY=h*(.94-.22*ratio);
+            var frequency=.8+(3-.8)*ratio;
+            var sine=Math.sin(performance.now()*.001*frequency*Math.PI);
+            var beating=sine>0;
+            pulse.style.opacity=absolute>=113?'0':(beating?'1':'.12');
+            pulse.style.transform='translate('+(x-3).toFixed(3)+'px,'+
+              pulseY.toFixed(3)+'px) scale('+
+              (beating?(1-Math.pow(sine,2)*.4):1).toFixed(3)+')';
+          }
+        }
         var arcs=cluster.querySelector('[data-fc-arcs]');
         if(arcs)arcs.style.transform='scale('+(1+3.5*ratio).toFixed(3)+')';
       });
-      var pulse=overlay.querySelector('[data-fc-pulse]');
-      if(pulse){
-        // Preserve Folly I's original 1:53 endpoint and beat formula.
-        var freq=.8+2.2*ratio;
-        var beat=Math.sin(performance.now()*.001*freq*Math.PI);
-        pulse.style.opacity=absolute>=113?'0':(beat>0?'1':'.12');
-        pulse.style.transform='translate(-50%,-50%) scale('+(beat>0?(1-Math.pow(beat,2)*.4):1).toFixed(3)+')';
-      }
     }else{
       var frame=sourceScore2Frame(ratio);
       overlay.querySelectorAll('.fc-score2-sequence').forEach(function(cluster){
@@ -1834,12 +1848,13 @@
         showScoreFrame(cluster,1,frame);
         var surface=cluster.querySelector('[data-fc-score2-sheet]');
         if(surface)surface.setAttribute('aria-valuenow',String(frame));
-        // On compiled.png, this placeholder stays near the lower middle.
-        // Precise positioning is intentionally deferred for artist review.
-        cluster.style.setProperty('--fc-score2-pointer-x',
-          (SCORE2_COMPILED_POINTER.x+SCORE2_COMPILED_POINTER.travelX*ratio).toFixed(3)+'%');
-        cluster.style.setProperty('--fc-score2-pointer-y',
-          (SCORE2_COMPILED_POINTER.y+SCORE2_COMPILED_POINTER.travelY*ratio).toFixed(3)+'%');
+        // Ruin Atlas Folly II / bindVideoUI's two independent needles.
+        // The first sweeps -65° → 30°; the second -55° → 74° and
+        // completes its sweep at 5/6 of the film duration.
+        var n1=cluster.querySelector('[data-fc-folly2-playhead]');
+        var n2=cluster.querySelector('[data-fc-folly2-playhead-2]');
+        if(n1)n1.style.transform='rotate('+(-65+95*ratio).toFixed(3)+'deg)';
+        if(n2)n2.style.transform='rotate('+(-55+129*Math.min(1,ratio*1.2)).toFixed(3)+'deg)';
       });
     }
   }
