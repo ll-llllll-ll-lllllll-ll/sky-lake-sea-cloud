@@ -1018,6 +1018,10 @@
           'aria-label="Folly II · 21 score frames" aria-valuemin="1" aria-valuemax="'+FILES_II.length+'" aria-valuenow="1">'+
           '<img data-fc-score2-img data-frame="1" src="'+scoreSource(1,1)+'" alt="" draggable="false" loading="lazy" decoding="async">'+
           '<canvas data-fc-score2-canvas aria-hidden="true"></canvas></div>'+
+        // The assembled notation is revealed only after pointer-on has
+        // returned the live frame sequence to its opening exposure.
+        '<img class="fc-score2-compiled" data-fc-score2-compiled '+
+          'src="'+FOLD_BASE+'compiled.png" alt="" loading="lazy" decoding="async" draggable="false">'+
       '</div>'+
       '<div class="fc-score-hud" data-fc-score-hud aria-hidden="true">'+
         '<i class="fc-score2-pointer" data-fc-score2-pointer></i>'+
@@ -1770,31 +1774,22 @@
         });
         var knob=cluster.querySelector('.fc-mechanical-v2-knob');
         if(knob)knob.setAttribute('aria-valuenow',String(state.frame));
-        // Once decoded, a single canvas draw replaces repeated img.src churn.
-        if(!paintMechanicalCanvas(cluster,state.frame)){
-          var fallback=cluster.querySelector('[data-fc-score-shadow-img]');
-          if(fallback && fallback.dataset.frame!==String(state.frame)){
-            fallback.dataset.frame=String(state.frame);
-            var frameURL=mechanicalImage(state.frame);
-            // Avoid aborting/restarting Safari's initial eager image load
-            // when the first paint selects the already-displayed frame 15.
-            if(fallback.getAttribute('src')!==frameURL)fallback.src=frameURL;
-          }
-        }
+        // The complete fifteen-frame sequence and the original HUD live in
+        // the SAME artwork coordinate space. Never change the fallback source
+        // in the paint loop; that had caused a second, drifting image layer.
+        showScoreFrame(cluster,0,state.frame);
+        var hudX=(12+76*ratio).toFixed(3)+'%';
+        var hudY=(94-22*ratio).toFixed(3)+'%';
+        cluster.style.setProperty('--fc-folly1-hud-x',hudX);
+        cluster.style.setProperty('--fc-folly1-hud-y',hudY);
         var arcs=cluster.querySelector('[data-fc-arcs]');
         if(arcs)arcs.style.transform='scale('+(1+3.5*ratio).toFixed(3)+')';
       });
-      overlay.querySelectorAll('[data-fc-line]').forEach(function(line){
-        line.style.left=(12+76*ratio).toFixed(3)+'%';
-      });
       var pulse=overlay.querySelector('[data-fc-pulse]');
       if(pulse){
-        // The pulse leaves after 1:53 of the authored Folly I moving image.
-        var x=12+76*ratio,y=94-22*ratio;
+        // Preserve Folly I's original 1:53 endpoint and beat formula.
         var freq=.8+2.2*ratio;
         var beat=Math.sin(performance.now()*.001*freq*Math.PI);
-        pulse.style.left=x.toFixed(3)+'%';
-        pulse.style.top=y.toFixed(3)+'%';
         pulse.style.opacity=absolute>=113?'0':(beat>0?'1':'.12');
         pulse.style.transform='translate(-50%,-50%) scale('+(beat>0?(1-Math.pow(beat,2)*.4):1).toFixed(3)+')';
       }
@@ -1805,8 +1800,10 @@
         showScoreFrame(cluster,1,frame);
         var surface=cluster.querySelector('[data-fc-score2-sheet]');
         if(surface)surface.setAttribute('aria-valuenow',String(frame));
-        var pointer=cluster.querySelector('[data-fc-score2-pointer]');
-        if(pointer)pointer.style.left=(12+76*ratio).toFixed(3)+'%';
+        // On compiled.png, this placeholder stays near the lower middle.
+        // Precise positioning is intentionally deferred for artist review.
+        cluster.style.setProperty('--fc-score2-pointer-x',(49+10*ratio).toFixed(3)+'%');
+        cluster.style.setProperty('--fc-score2-pointer-y',(73-7*ratio).toFixed(3)+'%');
       });
     }
   }
