@@ -1178,11 +1178,34 @@
       brief:'高さ 30 cm × 幅 20 cm；厚さ 24 → 3 mm',
       value:'高さ 30 cm × 幅 20 cm；厚さ 24 → 3 mm（紙面の崩壊に連動）'}
   };
+  // Folly II is a 23 cm equilateral triangular body with three movable
+  // pages. The 36 / 43 cm dimensions describe two successive unfolded
+  // inverted-triangle configurations (NOT thickness or fixed body size).
+  var FOLLY_II_SCORE_FACTS={
+    zh:{
+      brief:'主体边长 23 cm；展开边长 36 / 43 cm',
+      value:'主体为边长 23 cm 的等边三角形，另有三片可摆动的页面。三片页面平摊后，在主体上方倒置呈现边长 36 cm 的等边三角形（图1）；页面翻转后，倒置三角形的边长变为 43 cm（图2）。'
+    },
+    en:{
+      brief:'Base: 23 cm per side; unfolded: 36 / 43 cm per side',
+      value:'An equilateral triangular body measuring 23 cm per side, with three movable leaves. When the three leaves lie flat, an inverted equilateral triangle measuring 36 cm per side appears above the body (image 1). After the leaves are turned over, the inverted triangle measures 43 cm per side (image 2).'
+    },
+    ja:{
+      brief:'本体：一辺 23 cm；展開時：一辺 36 / 43 cm',
+      value:'一辺 23 cm の正三角形を本体とし、可動する3枚のページを備える。3枚を平らに広げると、本体の上に一辺 36 cm の倒立した正三角形が現れる（図1）。ページを裏返すと、倒立した正三角形の一辺は 43 cm になる（図2）。'
+    }
+  };
   function scoreFactsMarkup(si){
     var copy=FOLLY_I_SCORE_FACTS[state.lang]||FOLLY_I_SCORE_FACTS.zh;
-    if(si===1)return '<dl class="fc-score-object-facts" aria-label="'+esc(copy.frames)+'">'+
-      '<div class="fc-score-object-fact"><dt>'+esc(copy.frames)+'</dt>'+
-      '<dd>'+FILES_II.length+' '+esc(copy.frameUnit)+'</dd></div></dl>';
+    if(si===1){
+      var score2=FOLLY_II_SCORE_FACTS[state.lang]||FOLLY_II_SCORE_FACTS.zh;
+      return '<dl class="fc-score-object-facts" aria-label="'+esc(copy.frames+' / '+copy.dimensions)+'">'+
+        '<div class="fc-score-object-fact"><dt>'+esc(copy.frames)+'</dt>'+
+          '<dd>'+FILES_II.length+' '+esc(copy.frameUnit)+'</dd></div>'+
+        '<div class="fc-score-object-fact"><dt>'+esc(copy.dimensions)+'</dt>'+
+          '<dd>'+factDisclosure(score2.brief,score2.value)+'</dd></div>'+
+      '</dl>';
+    }
     if(si!==0)return '';
     var frames=FILES_I.length;
     return '<dl class="fc-score-object-facts" aria-label="'+esc(copy.frames+' / '+copy.dimensions)+'">'+
