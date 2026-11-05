@@ -843,7 +843,16 @@
     if(!viewer)return false;
     var count=si===0?FILES_I.length:FILES_II.length;
     frame=clamp(frame,1,count);
-    if(viewer.shown===frame)return true;
+    if(viewer.shown===frame){
+      // A rapid gesture may return to the current image while another frame
+      // is decoding. Cancel that stale request instead of showing it later.
+      if(viewer.wanted!==frame){
+        viewer.request++;
+        viewer.wanted=frame;
+        viewer.loading=false;
+      }
+      return true;
+    }
     if(viewer.wanted===frame&&viewer.loading)return true;
     var request=++viewer.request;
     viewer.wanted=frame;
