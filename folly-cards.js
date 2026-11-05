@@ -37,9 +37,9 @@
      ]}
   ];
   var COPY = {
-    zh:{group:'废墟园林 / 图景',instruction:'向右翻阅散落的瞬间',seek:'滑动阶段',open:'观看这一瞬间',close:'回到图景',prev:'上一阶段',next:'下一阶段',sound:'打开声音',mute:'静音',play:'继续',pause:'暂停',score:'检视图谱',reset:'复位',loading:'影像就位中',missing:'这一阶段的影像尚未就位',allEnd:'本卷已至尾声',hintI:'图谱随时间逆行 · 悬停校准指针',hintII:'二十二帧图谱随影片逆向更替 · 指针可选',loadingPoster:'',zoom:'放大'},
-    en:{group:'FOLLY / TABLEAUX',instruction:'Move right through scattered moments.',seek:'Move through stages',open:'Open this moment',close:'Return to the tableaux',prev:'Previous stage',next:'Next stage',sound:'Sound on',mute:'Mute',play:'Resume',pause:'Pause',score:'Inspect the score',reset:'Reset',loading:'Preparing the moving image',missing:'This fragment is not available yet',allEnd:'The sequence has ended',hintI:'Score runs in reverse · Hover to calibrate',hintII:'22 score frames run in reverse · Optional pointer',loadingPoster:'',zoom:'Zoom'},
-    ja:{group:'フォリー / 風景の断片',instruction:'右へ進み、散らばった瞬間をたどる。',seek:'段階を移動',open:'この瞬間を見る',close:'風景に戻る',prev:'前の段階',next:'次の段階',sound:'音声オン',mute:'消音',play:'再開',pause:'一時停止',score:'楽譜を検視',reset:'リセット',loading:'映像を準備中',missing:'この断片はまだありません',allEnd:'この巻は終わりました',hintI:'楽譜は逆行 · ホバーで校正',hintII:'22コマの譜面が逆順に進む · 指針は任意',loadingPoster:'',zoom:'拡大'}
+    zh:{group:'废墟园林 / 图景',instruction:'向右翻阅散落的瞬间',seek:'滑动阶段',open:'观看这一瞬间',close:'回到图景',prev:'上一阶段',next:'下一阶段',sound:'打开声音',mute:'静音',play:'继续',pause:'暂停',score:'检视图谱',reset:'复位',loading:'影像就位中',missing:'这一阶段的影像尚未就位',allEnd:'本卷已至尾声',hintI:'图谱随时间逆行 · 悬停校准指针',hintII:'二十二帧图谱随影片顺序更替 · 指针可选',loadingPoster:'',zoom:'放大'},
+    en:{group:'FOLLY / TABLEAUX',instruction:'Move right through scattered moments.',seek:'Move through stages',open:'Open this moment',close:'Return to the tableaux',prev:'Previous stage',next:'Next stage',sound:'Sound on',mute:'Mute',play:'Resume',pause:'Pause',score:'Inspect the score',reset:'Reset',loading:'Preparing the moving image',missing:'This fragment is not available yet',allEnd:'The sequence has ended',hintI:'Score runs in reverse · Hover to calibrate',hintII:'22 score frames in sequence · Optional pointer',loadingPoster:'',zoom:'Zoom'},
+    ja:{group:'フォリー / 風景の断片',instruction:'右へ進み、散らばった瞬間をたどる。',seek:'段階を移動',open:'この瞬間を見る',close:'風景に戻る',prev:'前の段階',next:'次の段階',sound:'音声オン',mute:'消音',play:'再開',pause:'一時停止',score:'楽譜を検視',reset:'リセット',loading:'映像を準備中',missing:'この断片はまだありません',allEnd:'この巻は終わりました',hintI:'楽譜は逆行 · ホバーで校正',hintII:'22コマの譜面が順に進む · 指針は任意',loadingPoster:'',zoom:'拡大'}
   };
   // Short interim captions stay close to the physical artefacts. They can be
   // replaced with the artist's full Chinese/English/Japanese texts later.
@@ -73,9 +73,9 @@
         ja:'器械と本体の細部を分けて並べる。次の短い映像では、静止した各部が時間の中に戻される。'
       },
       score:{
-        zh:'二十二帧图谱与影片共享同一段时间。横向滑动影像或移动时间滑轨时，图谱依照逆向排列的帧序逐张更替；指针可以独立显示或隐藏。',
-        en:'The twenty-two score frames share the film’s timeline. Scrolling the film strip or moving its slider advances the notation in reverse numerical order; the pointer can be shown or hidden independently.',
-        ja:'二十二コマの譜面は映像と時間軸を共有する。フィルムを横に送るかスライダーを動かすと、譜面が番号の逆順に切り替わる。指針は独立して表示・非表示を切り替えられる。'
+        zh:'二十二帧图谱与影片共享同一段时间。横向滑动影像或移动时间滑轨时，图谱依照新编排的顺序由第一帧推进至第二十二帧；指针可以独立显示或隐藏。',
+        en:'The twenty-two score frames share the film’s timeline. Scrolling the film strip or moving its slider advances the notation from the first frame to the twenty-second; the pointer can be shown or hidden independently.',
+        ja:'二十二コマの譜面は映像と時間軸を共有する。フィルムを横に送るかスライダーを動かすと、譜面が一コマ目から二十二コマ目へ順に切り替わる。指針は独立して表示・非表示を切り替えられる。'
       }
     }
   ];
@@ -339,9 +339,8 @@
   // authored mobile sequence exists; do not silently fall back to Ruin Archive.
   var FILES_I=Array.from({length:15},function(_,i){return LOCAL_VIDEO+'score-1/score-1-'+(i+1)+'.webp';});
   var FILES_I_MOBILE=FILES_I;
-  // These 15 originals are 2480x4137 WebPs (~40 MB decoded per frame).
-  // Decoding all of them together can exceed Safari's image memory budget.
-  // Keep ONLY the active <img> on WebKit; other browsers keep the canvas cache.
+  // Originals remain archival. Live playback uses optimized files and a
+  // small bounded image cache on all browsers, including Safari.
   var scoreUA=navigator.userAgent||'';
   var scoreIOS=/iPad|iPhone|iPod/.test(scoreUA)||
     (navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
@@ -716,11 +715,11 @@
   }
   function pumpScoreFrameQueue(){
     while(scoreFrameActive<scoreFrameParallel&&scoreFrameQueue.length){
-      var task=scoreFrameQueue.shift();
+      let task=scoreFrameQueue.shift();
       if(task.generation!==scoreFrameGeneration){task.resolve(null);continue;}
       scoreFrameActive++;
       task.started=true;
-      var img=new Image(),stage=0,timeout=0,done=false;
+      let img=new Image(),stage=0,timeout=0,done=false;
       img.decoding='async';
       function finish(ok){
         if(done)return;
@@ -851,13 +850,20 @@
         if(next.complete&&next.naturalWidth)finish();
       });
     });
+    if(viewer.prefetchTimers){
+      viewer.prefetchTimers.forEach(clearTimeout);
+      viewer.prefetchTimers=[];
+    }
     if(frame!==previous){
       var direction=previous!=null&&frame>previous?1:-1;
       var count=si===0?FILES_I.length:FILES_II.length;
-      // One adjacent frame each way, requested at idle priority.
+      viewer.prefetchTimers=[];
       [frame+direction,frame-direction].forEach(function(neighbor){
         if(neighbor>=1&&neighbor<=count){
-          window.setTimeout(function(){getScoreFrame(si,neighbor,false);},150);
+          var timer=window.setTimeout(function(){
+            if(viewer.wanted===frame)getScoreFrame(si,neighbor,false);
+          },180);
+          viewer.prefetchTimers.push(timer);
         }
       });
     }
