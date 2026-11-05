@@ -1,6 +1,8 @@
 "use strict";
 
 const LANGS = ["zh", "en", "ja"];
+// Browser-tab name follows the same language preference as the site.
+const SITE_TITLES = { zh: "天·湖·海·云", en: "sky-lake-sea-cloud", ja: "空・湖・海・雲" };
 const AMBIENT_TYPES = ["sea", "cloud", "lake", "sky"];
 const AMBIENT_LIBRARY = window.AMBIENT_LIBRARY || { sea: [], cloud: [], lake: [], sky: [] };
 
@@ -1330,10 +1332,10 @@ function render() {
   if (room) {
     state.indexOpen = false;
     state.calendarOpen = false;
-    document.title = localised(room.title) + " — sky-sea-lake-cloud";
+    document.title = localised(room.title) + " — " + SITE_TITLES[state.lang];
     app.innerHTML = '<main class="site-root">' + renderRoom(room) + "</main>";
   } else {
-    document.title = "sky-sea-lake-cloud";
+    document.title = SITE_TITLES[state.lang];
     app.innerHTML = '<main class="site-root">' + renderHome() + "</main>";
   }
 }
@@ -1418,6 +1420,15 @@ app.addEventListener("click", function(event) {
 
 window.addEventListener("hashchange", render);
 window.addEventListener("popstate", render);
+
+// Disable native copy and context menus without intercepting clicks, scrolling, media dragging, or pointer gestures.
+document.addEventListener("copy", function(event) { event.preventDefault(); }, true);
+document.addEventListener("contextmenu", function(event) { event.preventDefault(); }, true);
+document.addEventListener("selectstart", function(event) {
+  // Keep the caret and text editing usable in form fields.
+  if (event.target && event.target.closest && event.target.closest("input, textarea, [contenteditable]")) return;
+  event.preventDefault();
+}, true);
 
 window.addEventListener("keydown", function(event) {
   if (event.key !== "Escape") return;
