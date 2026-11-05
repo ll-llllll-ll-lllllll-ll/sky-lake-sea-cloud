@@ -1160,6 +1160,38 @@
       '<dd>'+factDisclosure(copy.brief,copy.value)+'</dd></div>'+
     '</dl>';
   }
+  // Reference-figure lever: the large white ring moves along the diagonal.
+  // The small ring travels against it; both track the same film-strip time.
+  function score2LeverMarkup(){
+    var name={zh:'推拉乐谱进度',en:'Drag score progress',ja:'譜面の進行を動かす'}[state.lang]||'推拉乐谱进度';
+    return '<div class="fc-score2-diagonal" data-fc-score2-diagonal>'+
+      '<svg viewBox="0 0 260 160" preserveAspectRatio="none" aria-hidden="true">'+
+        '<path d="M 22 22 L 238 138"></path></svg>'+
+      '<span class="fc-score2-trailer" data-fc-score2-trailer aria-hidden="true"></span>'+
+      '<button class="fc-score2-handle" type="button" data-fc-score2-handle role="slider" '+
+        'aria-label="'+esc(name)+'" aria-valuemin="1" aria-valuemax="'+FILES_II.length+'" '+
+        'aria-valuenow="1" aria-orientation="horizontal" '+
+        'title="'+esc(name)+'"></button>'+
+    '</div>';
+  }
+  function updateScore2Lever(score,ratio){
+    var rail=score.querySelector('[data-fc-score2-diagonal]');
+    if(!rail)return;
+    var t=clamp(ratio,0,1);
+    var x=(22+216*t)/260*100,y=(22+116*t)/160*100;
+    var handle=rail.querySelector('[data-fc-score2-handle]');
+    var trailer=rail.querySelector('[data-fc-score2-trailer]');
+    if(handle){
+      handle.style.left=x.toFixed(3)+'%';
+      handle.style.top=y.toFixed(3)+'%';
+      handle.setAttribute('aria-valuenow',String(sourceScore2Frame(t)));
+      handle.setAttribute('aria-valuetext',SCORE2_FRAMES[sourceScore2Frame(t)-1]+' / 22');
+    }
+    if(trailer){
+      trailer.style.left=((238-216*t)/260*100).toFixed(3)+'%';
+      trailer.style.top=((138-116*t)/160*100).toFixed(3)+'%';
+    }
+  }
   function inlineScoreMarkup(s,si){
     var pointerLabel={
       zh:['显示指针','隐藏指针'],en:['Show pointers','Hide pointers'],
@@ -1167,7 +1199,7 @@
     }[state.lang]||['显示指针','隐藏指针'];
     return '<section class="fc-inline-score" data-fc-inline-score="'+si+'" data-fc-pointers="off">'+
       '<div class="fc-inline-score-main">'+
-        '<div class="fc-inline-score-device">'+scoreMarkup(s)+'</div>'+
+        '<div class="fc-inline-score-device">'+scoreMarkup(s)+(si===1?score2LeverMarkup():'')+'</div>'+
         '<h3 class="fc-score-caption">'+esc(scoreWorkTitle(si))+'</h3>'+
         scoreFactsMarkup(si)+
         '<div class="fc-score-controls-bottom">'+
@@ -1778,6 +1810,7 @@
     var score=root.querySelector('[data-fc-inline-score]');
     if(!score)return;
     paintScore(score,s,at,si);
+    if(si===1)updateScore2Lever(score,at/s.endTime);
     var cluster=score.querySelector('.fc-score-cluster');
     if(cluster)cluster.style.transform='translate('+scorePan[si][0]+'px,'+scorePan[si][1]+'px) scale('+scoreScale[si]+')';
     // The single progress slider is now positioned between the films and
@@ -2632,6 +2665,63 @@
           else return;
           seekFilmFromScore(0,SERIES[0].endTime*(15-frame)/14);
           ev.preventDefault();ev.stopPropagation();
+        });
+      }
+    }
+    if(si===1){
+      var diagonal=score.querySelector('[data-fc-score2-diagonal]');
+      var whiteRing=diagonal?.querySelector('[data-fc-score2-handle]');
+      if(diagonal&&whiteRing){
+        var held=null,waiting=null,raf=0;
+        function atPointer(event){
+          var bounds=diagonal.getBoundingClientRect();
+          // Orthogonal projection onto the actual dashed line, so horizontal,
+          // vertical and diagonal hand movements give the same physical travel.
+          var ax=bounds.left+bounds.width*(22/260);
+          var ay=bounds.top+bounds.height*(22/160);
+          var dx=bounds.width*(216/260),dy=bounds.height*(116/160);
+          var along=((event.clientX-ax)*dx+(event.clientY-ay)*dy)/
+            Math.max(1,dx*dx+dy*dy);
+          seekFilmFromScore(1,SERIES[1].endTime*clamp(along,0,1));
+        }
+        function flush(){raf=0;if(waiting){atPointer(waiting);waiting=null;}}
+        whiteRing.addEventListener('pointerdown',function(event){
+          if(event.pointerType==='mouse'&&event.button!==0)return;
+          held=event.pointerId;
+          waiting={clientX:event.clientX,clientY:event.clientY};
+          whiteRing.classList.add('is-dragging');
+          try{whiteRing.setPointerCapture(event.pointerId);}catch(_){}
+          flush();event.preventDefault();event.stopPropagation();
+        });
+        whiteRing.addEventListener('pointermove',function(event){
+          if(event.pointerId!==held)return;
+          waiting={clientX:event.clientX,clientY:event.clientY};
+          if(!raf)raf=requestAnimationFrame(flush);
+          event.preventDefault();event.stopPropagation();
+        });
+        function finish(event){
+          if(held!==event.pointerId)return;
+          if(raf){cancelAnimationFrame(raf);raf=0;}
+          flush();
+          held=null;whiteRing.classList.remove('is-dragging');
+          event.stopPropagation();
+        }
+        whiteRing.addEventListener('pointerup',finish);
+        whiteRing.addEventListener('pointercancel',finish);
+        whiteRing.addEventListener('lostpointercapture',function(){
+          held=null;waiting=null;
+          if(raf){cancelAnimationFrame(raf);raf=0;}
+          whiteRing.classList.remove('is-dragging');
+        });
+        whiteRing.addEventListener('keydown',function(event){
+          var change={ArrowLeft:-1,ArrowDown:-1,ArrowRight:1,ArrowUp:1}[event.key];
+          var step=sourceScore2Frame(inlineTime[1]/SERIES[1].endTime);
+          if(change!=null)step=clamp(step+change,1,FILES_II.length);
+          else if(event.key==='Home')step=1;
+          else if(event.key==='End')step=FILES_II.length;
+          else return;
+          seekFilmFromScore(1,SERIES[1].endTime*(step-1)/(FILES_II.length-1));
+          event.preventDefault();event.stopPropagation();
         });
       }
     }
