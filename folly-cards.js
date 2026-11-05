@@ -3001,6 +3001,22 @@
     });
   }
   var imageSwapStates=new Map(),imageSwapObserver=null,imageSwapFallback=null;
+  // Photograph switches must work even if a later, unrelated score/video
+  // setup fails. Recover state from the real DOM instead of requiring a
+  // global initialization step to have run successfully.
+  function imageSwapStateFor(root){
+    if(!root)return null;
+    var found=imageSwapStates.get(root);
+    if(found)return found;
+    var faces=root.querySelectorAll('[data-fc-swap-face]');
+    if(!faces.length)return null;
+    var current=Number(root.dataset.fcActive);
+    if(!Number.isInteger(current)||current<0||current>=faces.length)current=0;
+    found={root:root,active:current,visible:false,timer:0,fade:0,
+      copyTimer:0,copyFrame:0};
+    imageSwapStates.set(root,found);
+    return found;
+  }
   function resetSwapTimer(state){
     if(!state)return;
     clearTimeout(state.timer);
@@ -3011,7 +3027,7 @@
       state.timer=0;
       if(!state.visible || document.hidden || !state.root.isConnected)return;
       advanceSwap(state,1);
-    },7000);
+    },6000);
   }
   // First let the old caption recede; only then reveal the matching note.
   // Match a caption to the PAINTED photograph, not the larger 16:9
@@ -3117,11 +3133,18 @@
   function advanceSwap(state,step){
     if(!state || !state.root.isConnected)return;
     var count=state.root.querySelectorAll('[data-fc-swap-face]').length;
+    if(count<2)return;
     var next=((state.active+step)%count+count)%count;
     if(next===state.active){resetSwapTimer(state);return;}
     var oldFace=state.root.querySelector('[data-fc-swap-face="'+state.active+'"]');
     var nextFace=state.root.querySelector('[data-fc-swap-face="'+next+'"]');
     if(!oldFace||!nextFace)return;
+    // Hidden lazy images need an explicit request before the crossfade.
+    var upcoming=nextFace.querySelector('img');
+    if(upcoming){
+      upcoming.loading='eager';
+      if(upcoming.decode)upcoming.decode().catch(function(){});
+    }
     clearTimeout(state.fade);
     [oldFace,nextFace].forEach(function(face){face.classList.remove('is-fading');});
     oldFace.classList.add('is-fading');
@@ -3177,15 +3200,15 @@
     if(!isLive())return;
     var frames=scene.querySelectorAll('[data-fc-swap]');
     frames.forEach(function(el){
-      imageSwapStates.set(el,{root:el,active:0,visible:false,timer:0,fade:0,copyTimer:0,copyFrame:0});
+      imageSwapStateFor(el);
     });
     if('IntersectionObserver' in window){
       imageSwapObserver=new IntersectionObserver(function(entries){
         entries.forEach(function(entry){
-          var state=imageSwapStates.get(entry.target);
-          if(state)setSwapVisible(state,entry.isIntersecting&&entry.intersectionRatio>=.15);
+          var state=imageSwapStateFor(entry.target);
+          if(state)setSwapVisible(state,entry.isIntersecting);
         });
-      },{root:null,rootMargin:'0px',threshold:[0,.15,.4,.7]});
+      },{root:null,rootMargin:'130px 0px',threshold:[0,.01]});
       frames.forEach(function(el){imageSwapObserver.observe(el);});
     }else{
       var check=function(){
@@ -3193,7 +3216,7 @@
           var r=el.getBoundingClientRect();
           var area=Math.max(1,r.height);
           var visible=Math.max(0,Math.min(r.bottom,window.innerHeight)-Math.max(r.top,0));
-          setSwapVisible(imageSwapStates.get(el),visible/area>=.15);
+          setSwapVisible(imageSwapStateFor(el),visible/area>=.02);
         });
       };
       imageSwapFallback=check;
@@ -3338,6 +3361,10 @@
     schedule();
   }
   function setupFollyChapters(){
+    // Mount independent photo controls first. Previously they were mounted
+    // last; a score/video setup error could leave ALL images hard-locked to
+    // their initial phase, including the manual text tabs.
+    initializeImageSwaps();
     SERIES.forEach(function(_,si){
       wireRail(si);
       wireInstrument(si);
@@ -3349,7 +3376,6 @@
     wireChapterShadows();
     wireFilmHints();
     wireChapterThreshold();
-    initializeImageSwaps();
     setupPhotoReadingLayout();
     watchMechanicalScoreSizes();
     watchSafariScoreImageErrors();
@@ -3416,8 +3442,14 @@
       }
       if(action==='swap-option'){
         var frame=node.closest('[data-fc-swap]');
-        var controller=imageSwapStates.get(frame);
-        if(controller)advanceSwap(controller,Number(node.dataset.fcIndex)-controller.active);
+        var controller=imageSwapStateFor(frame);
+        if(controller){
+          // The selected phase is derived from the clicked word, never from
+          // a fixed three-frame array (Folly II has four structure images).
+          var wanted=Number(node.dataset.fcIndex);
+          if(Number.isInteger(wanted))advanceSwap(controller,wanted-controller.active);
+        }
+        event.preventDefault();
         return;
       }
       if(action==='close'){closeProjection();return;}
