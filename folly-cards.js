@@ -351,6 +351,9 @@
   // the film begins on 1.webp and ends on 22.webp. Folly I stays reversed.
   // Number 8 is intentionally omitted; every timeline position remains contiguous.
   var SCORE2_FRAMES=[1,2,3,4,5,6,7,9,10,11,12,13,14,15,16,17,18,19,20,21,22];
+  // Temporary calibration only; the artist will confirm the final coordinate.
+  // x/y are percentages within compiled.png's 3:2 display box.
+  var SCORE2_COMPILED_POINTER={x:49,y:73,travelX:10,travelY:-7};
   var FILES_II=SCORE2_FRAMES.map(function(number){return FOLD_BASE+number+'.webp';});
   function scoreIIImage(frame){return FILES_II[clamp(frame,1,FILES_II.length)-1];}
   // Retain the five older folding PNGs in the repository as source archives.
@@ -1803,8 +1806,10 @@
         if(surface)surface.setAttribute('aria-valuenow',String(frame));
         // On compiled.png, this placeholder stays near the lower middle.
         // Precise positioning is intentionally deferred for artist review.
-        cluster.style.setProperty('--fc-score2-pointer-x',(49+10*ratio).toFixed(3)+'%');
-        cluster.style.setProperty('--fc-score2-pointer-y',(73-7*ratio).toFixed(3)+'%');
+        cluster.style.setProperty('--fc-score2-pointer-x',
+          (SCORE2_COMPILED_POINTER.x+SCORE2_COMPILED_POINTER.travelX*ratio).toFixed(3)+'%');
+        cluster.style.setProperty('--fc-score2-pointer-y',
+          (SCORE2_COMPILED_POINTER.y+SCORE2_COMPILED_POINTER.travelY*ratio).toFixed(3)+'%');
       });
     }
   }
@@ -1858,9 +1863,15 @@
     var image=score.querySelector('[data-fc-score2-compiled]');
     if(!image)return;
     function reveal(){
-      if(token===score2PointerRewind.token&&score.isConnected&&
-         score.dataset.fcPointers==='on'&&image.naturalWidth)
-        score.dataset.fcCompiledActive='on';
+      if(token!==score2PointerRewind.token||!score.isConnected||
+         score.dataset.fcPointers!=='on'||!image.naturalWidth)return;
+      // The compiled sheet should not cover a frame that has yet to return
+      // home. Wait for the lightweight frame-one decode to finish first.
+      getScoreFrame(1,1,true).then(function(){
+        if(token===score2PointerRewind.token&&score.isConnected&&
+           score.dataset.fcPointers==='on')
+          score.dataset.fcCompiledActive='on';
+      }).catch(function(){});
     }
     if(image.complete&&image.naturalWidth){reveal();return;}
     image.addEventListener('load',reveal,{once:true});
