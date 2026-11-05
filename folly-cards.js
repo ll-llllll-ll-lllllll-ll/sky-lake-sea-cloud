@@ -784,7 +784,10 @@
     else scoreFrameQueue.push(task);
     // Discard stale, low-priority queued prefetches during fast scrubbing.
     while(scoreFrameQueue.length>8){
-      var dropIndex=scoreFrameQueue.findLastIndex(function(t){return !t.urgent;});
+      var dropIndex=-1;
+      for(var d=scoreFrameQueue.length-1;d>=0;d--){
+        if(!scoreFrameQueue[d].urgent){dropIndex=d;break;}
+      }
       if(dropIndex<0)dropIndex=scoreFrameQueue.length-1;
       var dropped=scoreFrameQueue.splice(dropIndex,1)[0];
       scoreFramePending.delete(dropped.key);
@@ -992,11 +995,11 @@
       '</div>';
     }
     // The actual twenty-two-frame print shares the film timeline with Folly I.
-    return '<div class="fc-score-cluster fc-score-linear fc-score2-sequence" data-fc-frame="22">'+
+    return '<div class="fc-score-cluster fc-score-linear fc-score2-sequence" data-fc-frame="1">'+
       '<div class="fc-score-shadow" data-fc-score-shadow>'+
         '<div class="fc-score2-sheet" data-fc-score2-sheet role="slider" tabindex="0" '+
-          'aria-label="Folly II · 22 score frames" aria-valuemin="1" aria-valuemax="22" aria-valuenow="22">'+
-          '<img data-fc-score2-img data-frame="22" src="'+scoreIIImage(22)+'" alt="" draggable="false" loading="lazy" decoding="async">'+
+          'aria-label="Folly II · 22 score frames" aria-valuemin="1" aria-valuemax="22" aria-valuenow="1">'+
+          '<img data-fc-score2-img data-frame="1" src="'+scoreIIImage(1)+'" alt="" draggable="false" loading="lazy" decoding="async">'+
           '<canvas data-fc-score2-canvas aria-hidden="true"></canvas></div>'+
       '</div>'+
       '<div class="fc-score-hud" data-fc-score-hud aria-hidden="true">'+
@@ -1202,9 +1205,9 @@
           '<div class="fc-inspection-body">'+(s.kind==='linear'?
               '<div class="fc-inspect-mechanical"><img data-fc-inspect-img src="'+mechanicalImage(15)+'" alt="">'+
                 '<input class="fc-inspect-lever" data-fc-inspect-lever type="range" min="1" max="15" step="1" value="15" orient="vertical" aria-label="15 score frames"></div>':
-              '<div class="fc-inspect-mechanical fc-inspect-score2"><img data-fc-inspect-score2-img data-frame="22" src="'+scoreIIImage(22)+'" loading="lazy" decoding="async" alt="">'+
+              '<div class="fc-inspect-mechanical fc-inspect-score2"><img data-fc-inspect-score2-img data-frame="1" src="'+scoreIIImage(1)+'" loading="lazy" decoding="async" alt="">'+
                 '<canvas data-fc-score2-canvas aria-hidden="true"></canvas>'+
-                '<input class="fc-inspect-lever" data-fc-inspect-lever type="range" min="1" max="22" step="1" value="22" orient="vertical" aria-label="22 score frames"></div>')+
+                '<input class="fc-inspect-lever" data-fc-inspect-lever type="range" min="1" max="22" step="1" value="1" orient="vertical" aria-label="22 score frames"></div>')+
           '</div><div class="fc-inspection-foot">'+
             '<button type="button" data-fc-action="zoom-out" aria-label="Zoom out">−</button>'+
             '<button type="button" data-fc-action="zoom-in" aria-label="Zoom in">+</button>'+
@@ -1722,10 +1725,10 @@
         pulse.style.transform='translate(-50%,-50%) scale('+(beat>0?(1-Math.pow(beat,2)*.4):1).toFixed(3)+')';
       }
     }else{
-      var frame=sourceScoreFrame(ratio,FILES_II.length);
+      var frame=sourceScore2Frame(ratio);
       overlay.querySelectorAll('.fc-score2-sequence').forEach(function(cluster){
         cluster.dataset.fcFrame=String(frame);
-        setScore2Frame(cluster.querySelector('[data-fc-score2-canvas]'),frame);
+        showScoreFrame(cluster,1,frame);
         var surface=cluster.querySelector('[data-fc-score2-sheet]');
         if(surface)surface.setAttribute('aria-valuenow',String(frame));
         var pointer=cluster.querySelector('[data-fc-score2-pointer]');
@@ -2084,14 +2087,14 @@
     if(current().kind==='linear'){
       var frame=selection.manualFrame==null?sourceScoreFrame(selection.lastTime/current().endTime):selection.manualFrame;
       var lever=overlay.querySelector('[data-fc-inspect-lever]'),img=overlay.querySelector('[data-fc-inspect-img]');
-      if(img&&img.dataset.frame!==String(frame)){img.src=mechanicalImage(frame);img.dataset.frame=String(frame);}
+      showScoreInspectFrame(overlay,0,frame);
       if(lever&&document.activeElement!==lever)lever.value=frame;
     }else{
       var frame=selection.manualFrame==null
-        ?sourceScoreFrame(selection.lastTime/current().endTime,FILES_II.length)
+        ?sourceScore2Frame(selection.lastTime/current().endTime)
         :selection.manualFrame;
       var lever=overlay.querySelector('[data-fc-inspect-lever]');
-      setScore2Frame(overlay.querySelector('.fc-inspect-score2 [data-fc-score2-canvas]'),frame);
+      showScoreInspectFrame(overlay,1,frame);
       if(lever&&document.activeElement!==lever)lever.value=String(frame);
     }
     var target=overlay.querySelector('.fc-inspection .fc-inspect-mechanical, .fc-inspection .fc-inspect-fold');
@@ -2494,13 +2497,9 @@
       if(selection.series!==si)return;
       selection.manualFrame=Number(lever.value);
       if(si===0){
-        var img=overlay.querySelector('[data-fc-inspect-img]');
-        if(img){
-          img.dataset.frame=String(selection.manualFrame);
-          img.src=mechanicalImage(selection.manualFrame);
-        }
+        showScoreInspectFrame(overlay,0,selection.manualFrame);
       }else{
-        setScore2Frame(overlay.querySelector('.fc-inspect-score2 [data-fc-score2-canvas]'),selection.manualFrame);
+        showScoreInspectFrame(overlay,1,selection.manualFrame);
       }
     });
     overlay.querySelectorAll('.fc-inspection [data-fc-drag-wing]').forEach(function(wing){
@@ -2662,12 +2661,12 @@
     if(notationSurface){
       notationSurface.addEventListener('keydown',function(ev){
         var delta={ArrowUp:1,ArrowRight:1,ArrowDown:-1,ArrowLeft:-1}[ev.key];
-        var frame=sourceScoreFrame(inlineTime[si]/SERIES[si].endTime,FILES_II.length);
+        var frame=sourceScore2Frame(inlineTime[si]/SERIES[si].endTime);
         if(delta!=null)frame=clamp(frame+delta,1,FILES_II.length);
         else if(ev.key==='Home')frame=1;
         else if(ev.key==='End')frame=FILES_II.length;
         else return;
-        seekFilmFromScore(si,SERIES[si].endTime*(FILES_II.length-frame)/(FILES_II.length-1));
+        seekFilmFromScore(si,SERIES[si].endTime*(frame-1)/(FILES_II.length-1));
         ev.preventDefault();
       });
       var scoreGesture=null;
@@ -3141,7 +3140,7 @@
           var si=Number(entry.target.dataset.fcSeriesBlock);
           prioritizePreviews(si,selection.focus[si]);
           if(si===0)ensureMechanicalFrames();
-          if(si===1)warmScore2Frames();
+          if(si===1)warmScoreFrames(1);
         });
       },{rootMargin:'320px 0px'});
       SERIES.forEach(function(_,si){
@@ -3151,7 +3150,7 @@
     }else{
       prioritizePreviews(0,0);
       ensureMechanicalFrames();
-      warmScore2Frames();
+      warmScoreFrames(1);
     }
   }
   function wireEvents(){
