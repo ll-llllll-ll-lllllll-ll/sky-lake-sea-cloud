@@ -37,9 +37,9 @@
      ]}
   ];
   var COPY = {
-    zh:{group:'废墟园林 / 图景',instruction:'向右翻阅散落的瞬间',seek:'滑动阶段',open:'观看这一瞬间',close:'回到图景',prev:'上一阶段',next:'下一阶段',sound:'打开声音',mute:'静音',play:'继续',pause:'暂停',score:'检视图谱',reset:'复位',loading:'影像就位中',missing:'这一阶段的影像尚未就位',allEnd:'本卷已至尾声',hintI:'图谱随时间逆行 · 悬停校准指针',hintII:'二十二帧图谱随影片顺序更替 · 指针可选',loadingPoster:'',zoom:'放大'},
-    en:{group:'FOLLY / TABLEAUX',instruction:'Move right through scattered moments.',seek:'Move through stages',open:'Open this moment',close:'Return to the tableaux',prev:'Previous stage',next:'Next stage',sound:'Sound on',mute:'Mute',play:'Resume',pause:'Pause',score:'Inspect the score',reset:'Reset',loading:'Preparing the moving image',missing:'This fragment is not available yet',allEnd:'The sequence has ended',hintI:'Score runs in reverse · Hover to calibrate',hintII:'22 score frames in sequence · Optional pointer',loadingPoster:'',zoom:'Zoom'},
-    ja:{group:'フォリー / 風景の断片',instruction:'右へ進み、散らばった瞬間をたどる。',seek:'段階を移動',open:'この瞬間を見る',close:'風景に戻る',prev:'前の段階',next:'次の段階',sound:'音声オン',mute:'消音',play:'再開',pause:'一時停止',score:'楽譜を検視',reset:'リセット',loading:'映像を準備中',missing:'この断片はまだありません',allEnd:'この巻は終わりました',hintI:'楽譜は逆行 · ホバーで校正',hintII:'22コマの譜面が順に進む · 指針は任意',loadingPoster:'',zoom:'拡大'}
+    zh:{group:'废墟园林 / 图景',instruction:'向右翻阅散落的瞬间',seek:'滑动阶段',open:'观看这一瞬间',close:'回到图景',prev:'上一阶段',next:'下一阶段',sound:'打开声音',mute:'静音',play:'继续',pause:'暂停',score:'检视图谱',reset:'复位',loading:'影像就位中',missing:'这一阶段的影像尚未就位',allEnd:'本卷已至尾声',hintI:'图谱随时间逆行 · 悬停校准指针',hintII:'二十一帧图谱随影片顺序更替 · 指针可选',loadingPoster:'',zoom:'放大'},
+    en:{group:'FOLLY / TABLEAUX',instruction:'Move right through scattered moments.',seek:'Move through stages',open:'Open this moment',close:'Return to the tableaux',prev:'Previous stage',next:'Next stage',sound:'Sound on',mute:'Mute',play:'Resume',pause:'Pause',score:'Inspect the score',reset:'Reset',loading:'Preparing the moving image',missing:'This fragment is not available yet',allEnd:'The sequence has ended',hintI:'Score runs in reverse · Hover to calibrate',hintII:'21 score frames in sequence · Optional pointer',loadingPoster:'',zoom:'Zoom'},
+    ja:{group:'フォリー / 風景の断片',instruction:'右へ進み、散らばった瞬間をたどる。',seek:'段階を移動',open:'この瞬間を見る',close:'風景に戻る',prev:'前の段階',next:'次の段階',sound:'音声オン',mute:'消音',play:'再開',pause:'一時停止',score:'楽譜を検視',reset:'リセット',loading:'映像を準備中',missing:'この断片はまだありません',allEnd:'この巻は終わりました',hintI:'楽譜は逆行 · ホバーで校正',hintII:'21コマの譜面が順に進む · 指針は任意',loadingPoster:'',zoom:'拡大'}
   };
   // Short interim captions stay close to the physical artefacts. They can be
   // replaced with the artist's full Chinese/English/Japanese texts later.
@@ -73,9 +73,9 @@
         ja:'器械と本体の細部を分けて並べる。次の短い映像では、静止した各部が時間の中に戻される。'
       },
       score:{
-        zh:'二十二帧图谱与影片共享同一段时间。横向滑动影像或移动时间滑轨时，图谱依照新编排的顺序由第一帧推进至第二十二帧；指针可以独立显示或隐藏。',
-        en:'The twenty-two score frames share the film’s timeline. Scrolling the film strip or moving its slider advances the notation from the first frame to the twenty-second; the pointer can be shown or hidden independently.',
-        ja:'二十二コマの譜面は映像と時間軸を共有する。フィルムを横に送るかスライダーを動かすと、譜面が一コマ目から二十二コマ目へ順に切り替わる。指針は独立して表示・非表示を切り替えられる。'
+        zh:'二十一帧图谱与影片共享同一段时间。横向滑动影像或移动时间滑轨时，图谱依照新编排的顺序由第一帧推进至最后一帧；指针可以独立显示或隐藏。',
+        en:'The twenty-one score frames share the film’s timeline. Scrolling the film strip or moving its slider advances the notation from the first frame to the last; the pointer can be shown or hidden independently.',
+        ja:'二十一コマの譜面は映像と時間軸を共有する。フィルムを横に送るかスライダーを動かすと、譜面が最初から最後のコマへ順に切り替わる。指針は独立して表示・非表示を切り替えられる。'
       }
     }
   ];
@@ -349,7 +349,9 @@
   var FOLD_BASE=LOCAL_VIDEO+'score-2/';
   // Folly II's newly revised artwork is numbered in the final reading order:
   // the film begins on 1.webp and ends on 22.webp. Folly I stays reversed.
-  var FILES_II=Array.from({length:22},function(_,i){return FOLD_BASE+(i+1)+'.webp';});
+  // Number 8 is intentionally omitted; every timeline position remains contiguous.
+  var SCORE2_FRAMES=[1,2,3,4,5,6,7,9,10,11,12,13,14,15,16,17,18,19,20,21,22];
+  var FILES_II=SCORE2_FRAMES.map(function(number){return FOLD_BASE+number+'.webp';});
   function scoreIIImage(frame){return FILES_II[clamp(frame,1,FILES_II.length)-1];}
   // Retain the five older folding PNGs in the repository as source archives.
   var selection={series:0,index:0,focus:[0,0],open:false,muted:true,paused:false,scoreInspect:false,scoreZoom:1,scorePanX:0,scorePanY:0,folds:[0,0,0],lastTime:0,manualFrame:null,instrument:false};
@@ -678,7 +680,7 @@
      frame while its successor is still being decoded. */
   var scoreFrameSources=[
     FILES_I.map(function(_,i){return LOCAL_VIDEO+'score-1/optimized/score-1-'+(i+1)+'.webp?v=20261105-v2';}),
-    FILES_II.map(function(_,i){return FOLD_BASE+'optimized/'+(i+1)+'.webp?v=20261105-v2';})
+    SCORE2_FRAMES.map(function(number){return FOLD_BASE+'optimized/'+number+'.webp?v=20261105-v3';})
   ];
   var scoreFrameCaches=[new Map(),new Map()];
   var scoreFramePending=new Map(),scoreFrameQueue=[],scoreFrameActive=0,scoreFrameGeneration=0;
@@ -917,7 +919,7 @@
         var frame=clamp(Number(img.dataset.frame)||count,1,count);
         var original=isSecond?scoreIIImage(frame):mechanicalImage(frame);
         var raw='https://raw.githubusercontent.com/ll-llllll-ll-lllllll-ll/sky-lake-sea-cloud/main/works/ruin-garden/'+
-          (isSecond?'score-2/'+frame+'.webp':'score-1/score-1-'+frame+'.webp');
+          (isSecond?'score-2/'+SCORE2_FRAMES[frame-1]+'.webp':'score-1/score-1-'+frame+'.webp');
         var key=String(frame);
         if(img.dataset.fcScoreRetryFrame!==key){
           img.dataset.fcScoreRetryFrame=key;
@@ -1006,7 +1008,7 @@
     return '<div class="fc-score-cluster fc-score-linear fc-score2-sequence" data-fc-frame="1">'+
       '<div class="fc-score-shadow" data-fc-score-shadow>'+
         '<div class="fc-score2-sheet" data-fc-score2-sheet role="slider" tabindex="0" '+
-          'aria-label="Folly II · 22 score frames" aria-valuemin="1" aria-valuemax="22" aria-valuenow="1">'+
+          'aria-label="Folly II · 21 score frames" aria-valuemin="1" aria-valuemax="'+FILES_II.length+'" aria-valuenow="1">'+
           '<img data-fc-score2-img data-frame="1" src="'+scoreSource(1,1)+'" alt="" draggable="false" loading="lazy" decoding="async">'+
           '<canvas data-fc-score2-canvas aria-hidden="true"></canvas></div>'+
       '</div>'+
@@ -1215,7 +1217,7 @@
                 '<input class="fc-inspect-lever" data-fc-inspect-lever type="range" min="1" max="15" step="1" value="15" orient="vertical" aria-label="15 score frames"></div>':
               '<div class="fc-inspect-mechanical fc-inspect-score2"><img data-fc-inspect-score2-img data-frame="1" src="'+scoreSource(1,1)+'" loading="lazy" decoding="async" alt="">'+
                 '<canvas data-fc-score2-canvas aria-hidden="true"></canvas>'+
-                '<input class="fc-inspect-lever" data-fc-inspect-lever type="range" min="1" max="22" step="1" value="1" orient="vertical" aria-label="22 score frames"></div>')+
+                '<input class="fc-inspect-lever" data-fc-inspect-lever type="range" min="1" max="'+FILES_II.length+'" step="1" value="1" orient="vertical" aria-label="21 score frames"></div>')+
           '</div><div class="fc-inspection-foot">'+
             '<button type="button" data-fc-action="zoom-out" aria-label="Zoom out">−</button>'+
             '<button type="button" data-fc-action="zoom-in" aria-label="Zoom in">+</button>'+
