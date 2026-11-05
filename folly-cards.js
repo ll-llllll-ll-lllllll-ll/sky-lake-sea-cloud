@@ -348,8 +348,8 @@
   var SCORE_WEBKIT_SINGLE_FRAME=scoreIOS||
     (/Safari\//.test(scoreUA)&&!/Chrome|Chromium|Edg|OPR|Firefox|CriOS|FxiOS/.test(scoreUA));
   var FOLD_BASE=LOCAL_VIDEO+'score-2/';
-  // Folly II: 22 authored WebPs replace the folded score. As with Folly I,
-  // the film begins on frame 22 and ends on frame 1 (22.webp → 1.webp).
+  // Folly II's newly revised artwork is numbered in the final reading order:
+  // the film begins on 1.webp and ends on 22.webp. Folly I stays reversed.
   var FILES_II=Array.from({length:22},function(_,i){return FOLD_BASE+(i+1)+'.webp';});
   function scoreIIImage(frame){return FILES_II[clamp(frame,1,FILES_II.length)-1];}
   // Retain the five older folding PNGs in the repository as source archives.
@@ -595,6 +595,9 @@
     var count=total||FILES_I.length;
     return clamp(count-Math.round(clamp(fraction,0,1)*(count-1)),1,count);
   }
+  function sourceScore2Frame(fraction){
+    return clamp(1+Math.round(clamp(fraction,0,1)*(FILES_II.length-1)),1,FILES_II.length);
+  }
   function mechanicalImage(frame){
     return window.matchMedia('(max-width: 700px)').matches?FILES_I_MOBILE[frame-1]:FILES_I[frame-1];
   }
@@ -611,10 +614,9 @@
       '<div class="fc-fold-finish"><img src="'+FOLD_BASE+'score-final-replacement.png" alt="" draggable="false"></div>'+
       '</div>';
   }
-  /* Ruin Archive / Folly I · calibrated two-stage stop-motion apparatus.
-     Its static print is available at once; the 15 decoded frames share one
-     frame cache between inline notation and the projection score. */
-  var mechanicalFrames=[],mechanicalReady=null,mechanicalDecodeToken=0;
+  /* Folly I: keep the original mechanical lever and its two-stage timing,
+     but let the shared lightweight image engine own frame loading.
+     Never decode/cache the fifteen 10-megapixel originals at once. */
   var MECHANICAL_CFG={
     stage1Frames:7,knobBottom:14.55,knobTop:6.80,
     ringBottom:14.35,ringTop:9.70,centerX:49.85,
@@ -632,62 +634,11 @@
       ringTop:MECHANICAL_CFG.ringBottom+(MECHANICAL_CFG.ringTop-MECHANICAL_CFG.ringBottom)*engagement};
   }
   function paintMechanicalCanvas(cluster,frame){
-    if(SCORE_WEBKIT_SINGLE_FRAME)return false;
-    var canvas=cluster?.querySelector('[data-fc-mechanical-canvas]');
-    var image=mechanicalFrames[frame-1];
-    if(!canvas||!image||!image.naturalWidth||!image.naturalHeight)return false;
-    var w=canvas.clientWidth,h=canvas.clientHeight;
-    if(w<12||h<12)return false;
-    var dpr=Math.min(window.devicePixelRatio||1,window.innerWidth<=700?1.25:1.6);
-    var pw=Math.max(1,Math.round(w*dpr)),ph=Math.max(1,Math.round(h*dpr));
-    if(canvas.dataset.frame===String(frame)&&canvas.width===pw&&canvas.height===ph&&
-       cluster.classList.contains('is-mechanical-decoded'))return true;
-    if(canvas.width!==pw)canvas.width=pw;
-    if(canvas.height!==ph)canvas.height=ph;
-    var ctx=canvas.getContext('2d',{alpha:true});
-    if(!ctx)return false;
-    var scale=Math.min(pw/image.naturalWidth,ph/image.naturalHeight);
-    var dw=image.naturalWidth*scale,dh=image.naturalHeight*scale;
-    ctx.clearRect(0,0,pw,ph);
-    ctx.drawImage(image,(pw-dw)/2,(ph-dh)/2,dw,dh);
-    cluster.classList.add('is-mechanical-decoded');
-    canvas.dataset.frame=String(frame);
-    return true;
+    return showScoreFrame(cluster,0,frame);
   }
   function ensureMechanicalFrames(){
-    // WebKit: do not concurrently decode fifteen 10-megapixel images.
-    if(SCORE_WEBKIT_SINGLE_FRAME)return Promise.resolve(false);
-    if(mechanicalReady)return mechanicalReady;
-    var token=++mechanicalDecodeToken,urls=FILES_I;
-    var frames=new Array(urls.length).fill(null),cursor=0;
-    function worker(){
-      if(cursor>=urls.length)return Promise.resolve();
-      var i=cursor++;
-      return new Promise(function(resolve){
-        var img=new Image();
-        img.decoding='async';
-        img.onload=function(){
-          Promise.resolve(img.decode?img.decode():null).catch(function(){}).then(function(){
-            frames[i]=img;resolve();
-          });
-        };
-        img.onerror=function(){resolve();};
-        img.src=urls[i];
-      }).then(worker);
-    }
-    var concurrency=window.innerWidth<=700?2:4;
-    mechanicalReady=Promise.all(Array.from({length:concurrency},worker)).then(function(){
-      if(token!==mechanicalDecodeToken)return false;
-      mechanicalFrames=frames;
-      if(scene?.isConnected){
-        scene.querySelectorAll('.fc-score-linear.fc-mechanical-v2').forEach(function(cluster){
-          var frame=Number(cluster.dataset.fcFrame)||15;
-          paintMechanicalCanvas(cluster,frame);
-        });
-      }
-      return frames.some(Boolean);
-    });
-    return mechanicalReady;
+    warmScoreFrames(0);
+    return Promise.resolve(true);
   }
 
   // Safari score recovery: WebP files in this repository use VP8X with an
@@ -721,170 +672,229 @@
     scoreTemporaryUrls.push(url);
     return url;
   }
-  // Folly II frame engine. A persistent canvas keeps the last painted frame
-  // on-screen until the requested frame has finished decoding. Originals are
-  // large (6000x4000); decode one at a time, downsample once, and retain small
-  // temporary WebP/PNG thumbnails for smooth repeated scrubbing. The live
-  // decoded canvas cache stays bounded, especially on Safari/iOS.
-  var score2CanvasCache=new Map(),score2ThumbUrls=new Map();
-  var score2Queue=[],score2Queued=new Set(),score2LoadingFrame=0,score2Generation=0;
-  var score2CacheLimit=SCORE_WEBKIT_SINGLE_FRAME?5:8;
-  var score2RenderWidth=SCORE_WEBKIT_SINGLE_FRAME?1440:1920;
-  function releaseScore2Frames(){
-    score2Generation++;
-    score2Queue=[];
-    score2Queued.clear();
-    score2LoadingFrame=0;
-    score2CanvasCache.clear();
-    score2ThumbUrls.forEach(function(url){try{URL.revokeObjectURL(url);}catch(_){}});
-    score2ThumbUrls.clear();
+  /* Both Folly scores use the same image-backed, two-surface frame viewer.
+     GitHub Actions generates lightweight display WebPs. Unlike the old
+     canvas engine this never recompresses images in the visitor's browser,
+     never decodes all 22 originals at entry, and never erases a visible
+     frame while its successor is still being decoded. */
+  var scoreFrameSources=[
+    FILES_I.map(function(_,i){return LOCAL_VIDEO+'score-1/optimized/score-1-'+(i+1)+'.webp?v=20261105-v2';}),
+    FILES_II.map(function(_,i){return FOLD_BASE+'optimized/'+(i+1)+'.webp?v=20261105-v2';})
+  ];
+  var scoreFrameCaches=[new Map(),new Map()];
+  var scoreFramePending=new Map(),scoreFrameQueue=[],scoreFrameActive=0,scoreFrameGeneration=0;
+  var scoreFramePlayers=new WeakMap();
+  var scoreFrameLimit=SCORE_WEBKIT_SINGLE_FRAME?4:7;
+  var scoreFrameParallel=SCORE_WEBKIT_SINGLE_FRAME?1:2;
+  function releaseScoreFrameAssets(){
+    scoreFrameGeneration++;
+    scoreFrameQueue.forEach(function(task){task.resolve(null);});
+    scoreFrameQueue=[];
+    scoreFramePending.clear();
+    scoreFrameActive=0;
+    scoreFrameCaches.forEach(function(cache){cache.clear();});
   }
-  function rememberScore2Frame(frame,canvas){
-    if(score2CanvasCache.has(frame))score2CanvasCache.delete(frame);
-    score2CanvasCache.set(frame,canvas);
-    while(score2CanvasCache.size>score2CacheLimit)
-      score2CanvasCache.delete(score2CanvasCache.keys().next().value);
+  function cachedScoreFrame(si,frame){
+    var cache=scoreFrameCaches[si];
+    if(!cache.has(frame))return null;
+    var image=cache.get(frame);
+    cache.delete(frame);
+    cache.set(frame,image);
+    return image;
   }
-  function paintScore2Canvas(canvas,frame){
-    var rendered=score2CanvasCache.get(frame);
-    if(!canvas||!rendered)return false;
-    if(canvas.dataset.fcPaintedFrame===String(frame))return true;
-    var w=rendered.width,h=rendered.height;
-    if(canvas.width!==w||canvas.height!==h){canvas.width=w;canvas.height=h;}
-    var ctx=canvas.getContext('2d',{alpha:true});
-    if(!ctx)return false;
-    ctx.clearRect(0,0,w,h);
-    ctx.drawImage(rendered,0,0,w,h);
-    canvas.dataset.fcPaintedFrame=String(frame);
-    var holder=canvas.closest('.fc-score2-sequence, .fc-inspect-score2');
-    if(holder)holder.classList.add('fc-score2-ready');
-    // Access to a recently painted frame counts as recent use in the LRU.
-    rememberScore2Frame(frame,rendered);
+  function rememberScoreFrame(si,frame,image){
+    var cache=scoreFrameCaches[si];
+    cache.delete(frame);
+    cache.set(frame,image);
+    while(cache.size>scoreFrameLimit)cache.delete(cache.keys().next().value);
+  }
+  function scoreSource(si,frame){
+    return scoreFrameSources[si][frame-1];
+  }
+  function scoreOriginal(si,frame){
+    return si===0?mechanicalImage(frame):scoreIIImage(frame);
+  }
+  function pumpScoreFrameQueue(){
+    while(scoreFrameActive<scoreFrameParallel&&scoreFrameQueue.length){
+      var task=scoreFrameQueue.shift();
+      if(task.generation!==scoreFrameGeneration){task.resolve(null);continue;}
+      scoreFrameActive++;
+      task.started=true;
+      var img=new Image(),stage=0,timeout=0,done=false;
+      img.decoding='async';
+      function finish(ok){
+        if(done)return;
+        done=true;
+        if(timeout)clearTimeout(timeout);
+        if(task.generation===scoreFrameGeneration){
+          if(ok&&img.naturalWidth){
+            rememberScoreFrame(task.si,task.frame,img);
+            task.resolve(img);
+          }else task.resolve(null);
+          scoreFramePending.delete(task.key);
+          scoreFrameActive=Math.max(0,scoreFrameActive-1);
+          window.setTimeout(pumpScoreFrameQueue,0);
+        }else task.resolve(null);
+      }
+      function retry(){
+        if(stage===0){stage=1;img.src=scoreOriginal(task.si,task.frame);return;}
+        if(stage===1&&SCORE_WEBKIT_SINGLE_FRAME){
+          stage=2;
+          fetch(scoreOriginal(task.si,task.frame),{cache:'force-cache'})
+            .then(function(r){if(!r.ok)throw Error('Missing WebP');return r.arrayBuffer();})
+            .then(simpleWebPFromResponse)
+            .then(function(url){if(!done)img.src=url;})
+            .catch(function(){finish(false);});
+          return;
+        }
+        finish(false);
+      }
+      img.onload=function(){
+        var decoding=img.decode?img.decode():Promise.resolve();
+        Promise.resolve(decoding).catch(function(){}).then(function(){
+          if(img.naturalWidth)finish(true);
+          else retry();
+        });
+      };
+      img.onerror=retry;
+      timeout=window.setTimeout(function(){finish(false);},16000);
+      img.src=scoreSource(task.si,task.frame);
+    }
+  }
+  function getScoreFrame(si,frame,urgent){
+    frame=clamp(frame,1,si===0?FILES_I.length:FILES_II.length);
+    var image=cachedScoreFrame(si,frame);
+    if(image)return Promise.resolve(image);
+    var key=si+':'+frame;
+    var task=scoreFramePending.get(key);
+    if(task){
+      if(urgent&&!task.started){
+        task.urgent=true;
+        scoreFrameQueue=scoreFrameQueue.filter(function(t){return t!==task;});
+        scoreFrameQueue.unshift(task);
+      }
+      return task.promise;
+    }
+    var resolve;
+    var promise=new Promise(function(done){resolve=done;});
+    task={si:si,frame:frame,key:key,resolve:resolve,promise:promise,
+      urgent:!!urgent,started:false,generation:scoreFrameGeneration};
+    scoreFramePending.set(key,task);
+    if(urgent)scoreFrameQueue.unshift(task);
+    else scoreFrameQueue.push(task);
+    // Discard stale, low-priority queued prefetches during fast scrubbing.
+    while(scoreFrameQueue.length>8){
+      var dropIndex=scoreFrameQueue.findLastIndex(function(t){return !t.urgent;});
+      if(dropIndex<0)dropIndex=scoreFrameQueue.length-1;
+      var dropped=scoreFrameQueue.splice(dropIndex,1)[0];
+      scoreFramePending.delete(dropped.key);
+      dropped.resolve(null);
+    }
+    pumpScoreFrameQueue();
+    return promise;
+  }
+  function warmScoreFrames(si){
+    var start=si===0?15:1;
+    getScoreFrame(si,start,true);
+    getScoreFrame(si,start+(si===0?-1:1),false);
+  }
+  function scoreFramePlayer(cluster,si){
+    var player=scoreFramePlayers.get(cluster);
+    if(player)return player;
+    var sheet=si===0
+      ?cluster.querySelector('[data-fc-mechanical-sheet]')
+      :cluster.querySelector('[data-fc-score2-sheet]');
+    var base=si===0
+      ?cluster.querySelector('[data-fc-score-shadow-img]')
+      :cluster.querySelector('[data-fc-score2-img]');
+    if(!sheet||!base)return null;
+    var back=document.createElement('img');
+    back.className='fc-score-frame-playback';
+    back.alt='';
+    back.decoding='async';
+    back.draggable=false;
+    back.setAttribute('aria-hidden','true');
+    back.style.opacity='0';
+    sheet.appendChild(back);
+    player={base:base,back:back,front:base,wanted:null,serial:0,frame:null,si:si};
+    scoreFramePlayers.set(cluster,player);
+    return player;
+  }
+  function showScoreFrame(cluster,si,frame){
+    if(!cluster)return false;
+    frame=clamp(frame,1,si===0?FILES_I.length:FILES_II.length);
+    var viewer=scoreFramePlayer(cluster,si);
+    if(!viewer)return false;
+    if(viewer.wanted===frame)return true;
+    var previous=viewer.wanted,serial=++viewer.serial;
+    viewer.wanted=frame;
+    getScoreFrame(si,frame,true).then(function(image){
+      if(!image||!cluster.isConnected||viewer.serial!==serial)return;
+      var next=viewer.front===viewer.base?viewer.back:viewer.base;
+      var previousFront=viewer.front,painted=false;
+      function finish(){
+        if(painted||viewer.serial!==serial||!next.naturalWidth)return;
+        painted=true;
+        next.style.opacity='1';
+        previousFront.style.opacity='0';
+        viewer.front=next;
+        viewer.frame=frame;
+      }
+      next.onload=finish;
+      next.onerror=function(){};
+      next.src=image.src;
+      if(next.complete&&next.naturalWidth)finish();
+      else if(next.decode)next.decode().then(finish).catch(function(){
+        if(next.complete&&next.naturalWidth)finish();
+      });
+    });
+    if(frame!==previous){
+      var direction=previous!=null&&frame>previous?1:-1;
+      var count=si===0?FILES_I.length:FILES_II.length;
+      // One adjacent frame each way, requested at idle priority.
+      [frame+direction,frame-direction].forEach(function(neighbor){
+        if(neighbor>=1&&neighbor<=count){
+          window.setTimeout(function(){getScoreFrame(si,neighbor,false);},150);
+        }
+      });
+    }
     return true;
   }
-  function flushScore2Frame(frame){
-    if(!scene)return;
-    scene.querySelectorAll('[data-fc-score2-canvas]').forEach(function(canvas){
-      if(canvas.isConnected&&canvas.dataset.fcWantedFrame===String(frame))
-        paintScore2Canvas(canvas,frame);
+  function showScoreInspectFrame(overlay,si,frame){
+    var target=si===0
+      ?overlay.querySelector('.fc-inspection .fc-inspect-mechanical')
+      :overlay.querySelector('.fc-inspection .fc-inspect-score2');
+    if(!target)return;
+    // Inspection uses the same cache but a separate pair of visible images.
+    var viewer=scoreFramePlayers.get(target);
+    if(!viewer){
+      var base=target.querySelector(si===0?'[data-fc-inspect-img]':'[data-fc-inspect-score2-img]');
+      if(!base)return;
+      var back=document.createElement('img');
+      back.className='fc-score-frame-playback';
+      back.alt='';back.decoding='async';back.draggable=false;
+      back.setAttribute('aria-hidden','true');
+      back.style.opacity='0';target.appendChild(back);
+      viewer={base:base,back:back,front:base,wanted:null,serial:0,frame:null,si:si};
+      scoreFramePlayers.set(target,viewer);
+    }
+    if(viewer.wanted===frame)return;
+    var serial=++viewer.serial;
+    viewer.wanted=frame;
+    getScoreFrame(si,frame,true).then(function(image){
+      if(!image||viewer.serial!==serial||!target.isConnected)return;
+      var next=viewer.front===viewer.base?viewer.back:viewer.base;
+      var previous=viewer.front;
+      function display(){
+        if(viewer.serial!==serial||!next.naturalWidth)return;
+        next.style.opacity='1';previous.style.opacity='0';
+        viewer.front=next;viewer.frame=frame;
+      }
+      next.onload=display;next.onerror=function(){};
+      next.src=image.src;
+      if(next.complete&&next.naturalWidth)display();
+      else if(next.decode)next.decode().then(display).catch(function(){});
     });
-  }
-  function queueScore2Frame(frame,urgent){
-    frame=clamp(frame,1,FILES_II.length);
-    if(score2CanvasCache.has(frame))return;
-    if(score2Queued.has(frame)){
-      if(urgent){
-        score2Queue=score2Queue.filter(function(n){return n!==frame;});
-        score2Queue.unshift(frame);
-      }
-      return;
-    }
-    if(score2LoadingFrame===frame)return;
-    score2Queued.add(frame);
-    if(urgent)score2Queue.unshift(frame);
-    else score2Queue.push(frame);
-    pumpScore2Frames();
-  }
-  function setScore2Frame(canvas,frame){
-    if(!canvas)return;
-    frame=clamp(frame,1,FILES_II.length);
-    var previous=Number(canvas.dataset.fcWantedFrame)||0;
-    canvas.dataset.fcWantedFrame=String(frame);
-    if(!paintScore2Canvas(canvas,frame))queueScore2Frame(frame,true);
-    if(frame!==previous){
-      // Preload neighboring frames in reading order without waiting for a
-      // second user gesture. No source changes occur on the visible artwork.
-      var direction=previous&&frame>previous?1:-1;
-      for(var step=1;step<=2;step++){
-        var near=frame+direction*step,other=frame-direction*step;
-        if(near>=1&&near<=FILES_II.length)queueScore2Frame(near,false);
-        if(other>=1&&other<=FILES_II.length)queueScore2Frame(other,false);
-      }
-    }
-  }
-  function warmScore2Frames(){
-    // Work on every source exactly once while Folly II is in view.
-    // The compressed results are kept; full-res decoded originals are not.
-    for(var f=FILES_II.length;f>=1;f--)queueScore2Frame(f,false);
-  }
-  function pumpScore2Frames(){
-    if(score2LoadingFrame||!score2Queue.length)return;
-    var frame=score2Queue.shift();
-    score2Queued.delete(frame);
-    if(score2CanvasCache.has(frame)){pumpScore2Frames();return;}
-    score2LoadingFrame=frame;
-    var generation=score2Generation,attempt=0;
-    var source=score2ThumbUrls.get(frame)||scoreIIImage(frame);
-    var isThumbnail=score2ThumbUrls.has(frame);
-    var finished=false,watchdog=0;
-    function complete(){
-      if(finished)return;
-      finished=true;
-      if(watchdog)clearTimeout(watchdog);
-      if(generation!==score2Generation)return;
-      score2LoadingFrame=0;
-      window.setTimeout(pumpScore2Frames,34);
-    }
-    function loaded(img){
-      if(finished||generation!==score2Generation){complete();return;}
-      if(!img.naturalWidth||!img.naturalHeight){complete();return;}
-      try{
-        var w=Math.min(score2RenderWidth,img.naturalWidth);
-        var h=Math.round(w*img.naturalHeight/img.naturalWidth);
-        var reduced=document.createElement('canvas');
-        reduced.width=w;reduced.height=h;
-        var ctx=reduced.getContext('2d',{alpha:true});
-        if(!ctx)throw Error('Score frame canvas unavailable');
-        ctx.imageSmoothingEnabled=true;
-        ctx.imageSmoothingQuality='high';
-        ctx.drawImage(img,0,0,w,h);
-        rememberScore2Frame(frame,reduced);
-        flushScore2Frame(frame);
-        if(!isThumbnail&&!score2ThumbUrls.has(frame)&&reduced.toBlob){
-          // Idle encoding ensures the first display never waits for export.
-          var encode=function(){
-            if(generation!==score2Generation)return;
-            try{
-              reduced.toBlob(function(blob){
-                if(generation!==score2Generation||!blob)return;
-                if(!score2ThumbUrls.has(frame))
-                  score2ThumbUrls.set(frame,URL.createObjectURL(blob));
-              },'image/webp',.90);
-            }catch(_){}
-          };
-          if('requestIdleCallback' in window)requestIdleCallback(encode,{timeout:2800});
-          else window.setTimeout(encode,240);
-        }
-      }catch(_){
-        // Retain the previous canvas image on any decode or drawing error.
-      }
-      complete();
-    }
-    function load(url){
-      var img=new Image();
-      img.decoding='async';
-      img.onload=function(){
-        var ready=img.decode?img.decode().catch(function(){}):Promise.resolve();
-        Promise.resolve(ready).then(function(){loaded(img);});
-      };
-      img.onerror=function(){
-        if(finished||generation!==score2Generation){complete();return;}
-        if(!isThumbnail&&SCORE_WEBKIT_SINGLE_FRAME&&attempt++===0){
-          // Match the existing Safari ICC/VP8X fallback for Folly I.
-          fetch(scoreIIImage(frame),{cache:'force-cache'})
-            .then(function(response){
-              if(!response.ok)throw Error('WebP fetch failed');
-              return response.arrayBuffer();
-            }).then(simpleWebPFromResponse)
-            .then(function(url){load(url);})
-            .catch(complete);
-        }else complete();
-      };
-      img.src=url;
-    }
-    // An incomplete image request must never block the remaining 21 frames.
-    watchdog=window.setTimeout(complete,15000);
-    load(source);
   }
   function watchSafariScoreImageErrors(){
     if(!SCORE_WEBKIT_SINGLE_FRAME||!scene)return;
@@ -934,30 +944,12 @@
       if(img.complete&&!img.naturalWidth)failed();
     });
   }
-  var mechanicalCanvasObserver=null;
   function watchMechanicalScoreSizes(){
-    if(mechanicalCanvasObserver){mechanicalCanvasObserver.disconnect();mechanicalCanvasObserver=null;}
-    if(SCORE_WEBKIT_SINGLE_FRAME||!scene||!('ResizeObserver' in window))return;
-    mechanicalCanvasObserver=new ResizeObserver(function(entries){
-      entries.forEach(function(entry){
-        var cluster=entry.target.closest('.fc-mechanical-v2');
-        if(!cluster||!cluster.isConnected)return;
-        var frame=Number(cluster.dataset.fcFrame)||15;
-        paintMechanicalCanvas(cluster,frame);
-      });
-    });
-    scene.querySelectorAll('[data-fc-mechanical-canvas]').forEach(function(canvas){
-      mechanicalCanvasObserver.observe(canvas);
-    });
+    // Frame artwork now scales with CSS; no canvas resize/repaint observer.
   }
   function releaseMechanicalScoreAssets(){
-    if(mechanicalCanvasObserver){mechanicalCanvasObserver.disconnect();mechanicalCanvasObserver=null;}
-    // Keep the decoded score only while the visitor is within this page.
-    mechanicalDecodeToken++;
-    mechanicalFrames=[];
-    mechanicalReady=null;
     releaseScoreTemporaryUrls();
-    releaseScore2Frames();
+    releaseScoreFrameAssets();
   }
   function mechanicalLeverMarkup(interactive){
     return '<div class="fc-mechanical-v2-lever" data-fc-stage="1" '+
