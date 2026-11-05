@@ -6025,3 +6025,63 @@ html:has(.fc-room){
   .fc-room .fc-score2-sequence .fc-score2-compiled,
   .fc-room .fc-score2-sequence .fc-score2-pointer{transition:none;}
 }
+
+
+/* v104 · score II first-frame ghost and 120% physical sizing.
+   Keep the initial frame while loading, remove it from paint compositing
+   as soon as the first fully decoded buffered frame has been committed.
+   This fixes transparent portions revealing the first image underneath. */
+.fc-room .fc-score2-sequence .fc-score2-sheet.fc-score-playback-active > img[data-fc-score2-img],
+.fc-room .fc-inspect-score2.fc-score-playback-active > img[data-fc-inspect-score2-img]{
+  opacity:0!important;
+  visibility:hidden!important;
+  pointer-events:none!important;
+}
+.fc-room .fc-score2-sequence .fc-score2-sheet > img.fc-score-frame-playback,
+.fc-room .fc-inspect-score2 > img.fc-score-frame-playback{
+  visibility:visible;
+}
+
+/* Original score II dimensions: 860px artwork, 1040px expanded artwork,
+   1050px page width, 620px maximum stage height. 120% gives
+   1032 / 1248 / 1260 / 744 respectively (not the previous 150%). */
+.fc-room .fc-inline-score[data-fc-inline-score="1"]{
+  width:min(calc(100% - 2 * clamp(24px,7vw,120px)),1260px);
+  max-width:1260px;
+}
+.fc-room .fc-inline-score[data-fc-inline-score="1"] .fc-inline-score-device{
+  height:clamp(492px,54vw,744px);
+}
+.fc-room .fc-inline-score[data-fc-inline-score="1"] .fc-inline-score-device > .fc-score2-sequence{
+  width:min(94%,1032px);
+  max-width:94%;
+  max-height:90%;
+}
+.fc-room .fc-inline-score[data-fc-inline-score="1"].is-expanded .fc-inline-score-device{
+  height:min(74dvh,744px);
+}
+.fc-room .fc-inline-score[data-fc-inline-score="1"].is-expanded .fc-inline-score-device > .fc-score2-sequence{
+  width:min(94%,1248px);
+  max-width:94%;
+  max-height:91%;
+}
+@media(max-width:700px){
+  .fc-room .fc-inline-score[data-fc-inline-score="1"] .fc-inline-score-device{
+    height:clamp(450px,68.4vw,660px);
+  }
+  .fc-room .fc-inline-score[data-fc-inline-score="1"] .fc-inline-score-device > .fc-score2-sequence{
+    width:94%;max-width:94%;max-height:85%;
+  }
+}
+/* Keep photo stage selectors above their background images, independently
+   of the Film/Score DOM. Their selected word must be clickable in Safari. */
+.fc-room .fc-asset-pair .fc-photo-column{position:relative;}
+.fc-room .fc-asset-pair .fc-swap-controls{
+  z-index:20;
+  pointer-events:auto;
+}
+.fc-room .fc-asset-pair .fc-swap-option{
+  position:relative;
+  z-index:21;
+  pointer-events:auto;
+}
