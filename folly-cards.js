@@ -802,112 +802,102 @@
     getScoreFrame(si,start,true);
     getScoreFrame(si,start+(si===0?-1:1),false);
   }
-  function scoreFramePlayer(cluster,si){
-    var player=scoreFramePlayers.get(cluster);
-    if(player)return player;
-    var sheet=si===0
-      ?cluster.querySelector('[data-fc-mechanical-sheet]')
-      :cluster.querySelector('[data-fc-score2-sheet]');
-    var base=si===0
-      ?cluster.querySelector('[data-fc-score-shadow-img]')
-      :cluster.querySelector('[data-fc-score2-img]');
+  // Preserve the authored still as a permanent fallback. Two independent
+  // overlay images alternate only after the incoming frame is fully loaded.
+  // Earlier code alternated the fallback <img> itself and kept "wanted"
+  // locked even after a dropped request, causing the score to freeze.
+  function scoreFramePlayer(holder,si,inspect){
+    var viewer=scoreFramePlayers.get(holder);
+    if(viewer)return viewer;
+    var sheet=inspect?holder:(si===0
+      ?holder.querySelector('[data-fc-mechanical-sheet]')
+      :holder.querySelector('[data-fc-score2-sheet]'));
+    var base=inspect
+      ?holder.querySelector(si===0?'[data-fc-inspect-img]':'[data-fc-inspect-score2-img]')
+      :holder.querySelector(si===0?'[data-fc-score-shadow-img]':'[data-fc-score2-img]');
     if(!sheet||!base)return null;
-    var back=document.createElement('img');
-    back.className='fc-score-frame-playback';
-    back.alt='';
-    back.decoding='async';
-    back.draggable=false;
-    back.setAttribute('aria-hidden','true');
-    back.style.opacity='0';
-    sheet.appendChild(back);
-    player={base:base,back:back,front:base,wanted:null,serial:0,frame:null,si:si};
-    scoreFramePlayers.set(cluster,player);
-    return player;
+    var layers=[0,1].map(function(){
+      var img=document.createElement('img');
+      img.className='fc-score-frame-playback';
+      img.alt='';img.decoding='async';img.draggable=false;
+      img.setAttribute('aria-hidden','true');
+      img.style.opacity='0';
+      sheet.appendChild(img);
+      return img;
+    });
+    viewer={holder:holder,base:base,layers:layers,active:-1,
+      wanted:null,shown:null,request:0,loading:false,prefetchTimers:[]};
+    scoreFramePlayers.set(holder,viewer);
+    return viewer;
+  }
+  function presentScoreFrame(holder,si,frame,inspect){
+    var viewer=scoreFramePlayer(holder,si,inspect);
+    if(!viewer)return false;
+    var count=si===0?FILES_I.length:FILES_II.length;
+    frame=clamp(frame,1,count);
+    if(viewer.shown===frame)return true;
+    if(viewer.wanted===frame&&viewer.loading)return true;
+    var request=++viewer.request;
+    viewer.wanted=frame;
+    viewer.loading=true;
+    getScoreFrame(si,frame,true).then(function(image){
+      if(request!==viewer.request||!viewer.holder.isConnected)return;
+      if(!image||!image.naturalWidth){
+        // A rejected prefetch must not permanently pin the displayed frame.
+        viewer.loading=false;
+        viewer.wanted=null;
+        return;
+      }
+      var index=viewer.active===0?1:0;
+      var incoming=viewer.layers[index];
+      var settled=false;
+      function commit(){
+        if(settled||request!==viewer.request||!incoming.naturalWidth)return;
+        settled=true;
+        incoming.style.opacity='1';
+        viewer.layers[1-index].style.opacity='0';
+        viewer.active=index;
+        viewer.shown=frame;
+        viewer.loading=false;
+      }
+      function failed(){
+        if(request===viewer.request){viewer.loading=false;viewer.wanted=null;}
+      }
+      incoming.onload=commit;
+      incoming.onerror=failed;
+      incoming.dataset.frame=String(frame);
+      // The source has already been decoded once by the small shared cache.
+      // Loading it into the inactive layer does not clear the current image.
+      if(incoming.getAttribute('src')!==image.src)incoming.src=image.src;
+      if(incoming.complete&&incoming.naturalWidth)commit();
+      else if(incoming.decode)incoming.decode().then(commit).catch(function(){
+        if(incoming.complete&&incoming.naturalWidth)commit();
+        else failed();
+      });
+    }).catch(function(){
+      if(request===viewer.request){viewer.loading=false;viewer.wanted=null;}
+    });
+    viewer.prefetchTimers.forEach(clearTimeout);
+    viewer.prefetchTimers=[];
+    var near=[frame+1,frame-1];
+    near.forEach(function(neighbor){
+      if(neighbor<1||neighbor>count)return;
+      viewer.prefetchTimers.push(window.setTimeout(function(){
+        if(viewer.wanted===frame&&viewer.holder.isConnected)
+          getScoreFrame(si,neighbor,false);
+      },220));
+    });
+    return true;
   }
   function showScoreFrame(cluster,si,frame){
-    if(!cluster)return false;
-    frame=clamp(frame,1,si===0?FILES_I.length:FILES_II.length);
-    var viewer=scoreFramePlayer(cluster,si);
-    if(!viewer)return false;
-    if(viewer.wanted===frame)return true;
-    var previous=viewer.wanted,serial=++viewer.serial;
-    viewer.wanted=frame;
-    getScoreFrame(si,frame,true).then(function(image){
-      if(!image||!cluster.isConnected||viewer.serial!==serial)return;
-      var next=viewer.front===viewer.base?viewer.back:viewer.base;
-      var previousFront=viewer.front,painted=false;
-      function finish(){
-        if(painted||viewer.serial!==serial||!next.naturalWidth)return;
-        painted=true;
-        next.style.opacity='1';
-        previousFront.style.opacity='0';
-        viewer.front=next;
-        viewer.frame=frame;
-      }
-      next.onload=finish;
-      next.onerror=function(){};
-      next.dataset.frame=String(frame);
-      next.src=image.src;
-      if(next.complete&&next.naturalWidth)finish();
-      else if(next.decode)next.decode().then(finish).catch(function(){
-        if(next.complete&&next.naturalWidth)finish();
-      });
-    });
-    if(viewer.prefetchTimers){
-      viewer.prefetchTimers.forEach(clearTimeout);
-      viewer.prefetchTimers=[];
-    }
-    if(frame!==previous){
-      var direction=previous!=null&&frame>previous?1:-1;
-      var count=si===0?FILES_I.length:FILES_II.length;
-      viewer.prefetchTimers=[];
-      [frame+direction,frame-direction].forEach(function(neighbor){
-        if(neighbor>=1&&neighbor<=count){
-          var timer=window.setTimeout(function(){
-            if(viewer.wanted===frame)getScoreFrame(si,neighbor,false);
-          },180);
-          viewer.prefetchTimers.push(timer);
-        }
-      });
-    }
-    return true;
+    return cluster?presentScoreFrame(cluster,si,frame,false):false;
   }
   function showScoreInspectFrame(overlay,si,frame){
     var target=si===0
-      ?overlay.querySelector('.fc-inspection .fc-inspect-mechanical')
-      :overlay.querySelector('.fc-inspection .fc-inspect-score2');
-    if(!target)return;
-    // Inspection uses the same cache but a separate pair of visible images.
-    var viewer=scoreFramePlayers.get(target);
-    if(!viewer){
-      var base=target.querySelector(si===0?'[data-fc-inspect-img]':'[data-fc-inspect-score2-img]');
-      if(!base)return;
-      var back=document.createElement('img');
-      back.className='fc-score-frame-playback';
-      back.alt='';back.decoding='async';back.draggable=false;
-      back.setAttribute('aria-hidden','true');
-      back.style.opacity='0';target.appendChild(back);
-      viewer={base:base,back:back,front:base,wanted:null,serial:0,frame:null,si:si};
-      scoreFramePlayers.set(target,viewer);
-    }
-    if(viewer.wanted===frame)return;
-    var serial=++viewer.serial;
-    viewer.wanted=frame;
-    getScoreFrame(si,frame,true).then(function(image){
-      if(!image||viewer.serial!==serial||!target.isConnected)return;
-      var next=viewer.front===viewer.base?viewer.back:viewer.base;
-      var previous=viewer.front;
-      function display(){
-        if(viewer.serial!==serial||!next.naturalWidth)return;
-        next.style.opacity='1';previous.style.opacity='0';
-        viewer.front=next;viewer.frame=frame;
-      }
-      next.onload=display;next.onerror=function(){};
-      next.dataset.frame=String(frame);
-      next.src=image.src;
-      if(next.complete&&next.naturalWidth)display();
-      else if(next.decode)next.decode().then(display).catch(function(){});
-    });
+      ?overlay?.querySelector('.fc-inspection .fc-inspect-mechanical')
+      :overlay?.querySelector('.fc-inspection .fc-inspect-score2');
+    if(target)return presentScoreFrame(target,si,frame,true);
+    return false;
   }
   function watchSafariScoreImageErrors(){
     if(!SCORE_WEBKIT_SINGLE_FRAME||!scene)return;
