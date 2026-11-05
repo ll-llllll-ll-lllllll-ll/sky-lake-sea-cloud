@@ -1,6 +1,6 @@
 {
-  "name": "sky-sea-lake-cloud",
-  "short_name": "sky-sea-lake-cloud",
+  "name": "sky-lake-sea-cloud",
+  "short_name": "sky-lake-sea-cloud",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#f4f3ee",
