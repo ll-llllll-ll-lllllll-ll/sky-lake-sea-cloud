@@ -6266,3 +6266,47 @@ html:has(.fc-room){
   clip-path:none!important;
   -webkit-clip-path:none!important;
 }
+
+
+/* v108 · Score II layout tightening. The film cards and score now sit
+   closer together without changing either score image dimensions or the
+   film-strip progress / pointer systems. */
+.fc-room .fc-inline-score[data-fc-inline-score="1"]{
+  margin-top:clamp(9px,1.1vw,18px);
+}
+
+/* Keep the diagonal progress lever clear of the triangular drawing:
+   shrink the full SVG track and both rings, then move the entire unit to
+   the lower-right of the device. Its actual pointer/keyboard controls and
+   reverse-moving follower still use the original normalized coordinates. */
+.fc-room .fc-inline-score[data-fc-inline-score="1"] .fc-score2-diagonal{
+  width:clamp(145px,16.5vw,225px);
+  right:clamp(2px,1.4vw,22px);
+  bottom:clamp(8px,1.6vw,26px);
+}
+.fc-room .fc-inline-score[data-fc-inline-score="1"] .fc-score2-diagonal .fc-score2-handle{
+  width:clamp(25px,2.1vw,32px);
+  height:clamp(25px,2.1vw,32px);
+}
+.fc-room .fc-inline-score[data-fc-inline-score="1"] .fc-score2-diagonal .fc-score2-trailer{
+  width:clamp(10px,1vw,15px);
+  height:clamp(10px,1vw,15px);
+}
+@media(max-width:700px){
+  .fc-room .fc-inline-score[data-fc-inline-score="1"]{
+    margin-top:8px;
+  }
+  .fc-room .fc-inline-score[data-fc-inline-score="1"] .fc-score2-diagonal{
+    width:clamp(125px,30vw,166px);
+    right:0;
+    bottom:0;
+  }
+  .fc-room .fc-inline-score[data-fc-inline-score="1"] .fc-score2-diagonal .fc-score2-handle{
+    width:28px;
+    height:28px;
+  }
+  .fc-room .fc-inline-score[data-fc-inline-score="1"] .fc-score2-diagonal .fc-score2-trailer{
+    width:12px;
+    height:12px;
+  }
+}
