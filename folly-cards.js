@@ -876,6 +876,13 @@
         settled=true;
         incoming.style.opacity='1';
         viewer.layers[1-index].style.opacity='0';
+        // The static first-frame placeholder must disappear after the first
+        // real score II frame has decoded. Otherwise every subsequent
+        // transparent WebP reveals frame 1 underneath (a visual ghost).
+        if(si===1){
+          var surface=inspect?holder:holder.querySelector('[data-fc-score2-sheet]');
+          if(surface)surface.classList.add('fc-score-playback-active');
+        }
         viewer.active=index;
         viewer.shown=frame;
         viewer.loading=false;
