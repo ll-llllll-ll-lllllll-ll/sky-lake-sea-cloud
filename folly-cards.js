@@ -844,6 +844,7 @@
       }
       next.onload=finish;
       next.onerror=function(){};
+      next.dataset.frame=String(frame);
       next.src=image.src;
       if(next.complete&&next.naturalWidth)finish();
       else if(next.decode)next.decode().then(finish).catch(function(){
@@ -900,6 +901,7 @@
         viewer.front=next;viewer.frame=frame;
       }
       next.onload=display;next.onerror=function(){};
+      next.dataset.frame=String(frame);
       next.src=image.src;
       if(next.complete&&next.naturalWidth)display();
       else if(next.decode)next.decode().then(display).catch(function(){});
