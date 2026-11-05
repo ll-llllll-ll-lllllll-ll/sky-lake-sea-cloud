@@ -1254,7 +1254,7 @@
   }
   // Chapter II is deliberately not constructed until the reader crosses
   // this boundary. No photograph, mask or teaser asset belongs here.
-  var activeChapter=0,lastFollyIntro='',chapterChanging=false;
+  var activeChapter=0,chapterChanging=false;
   // Each Folly is a self-contained page surface. The reader can scroll
   // through either entire page and pass between them without wheel locks,
   // synthetic momentum, or DOM replacement.
@@ -1558,7 +1558,6 @@
     '</section>';
   }
   function pageMarkup(item) {
-    lastFollyIntro=localised(item.closing || item.intro);
     return '<section class="room-view fc-room"><header class="room-head">'+
       '<button type="button" data-action="home" class="room-back">←︎ '+esc(labels[state.lang].back)+'</button>'+
       '<p>'+esc(labels[state.lang].works)+' / '+esc(localised(item.title))+'</p>'+languageSwitch()+'</header>'+
