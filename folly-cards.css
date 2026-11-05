@@ -5656,3 +5656,47 @@ html:has(.fc-room){
   position:relative;
   overflow:hidden;
 }
+
+
+/* v96 · Optimized Folly score frame buffer.
+   Both scores use TWO stacked images, not a repeatedly cleared canvas.
+   The inactive image finishes loading/decoding before becoming visible,
+   so no loading flash or interim background is ever exposed. */
+.fc-room .fc-mechanical-v2-sheet > img.fc-score-frame-playback,
+.fc-room .fc-score2-sequence .fc-score2-sheet > img.fc-score-frame-playback,
+.fc-room .fc-inspect-mechanical > img.fc-score-frame-playback {
+  display:block;
+  position:absolute;
+  inset:0;
+  z-index:3;
+  width:100%;
+  height:100%;
+  max-width:none;
+  max-height:none;
+  margin:0;
+  padding:0;
+  border:0;
+  background:transparent;
+  object-fit:contain;
+  object-position:center;
+  filter:none;
+  pointer-events:none;
+  user-select:none;
+  -webkit-user-drag:none;
+  opacity:0;
+  transition:none!important;
+}
+.fc-room .fc-score2-sequence .fc-score2-sheet > canvas,
+.fc-room .fc-mechanical-v2 .fc-mechanical-v2-canvas,
+.fc-room .fc-inspect-score2 > canvas {
+  display:none!important;
+}
+/* Existing static frame remains behind the playback layer as a fallback.
+   Do not show the old single-frame canvas, nor apply its frame-hide class. */
+.fc-room .fc-score2-sequence .fc-score2-sheet > img[data-fc-score2-img],
+.fc-room .fc-mechanical-v2-sheet > img[data-fc-score-shadow-img] {
+  transition:none!important;
+}
+.fc-room .fc-inspect-mechanical > .fc-inspect-lever{
+  z-index:5;
+}
