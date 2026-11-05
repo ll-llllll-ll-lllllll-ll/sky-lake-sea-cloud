@@ -1234,6 +1234,35 @@
   // Each Folly is a self-contained page surface. The reader can scroll
   // through either entire page and pass between them without wheel locks,
   // synthetic momentum, or DOM replacement.
+  // Folly's closing is a quiet path to two existing portfolio rooms.
+  // These are internal hash routes, never links to the separate archive site.
+  var FOLLY_RELATED={
+    zh:{heading:'延伸阅读',entries:[
+      {name:'《墟域图·遗构馆》',description:'地图上的都市如墨迹散落，遗构录中的废墟则渐渐进入它们的缝隙。漫游与记录仍在继续，使这张文明地表不断生长。',link:'进入遗构馆',slug:'ruin-atlas'},
+      {name:'《墟构师宣言》',description:'从对废墟的观察出发，沿着建造、材料与声音展开的十则及后续文字，记录“墟构师”如何将这些认识带入《废墟园林》的实践。',link:'阅读宣言',slug:'ruinwright-manifesto'}
+    ]},
+    en:{heading:'Further reading',entries:[
+      {name:'Ruin Archive',description:'Cities stain the map like ink. The recorded ruins settle into their margins and gaps as the atlas grows through continued wandering and observation.',link:'Enter the archive',slug:'ruin-atlas'},
+      {name:'Manifesto of the Ruinwright',description:'Ten tenets and the writing that follows trace a way of working with ruins, material, construction, and sound, extending into the practice of the Folly series.',link:'Read the manifesto',slug:'ruinwright-manifesto'}
+    ]},
+    ja:{heading:'関連する記録',entries:[
+      {name:'『墟域図・遺構館』',description:'都市が墨跡のように地図上へ散り、記録された廃墟はその縁や隙間に重なる。歩き、記録し続けることで、この地表は少しずつ広がっていく。',link:'遺構館へ',slug:'ruin-atlas'},
+      {name:'『墟構師宣言』',description:'廃墟の観察から建造、素材、音へと向かう十則とその後の文章。そこで育った考えが『フォリー』の制作へ入っていく過程を記す。',link:'宣言を読む',slug:'ruinwright-manifesto'}
+    ]}
+  };
+  function follyRelatedMarkup(){
+    var copy=FOLLY_RELATED[state.lang]||FOLLY_RELATED.zh;
+    return '<section class="fc-related-reading" aria-label="'+esc(copy.heading)+'">'+
+      '<p class="fc-related-heading">'+esc(copy.heading)+'</p>'+
+      '<div class="fc-related-grid">'+copy.entries.map(function(entry){
+        return '<article class="fc-related-entry">'+
+          '<h3>'+esc(entry.name)+'</h3>'+
+          '<p>'+esc(entry.description)+'</p>'+
+          '<a href="#'+entry.slug+'">'+esc(entry.link)+' <span aria-hidden="true">↗</span></a>'+
+        '</article>';
+      }).join('')+'</div>'+
+    '</section>';
+  }
   function chapterBodyMarkup(){
     return '<section class="fc-chapter-page fc-chapter-page-one" data-fc-chapter-page="0" '+
         'aria-label="'+esc(chapterPart(0)+' · '+label(SERIES[0].title))+'">'+
@@ -1245,10 +1274,7 @@
         'aria-label="'+esc(chapterPart(1)+' · '+label(SERIES[1].title))+'">'+
         '<div class="fc-page-shadow" data-fc-page-shadow="1" aria-hidden="true"></div>'+
         sectionMarkup(SERIES[1],1)+
-        '<section class="fc-essay" aria-label="Folly notes"><div class="fc-essay-rule"></div>'+
-          '<p class="fc-essay-intro">'+esc(lastFollyIntro)+'</p>'+
-          '<div class="fc-essay-space" aria-hidden="true"></div>'+
-        '</section>'+
+        follyRelatedMarkup()+
       '</section>';
   }
   var FOLLY_INTRO={
