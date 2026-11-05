@@ -124,7 +124,8 @@
 
     // Keep existing ambient-day-* class and grading rather than resetting it.
     document.documentElement.lang = state.lang === "zh" ? "zh-Hans" : state.lang;
-    document.title = "sky-sea-lake-cloud";
+    // The preserved-video render path must update the tab title, too.
+    document.title = SITE_TITLES[state.lang] || SITE_TITLES.en;
     setCalendarEntry(home);
     setMotion(home);
   }
