@@ -354,7 +354,7 @@
   var FILES_II=SCORE2_FRAMES.map(function(number){return FOLD_BASE+number+'.webp';});
   function scoreIIImage(frame){return FILES_II[clamp(frame,1,FILES_II.length)-1];}
   // Retain the five older folding PNGs in the repository as source archives.
-  var selection={series:0,index:0,focus:[0,0],open:false,muted:true,paused:false,scoreInspect:false,scoreZoom:1,scorePanX:0,scorePanY:0,folds:[0,0,0],lastTime:0,manualFrame:null,instrument:false};
+  var selection={series:0,index:0,focus:[0,0],open:false,muted:false,paused:false,scoreInspect:false,scoreZoom:1,scorePanX:0,scorePanY:0,folds:[0,0,0],lastTime:0,manualFrame:null,instrument:false};
   var scene=null,player=null,serial=0,queue=[],previewInFlight=0,previewComplete=new Set(),mountedToken=0;
   // Only one in-card film is allowed to play. The still-image extraction uses
   // a different off-screen video so hovering cannot disturb decoding.
@@ -1374,7 +1374,7 @@
           '<button type="button" data-fc-action="close" aria-label="'+esc(i18n('close'))+'">×</button></div>'+
         '<div class="fc-projection-center">'+
           '<button type="button" class="fc-projection-arrow fc-arrow-prev" data-fc-action="previous" aria-label="'+esc(i18n('prev'))+'">←︎</button>'+
-          '<div class="fc-film-wrap"><video class="fc-film" data-fc-film playsinline webkit-playsinline preload="metadata" tabindex="0" aria-label="'+esc(i18n('open')+' / '+label(s.title))+'" muted></video>'+
+          '<div class="fc-film-wrap"><video class="fc-film" data-fc-film playsinline webkit-playsinline preload="metadata" tabindex="0" aria-label="'+esc(i18n('open')+' / '+label(s.title))+'"></video>'+
             '<div class="fc-film-vignette"></div><span class="fc-film-status" data-fc-film-status aria-live="polite"></span>'+
             '<button class="fc-film-pause-sign" type="button" data-fc-action="play" aria-label="'+esc(i18n('pause'))+'">Ⅱ</button></div>'+
           '<button type="button" class="fc-projection-arrow fc-arrow-next" data-fc-action="next" aria-label="'+esc(i18n('next'))+'">→︎</button>'+
@@ -1383,7 +1383,7 @@
         '<div class="fc-projection-bottom"><span class="fc-time-index"><strong data-fc-time-index>01</strong><small data-fc-total> / '+pad(s.stages.length)+'</small></span>'+
           '<span class="fc-now-title" data-fc-now-title>'+esc(label(s.stages[0]))+'</span>'+
           '<div class="fc-play-actions"><button type="button" data-fc-action="play" aria-label="'+esc(i18n('pause'))+'">Ⅱ</button>'+
-            '<button type="button" data-fc-action="sound" aria-label="'+esc(i18n('sound'))+'">♪̸</button></div></div>'+
+            '<button type="button" data-fc-action="sound" aria-label="'+esc(i18n('mute'))+'">♫</button></div></div>'+
         '<div class="fc-inspection" data-fc-inspection hidden>'+
           '<div class="fc-inspection-head"><span>FOLLY '+s.roman+' / SCORE</span>'+
             '<button type="button" data-fc-action="stop-inspect" aria-label="'+esc(i18n('close'))+'">×</button></div>'+
@@ -2422,6 +2422,14 @@
       btn.setAttribute('aria-label',i18n(selection.paused?'play':'pause'));
     });
   }
+  function syncSoundButton(){
+    var overlay=activeOverlay();if(!overlay)return;
+    overlay.querySelectorAll('[data-fc-action="sound"]').forEach(function(btn){
+      btn.textContent=selection.muted?'♪̸':'♫';
+      btn.setAttribute('aria-label',i18n(selection.muted?'sound':'mute'));
+      btn.setAttribute('aria-pressed',String(!selection.muted));
+    });
+  }
   function select(si,index,isInstrument) {
     if(!isLive())return;
     if(selection.open)closeProjection();
@@ -2465,7 +2473,13 @@
     status.textContent=i18n('loading');
     selection.lastTime=selection.instrument?0:s.stages[i].start;
     selection.paused=false;syncPlayButton();updateScore(selection.lastTime);
-    video.muted=selection.muted;video.loop=false;video.controls=false;
+    // Opening a film is an explicit user gesture: enable its authored sound.
+    // Hover films remain permanently muted for unobtrusive preview playback.
+    video.defaultMuted=false;
+    video.muted=selection.muted;
+    try{video.volume=1;}catch(_){}
+    syncSoundButton();
+    video.loop=false;video.controls=false;
     video.preload='auto';video.playsInline=true;
     video.removeAttribute('poster');
     // Match the film's actual encoded aspect ratio. The projection frame
@@ -3647,8 +3661,20 @@
         return;
       }
       if(action==='sound'){
-        selection.muted=!selection.muted;if(player)player.muted=selection.muted;
-        node.textContent=selection.muted?'♪̸':'♫';node.setAttribute('aria-label',i18n(selection.muted?'sound':'mute'));
+        selection.muted=!selection.muted;
+        if(player){
+          player.muted=selection.muted;
+          if(!selection.muted){
+            try{player.volume=1;}catch(_){}
+            // Safari may have paused an audible stream after a muted preview.
+            // Restart within this same user activation only if needed.
+            if(player.paused&&selection.open){
+              var audioPlay=player.play();
+              if(audioPlay&&audioPlay.catch)audioPlay.catch(function(){});
+            }
+          }
+        }
+        syncSoundButton();
         return;
       }
       if(action==='play'&&player){
