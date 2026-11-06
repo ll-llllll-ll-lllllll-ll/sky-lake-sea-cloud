@@ -1110,7 +1110,7 @@
     // The actual twenty-two-frame print shares the film timeline with Folly I.
     return '<div class="fc-score-cluster fc-score-linear fc-score2-sequence" data-fc-frame="1">'+
       '<div class="fc-score-shadow" data-fc-score-shadow>'+
-        '<div class="fc-score2-sheet" data-fc-score2-sheet aria-label="Folly II · 21 score frames">'+
+        '<div class="fc-score2-sheet" data-fc-score2-sheet role="img" aria-label="Folly II · 21 score frames">'+
           '<img data-fc-score2-img data-frame="1" src="'+scoreSource(1,1)+'" alt="" draggable="false" loading="lazy" decoding="async">'+
           '<canvas data-fc-score2-canvas aria-hidden="true"></canvas></div>'+
         // The assembled notation is revealed only after pointer-on has
@@ -1939,8 +1939,7 @@
       overlay.querySelectorAll('.fc-score2-sequence').forEach(function(cluster){
         cluster.dataset.fcFrame=String(frame);
         showScoreFrame(cluster,1,frame);
-        var surface=cluster.querySelector('[data-fc-score2-sheet]');
-        if(surface)surface.setAttribute('aria-valuenow',String(frame));
+        // The image is display-only; the diagonal handle owns slider ARIA.
         // Ruin Atlas Folly II / bindVideoUI's two independent needles.
         // The first sweeps -65° → 30°; the second -55° → 74° and
         // completes its sweep at 5/6 of the film duration.
