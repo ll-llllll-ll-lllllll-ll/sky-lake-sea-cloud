@@ -724,13 +724,14 @@
       return;
     }
     while(scoreNetworkActive<scoreNetworkParallel&&scoreNetworkQueue.length){
-      var job=scoreNetworkQueue.shift();
-      var epoch=scoreNetworkEpoch,controller=new AbortController();
+      // Block-scoped references keep concurrent requests independent.
+      let job=scoreNetworkQueue.shift();
+      let epoch=scoreNetworkEpoch,controller=new AbortController();
       scoreNetworkControllers.add(controller);
       scoreNetworkActive++;
       // Wait for the full response body: fetch() alone resolves at headers.
       // No Image.decode(), canvas draw, or full-size archive fallback here.
-      fetch(job.url,{cache:'force-cache',signal:controller.signal})
+      fetch(job.url,{cache:'force-cache',priority:'low',signal:controller.signal})
         .then(function(response){
           if(!response.ok)throw new Error('Score warmup HTTP '+response.status);
           return response.blob();
