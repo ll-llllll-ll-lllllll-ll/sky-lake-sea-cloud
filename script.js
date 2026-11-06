@@ -86,19 +86,19 @@ const ambientMeta = {
 
 const calendarIntro = {
   "zh": [
-    "一册由天空、海洋、湖泊与云层这些瞬息万变、无法被安排之物占据的日历。每一天的景象便如天气般自行更替，首页背景也随之播放着不同的环境影像。在这个看似没有重点的日历中，目光仿佛短暂地“失焦”，从日常琐事的焦点移开，重新落到那些原本退入生活背景的自然景象上。",
-    "这些景象在这里承担着重新校准感官的作用。这里所谓的“纯净”并非空白，而是一枚让观看暂时退回到解释与判断之前的“锚点”。",
-    "我的艺术创作理念也是如此：看完世界后，仍可以回到这里。所谓纯粹的心灵，并不是从未见过复杂，而是在洞见复杂之后，仍愿意抬头看一眼天空。"
+    "天空、海洋、湖泊与云层，在这册日历里如天气般自行更替。每日一段短短的风景，让目光暂时失焦，从琐事间移开，重新望向那些早已退入生活背景的事物。",
+    "我把这些短片看作香水店里的一小碟咖啡豆。经过纷杂的气味，轻轻一嗅，感官便有机会重新清明。",
+    "我也愿自己的创作保有这样的去处：看过世界的复杂，仍能回到这里，抬头看一眼天空。"
   ],
   "en": [
-    "A calendar occupied by sky, oceans, lakes, and clouds—things that change in an instant and cannot be arranged. Each day's scenery changes of its own accord, like the weather, and the homepage plays a different ambient film in the background. In this seemingly aimless calendar, the gaze briefly slips “out of focus”: it moves away from the concerns of everyday life and settles once more on the natural scenes that had receded into its background.",
-    "Here, these scenes serve to recalibrate the senses. What I call “purity” is not emptiness, but an “anchor” that allows looking to return, for a moment, to a point before explanation and judgment.",
-    "My approach to making art follows much the same thought: after seeing the world, one can still return here. A pure heart is not one that has never encountered complexity, but one that, having looked deeply into it, is still willing to look up at the sky."
+    "Sky, sea, lakes, and clouds change from day to day in this calendar, as freely as the weather. Each brief film lets the gaze drift out of focus, away from daily concerns and back to things that have quietly receded into the background of life.",
+    "I think of these films as a small dish of coffee beans in a perfume shop. After so many mingling scents, a moment to let the senses grow clear again.",
+    "I hope my own work can leave room for such a return: to look closely at the world's complexities, and still come back here to look up at the sky."
   ],
   "ja": [
-    "空、海、湖、雲――刻々と姿を変え、人の手では予定できないものに占められた暦。一日の風景は天気のようにおのずと移り変わり、ホームの背景にも、それに応じて異なる環境映像が流れる。これといった中心のない暦のなかで、視線はふと「ピントを外す」ように、日々の雑事へ向けていた焦点を離れ、暮らしの背景へと退いていた自然の風景に、再び落ち着く。",
-    "ここでは、こうした風景が感覚を整え直す役割を担っている。ここでいう「純粋」は空白ではなく、見ることを一時的に説明や判断よりも前へと戻す「錨」である。",
-    "私の芸術制作に対する考え方も同じだ。世界を見てきたあとにも、ここへ戻ってくることができる。純粋な心とは、複雑さを知らない心ではなく、その複雑さを見通したあとにも、なお空を見上げようとする心のことだ。"
+    "空、海、湖、雲。この暦では、日々の風景が天気のようにおのずと移り変わる。短い映像を眺めるあいだ、視線は日々の雑事からふと焦点を外し、暮らしの背景へと退いていたものに再び向かう。",
+    "私にとってこれらの映像は、香水店に置かれた小皿のコーヒー豆のようなものだ。いくつもの香りに触れたあと、感覚をそっと澄ませてくれる。",
+    "自分の制作にも、そんな帰り道を残しておきたい。世界の複雑さを見つめたあとも、ここへ戻り、また空を見上げられるように。"
   ]
 };
 
