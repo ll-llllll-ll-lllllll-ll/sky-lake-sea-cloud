@@ -1110,8 +1110,7 @@
     // The actual twenty-two-frame print shares the film timeline with Folly I.
     return '<div class="fc-score-cluster fc-score-linear fc-score2-sequence" data-fc-frame="1">'+
       '<div class="fc-score-shadow" data-fc-score-shadow>'+
-        '<div class="fc-score2-sheet" data-fc-score2-sheet role="slider" tabindex="0" '+
-          'aria-label="Folly II · 21 score frames" aria-valuemin="1" aria-valuemax="'+FILES_II.length+'" aria-valuenow="1">'+
+        '<div class="fc-score2-sheet" data-fc-score2-sheet aria-label="Folly II · 21 score frames">'+
           '<img data-fc-score2-img data-frame="1" src="'+scoreSource(1,1)+'" alt="" draggable="false" loading="lazy" decoding="async">'+
           '<canvas data-fc-score2-canvas aria-hidden="true"></canvas></div>'+
         // The assembled notation is revealed only after pointer-on has
@@ -3027,46 +3026,9 @@
     });
     device.addEventListener('pointerup',function(){panGesture=null;});
     device.addEventListener('pointercancel',function(){panGesture=null;});
-    // The entire mechanical score is a tactile fifteen-frame index even with
-    // the HUD pointer switched off. Drag downward to advance the Folly film.
-    // In Folly I the small central ring is the authored input, as in
-    // Ruin Archive; the rest of the printed score does not act as a giant
-    // invisible scrub surface. Folly II keeps its existing interactions.
-    var notationSurface=si===1?score.querySelector('[data-fc-score2-sheet]'):null;
-    if(notationSurface){
-      notationSurface.addEventListener('keydown',function(ev){
-        var delta={ArrowUp:1,ArrowRight:1,ArrowDown:-1,ArrowLeft:-1}[ev.key];
-        var frame=sourceScore2Frame(inlineTime[si]/SERIES[si].endTime);
-        if(delta!=null)frame=clamp(frame+delta,1,FILES_II.length);
-        else if(ev.key==='Home')frame=1;
-        else if(ev.key==='End')frame=FILES_II.length;
-        else return;
-        seekFilmFromScore(si,SERIES[si].endTime*(frame-1)/(FILES_II.length-1));
-        ev.preventDefault();
-      });
-      var scoreGesture=null;
-      function scrubArtwork(ev){
-        var rect=notationSurface.getBoundingClientRect();
-        var y=clamp((ev.clientY-rect.top)/Math.max(1,rect.height),0,1);
-        var ratio=clamp((y-.12)/.76,0,1);
-        seekFilmFromScore(si,SERIES[si].endTime*ratio);
-      }
-      notationSurface.addEventListener('pointerdown',function(ev){
-        if(ev.target.closest('.fc-mechanical-v2-knob'))return;
-        if(ev.pointerType==='mouse'&&ev.button!==0)return;
-        scoreGesture=ev.pointerId;
-        try{notationSurface.setPointerCapture(ev.pointerId);}catch(_){}
-        scrubArtwork(ev);ev.preventDefault();
-      });
-      notationSurface.addEventListener('pointermove',function(ev){
-        if(scoreGesture!==ev.pointerId)return;
-        scrubArtwork(ev);ev.preventDefault();
-      });
-      var releaseArtwork=function(ev){if(ev.pointerId===scoreGesture)scoreGesture=null;};
-      notationSurface.addEventListener('pointerup',releaseArtwork);
-      notationSurface.addEventListener('pointercancel',releaseArtwork);
-      notationSurface.addEventListener('lostpointercapture',function(){scoreGesture=null;});
-    }
+    // Score II is display-only: touching, swiping or tapping the artwork must
+    // never seek the film. The dedicated diagonal handle remains its sole
+    // inline score-time input (with its own pointer and keyboard support).
     // Folly I: drag the small knob along its guide; the authored fifteen
     // frames and two-stage large ring then follow the same rail timeline.
     var lever=score.querySelector('.fc-mechanical-notation .fc-mechanical-lever');
