@@ -6311,43 +6311,12 @@ html:has(.fc-room){
   }
 }
 
-
-/* v111 · Score II artwork without the photographed floor shadow.
-   The optimized 1680×1344 image is object-fit:contain inside a 3:2 viewer:
-   its visible width occupies 5/6 of the box. The x coordinates below
-   compensate for that inset. Each fold phase has its own low-edge outline.
-   Clip only the 21 photographic frames, not the compiled sheet or HUD;
-   leave all original score files untouched and preserve the image cache. */
+/* v112 · Keep the photographic ground shadow authored into all 21 Score II
+   WebP frames. The v111 polygon masks were too aggressive, cropping actual
+   artwork. Remove those masks entirely; only suppress CSS-generated shadows
+   on the inline Score II container. Do not modify images or HUD. */
 .fc-room .fc-inline-score[data-fc-inline-score="1"] .fc-score2-sequence > .fc-score-shadow,
 .fc-room .fc-inline-score[data-fc-inline-score="1"] .fc-score2-sequence.is-magnetic > .fc-score-shadow{
   filter:none!important;
   box-shadow:none!important;
-}
-.fc-room .fc-score2-sequence .fc-score2-sheet > img[data-fc-score2-img],
-.fc-room .fc-score2-sequence .fc-score2-sheet > img.fc-score-frame-playback,
-.fc-room .fc-inspect-score2 > img[data-fc-inspect-score2-img],
-.fc-room .fc-inspect-score2 > img.fc-score-frame-playback{
-  --fc-score2-shadowless-outline:polygon(50% 5%,65.83% 39%,68.33% 43%,84.17% 83%,84.17% 85%,52.5% 85%,50% 87%,47.5% 85%,15.83% 85%,15.83% 83%,31.67% 43%,34.17% 39%);
-  clip-path:var(--fc-score2-shadowless-outline);
-  -webkit-clip-path:var(--fc-score2-shadowless-outline);
-}
-.fc-room .fc-score2-sequence .fc-score2-sheet > img:is([data-frame="1"],[data-frame="2"],[data-frame="3"],[data-frame="4"],[data-frame="5"]),
-.fc-room .fc-inspect-score2 > img:is([data-frame="1"],[data-frame="2"],[data-frame="3"],[data-frame="4"],[data-frame="5"]){
-  --fc-score2-shadowless-outline:polygon(50% 13%,66.67% 41%,68.33% 43%,77.5% 80%,77.5% 81%,53.33% 81%,50% 87%,46.67% 81%,22.5% 81%,22.5% 80%,31.67% 43%,33.33% 41%);
-}
-.fc-room .fc-score2-sequence .fc-score2-sheet > img:is([data-frame="6"],[data-frame="7"],[data-frame="8"],[data-frame="9"]),
-.fc-room .fc-inspect-score2 > img:is([data-frame="6"],[data-frame="7"],[data-frame="8"],[data-frame="9"]){
-  --fc-score2-shadowless-outline:polygon(50% 29%,66.67% 39%,68.33% 44%,75% 80%,73.33% 81%,51.67% 83%,50% 87%,48.33% 83%,26.67% 81%,25% 80%,31.67% 44%,33.33% 39%);
-}
-.fc-room .fc-score2-sequence .fc-score2-sheet > img:is([data-frame="10"],[data-frame="11"],[data-frame="12"],[data-frame="13"]),
-.fc-room .fc-inspect-score2 > img:is([data-frame="10"],[data-frame="11"],[data-frame="12"],[data-frame="13"]){
-  --fc-score2-shadowless-outline:polygon(33.33% 38%,66.67% 38%,68.33% 44%,74.17% 80%,71.67% 81%,52.5% 83%,50% 87%,47.5% 83%,34.17% 79%,33.33% 77%,33.33% 46%);
-}
-.fc-room .fc-score2-sequence .fc-score2-sheet > img:is([data-frame="14"],[data-frame="15"],[data-frame="16"],[data-frame="17"]),
-.fc-room .fc-inspect-score2 > img:is([data-frame="14"],[data-frame="15"],[data-frame="16"],[data-frame="17"]){
-  --fc-score2-shadowless-outline:polygon(50% 9%,66.67% 39%,70% 44%,73.33% 80%,71.67% 83%,51.67% 85%,50% 87%,48.33% 85%,27.5% 84%,25.83% 80%,30% 44%,33.33% 39%);
-}
-.fc-room .fc-score2-sequence .fc-score2-sheet > img:is([data-frame="18"],[data-frame="19"],[data-frame="20"],[data-frame="21"]),
-.fc-room .fc-inspect-score2 > img:is([data-frame="18"],[data-frame="19"],[data-frame="20"],[data-frame="21"]){
-  --fc-score2-shadowless-outline:polygon(50% 5%,65.83% 39%,68.33% 43%,84.17% 83%,84.17% 85%,52.5% 85%,50% 87%,47.5% 85%,15.83% 85%,15.83% 83%,31.67% 43%,34.17% 39%);
 }
