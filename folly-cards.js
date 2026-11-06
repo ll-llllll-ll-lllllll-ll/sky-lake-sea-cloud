@@ -695,7 +695,89 @@
   var scoreFramePlayers=new WeakMap();
   var scoreFrameLimit=SCORE_WEBKIT_SINGLE_FRAME?4:7;
   var scoreFrameParallel=SCORE_WEBKIT_SINGLE_FRAME?1:2;
+
+  // Network-warm the small, optimized WebP sequence before the visitor
+  // reaches each score. Fetching compressed bytes fills the HTTP cache
+  // without retaining 36 high-resolution decoded bitmaps in Safari memory.
+  // All foreground scrubbing still goes through the existing priority queue.
+  var scoreNetworkQueue=[],scoreNetworkControllers=new Set(),scoreNetworkQueued=new Set();
+  var scoreNetworkActive=0,scoreNetworkEpoch=0,scoreNetworkBusyUntil=0;
+  var scoreNetworkTimer=0,scoreNetworkStarted=[false,false];
+  var scoreNetworkParallel=SCORE_WEBKIT_SINGLE_FRAME?1:2;
+  function stopScoreNetworkWarmup(){
+    scoreNetworkEpoch++;
+    if(scoreNetworkTimer){clearTimeout(scoreNetworkTimer);scoreNetworkTimer=0;}
+    scoreNetworkControllers.forEach(function(controller){controller.abort();});
+    scoreNetworkControllers.clear();
+    scoreNetworkQueue=[];scoreNetworkQueued.clear();
+    scoreNetworkActive=0;scoreNetworkBusyUntil=0;
+    scoreNetworkStarted=[false,false];
+  }
+  function pumpScoreNetworkWarmup(){
+    if(!scene||!scene.isConnected||document.hidden)return;
+    if(!scoreNetworkQueue.length)return;
+    var delay=scoreNetworkBusyUntil-Date.now();
+    if(delay>0){
+      if(!scoreNetworkTimer)scoreNetworkTimer=setTimeout(function(){
+        scoreNetworkTimer=0;pumpScoreNetworkWarmup();
+      },Math.max(80,delay+30));
+      return;
+    }
+    while(scoreNetworkActive<scoreNetworkParallel&&scoreNetworkQueue.length){
+      var job=scoreNetworkQueue.shift();
+      var epoch=scoreNetworkEpoch,controller=new AbortController();
+      scoreNetworkControllers.add(controller);
+      scoreNetworkActive++;
+      // Wait for the full response body: fetch() alone resolves at headers.
+      // No Image.decode(), canvas draw, or full-size archive fallback here.
+      fetch(job.url,{cache:'force-cache',signal:controller.signal})
+        .then(function(response){
+          if(!response.ok)throw new Error('Score warmup HTTP '+response.status);
+          return response.blob();
+        })
+        .catch(function(){/* Offline/slow links retain on-demand fallback. */})
+        .then(function(){
+          scoreNetworkControllers.delete(controller);
+          if(epoch!==scoreNetworkEpoch)return;
+          scoreNetworkActive=Math.max(0,scoreNetworkActive-1);
+          // Yield between batches to video playback and interactive requests.
+          window.setTimeout(pumpScoreNetworkWarmup,30);
+        });
+    }
+  }
+  function startScoreNetworkWarmup(si){
+    if(scoreNetworkStarted[si]||navigator.connection?.saveData)return;
+    scoreNetworkStarted[si]=true;
+    var epoch=scoreNetworkEpoch;
+    var count=scoreFrameSources[si].length;
+    var begin=si===0?count:1,step=si===0?-1:1,order=[];
+    function add(frame){
+      if(frame>=1&&frame<=count&&order.indexOf(frame)<0)order.push(frame);
+    }
+    // Immediate neighbours first; also prepare midpoint/end for a quick jump.
+    for(var k=0;k<5;k++)add(begin+k*step);
+    add(Math.ceil(count/2));add(si===0?1:count);
+    for(var n=0;n<count;n++)add(begin+n*step);
+    function enqueue(){
+      if(epoch!==scoreNetworkEpoch||!scene||!scene.isConnected)return;
+      order.forEach(function(frame){
+        var key=si+':'+frame,url=scoreSource(si,frame);
+        if(scoreNetworkQueued.has(key)||scoreFrameCaches[si].has(frame))return;
+        scoreNetworkQueued.add(key);
+        scoreNetworkQueue.push({url:url,key:key});
+      });
+      pumpScoreNetworkWarmup();
+    }
+    // Avoid competing with the opening layout, video and photographs.
+    if('requestIdleCallback' in window)
+      window.requestIdleCallback(enqueue,{timeout:1700});
+    else window.setTimeout(enqueue,650);
+  }
+  document.addEventListener('visibilitychange',function(){
+    if(!document.hidden)pumpScoreNetworkWarmup();
+  });
   function releaseScoreFrameAssets(){
+    stopScoreNetworkWarmup();
     scoreFrameGeneration++;
     scoreFrameQueue.forEach(function(task){task.resolve(null);});
     scoreFrameQueue=[];
@@ -771,6 +853,8 @@
     }
   }
   function getScoreFrame(si,frame,urgent){
+    // Scrubbing takes network priority over speculative preloading.
+    if(urgent)scoreNetworkBusyUntil=Date.now()+950;
     frame=clamp(frame,1,si===0?FILES_I.length:FILES_II.length);
     var image=cachedScoreFrame(si,frame);
     if(image)return Promise.resolve(image);
@@ -806,9 +890,12 @@
     return promise;
   }
   function warmScoreFrames(si){
-    var start=si===0?15:1;
+    var start=si===0?FILES_I.length:1,step=si===0?-1:1;
     getScoreFrame(si,start,true);
-    getScoreFrame(si,start+(si===0?-1:1),false);
+    // Keep three adjacent starting frames decoded in the bounded LRU.
+    getScoreFrame(si,start+step,false);
+    getScoreFrame(si,start+2*step,false);
+    startScoreNetworkWarmup(si);
   }
   // Preserve the authored still as a permanent fallback. Two independent
   // overlay images alternate only after the incoming frame is fully loaded.
@@ -3324,6 +3411,8 @@
   // gesture, or clicking the invitation, releases the next reading page.
   var chapterThresholdCleanup=null,chapterThresholdRelease=false;
   function enterNextFolly(){
+    // A direct chapter jump should not defer Score II's compressed frames.
+    warmScoreFrames(1);
     chapterThresholdRelease=true;
     var next=scene?.querySelector('[data-fc-chapter-page="1"]');
     if(next){
