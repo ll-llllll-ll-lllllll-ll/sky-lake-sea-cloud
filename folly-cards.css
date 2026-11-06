@@ -5463,9 +5463,9 @@ html:has(.fc-room){
   border:0;
   background:transparent;
   overflow:hidden;
-  cursor:ns-resize;
-  touch-action:none;
-  pointer-events:auto;
+  cursor:default;
+  touch-action:pan-y;
+  pointer-events:none;
 }
 .fc-room .fc-score2-sequence .fc-score2-sheet > img{
   display:block;
