@@ -1063,6 +1063,7 @@
     // Frame artwork now scales with CSS; no canvas resize/repaint observer.
   }
   function releaseMechanicalScoreAssets(){
+    cancelScore1PointerRewind();
     cancelScore2PointerRewind();
     releaseScoreTemporaryUrls();
     releaseScoreFrameAssets();
@@ -1985,6 +1986,76 @@
     manualWings[si]=null;
     updateInlineScore(si,s.endTime*ratio);
   }
+  // Folly I runs backwards through its numbered artwork: the opening exposure
+  // of the film is score-1-15.webp and the final exposure is score-1-1.webp.
+  // When its pointer is enabled, travel back through the actual score frames
+  // before unveiling the original HUD. The art itself remains untouched.
+  var score1PointerRewind={raf:0,token:0};
+  function cancelScore1PointerRewind(){
+    score1PointerRewind.token++;
+    if(score1PointerRewind.raf)cancelAnimationFrame(score1PointerRewind.raf);
+    score1PointerRewind.raf=0;
+  }
+  function revealScore1Pointer(score,token){
+    if(token!==score1PointerRewind.token||!score.isConnected||
+       score.dataset.fcPointers!=='on')return;
+    // Do not show the pointer ahead of the opening WebP's actual decode.
+    getScoreFrame(0,FILES_I.length,true).then(function(image){
+      if(token!==score1PointerRewind.token||!score.isConnected||
+         score.dataset.fcPointers!=='on')return;
+      var base=score.querySelector('[data-fc-score-shadow-img]');
+      if(!image&&!base?.naturalWidth)return;
+      // Commit the final frame, then allow a rendering turn before its HUD.
+      seekFilmFromScore(0,0,{fromPointerRewind:true});
+      requestAnimationFrame(function(){
+        if(token===score1PointerRewind.token&&score.isConnected&&
+           score.dataset.fcPointers==='on'&&
+           sourceScoreFrame(inlineTime[0]/SERIES[0].endTime)===FILES_I.length)
+          score.dataset.fcRewindReady='on';
+      });
+    }).catch(function(){});
+  }
+  function beginScore1PointerRewind(score){
+    cancelScore1PointerRewind();
+    var token=score1PointerRewind.token;
+    score.dataset.fcRewindReady='off';
+    var end=SERIES[0].endTime;
+    var startFrame=sourceScoreFrame(inlineTime[0]/end);
+    var firstFrame=FILES_I.length;
+    if(startFrame>=firstFrame){
+      seekFilmFromScore(0,0,{fromPointerRewind:true});
+      revealScore1Pointer(score,token);
+      return;
+    }
+    // Warm the next two real artwork frames, without decoding all 15 at once.
+    getScoreFrame(0,Math.min(firstFrame,startFrame+1),true);
+    if(startFrame<firstFrame-1)getScoreFrame(0,startFrame+2,false);
+    var reduced=window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+    var duration=reduced?0:Math.min(2800,520+110*(firstFrame-startFrame));
+    var firstTime=null,previousFrame=startFrame;
+    function tick(now){
+      if(token!==score1PointerRewind.token||!score.isConnected||
+         score.dataset.fcPointers!=='on')return;
+      if(firstTime===null)firstTime=now;
+      var p=duration===0?1:clamp((now-firstTime)/duration,0,1);
+      var ease=1-Math.pow(1-p,2.4);
+      var step=Math.min(firstFrame,Math.round(startFrame+(firstFrame-startFrame)*ease));
+      if(step!==previousFrame){
+        previousFrame=step;
+        seekFilmFromScore(0,end*(firstFrame-step)/(firstFrame-1),
+          {fromPointerRewind:true});
+      }
+      if(p<1){
+        score1PointerRewind.raf=requestAnimationFrame(tick);
+      }else{
+        score1PointerRewind.raf=0;
+        seekFilmFromScore(0,0,{fromPointerRewind:true});
+        revealScore1Pointer(score,token);
+      }
+    }
+    score1PointerRewind.raf=requestAnimationFrame(tick);
+  }
+
   // Pointer-on for Folly II is a ritual return to the first of its
   // twenty-one authored frames. During the rewind the real frame art stays
   // visible; only after reaching frame 1 does compiled.png fade in.
@@ -2065,6 +2136,13 @@
     score2PointerRewind.raf=requestAnimationFrame(tick);
   }
   function seekFilmFromScore(si,absolute,opts){
+    // Direct interaction overrides the Score I return, exactly as in Score II.
+    if(si===0&&score1PointerRewind.raf&&!(opts&&opts.fromPointerRewind)){
+      cancelScore1PointerRewind();
+      var score1=block(0)?.querySelector('[data-fc-inline-score]');
+      if(score1?.dataset.fcPointers==='on')
+        score1.dataset.fcRewindReady='on';
+    }
     // A direct drag interrupts the automated return; keep compiled notation
     // visible if the user elects to intervene while pointer mode is enabled.
     if(si===1&&score2PointerRewind.raf&&!(opts&&opts.fromPointerRewind)){
@@ -3591,9 +3669,12 @@
             score.dataset.fcCompiledActive='off';
           }
         }else{
-          // Folly I's existing score-hud is repainted immediately at the
-          // current time; it must never reposition or reset the film.
-          updateInlineScore(0,inlineTime[0]);
+          if(on)beginScore1PointerRewind(score);
+          else{
+            cancelScore1PointerRewind();
+            score.dataset.fcRewindReady='off';
+            updateInlineScore(0,inlineTime[0]);
+          }
         }
         node.setAttribute('aria-checked',String(on));
         var caption=node.querySelector('.fc-pointer-switch-text');
