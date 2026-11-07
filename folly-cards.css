@@ -6338,3 +6338,18 @@ html:has(.fc-room){
   visibility:visible!important;
   pointer-events:none!important;
 }
+
+
+/* v115 · Score I: hide the permanent opening-frame placeholder only once
+   the first decoded buffered image is visible. This mirrors Score II's
+   existing first-frame ghost fix while preserving the loading fallback. */
+.fc-room .fc-mechanical-v2 .fc-mechanical-v2-sheet.fc-score-playback-active > img[data-fc-score-shadow-img],
+.fc-room .fc-inspect-mechanical.fc-score-playback-active > img[data-fc-inspect-img]{
+  opacity:0!important;
+  visibility:hidden!important;
+  pointer-events:none!important;
+}
+.fc-room .fc-mechanical-v2 .fc-mechanical-v2-sheet > img.fc-score-frame-playback,
+.fc-room .fc-inspect-mechanical > img.fc-score-frame-playback{
+  visibility:visible;
+}
