@@ -337,7 +337,7 @@
   // Artist's newly uploaded fifteen-frame Folly I stop-motion score.
   // Use the real local frames on both desktop and mobile until a distinct
   // authored mobile sequence exists; do not silently fall back to Ruin Archive.
-  var FILES_I=Array.from({length:15},function(_,i){return LOCAL_VIDEO+'score-1/score-1-'+(i+1)+'.webp';});
+  var FILES_I=Array.from({length:15},function(_,i){return LOCAL_VIDEO+'score-1/score-1-'+(i+1)+'.webp?v=20261107-score1-original';});
   var FILES_I_MOBILE=FILES_I;
   // Originals remain archival. Live playback uses optimized files and a
   // small bounded image cache on all browsers, including Safari.
@@ -687,7 +687,7 @@
      never decodes all 22 originals at entry, and never erases a visible
      frame while its successor is still being decoded. */
   var scoreFrameSources=[
-    FILES_I.map(function(_,i){return LOCAL_VIDEO+'score-1/optimized/score-1-'+(i+1)+'.webp?v=20261105-v2';}),
+    FILES_I.map(function(_,i){return LOCAL_VIDEO+'score-1/optimized/score-1-'+(i+1)+'.webp?v=20261107-refreshed-v4';}),
     SCORE2_FRAMES.map(function(number){return FOLD_BASE+'optimized/'+number+'.webp?v=20261105-v3';})
   ];
   var scoreFrameCaches=[new Map(),new Map()];
@@ -1059,6 +1059,19 @@
       if(img.complete&&!img.naturalWidth)failed();
     });
   }
+  // Keep the updated source PNG as a fallback if an older Safari or a
+  // transient network failure prevents the lightweight compiled WebP loading.
+  // This attachment is separate from the 21 animated Score II frames.
+  function wireCompiledScoreFallback(){
+    if(!scene)return;
+    scene.querySelectorAll('[data-fc-score2-compiled]').forEach(function(img){
+      img.addEventListener('error',function(){
+        if(img.dataset.fcCompiledFallback==='original')return;
+        img.dataset.fcCompiledFallback='original';
+        img.src=FOLD_BASE+'compiled.png?v=20261107-new-original';
+      });
+    });
+  }
   function watchMechanicalScoreSizes(){
     // Frame artwork now scales with CSS; no canvas resize/repaint observer.
   }
@@ -1117,7 +1130,7 @@
         // The assembled notation is revealed only after pointer-on has
         // returned the live frame sequence to its opening exposure.
         '<img class="fc-score2-compiled" data-fc-score2-compiled '+
-          'src="'+FOLD_BASE+'compiled.png" alt="" loading="lazy" decoding="async" draggable="false">'+
+          'src="'+FOLD_BASE+'optimized/compiled.webp?v=20261107-rebuilt-v1" alt="" loading="lazy" decoding="async" draggable="false">'+
       '</div>'+
       // Ported directly from Ruin Atlas / attachment viewer:
       // the paired radial Folly II needles, not a free-floating circle.
@@ -3573,6 +3586,7 @@
     setupPhotoReadingLayout();
     watchMechanicalScoreSizes();
     watchSafariScoreImageErrors();
+    wireCompiledScoreFallback();
     // Existing 2-second MP4 stills and instrument videos remain deferred;
     // no new HTTP request is issued until a particular chapter is nearby.
     if('IntersectionObserver' in window){
