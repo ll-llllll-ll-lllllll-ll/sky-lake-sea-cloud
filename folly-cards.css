@@ -6320,3 +6320,21 @@ html:has(.fc-room){
   filter:none!important;
   box-shadow:none!important;
 }
+
+
+/* v114 · Folly I: keep the physical score HUD concealed while the image
+   sequence returns to its authored opening exposure (score-1-15.webp).
+   Only unveil it after the final lightweight frame has decoded. Score II
+   uses its independent compiled.png reveal and remains unchanged. */
+.fc-room .fc-inline-score[data-fc-inline-score="0"][data-fc-pointers="on"]:not([data-fc-rewind-ready="on"])
+.fc-mechanical-v2 > .fc-score-hud{
+  opacity:0!important;
+  visibility:hidden!important;
+  pointer-events:none!important;
+}
+.fc-room .fc-inline-score[data-fc-inline-score="0"][data-fc-pointers="on"][data-fc-rewind-ready="on"]
+.fc-mechanical-v2 > .fc-score-hud{
+  opacity:1!important;
+  visibility:visible!important;
+  pointer-events:none!important;
+}
