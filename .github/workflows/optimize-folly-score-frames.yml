@@ -7,6 +7,7 @@ on:
       - '.github/workflows/optimize-folly-score-frames.yml'
       - 'works/ruin-garden/score-1/*.webp'
       - 'works/ruin-garden/score-2/*.webp'
+      - 'works/ruin-garden/score-2/compiled.png'
   workflow_dispatch:
 
 permissions:
@@ -66,6 +67,29 @@ jobs:
                       # Strip potentially incompatible ICC metadata by default.
                       image.save(output, format="WEBP", quality=83, method=5, exact=True)
                       print(f"{source} -> {output}: {image.width}x{image.height}, {output.stat().st_size} bytes")
+
+          # The authored compiled.png is a separate sheet revealed only when
+          # Folly II's pointer is enabled, not one of the 21 moving frames.
+          # Keep the PNG original; produce a transparent, lightweight WebP
+          # matching the large-screen score display resolution.
+          source = root / "score-2" / "compiled.png"
+          if not source.is_file():
+              raise FileNotFoundError(source)
+          with Image.open(source) as original:
+              image = ImageOps.exif_transpose(original)
+              if image.mode == "P":
+                  image = image.convert("RGBA" if "transparency" in image.info else "RGB")
+              elif image.mode not in ("RGB", "RGBA"):
+                  image = image.convert("RGBA" if "A" in image.getbands() else "RGB")
+              max_width = 1680
+              if image.width > max_width:
+                  image = image.resize(
+                      (max_width, max(1, round(image.height * max_width / image.width))),
+                      Image.Resampling.LANCZOS,
+                  )
+              output = root / "score-2" / "optimized" / "compiled.webp"
+              image.save(output, format="WEBP", quality=90, method=6, exact=True)
+              print(f"{source} -> {output}: {image.width}x{image.height}, {output.stat().st_size} bytes")
           PY
       - name: Publish generated frames to the website repository
         shell: bash
@@ -78,6 +102,6 @@ jobs:
           fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git commit -m "Generate optimized display frames for both Folly scores"
+          git commit -m "Regenerate Folly score display frames and compiled image"
           git pull --rebase origin main
           git push origin HEAD:main
