@@ -1147,7 +1147,7 @@
   }
   function posterFor(si,index,kind){
     var suffix=kind==='instrument'?'instrument':String(index+1);
-    return LOCAL_VIDEO+'thumbnails/folly-'+(si+1)+'-'+suffix+'.jpg';
+    return LOCAL_VIDEO+'thumbnails/folly-'+(si+1)+'-'+suffix+'.jpg?v=20261109-poster-3s';
   }
   // Static JPEGs are generated from the actual clips in the GitHub build.
   // Only a failed JPEG uses the legacy MP4 frame extraction; on mobile with
@@ -1823,7 +1823,7 @@
       root.style.setProperty('--fc-ratio-number',String(ratio));
     }
   }
-  // Decode a genuine film frame near 2 seconds into a light canvas still.
+  // Decode a genuine film frame near 3 seconds into a light canvas still.
   // Once captured, detach the 25MB source from the preview video.
   // Each MP4 is only prepared as its series approaches the viewport.
   function processPreviews() {
@@ -1880,7 +1880,7 @@
         }else applyVideoRatio(task.si,v);
         try{
           if(!Number.isFinite(v.duration)||v.duration<.15){release(false);return;}
-          var target=Math.min(2,Math.max(.04,v.duration-.12));
+          var target=Math.min(3,Math.max(.04,v.duration-.12));
           v.currentTime=target;
         }catch(_){release(false);}
       }
