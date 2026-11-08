@@ -31,17 +31,17 @@ jobs:
             sudo apt-get update -qq
             sudo apt-get install -y ffmpeg
           fi
-      - name: Extract real two-second poster frames
+      - name: Extract Folly three-second poster frames
         shell: bash
         run: |
           set -euo pipefail
           mkdir -p works/ruin-garden/thumbnails
           poster() {
-            local source="$1" destination="$2"
+            local source="$1" destination="$2" at="${3:-3}"
             test -s "$source" || { echo "Source missing: $source" >&2; exit 1; }
             # A 960px JPEG is normally tens of KB instead of 18-25 MB.
             # Fast seek, one decoded frame, preserved aspect ratio.
-            ffmpeg -hide_banner -loglevel error -y -ss 2 -i "$source" \
+            ffmpeg -hide_banner -loglevel error -y -ss "$at" -i "$source" \
               -an -vf "scale=w='min(960,iw)':h=-2" -frames:v 1 \
               -q:v 5 "$destination"
             test -s "$destination"
@@ -56,8 +56,9 @@ jobs:
             poster "works/ruin-garden/folly-${series}-assets/instrument-${series}.mp4" \
               "works/ruin-garden/thumbnails/folly-${series}-instrument.jpg"
           done
+          # Leave the unrelated Instrument-series poster at its original two seconds.
           poster "works/the-instrument/the-instrument-2/ship-in-klein-bottle.mp4" \
-            "works/the-instrument/the-instrument-2/ship-in-klein-bottle-thumb.jpg"
+            "works/the-instrument/the-instrument-2/ship-in-klein-bottle-thumb.jpg" 2
       - name: Commit generated thumbnails
         shell: bash
         run: |
