@@ -6353,3 +6353,40 @@ html:has(.fc-room){
 .fc-room .fc-inspect-mechanical > img.fc-score-frame-playback{
   visibility:visible;
 }
+
+/* v116 · Compact Folly object records on narrow Safari screens.
+   In a 56px label column, "Primary materials" cannot fit and collides
+   with its value. Stack only the label/value pair; keep the native
+   three-language <details> disclosure for the complete specifications. */
+@media (max-width:700px){
+  .fc-room .fc-reading-part .fc-work-facts{
+    gap:12px;
+    width:100%;
+    max-width:100%;
+  }
+  .fc-room .fc-reading-part .fc-work-fact,
+  .fc-room .fc-inline-score[data-fc-inline-score="0"] .fc-score-object-fact,
+  .fc-room .fc-inline-score[data-fc-inline-score="1"] .fc-score-object-fact{
+    display:grid;
+    grid-template-columns:minmax(0,1fr);
+    row-gap:2px;
+    column-gap:0;
+    align-items:start;
+    width:100%;
+    max-width:100%;
+    min-width:0;
+  }
+  .fc-room .fc-reading-part .fc-work-fact dt,
+  .fc-room .fc-inline-score[data-fc-inline-score="0"] .fc-score-object-fact dt,
+  .fc-room .fc-inline-score[data-fc-inline-score="1"] .fc-score-object-fact dt{
+    white-space:normal;
+    overflow-wrap:normal;
+  }
+  .fc-room .fc-reading-part .fc-work-fact dd,
+  .fc-room .fc-inline-score[data-fc-inline-score="0"] .fc-score-object-fact dd,
+  .fc-room .fc-inline-score[data-fc-inline-score="1"] .fc-score-object-fact dd{
+    min-width:0;
+    max-width:100%;
+    overflow-wrap:break-word;
+  }
+}
