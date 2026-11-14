@@ -83,7 +83,7 @@
     return '<li class="ins-card"><button type="button" class="ins-card-button" data-ins-open="'+i+
       '" aria-label="'+E(T('view')+' · '+L(photo.title))+'">'+
       '<span class="ins-card-image"><img src="'+E(photo.src)+'" alt="'+E(L(w.title)+' · '+L(photo.title))+
-      '" loading="lazy" decoding="async"><span class="ins-arrow" aria-hidden="true">↗︎</span></span>'+
+      '" loading="lazy" decoding="async"><span class="ins-arrow" aria-hidden="true"></span></span>'+
       '<span class="ins-card-copy"><span class="ins-card-number">'+N(i)+' <small>/ '+N(w.gallery.length-1)+'</small></span>'+
       '<span class="ins-card-name">'+E(L(photo.title))+'</span></span>'+
       (photo.note?'<span class="ins-card-note">'+E(L(photo.note))+'</span>':'')+
@@ -102,7 +102,7 @@
                 'src="./works/the-instrument/the-instrument-2/ship-in-klein-bottle-thumb.jpg">'+
               '<canvas class="ins-video-still" aria-hidden="true"></canvas>'+
               '<video class="ins-video-preview" muted loop playsinline webkit-playsinline preload="none" aria-hidden="true"></video>'+
-              '<span class="ins-video-open-mark" aria-hidden="true">↗︎</span>'+
+              '<span class="ins-video-open-mark" aria-hidden="true"></span>'+
             '</span>'+
             '<span class="ins-video-caption"><span class="ins-video-number">01 <small>/ 01</small></span><span class="ins-video-name">'+E(label)+'</span></span>'+
           '</button>'+
