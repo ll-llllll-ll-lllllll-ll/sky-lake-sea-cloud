@@ -153,7 +153,7 @@
       '<figure class="mp-preview-figure">'+
         '<img data-mp-image src="'+escape(imgs[0]||"")+'" alt="'+escape(title(TITLES[0]))+'" loading="lazy" decoding="async">'+
         '<figcaption><span data-mp-title>'+escape(ord[0])+'：'+escape(title(TITLES[0]))+'</span>'+
-          '<a data-mp-link href="'+escape(fullUrl(0))+'" target="_blank" rel="noopener noreferrer">'+escape(t.read)+' ↗</a>'+
+          '<a data-mp-link href="'+escape(fullUrl(0))+'" target="_blank" rel="noopener noreferrer">'+escape(t.read)+' <span class="site-link-arrow" aria-hidden="true"></span></a>'+
         '</figcaption>'+
       '</figure>'+
     '</section>';
@@ -179,7 +179,7 @@
       if(paragraphs && paragraphs.length===3){
         var visitText=title(item.visitLabel||{zh:"阅读《墟构师宣言》",en:"Read the Manifesto of the Ruinwright",ja:"本文を読む"});
         var link='<a class="mp-intro-visit" href="'+escape(item.visit)+
-          '" target="_blank" rel="noopener noreferrer">'+escape(visitText)+' ↗</a>';
+          '" target="_blank" rel="noopener noreferrer">'+escape(visitText)+' <span class="site-link-arrow" aria-hidden="true"></span></a>';
         var revised=paragraphs[0]+paragraphs[1]+
           '<div class="mp-intro-final">'+paragraphs[2]+link+'</div>';
         html=html.replace(match[0],'<div class="room-intro-stack">'+revised+'</div>');
