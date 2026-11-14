@@ -1117,7 +1117,7 @@
           '</div>'+
         '</div>'+
         '<p class="fc-score-manual">'+esc(i18n('hintI'))+'</p>'+
-        '<button class="fc-score-expand" type="button" data-fc-action="inspect">'+esc(i18n('score'))+' ↗︎</button>'+
+        '<button class="fc-score-expand" type="button" data-fc-action="inspect">'+esc(i18n('score'))+' <span class="site-link-arrow" aria-hidden="true"></span></button>'+
       '</div>';
     }
     // The actual twenty-two-frame print shares the film timeline with Folly I.
@@ -1142,7 +1142,7 @@
         '</div>'+
       '</div>'+
       '<p class="fc-score-manual">'+esc(i18n('hintII'))+'</p>'+
-      '<button class="fc-score-expand" type="button" data-fc-action="inspect">'+esc(i18n('score'))+' ↗︎</button>'+
+      '<button class="fc-score-expand" type="button" data-fc-action="inspect">'+esc(i18n('score'))+' <span class="site-link-arrow" aria-hidden="true"></span></button>'+
     '</div>';
   }
   function posterFor(si,index,kind){
@@ -1199,7 +1199,7 @@
           '<canvas class="fc-preview-frame" aria-hidden="true"></canvas>'+
           '<video class="fc-preview" playsinline webkit-playsinline preload="none" muted aria-hidden="true"></video>'+
           '<video class="fc-hover-video" playsinline webkit-playsinline preload="none" muted loop aria-hidden="true"></video>'+
-          '<span class="fc-card-filmwash" aria-hidden="true"></span><span class="fc-card-open-sign">↗︎</span></span>'+
+          '<span class="fc-card-filmwash" aria-hidden="true"></span><span class="fc-card-open-sign" aria-hidden="true"></span></span>'+
         '<span class="fc-card-copy"><span class="fc-card-count">'+pad(index+1)+' <small>/ '+pad(s.stages.length)+'</small></span>'+
         '<span class="fc-card-name">'+esc(label(stage))+'</span></span>'+
       '</button></li>';
@@ -1251,7 +1251,7 @@
               '<canvas class="fc-preview-frame" aria-hidden="true"></canvas>'+
             '<video class="fc-preview" playsinline webkit-playsinline preload="none" muted aria-hidden="true"></video>'+
             '<video class="fc-hover-video" playsinline webkit-playsinline preload="none" muted loop aria-hidden="true"></video>'+
-            '<span class="fc-card-open-sign">↗︎</span></span>'+
+            '<span class="fc-card-open-sign" aria-hidden="true"></span></span>'+
             '<span class="fc-card-copy"><span class="fc-card-count">01 <small>/ 01</small></span>'+
             '<span class="fc-card-name">'+esc(term('moving'))+'</span></span>'+
           '</button></div>'+
@@ -1279,13 +1279,13 @@
   // alongside the paper collapse; it is not the lever travel distance.
   var FOLLY_I_SCORE_FACTS={
     zh:{frames:'帧数',frameUnit:'帧',dimensions:'尺寸',
-      brief:'高 30 cm × 宽 20 cm；厚度 24 → 3 mm',
+      brief:'30 × 20 cm；厚 24–3 mm',
       value:'高 30 cm × 宽 20 cm；厚度 24 → 3 mm（随纸面坍塌同步变化）'},
     en:{frames:'Frames',frameUnit:'frames',dimensions:'Dimensions',
-      brief:'H 30 × W 20 cm; thickness 24 → 3 mm',
+      brief:'30 × 20 cm; thickness 24–3 mm',
       value:'H 30 × W 20 cm; thickness 24 → 3 mm (in sync with the paper’s collapse)'},
     ja:{frames:'コマ数',frameUnit:'コマ',dimensions:'寸法',
-      brief:'高さ 30 cm × 幅 20 cm；厚さ 24 → 3 mm',
+      brief:'30 × 20 cm；厚さ 24–3 mm',
       value:'高さ 30 cm × 幅 20 cm；厚さ 24 → 3 mm（紙面の崩壊に連動）'}
   };
   // Folly II is a 23 cm equilateral triangular body with three movable
@@ -1293,15 +1293,15 @@
   // inverted-triangle configurations (NOT thickness or fixed body size).
   var FOLLY_II_SCORE_FACTS={
     zh:{
-      brief:'主体边长 23 cm；展开边长 36 / 43 cm',
+      brief:'边长 23 cm；展开 36 / 43 cm',
       value:'主体为边长 23 cm 的等边三角形，另有三片可摆动的页面。三片页面平摊后，在主体上方倒置呈现边长 36 cm 的等边三角形（图1）；页面翻转后，倒置三角形的边长变为 43 cm（图2）。'
     },
     en:{
-      brief:'Base: 23 cm per side; unfolded: 36 / 43 cm per side',
+      brief:'Side 23 cm; unfolded 36 / 43 cm',
       value:'An equilateral triangular body measuring 23 cm per side, with three movable leaves. When the three leaves lie flat, an inverted equilateral triangle measuring 36 cm per side appears above the body (image 1). After the leaves are turned over, the inverted triangle measures 43 cm per side (image 2).'
     },
     ja:{
-      brief:'本体：一辺 23 cm；展開時：一辺 36 / 43 cm',
+      brief:'一辺 23 cm；展開 36 / 43 cm',
       value:'一辺 23 cm の正三角形を本体とし、可動する3枚のページを備える。3枚を平らに広げると、本体の上に一辺 36 cm の倒立した正三角形が現れる（図1）。ページを裏返すと、倒立した正三角形の一辺は 43 cm になる（図2）。'
     }
   };
@@ -1447,7 +1447,7 @@
         return '<article class="fc-related-entry">'+
           '<h3>'+esc(entry.name)+'</h3>'+
           '<p>'+esc(entry.description)+'</p>'+
-          '<a href="#'+entry.slug+'">'+esc(entry.link)+' <span aria-hidden="true">↗</span></a>'+
+          '<a href="#'+entry.slug+'">'+esc(entry.link)+' <span class="site-link-arrow" aria-hidden="true"></span></a>'+
         '</article>';
       }).join('')+'</div>'+
     '</section>';
@@ -1457,7 +1457,7 @@
         'aria-label="'+esc(chapterPart(0)+' · '+label(SERIES[0].title))+'">'+
         '<div class="fc-page-shadow" data-fc-page-shadow="0" aria-hidden="true"></div>'+
         sectionMarkup(SERIES[0],0)+
-        '<div class="fc-chapter-threshold" data-fc-chapter-threshold="0"><div class="fc-threshold-sticky"><button type="button" class="fc-threshold-link" data-fc-action="chapter-next" data-fc-series="1">'+esc(folioIntro('next'))+' · '+esc(workChapterLabel(1))+' <span>↗︎</span></button><div class="fc-threshold-progress" aria-hidden="true"><i></i></div></div></div>'+
+        '<div class="fc-chapter-threshold" data-fc-chapter-threshold="0"><div class="fc-threshold-sticky"><button type="button" class="fc-threshold-link" data-fc-action="chapter-next" data-fc-series="1">'+esc(folioIntro('next'))+' · '+esc(workChapterLabel(1))+' <span class="site-link-arrow" aria-hidden="true"></span></button><div class="fc-threshold-progress" aria-hidden="true"><i></i></div></div></div>'+
       '</section>'+
       '<section class="fc-chapter-page fc-chapter-page-two" data-fc-chapter-page="1" '+
         'aria-label="'+esc(chapterPart(1)+' · '+label(SERIES[1].title))+'">'+
@@ -1585,24 +1585,24 @@
     zh:[
       {
         structure:{
-          dimensions:'高约 200 cm；平台最大直径约 260 cm',
+          dimensions:'高约 200 cm · 最大直径约 260 cm',
           materials:'建筑残料、水泥、钢质构件、积水',
           materialsFull:'现场黄沙、砖块、钢筋与积水；另有水泥、钢缆、螺纹钢、连接件和铁球'
         },
         instrument:{
-          dimensions:'高 20 cm；直径 8 cm（玻璃容器）',
+          dimensions:'玻璃容器：高 20 × 直径 8 cm',
           materials:'锈铁残片、玻璃、电子元件',
           materialsFull:'废墟中的锈铁片及铁制工件残片、玻璃容器、电磁铁、外置滑动变阻器、循环开关电路与电线'
         }
       },
       {
         structure:{
-          dimensions:'塔高约 190 cm；沙盘直径约 400 cm',
+          dimensions:'塔高约 190 cm · 沙盘直径约 400 cm',
           materials:'现场沙土、混凝土、钢缆、玻璃',
           materialsFull:'现场沙土、混凝土块、钢管、钢缆、玻璃球、滑轮及连接件'
         },
         instrument:{
-          dimensions:'高约 60 cm；中央截面边长约 23 cm',
+          dimensions:'高约 60 cm · 中央边长约 23 cm',
           materials:'亚克力、天线、电子元件',
           materialsFull:'亚克力、特雷门琴、电磁铁与天线'
         }
@@ -1611,24 +1611,24 @@
     en:[
       {
         structure:{
-          dimensions:'H approx. 200 cm; maximum platform Ø approx. 260 cm',
+          dimensions:'H ~200 cm · max. Ø ~260 cm',
           materials:'Found construction debris, cement, steel, and standing water',
           materialsFull:'On-site sand, bricks, reinforcing steel, and standing water; cement, steel cables, threaded steel rods, connectors, and iron balls'
         },
         instrument:{
-          dimensions:'H 20 × Ø 8 cm (glass vessel)',
+          dimensions:'Glass vessel: H 20 × Ø 8 cm',
           materials:'Rusted iron fragments, glass, and electronics',
           materialsFull:'Rusted iron sheets and broken iron fittings found in the ruin, glass vessel, electromagnets, external slide rheostat, cyclic switching circuit, and wiring'
         }
       },
       {
         structure:{
-          dimensions:'Tower H approx. 190 cm; sand field Ø approx. 400 cm',
+          dimensions:'Tower H ~190 cm · sand field Ø ~400 cm',
           materials:'On-site sand, concrete, steel cables, and glass',
           materialsFull:'On-site sand, concrete blocks, steel tubing, steel cables, glass sphere, pulleys, and connectors'
         },
         instrument:{
-          dimensions:'H approx. 60 cm; central triangle side approx. 23 cm',
+          dimensions:'H ~60 cm · triangle side ~23 cm',
           materials:'Acrylic, antennas, and electronics',
           materialsFull:'Acrylic, theremin, electromagnets, and antennas'
         }
@@ -1637,24 +1637,24 @@
     ja:[
       {
         structure:{
-          dimensions:'高さ約 200 cm、台座の最大直径約 260 cm',
+          dimensions:'高さ約 200 cm · 最大直径約 260 cm',
           materials:'建築廃材、セメント、鋼製部材、滞留水',
           materialsFull:'現場の砂、煉瓦、鉄筋、滞留水。加えてセメント、鋼索、ねじ付き鉄筋、接合部材、鉄球'
         },
         instrument:{
-          dimensions:'高さ 20 cm、直径 8 cm（ガラス容器）',
+          dimensions:'ガラス容器：高さ 20 × 直径 8 cm',
           materials:'錆びた鉄片、ガラス、電子部品',
           materialsFull:'廃墟で見つけた錆びた鉄板や鉄製部品の破片、ガラス容器、電磁石、外付けスライド抵抗器、周期スイッチ回路、配線'
         }
       },
       {
         structure:{
-          dimensions:'塔の高さ約 190 cm、砂場の直径約 400 cm',
+          dimensions:'塔高約 190 cm · 砂場直径約 400 cm',
           materials:'現場の砂、コンクリート、鋼索、ガラス',
           materialsFull:'現場の砂、コンクリートブロック、鋼管、鋼索、ガラス球、滑車、接合部材'
         },
         instrument:{
-          dimensions:'高さ約 60 cm、中央断面の三角形の一辺約 23 cm',
+          dimensions:'高さ約 60 cm · 中央の一辺約 23 cm',
           materials:'アクリル、アンテナ、電子部品',
           materialsFull:'アクリル、テルミン、電磁石、アンテナ'
         }
@@ -2199,7 +2199,7 @@
       document.body.classList.remove('fc-score-expanded');
       score.querySelectorAll('[data-fc-action="score-expand"]').forEach(function(b){
         b.setAttribute('aria-expanded','false');
-        b.textContent=term('scoreOpen')+' ↗︎';
+        b.innerHTML=esc(term('scoreOpen'))+' <span class="site-link-arrow" aria-hidden="true"></span>';
       });
       score.querySelector('[data-fc-action="score-expand"]')?.focus({preventScroll:true});
     }
