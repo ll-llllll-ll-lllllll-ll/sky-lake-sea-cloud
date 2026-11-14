@@ -1313,7 +1313,7 @@ function renderRoom(item) {
 
   if (item.visit) {
     html += '<div class="room-visit-wrap"><a class="room-visit" href="' + item.visit + '" target="_blank" rel="noreferrer">' +
-      escapeHtml(localised(item.visitLabel)) + '<span aria-hidden="true"> ↗︎</span></a></div>';
+      escapeHtml(localised(item.visitLabel)) + '<span class="site-link-arrow" aria-hidden="true"></span></a></div>';
   }
 
   html += '<footer class="room-footer">' +
