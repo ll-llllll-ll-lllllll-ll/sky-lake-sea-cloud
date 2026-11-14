@@ -191,7 +191,7 @@
             '<video class="ft-media-video" data-ft-preview="'+e(block.id)+'" preload="metadata" muted loop playsinline webkit-playsinline aria-hidden="true" '+
               'src="'+e(block.src)+'"></video>':
             '<img class="ft-media-gif" src="'+e(block.src)+'" alt="" loading="lazy" decoding="async">')+
-          '<span class="ft-media-open-mark" aria-hidden="true">↗</span>'+
+          '<span class="ft-media-open-mark" aria-hidden="true"></span>'+
         '</span>'+
         '<span class="ft-media-card-caption"><span class="ft-media-card-count">01 <small>/ 01</small></span>'+
         '<span class="ft-media-card-name">'+e(block.file)+'</span></span>'+
