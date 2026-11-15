@@ -67,6 +67,22 @@ jobs:
                       # Strip potentially incompatible ICC metadata by default.
                       image.save(output, format="WEBP", quality=83, method=5, exact=True)
                       print(f"{source} -> {output}: {image.width}x{image.height}, {output.stat().st_size} bytes")
+                      # A separate, smaller sequence is important on iPhone:
+                      # pre-decoding 21 full-resolution RGBA frames can consume
+                      # ~190MB before even accounting for the page's videos.
+                      # Generate the same artwork/order at mobile display scale.
+                      mobile_width = 780 if folder == "score-1" else 1024
+                      mobile = image
+                      if image.width > mobile_width:
+                          mobile = image.resize(
+                              (mobile_width, max(1, round(image.height * mobile_width / image.width))),
+                              Image.Resampling.LANCZOS,
+                          )
+                      mobile_destination = destination / "mobile"
+                      mobile_destination.mkdir(parents=True, exist_ok=True)
+                      mobile_output = mobile_destination / filename
+                      mobile.save(mobile_output, format="WEBP", quality=84, method=5, exact=True)
+                      print(f"{source} -> {mobile_output}: {mobile.width}x{mobile.height}, {mobile_output.stat().st_size} bytes")
 
           # The authored compiled.png is a separate sheet revealed only when
           # Folly II's pointer is enabled, not one of the 21 moving frames.
