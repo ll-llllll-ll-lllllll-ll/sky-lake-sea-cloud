@@ -6438,3 +6438,32 @@ html:has(.fc-room){
     letter-spacing:.035em;
   }
 }
+
+
+/* v118 · A visible, quiet loader while the two Folly scores prepare.
+   No artwork is held off-screen without either this indicator or the
+   14.5-second fail-open limit. */
+.fc-room .fc-inline-score .fc-score-preparing{
+  flex-direction:column;
+  gap:12px;
+  color:rgba(43,50,43,.76);
+  font-size:clamp(12px,1.18vw,15px);
+  line-height:1.5;
+  font-variant-numeric:tabular-nums;
+}
+.fc-room .fc-inline-score .fc-score-preparing::before{
+  content:"";
+  display:block;
+  width:19px;
+  height:19px;
+  border:1.5px solid rgba(43,50,43,.18);
+  border-top-color:rgba(43,50,43,.75);
+  border-radius:50%;
+  animation:fc-score-loader-spin .85s linear infinite;
+}
+@keyframes fc-score-loader-spin{
+  to{transform:rotate(360deg);}
+}
+@media(prefers-reduced-motion:reduce){
+  .fc-room .fc-inline-score .fc-score-preparing::before{animation:none;}
+}
