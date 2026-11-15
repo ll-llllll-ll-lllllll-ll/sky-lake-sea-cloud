@@ -6390,3 +6390,51 @@ html:has(.fc-room){
     overflow-wrap:break-word;
   }
 }
+
+
+/* v117 · Folly scores: no partially prepared scrubbing.
+   The complete compact 15/21-frame WebP set is decoded before the
+   interactive sheet appears. The progress note takes the artwork's place
+   only while loading; descriptions and ordinary page scrolling remain. */
+.fc-room .fc-inline-score .fc-score-preparing{
+  position:absolute;
+  inset:0;
+  z-index:8;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  pointer-events:none;
+  color:rgba(43,50,43,.50);
+  font:400 clamp(12px,1.1vw,15px)/1.6 var(--serif),serif;
+  letter-spacing:.045em;
+  text-align:center;
+}
+.fc-room .fc-inline-score[data-fc-score-ready="loading"] .fc-score-preparing{
+  display:flex;
+}
+.fc-room .fc-inline-score[data-fc-score-ready="loading"] .fc-inline-score-device > .fc-score-cluster,
+.fc-room .fc-inline-score[data-fc-score-ready="loading"] .fc-inline-score-device > .fc-score2-diagonal{
+  opacity:0!important;
+  visibility:hidden!important;
+  pointer-events:none!important;
+}
+.fc-room .fc-inline-score[data-fc-score-ready="ready"] .fc-inline-score-device > .fc-score-cluster,
+.fc-room .fc-inline-score[data-fc-score-ready="partial"] .fc-inline-score-device > .fc-score-cluster{
+  opacity:1;
+  visibility:visible;
+}
+.fc-room .fc-inline-score[data-fc-score-ready="ready"] .fc-inline-score-device > .fc-score2-diagonal,
+.fc-room .fc-inline-score[data-fc-score-ready="partial"] .fc-inline-score-device > .fc-score2-diagonal{
+  opacity:1;
+  visibility:visible;
+}
+.fc-room .fc-inline-score .fc-score-predecoded-frame{
+  transition:none!important;
+  will-change:auto!important;
+}
+@media(max-width:700px){
+  .fc-room .fc-inline-score .fc-score-preparing{
+    font-size:12px;
+    letter-spacing:.035em;
+  }
+}
