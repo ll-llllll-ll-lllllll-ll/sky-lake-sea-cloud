@@ -690,10 +690,24 @@
   // memory footprint of the desktop source frames, especially on iOS Safari.
   // GitHub Actions writes both versions whenever the source artwork changes.
   var scoreCompactArtwork=scoreIOS||window.matchMedia('(max-width:700px)').matches;
+  // WebKit Safari has shown broken-image placeholders on some of the updated
+  // VP8X/ICC WebPs, including the very first still. The build now publishes
+  // reliable, alpha-preserving PNG equivalents, so Safari should not have
+  // to decode a WebP just to show the score at all.
+  var scoreSafariPng=SCORE_WEBKIT_SINGLE_FRAME;
   var scoreDisplayDir=scoreCompactArtwork?'optimized/mobile/':'optimized/';
   var scoreFrameSources=[
-    FILES_I.map(function(_,i){return LOCAL_VIDEO+'score-1/'+scoreDisplayDir+'score-1-'+(i+1)+'.webp?v=20261115-full-ready-v5';}),
-    SCORE2_FRAMES.map(function(number){return FOLD_BASE+scoreDisplayDir+number+'.webp?v=20261115-full-ready-v5';})
+    FILES_I.map(function(_,i){
+      var name='score-1-'+(i+1);
+      return scoreSafariPng
+        ?LOCAL_VIDEO+'score-1/optimized/safari/'+name+'.png?v=20261115-safari-png-v1'
+        :LOCAL_VIDEO+'score-1/'+scoreDisplayDir+name+'.webp?v=20261115-full-ready-v5';
+    }),
+    SCORE2_FRAMES.map(function(number){
+      return scoreSafariPng
+        ?FOLD_BASE+'optimized/safari/'+number+'.png?v=20261115-safari-png-v1'
+        :FOLD_BASE+scoreDisplayDir+number+'.webp?v=20261115-full-ready-v5';
+    })
   ];
   var scoreFrameCaches=[new Map(),new Map()];
   var scoreFramePending=new Map(),scoreFrameQueue=[],scoreFrameActive=0,scoreFrameGeneration=0;
@@ -1171,6 +1185,17 @@
         var count=isSecond?FILES_II.length:FILES_I.length;
         var frame=clamp(Number(img.dataset.frame)||count,1,count);
         var original=isSecond?scoreIIImage(frame):mechanicalImage(frame);
+        var png=scoreSource(isSecond?1:0,frame);
+        // Recover any old WebP still/inspection layer to the generated PNG.
+        // Never let an inaccessible GitHub raw-domain URL become the first
+        // Safari fallback when our own domain already hosts the PNG.
+        var current=img.getAttribute('src')||'';
+        if(scoreSafariPng&&current!==png&&
+           img.dataset.fcScoreRetryStage!=='png'){
+          img.dataset.fcScoreRetryStage='png';
+          img.src=png;
+          return;
+        }
         var raw='https://raw.githubusercontent.com/ll-llllll-ll-lllllll-ll/sky-lake-sea-cloud/main/works/ruin-garden/'+
           (isSecond?'score-2/'+SCORE2_FRAMES[frame-1]+'.webp':'score-1/score-1-'+frame+'.webp');
         var key=String(frame);
