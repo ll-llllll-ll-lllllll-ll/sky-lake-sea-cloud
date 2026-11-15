@@ -906,10 +906,9 @@
     pumpScoreFrameQueue();
     return promise;
   }
-  // All frames must be downloaded AND decoded before their interactive
-  // notation is shown. Each score has its own progress/ready state.
-  // Two slow background lanes per score avoid saturating the photo/video
-  // requests, and preserve the real 15→1 / 1→21 authoring order.
+  // Prepare both complete, optimized sequences without tying them to the
+  // interactive frame queue. A stalled fallback for one source must never
+  // block the other 35 frames or leave the artwork hidden indefinitely.
   function renderScorePreparation(si){
     var score=block(si)?.querySelector('[data-fc-inline-score]');
     if(!score)return;
@@ -918,15 +917,49 @@
     score.dataset.fcScoreReady=prep.status;
     var progress=score.querySelector('[data-fc-score-load-text]');
     if(progress){
+      var labels={zh:'加载中',en:'Loading',ja:'読み込み中'};
       var lang=state.lang||'zh';
-      var labels={zh:'乐谱准备中',en:'Preparing score',ja:'楽譜を準備中'};
-      progress.textContent=(labels[lang]||labels.zh)+' · '+prep.loaded.size+' / '+total;
+      progress.textContent=(labels[lang]||labels.zh)+'… '+prep.loaded.size+' / '+total;
     }
     var device=score.querySelector('.fc-inline-score-device');
     if(device)device.setAttribute('aria-busy',loading?'true':'false');
     score.querySelectorAll('[data-fc-action="score-pointer"],[data-fc-score2-handle],.fc-mechanical-v2-knob').forEach(function(input){
       input.disabled=loading;
       input.setAttribute('aria-disabled',loading?'true':'false');
+    });
+  }
+  function loadScoreReadyFrame(si,frame,token){
+    // Fetch ONLY the lightweight optimized WebP during preparation. Full-
+    // resolution originals remain a fallback for normal interactive viewing,
+    // never an expensive mandatory condition for revealing the score.
+    var existing=cachedScoreFrame(si,frame);
+    if(existing)return Promise.resolve(existing);
+    return new Promise(function(resolve){
+      var source=scoreSource(si,frame),img=new Image(),done=false,deadline=0;
+      img.decoding='async';
+      function finish(ok){
+        if(done)return;
+        done=true;
+        if(deadline)clearTimeout(deadline);
+        img.onload=null;img.onerror=null;
+        if(ok&&token===scoreFrameGeneration&&img.naturalWidth){
+          rememberScoreFrame(si,frame,img);
+          resolve(img);
+        }else resolve(null);
+      }
+      img.onload=function(){
+        // Safari's decode() promise can remain pending even after onload.
+        // Bound the optional explicit decode so progress cannot deadlock.
+        if(!img.decode){finish(true);return;}
+        Promise.race([
+          img.decode().catch(function(){return null;}),
+          new Promise(function(done){setTimeout(done,1600);})
+        ]).then(function(){finish(img.naturalWidth>0);});
+      };
+      img.onerror=function(){finish(false);};
+      deadline=setTimeout(function(){finish(false);},9500);
+      img.src=source;
+      if(img.complete&&img.naturalWidth)img.onload();
     });
   }
   function warmScoreFrames(si){
@@ -936,20 +969,25 @@
     var order=Array.from({length:total},function(_,i){return si===0?total-i:i+1;});
     prep.status='loading';
     renderScorePreparation(si);
+    function stopWaiting(){
+      if(prep.timer){clearTimeout(prep.timer);prep.timer=0;}
+      if(token!==scoreFrameGeneration)return;
+      prep.status=prep.loaded.size===total?'ready':'partial';
+      renderScorePreparation(si);
+      // Partial is a functional fallback; the user can now see the original
+      // score still and scrub while any unfinished frames continue loading.
+      updateInlineScore(si,inlineTime[si]);
+    }
+    // A genuine safety limit. Previously, required serial full-image retry
+    // could keep the entire artwork invisible for minutes on Safari.
     prep.timer=setTimeout(function(){
       if(token!==scoreFrameGeneration||prep.status!=='loading')return;
-      // An offline or stalled request must not leave artwork hidden forever.
-      prep.status='partial';
-      renderScorePreparation(si);
-      updateInlineScore(si,inlineTime[si]);
-    },48000);
+      stopWaiting();
+    },14500);
     async function lane(start){
       for(var i=start;i<order.length;i+=2){
         if(token!==scoreFrameGeneration||!scene||!scene.isConnected)return;
-        var frame=order[i],image=await getScoreFrame(si,frame,false);
-        if(token!==scoreFrameGeneration)return;
-        if(!image||!image.naturalWidth)
-          image=await getScoreFrame(si,frame,true);
+        var frame=order[i],image=await loadScoreReadyFrame(si,frame,token);
         if(token!==scoreFrameGeneration)return;
         if(image&&image.naturalWidth){
           prep.loaded.add(frame);
@@ -960,17 +998,10 @@
     }
     prep.promise=Promise.all([lane(0),lane(1)]).then(function(){
       if(token!==scoreFrameGeneration||!scene||!scene.isConnected)return;
-      if(prep.timer){clearTimeout(prep.timer);prep.timer=0;}
-      prep.status=prep.loaded.size===total?'ready':'partial';
-      renderScorePreparation(si);
-      // The first visible image now comes from a complete predecoded set.
-      updateInlineScore(si,inlineTime[si]);
+      stopWaiting();
     }).catch(function(){
       if(token!==scoreFrameGeneration)return;
-      if(prep.timer){clearTimeout(prep.timer);prep.timer=0;}
-      prep.status='partial';
-      renderScorePreparation(si);
-      updateInlineScore(si,inlineTime[si]);
+      stopWaiting();
     });
     return prep.promise;
   }
@@ -1483,7 +1514,7 @@
       zh:['显示指针','隐藏指针'],en:['Show pointers','Hide pointers'],
       ja:['指針を表示','指針を非表示']
     }[state.lang]||['显示指针','隐藏指针'];
-    return '<section class="fc-inline-score" data-fc-inline-score="'+si+'" data-fc-pointers="off" data-fc-score-ready="loading">'+
+    return '<section class="fc-inline-score" data-fc-inline-score="'+si+'" data-fc-pointers="off" data-fc-score-ready="idle">'+
       '<div class="fc-inline-score-main">'+
         '<div class="fc-inline-score-device">'+scoreMarkup(s)+(si===1?score2LeverMarkup():'')+
           '<div class="fc-score-preparing" role="status" aria-live="polite">'+
