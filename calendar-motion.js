@@ -28,7 +28,7 @@
       mark.textContent = value;
     } else {
       Array.from(String(value)).forEach(function(character) {
-        if (/\\s/.test(character)) return;
+        if (character.trim() === "") return;
         var glyph = document.createElement("span");
         glyph.className = "home-day-vertical-glyph";
         glyph.textContent = character;
