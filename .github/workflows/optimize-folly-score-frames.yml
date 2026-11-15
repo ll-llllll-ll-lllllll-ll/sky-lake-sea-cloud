@@ -83,6 +83,23 @@ jobs:
                       mobile_output = mobile_destination / filename
                       mobile.save(mobile_output, format="WEBP", quality=84, method=5, exact=True)
                       print(f"{source} -> {mobile_output}: {mobile.width}x{mobile.height}, {mobile_output.stat().st_size} bytes")
+                      # Reliable Safari fallback: Safari versions that reject
+                      # the WebP VP8X/ICC/alpha combination must receive an
+                      # actual PNG, not another URL pointing at a WebP.
+                      # Use display-sized transparent artwork to avoid
+                      # pre-decoding the large archival originals.
+                      safari_width = 900 if folder == "score-1" else 1120
+                      safari = image
+                      if image.width > safari_width:
+                          safari = image.resize(
+                              (safari_width, max(1, round(image.height * safari_width / image.width))),
+                              Image.Resampling.LANCZOS,
+                          )
+                      safari_destination = destination / "safari"
+                      safari_destination.mkdir(parents=True, exist_ok=True)
+                      safari_output = safari_destination / filename.replace(".webp", ".png")
+                      safari.save(safari_output, format="PNG", optimize=True, compress_level=6)
+                      print(f"{source} -> {safari_output}: {safari.width}x{safari.height}, {safari_output.stat().st_size} bytes")
 
           # The authored compiled.png is a separate sheet revealed only when
           # Folly II's pointer is enabled, not one of the 21 moving frames.
