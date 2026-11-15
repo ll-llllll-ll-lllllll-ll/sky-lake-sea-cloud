@@ -67,6 +67,17 @@
       group.insertBefore(former, title.nextSibling);
     }
 
+    // Give the date its own vertical text box too. Keeping the parent
+    // horizontal avoids WebKit flex/writing-mode sizing pushing the day name
+    // outside the viewport on both macOS Safari and iOS Safari.
+    var dateMark = group.querySelector(".home-day-calligraphy-date");
+    if (dateMark && !dateMark.querySelector(".home-day-date-vertical-text")) {
+      var dateText = document.createElement("span");
+      dateText.className = "home-day-date-vertical-text";
+      dateText.textContent = dateMark.textContent.trim();
+      dateMark.textContent = "";
+      dateMark.appendChild(dateText);
+    }
     group.classList.add("has-calendar-trigger");
   }
 
