@@ -87,18 +87,15 @@ const ambientMeta = {
 const calendarIntro = {
   "zh": [
     "天空、海洋、湖泊与云层，在这册日历里如天气般自行更替。每日一段短短的风景，让目光暂时失焦，从琐事间移开，重新望向那些早已退入生活背景的事物。",
-    "我把这些短片看作香水店里的一小碟咖啡豆。在繁复的香气之间，低头轻嗅，感官便慢慢清明。",
-    "我也愿自己的创作保有这样的去处：看过世界的复杂，仍能回到这里，抬头看一眼天空。"
+    "我把这些短片看作香水店里的一小碟咖啡豆。在繁复的香气之间，低头轻嗅，感官便慢慢清明。"
   ],
   "en": [
     "Sky, sea, lakes, and clouds change from day to day in this calendar, as freely as the weather. Each brief film lets the gaze drift out of focus, away from daily concerns and back to things that have quietly receded into the background of life.",
-    "I think of these films as a small dish of coffee beans in a perfume shop. After so many mingling scents, a moment to let the senses grow clear again.",
-    "I hope my own work can leave room for such a return: to look closely at the world's complexities, and still come back here to look up at the sky."
+    "I think of these films as a small dish of coffee beans in a perfume shop. After so many mingling scents, a moment to let the senses grow clear again."
   ],
   "ja": [
     "空、海、湖、雲。この暦では、日々の風景が天気のようにおのずと移り変わる。短い映像を眺めるあいだ、視線は日々の雑事からふと焦点を外し、暮らしの背景へと退いていたものに再び向かう。",
-    "私にとってこれらの映像は、香水店に置かれた小皿のコーヒー豆のようなものだ。いくつもの香りに触れたあと、感覚をそっと澄ませてくれる。",
-    "自分の制作にも、そんな帰り道を残しておきたい。世界の複雑さを見つめたあとも、ここへ戻り、また空を見上げられるように。"
+    "私にとってこれらの映像は、香水店に置かれた小皿のコーヒー豆のようなものだ。いくつもの香りに触れたあと、感覚をそっと澄ませてくれる。"
   ]
 };
 
