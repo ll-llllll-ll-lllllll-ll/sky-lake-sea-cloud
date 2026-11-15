@@ -18,6 +18,26 @@
     return video.dataset.originalWebm || video.getAttribute("src") || "";
   }
 
+  // Safari can lose the intrinsic width of a vertical-writing native button
+  // and push the whole heading out of view. Construct the glyph columns with
+  // ordinary horizontal boxes; rotate complete Latin/numeric lines as units.
+  function makeVerticalText(value, cls, wholeLine) {
+    var mark = document.createElement("span");
+    mark.className = cls + (wholeLine ? " is-rotated-line" : " is-glyph-column");
+    if (wholeLine) {
+      mark.textContent = value;
+    } else {
+      Array.from(String(value)).forEach(function(character) {
+        if (/\\s/.test(character)) return;
+        var glyph = document.createElement("span");
+        glyph.className = "home-day-vertical-glyph";
+        glyph.textContent = character;
+        mark.appendChild(glyph);
+      });
+    }
+    return mark;
+  }
+
   function setCalendarEntry(home) {
     if (!home) return;
     var group = home.querySelector(".home-day-calligraphy");
@@ -30,13 +50,9 @@
       var titleButton = document.createElement("button");
       titleButton.type = "button";
       titleButton.className = title.className;
-      // Safari can reset writing-mode inside native buttons. Keep a
-      // dedicated vertical text box within the clickable calendar control.
       var titleText = title.textContent.trim();
-      var verticalText = document.createElement("span");
-      verticalText.className = "home-day-title-vertical-text";
-      verticalText.textContent = titleText;
-      titleButton.appendChild(verticalText);
+      titleButton.appendChild(makeVerticalText(
+        titleText, "home-day-title-vertical-text", state.lang === "en"));
       titleButton.dataset.action = "toggle-calendar";
       titleButton.setAttribute("aria-label", titleText + " · " + labels[state.lang].calendar);
       title.replaceWith(titleButton);
@@ -53,14 +69,11 @@
 
     // Physically move the existing link so the former top-left entry disappears.
     if (former) {
-      // A separate vertical text box makes the compact calendar label
-      // reliable in mobile Safari, where writing-mode on buttons may be
-      // ignored or used incorrectly during flex intrinsic sizing.
+      // One glyph per line for Chinese/Japanese, as in the Chrome reference;
+      // the English phrase is rotated together, not broken character-by-character.
       former.textContent = "";
-      var calendarText = document.createElement("span");
-      calendarText.className = "home-day-calendar-link-text";
-      calendarText.textContent = cycleName;
-      former.appendChild(calendarText);
+      former.appendChild(makeVerticalText(
+        cycleName, "home-day-calendar-link-text", state.lang === "en"));
       former.setAttribute("aria-label", cycleName);
       former.classList.remove("calendar-toggle");
       former.classList.add("home-day-calendar-link");
@@ -72,9 +85,8 @@
     // outside the viewport on both macOS Safari and iOS Safari.
     var dateMark = group.querySelector(".home-day-calligraphy-date");
     if (dateMark && !dateMark.querySelector(".home-day-date-vertical-text")) {
-      var dateText = document.createElement("span");
-      dateText.className = "home-day-date-vertical-text";
-      dateText.textContent = dateMark.textContent.trim();
+      var dateText = makeVerticalText(
+        dateMark.textContent.trim(), "home-day-date-vertical-text", true);
       dateMark.textContent = "";
       dateMark.appendChild(dateText);
     }
