@@ -53,7 +53,14 @@
 
     // Physically move the existing link so the former top-left entry disappears.
     if (former) {
-      former.textContent = cycleName;
+      // A separate vertical text box makes the compact calendar label
+      // reliable in mobile Safari, where writing-mode on buttons may be
+      // ignored or used incorrectly during flex intrinsic sizing.
+      former.textContent = "";
+      var calendarText = document.createElement("span");
+      calendarText.className = "home-day-calendar-link-text";
+      calendarText.textContent = cycleName;
+      former.appendChild(calendarText);
       former.setAttribute("aria-label", cycleName);
       former.classList.remove("calendar-toggle");
       former.classList.add("home-day-calendar-link");
