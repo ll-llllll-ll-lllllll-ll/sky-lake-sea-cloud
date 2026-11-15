@@ -686,15 +686,26 @@
      canvas engine this never recompresses images in the visitor's browser,
      never decodes all 22 originals at entry, and never erases a visible
      frame while its successor is still being decoded. */
+  // Mobile-specific display WebPs keep the complete decoded set below the
+  // memory footprint of the desktop source frames, especially on iOS Safari.
+  // GitHub Actions writes both versions whenever the source artwork changes.
+  var scoreCompactArtwork=scoreIOS||window.matchMedia('(max-width:700px)').matches;
+  var scoreDisplayDir=scoreCompactArtwork?'optimized/mobile/':'optimized/';
   var scoreFrameSources=[
-    FILES_I.map(function(_,i){return LOCAL_VIDEO+'score-1/optimized/score-1-'+(i+1)+'.webp?v=20261107-refreshed-v4';}),
-    SCORE2_FRAMES.map(function(number){return FOLD_BASE+'optimized/'+number+'.webp?v=20261105-v3';})
+    FILES_I.map(function(_,i){return LOCAL_VIDEO+'score-1/'+scoreDisplayDir+'score-1-'+(i+1)+'.webp?v=20261115-full-ready-v5';}),
+    SCORE2_FRAMES.map(function(number){return FOLD_BASE+scoreDisplayDir+number+'.webp?v=20261115-full-ready-v5';})
   ];
   var scoreFrameCaches=[new Map(),new Map()];
   var scoreFramePending=new Map(),scoreFrameQueue=[],scoreFrameActive=0,scoreFrameGeneration=0;
   var scoreFramePlayers=new WeakMap();
-  var scoreFrameLimit=SCORE_WEBKIT_SINGLE_FRAME?4:7;
+  // The previous 4/7-image LRU discarded already decoded frames, forcing
+  // the first full scrub to decode them all over again. Retain exactly
+  // the authored 15 / 21 optimized frames while the Folly page is mounted.
+  var scoreFrameLimit=[FILES_I.length,FILES_II.length];
   var scoreFrameParallel=SCORE_WEBKIT_SINGLE_FRAME?1:2;
+  var scorePreparation=[0,1].map(function(){
+    return {status:'idle',loaded:new Set(),failed:new Set(),promise:null,timer:0};
+  });
 
   // Network-warm the small, optimized WebP sequence before the visitor
   // reaches each score. Fetching compressed bytes fills the HTTP cache
@@ -785,6 +796,11 @@
     scoreFramePending.clear();
     scoreFrameActive=0;
     scoreFrameCaches.forEach(function(cache){cache.clear();});
+    scorePreparation.forEach(function(prep){
+      if(prep.timer)clearTimeout(prep.timer);
+      prep.timer=0;prep.status='idle';prep.loaded.clear();
+      prep.failed.clear();prep.promise=null;
+    });
   }
   function cachedScoreFrame(si,frame){
     var cache=scoreFrameCaches[si];
@@ -798,7 +814,7 @@
     var cache=scoreFrameCaches[si];
     cache.delete(frame);
     cache.set(frame,image);
-    while(cache.size>scoreFrameLimit)cache.delete(cache.keys().next().value);
+    while(cache.size>scoreFrameLimit[si])cache.delete(cache.keys().next().value);
   }
   function scoreSource(si,frame){
     return scoreFrameSources[si][frame-1];
@@ -890,13 +906,73 @@
     pumpScoreFrameQueue();
     return promise;
   }
+  // All frames must be downloaded AND decoded before their interactive
+  // notation is shown. Each score has its own progress/ready state.
+  // Two slow background lanes per score avoid saturating the photo/video
+  // requests, and preserve the real 15→1 / 1→21 authoring order.
+  function renderScorePreparation(si){
+    var score=block(si)?.querySelector('[data-fc-inline-score]');
+    if(!score)return;
+    var prep=scorePreparation[si],total=scoreFrameSources[si].length;
+    var loading=prep.status==='loading';
+    score.dataset.fcScoreReady=prep.status;
+    var progress=score.querySelector('[data-fc-score-load-text]');
+    if(progress){
+      var lang=state.lang||'zh';
+      var labels={zh:'乐谱准备中',en:'Preparing score',ja:'楽譜を準備中'};
+      progress.textContent=(labels[lang]||labels.zh)+' · '+prep.loaded.size+' / '+total;
+    }
+    var device=score.querySelector('.fc-inline-score-device');
+    if(device)device.setAttribute('aria-busy',loading?'true':'false');
+    score.querySelectorAll('[data-fc-action="score-pointer"],[data-fc-score2-handle],.fc-mechanical-v2-knob').forEach(function(input){
+      input.disabled=loading;
+      input.setAttribute('aria-disabled',loading?'true':'false');
+    });
+  }
   function warmScoreFrames(si){
-    var start=si===0?FILES_I.length:1,step=si===0?-1:1;
-    getScoreFrame(si,start,true);
-    // Keep three adjacent starting frames decoded in the bounded LRU.
-    getScoreFrame(si,start+step,false);
-    getScoreFrame(si,start+2*step,false);
-    startScoreNetworkWarmup(si);
+    var prep=scorePreparation[si];
+    if(prep.status!=='idle')return prep.promise||Promise.resolve();
+    var token=scoreFrameGeneration,total=scoreFrameSources[si].length;
+    var order=Array.from({length:total},function(_,i){return si===0?total-i:i+1;});
+    prep.status='loading';
+    renderScorePreparation(si);
+    prep.timer=setTimeout(function(){
+      if(token!==scoreFrameGeneration||prep.status!=='loading')return;
+      // An offline or stalled request must not leave artwork hidden forever.
+      prep.status='partial';
+      renderScorePreparation(si);
+      updateInlineScore(si,inlineTime[si]);
+    },48000);
+    async function lane(start){
+      for(var i=start;i<order.length;i+=2){
+        if(token!==scoreFrameGeneration||!scene||!scene.isConnected)return;
+        var frame=order[i],image=await getScoreFrame(si,frame,false);
+        if(token!==scoreFrameGeneration)return;
+        if(!image||!image.naturalWidth)
+          image=await getScoreFrame(si,frame,true);
+        if(token!==scoreFrameGeneration)return;
+        if(image&&image.naturalWidth){
+          prep.loaded.add(frame);
+          prep.failed.delete(frame);
+        }else prep.failed.add(frame);
+        renderScorePreparation(si);
+      }
+    }
+    prep.promise=Promise.all([lane(0),lane(1)]).then(function(){
+      if(token!==scoreFrameGeneration||!scene||!scene.isConnected)return;
+      if(prep.timer){clearTimeout(prep.timer);prep.timer=0;}
+      prep.status=prep.loaded.size===total?'ready':'partial';
+      renderScorePreparation(si);
+      // The first visible image now comes from a complete predecoded set.
+      updateInlineScore(si,inlineTime[si]);
+    }).catch(function(){
+      if(token!==scoreFrameGeneration)return;
+      if(prep.timer){clearTimeout(prep.timer);prep.timer=0;}
+      prep.status='partial';
+      renderScorePreparation(si);
+      updateInlineScore(si,inlineTime[si]);
+    });
+    return prep.promise;
   }
   // Preserve the authored still as a permanent fallback. Two independent
   // overlay images alternate only after the incoming frame is fully loaded.
@@ -926,11 +1002,56 @@
     scoreFramePlayers.set(holder,viewer);
     return viewer;
   }
+  function showPredecodedScoreFrame(viewer,si,frame,inspect){
+    // The inline score is the primary interaction. Display already decoded
+    // Image objects themselves, instead of assigning their URLs into a new
+    // image buffer (which triggers another Safari image decode).
+    if(inspect||scorePreparation[si].status!=='ready'||
+       !viewer.holder.closest('[data-fc-inline-score]'))return false;
+    if(!viewer.readyLayers){
+      var count=scoreFrameSources[si].length,frames=[];
+      for(var i=1;i<=count;i++){
+        var img=scoreFrameCaches[si].get(i);
+        if(!img||!img.naturalWidth)return false;
+        frames[i]=img;
+      }
+      var sheet=viewer.holder.querySelector(
+        si===0?'[data-fc-mechanical-sheet]':'[data-fc-score2-sheet]');
+      if(!sheet)return false;
+      viewer.request++;
+      viewer.loading=false;
+      viewer.layers.forEach(function(layer){
+        layer.style.opacity='0';
+        layer.style.display='none';
+      });
+      frames.slice(1).forEach(function(img,i){
+        img.className='fc-score-frame-playback fc-score-predecoded-frame';
+        img.alt='';img.draggable=false;
+        img.decoding='sync';img.loading='eager';
+        img.setAttribute('aria-hidden','true');
+        img.dataset.frame=String(i+1);
+        img.style.opacity='0';
+        sheet.appendChild(img);
+      });
+      viewer.readyLayers=frames;
+      viewer.shown=null;
+      sheet.classList.add('fc-score-playback-active');
+    }
+    if(viewer.shown!==frame){
+      if(viewer.shown&&viewer.readyLayers[viewer.shown])
+        viewer.readyLayers[viewer.shown].style.opacity='0';
+      viewer.readyLayers[frame].style.opacity='1';
+      viewer.shown=frame;
+    }
+    viewer.wanted=frame;
+    return true;
+  }
   function presentScoreFrame(holder,si,frame,inspect){
     var viewer=scoreFramePlayer(holder,si,inspect);
     if(!viewer)return false;
     var count=si===0?FILES_I.length:FILES_II.length;
     frame=clamp(frame,1,count);
+    if(showPredecodedScoreFrame(viewer,si,frame,inspect))return true;
     if(viewer.shown===frame){
       // A rapid gesture may return to the current image while another frame
       // is decoding. Cancel that stale request instead of showing it later.
@@ -1362,9 +1483,11 @@
       zh:['显示指针','隐藏指针'],en:['Show pointers','Hide pointers'],
       ja:['指針を表示','指針を非表示']
     }[state.lang]||['显示指针','隐藏指针'];
-    return '<section class="fc-inline-score" data-fc-inline-score="'+si+'" data-fc-pointers="off">'+
+    return '<section class="fc-inline-score" data-fc-inline-score="'+si+'" data-fc-pointers="off" data-fc-score-ready="loading">'+
       '<div class="fc-inline-score-main">'+
-        '<div class="fc-inline-score-device">'+scoreMarkup(s)+(si===1?score2LeverMarkup():'')+'</div>'+
+        '<div class="fc-inline-score-device">'+scoreMarkup(s)+(si===1?score2LeverMarkup():'')+
+          '<div class="fc-score-preparing" role="status" aria-live="polite">'+
+            '<span data-fc-score-load-text></span></div></div>'+
         '<h3 class="fc-score-caption">'+esc(scoreHeadingTitle(si))+'</h3>'+
         scoreFactsMarkup(si)+
         '<div class="fc-score-controls-bottom">'+
@@ -3586,7 +3709,11 @@
     watchMechanicalScoreSizes();
     watchSafariScoreImageErrors();
     wireCompiledScoreFallback();
-    // Existing 2-second MP4 stills and instrument videos remain deferred;
+    // Begin both decoded score sequences immediately on Folly entry.
+    // The score remains covered until all its optimized frames are ready.
+    warmScoreFrames(0);
+    warmScoreFrames(1);
+    // Existing MP4 stills and instrument videos remain deferred;
     // no new HTTP request is issued until a particular chapter is nearby.
     if('IntersectionObserver' in window){
       io=new IntersectionObserver(function(entries){
