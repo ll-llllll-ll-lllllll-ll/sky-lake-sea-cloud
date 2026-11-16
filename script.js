@@ -2836,6 +2836,7 @@ render();
         var name = String(event && event.detail && event.detail.name || "");
         var entry = miniMarkerEntries.find(function(item) { return item.site.name === name; });
         if (!entry) return;
+        delete shell.dataset.ruinMiniPendingFocus;
         ruinMiniManualFocus = true;
         map.stop();
         var coords = ruinMiniGeoToSvg(entry.site.lat, entry.site.lng);
@@ -2872,10 +2873,6 @@ render();
         shell.removeEventListener("ruin-mini-index-flyto", flyToMiniIndexSite);
       };
       shell.dispatchEvent(new CustomEvent("ruin-mini-map-ready"));
-      if (shell.dataset.ruinMiniPendingFocus) {
-        flyToMiniIndexSite({ detail: { name: shell.dataset.ruinMiniPendingFocus } });
-        delete shell.dataset.ruinMiniPendingFocus;
-      }
 
       /* Mirror ruin-archive.site exactly: once zoom passes 0, all markers
          progressively fade as the view magnifies, reaching 30% opacity at
@@ -2988,7 +2985,11 @@ render();
       ];
       var startupTargetZoom = Math.min(map.getMaxZoom(), map.getZoom() + startupZoomDelta);
 
-      if (reducedMotion) {
+      // A site chosen before Leaflet finishes loading takes precedence over the
+      // five-second introductory flight: never recenter it afterward.
+      if (shell.dataset.ruinMiniPendingFocus) {
+        flyToMiniIndexSite({ detail: { name: shell.dataset.ruinMiniPendingFocus } });
+      } else if (reducedMotion) {
         map.setView(startupTarget, startupTargetZoom, { animate: false });
       } else {
         startupFlyActive = true;

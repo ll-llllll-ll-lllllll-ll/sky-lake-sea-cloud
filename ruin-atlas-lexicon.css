@@ -96,7 +96,7 @@
 }
 .room-view[data-room="ruin-atlas"] .ruin-atlas-index-tag.is-active {
   border-color: var(--ruin-mini-line-strong, #777);
-  background: color-mix(in srgb, var(--ruin-mini-text) 7%, transparent);
+  background: color-mix(in srgb, var(--ruin-mini-text, #1c1c1a) 7%, transparent);
 }
 .room-view[data-room="ruin-atlas"] .ruin-atlas-index-tag:disabled {
   opacity: .21;
