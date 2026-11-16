@@ -30,8 +30,15 @@
       Array.from(String(value)).forEach(function(character) {
         if (character.trim() === "") return;
         var glyph = document.createElement("span");
-        glyph.className = "home-day-vertical-glyph";
-        glyph.textContent = character;
+        // In the vertical calendar label, the separators are actual vertical
+        // hairlines, not horizontal full-width minus characters.
+        if (/[－—–―-]/.test(character)) {
+          glyph.className = "home-day-vertical-glyph home-day-vertical-separator";
+          glyph.setAttribute("aria-hidden", "true");
+        } else {
+          glyph.className = "home-day-vertical-glyph";
+          glyph.textContent = character;
+        }
         mark.appendChild(glyph);
       });
     }
