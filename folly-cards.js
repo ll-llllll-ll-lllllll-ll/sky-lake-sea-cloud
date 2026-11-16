@@ -1646,9 +1646,9 @@
       '</section>';
   }
   var FOLLY_INTRO={
-    zh:{lead:'一座废墟园林，从建成之时便开始排练自己的消失。它借用废墟中已有的重力、风化与断裂，把结构、乐器和观看者放进同一场不可重演的演出；当材料终于松手，建筑的终点便在眼前短暂显形。',about:'关于废墟园林',contents:'作品目录',next:'继续阅读'},
-    en:{lead:'A Folly rehearses its own disappearance from the moment it is built. Working with the gravity, weathering and fractures already present in a ruin, it gathers structure, instrument and observer into an unrepeatable performance. When matter finally lets go, the endpoint of architecture appears for a moment.',about:'About Folly',contents:'Works',next:'Continue reading'},
-    ja:{lead:'フォリーは、建てられた瞬間から自らの消滅を稽古し始める。廃墟にすでにある重力、風化、亀裂を借りて、構造と楽器と見る者を一度かぎりの上演に置く。材料がついに手を放すとき、建築の終点が一瞬だけ姿を現す。',about:'フォリーについて',contents:'作品目次',next:'続きを読む'}
+    zh:{lead:'一座废墟园林，从建成之时便开始排练自己的坍塌。\\n\\n它被建造在仍不断崩解的废墟之中。墟构师将新的构造接入残构，借用瓦砾间那些偶然、无序而尚未平息的力量，使细微的牵引与位移沿着机械连接传至废墟乐器，化作敲击、振动与不断变化的声响。那些原本难以察觉的力量，由此获得了可以被聆听的形态，汇成一场随废墟变化而演进的演奏。\\n\\n随着演奏持续，原本经过编排的运动逐渐失序，乐器在其中耗损，园林的结构也在愈发混沌的运动中倾覆。演奏结束之后，余下的形体仍留在废墟之中，继续交给时间。',about:'关于废墟园林',contents:'作品目录',next:'继续阅读'},
+    en:{lead:'A Folly begins rehearsing its own collapse from the moment it is built.\\n\\nIt is constructed within ruins that are still coming apart. The Ruinwright connects new structures to the surviving remains, drawing on the chance, disorderly forces still at work among the rubble. Subtle pulls and shifts travel through mechanical linkages to the ruin instruments, becoming knocks, vibrations, and ever-changing sounds. Forces that could scarcely be perceived take on an audible form, gathering into a performance that unfolds with the changing ruins.\\n\\nAs the performance continues, movements once carefully arranged gradually fall out of order. The instruments wear down, while the garden\'s structures give way amid the growing disorder. When the performance ends, what remains stays among the ruins, left to time.',about:'About Folly',contents:'Works',next:'Continue reading'},
+    ja:{lead:'一つのフォリーは、完成したときから自らの崩壊を稽古し始める。\\n\\nそれは、今なお崩れ続ける廃墟の中に建てられる。墟構師は新たな構造を残構につなぎ、瓦礫のあいだに残る偶発的で無秩序な、まだ鎮まらない力を借りる。かすかな引っ張りや変位は機械的な連結を通じて廃墟楽器へと伝わり、打撃や振動、絶えず変化する音となる。それまでほとんど感じ取れなかった力は、こうして耳で捉えられる形を得て、廃墟の変化とともに展開する一度の演奏へと集まっていく。\\n\\n演奏が続くにつれ、当初は綿密に組み立てられていた動きが次第に秩序を失い、楽器は摩耗し、園林の構造も混沌を増す運動の中で崩れ落ちる。演奏が終わったあとも、残された形は廃墟の中にとどまり、その先を時間に委ねる。',about:'フォリーについて',contents:'作品目次',next:'続きを読む'}
   };
   var INSTRUMENT_TITLES={
     zh:['锈血心脏','以太狭间'],
@@ -1910,7 +1910,10 @@
           '<h1>'+esc(localised(item.title))+'</h1></div></div>'+
         '<div class="fc-scroll-content" data-fc-chapter-body>'+
         '<section class="fc-about" aria-label="'+esc(folioIntro('about'))+'">'+
-          '<h2>'+esc(folioIntro('about'))+'</h2><p>'+esc(folioIntro('lead'))+'</p>'+
+          '<h2>'+esc(folioIntro('about'))+'</h2>'+
+          folioIntro('lead').split(/\\n\\n+/).map(function(paragraph){
+            return '<p>'+esc(paragraph)+'</p>';
+          }).join('')+
           '<nav class="fc-about-index" aria-label="'+esc(folioIntro('contents'))+'">'+
             '<ol class="fc-about-list">'+SERIES.map(function(series,i){return '<li><a href="#fc-chapter-'+(i+1)+'" data-fc-chapter-link="'+i+'"><span>'+esc(workChapterLabel(i))+'</span><span class="fc-about-year">（'+series.year+'）</span></a></li>';}).join('')+'</ol>'+
           '</nav></section>'+chapterBodyMarkup()+'</div>'+
