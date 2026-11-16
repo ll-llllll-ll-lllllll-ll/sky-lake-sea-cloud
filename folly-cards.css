@@ -6467,3 +6467,15 @@ html:has(.fc-room){
 @media(prefers-reduced-motion:reduce){
   .fc-room .fc-inline-score .fc-score-preparing::before{animation:none;}
 }
+
+
+/* v120 · Three short paragraphs in the Folly introduction.
+   Preserve the existing restrained type scale and reading width. */
+.fc-room .fc-about > p + p{
+  margin-top:1.2em;
+}
+@media(max-width:700px){
+  .fc-room .fc-about > p + p{
+    margin-top:1.15em;
+  }
+}
