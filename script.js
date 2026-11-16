@@ -151,9 +151,21 @@ const collections = [
     group: "collection",
     title: { zh: "墟域图·遗构馆", en: "Ruin Archive", ja: "墟域図・遺構館" },
     intro: {
-      zh: "一张由城市、废墟与断裂共同构成的文明地表。",
-      en: "A surface of civilization composed of cities, ruins, and fractures.",
-      ja: "都市、廃墟、断裂によって構成された文明の地表。"
+      zh: [
+        "人造的疆域不断向地表扩张，许多建筑与设施早在我们理解它们之前，便已成为熟悉的日常。直到墙体剥落、路径断裂，那些曾被完整外貌遮蔽的构造才逐渐显露。失去用途的造物仍在原地承重、下坠，继续经受风雨、侵蚀与植物的生长。",
+        "我在漫游与勘察中记录这些残构。旧有的地名能够指认它们的过去，却未必能够说清眼前仍在发生的变化。于是，我尝试从土地、建筑、物理状态与自然演化中辨认新的语素，将现场的征候逐渐汇集为一套仍需不断修订的「墟语」。",
+        "这些语素越过地点之间的距离，使来历与形态各异的遗构重新发生联系。废墟的标记散落在城市留下的墨迹之间，随着每一次记录逐渐增多，从某一处细小的断裂，拼合成一张尚未完成的世界废墟图谱。"
+      ],
+      en: [
+        "The territories of human construction keep spreading across the earth. Long before we understand them, buildings and infrastructures have already become part of our familiar surroundings. Only when walls peel away and passages break do their concealed structures begin to emerge. Even after their uses have disappeared, these works remain in place, bearing weight, subsiding, and yielding to weather, erosion, and the growth of plants.",
+        "I record these remnants while wandering and surveying. Their former names can identify a past, but seldom describe the changes still taking place before us. Gradually, I began to draw new morphemes from terrain, structure, physical condition, and natural processes, gathering the signs found on site into a vocabulary of ruins that must continually be revised.",
+        "These morphemes reach across the distances between sites, connecting remnants whose histories and forms otherwise have little in common. Their marks settle among the ink traces left by cities. As each new record is added, a fracture encountered in one particular place becomes part of an unfinished atlas of the world's ruins."
+      ],
+      ja: [
+        "人の築いた領域は地表へと広がり続け、建築や施設の多くは、その仕組みを理解するよりも先に、見慣れた日常の一部となっている。壁が剥がれ、通路が途切れてはじめて、完成した外観の下に隠されていた構造が姿を現す。用途を失った造物もその場に残り、重さを支え、沈み込み、風雨や侵食、植物の成長にさらされ続けている。",
+        "私は各地を歩き、遺構を調査しながら記録してきた。かつての地名はその過去を指し示すことができても、目の前でなお起こっている変化を語り尽くすことはできない。そこで、土地、建築、物理的状態、自然による変化から新たな語素を見いだし、現場の徴候を、絶えず書き換えられる「墟語」として集めていった。",
+        "その語素は場所の隔たりを越え、由来も形態も異なる遺構を再び結びつける。廃墟の印は都市の残した墨跡のあいだへ散らばり、記録が増えるにつれて、一つの小さな亀裂から、いまだ完成していない世界の廃墟図譜が少しずつ組み上がっていく。"
+      ]
     },
     visit: "https://ruin-archive.site/",
     visitLabel: {
@@ -894,9 +906,9 @@ function renderRoomIntro(item) {
 
 function renderRuinAtlasPreview() {
   var updatedCopy = {
-    zh: "地点更新于 [2026 10 3]",
-    en: "sites updated [2026 10 3]",
-    ja: "地点更新 [2026 10 3]"
+    zh: "地点随遗构录持续更新",
+    en: "sites follow the evolving archive",
+    ja: "地点は遺構録とともに随時更新"
   };
   var sourceCopy = {
     zh: { before: "地图取自 ", label: "《墟域图·遗构馆》", after: " 网站。" },
@@ -2462,7 +2474,7 @@ render();
 
       var scriptEl = document.createElement("script");
       scriptEl.id = "ruin-mini-site-data";
-      scriptEl.src = "https://ruin-archive.site/data/site-data.js?v=20261003";
+      scriptEl.src = "https://ruin-archive.site/data/site-data.js?v=20261116-index";
       scriptEl.onload = finish;
       scriptEl.onerror = finish;
       document.head.appendChild(scriptEl);
@@ -2819,6 +2831,22 @@ render();
         miniMarkerEntries.push({ marker: marker, site: site, tags: tags });
       });
 
+      var ruinMiniManualFocus = false;
+      function flyToMiniIndexSite(event) {
+        var name = String(event && event.detail && event.detail.name || "");
+        var entry = miniMarkerEntries.find(function(item) { return item.site.name === name; });
+        if (!entry) return;
+        ruinMiniManualFocus = true;
+        map.stop();
+        var coords = ruinMiniGeoToSvg(entry.site.lat, entry.site.lng);
+        var targetZoom = Math.min(map.getMaxZoom(), Math.max(map.getZoom(), 0.85));
+        if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+          map.setView(coords, targetZoom, { animate: false });
+        } else {
+          map.flyTo(coords, targetZoom, { animate: true, duration: 2.5 });
+        }
+      }
+
       function applyMiniIndexFilter(event) {
         var activeTags = Array.isArray(event && event.detail && event.detail.tags)
           ? event.detail.tags.map(String).map(function(tag) { return tag.trim(); }).filter(Boolean)
@@ -2838,9 +2866,16 @@ render();
       }
 
       shell.addEventListener("ruin-mini-index-filter", applyMiniIndexFilter);
+      shell.addEventListener("ruin-mini-index-flyto", flyToMiniIndexSite);
       ruinMiniIndexFilterCleanup = function() {
         shell.removeEventListener("ruin-mini-index-filter", applyMiniIndexFilter);
+        shell.removeEventListener("ruin-mini-index-flyto", flyToMiniIndexSite);
       };
+      shell.dispatchEvent(new CustomEvent("ruin-mini-map-ready"));
+      if (shell.dataset.ruinMiniPendingFocus) {
+        flyToMiniIndexSite({ detail: { name: shell.dataset.ruinMiniPendingFocus } });
+        delete shell.dataset.ruinMiniPendingFocus;
+      }
 
       /* Mirror ruin-archive.site exactly: once zoom passes 0, all markers
          progressively fade as the view magnifies, reaching 30% opacity at
@@ -2908,7 +2943,7 @@ render();
 
       function applyRuinMiniParallax() {
         parallaxRaf = 0;
-        if (!roomScroll || !shell.isConnected || token !== ruinMiniMountToken || startupFlyActive) return;
+        if (!roomScroll || !shell.isConnected || token !== ruinMiniMountToken || startupFlyActive || ruinMiniManualFocus) return;
 
         var shellRect = shell.getBoundingClientRect();
         var scrollRect = roomScroll.getBoundingClientRect();

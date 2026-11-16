@@ -1,0 +1,308 @@
+/* Ruin Atlas: compact lexicon and live site concordance, v1.
+   The primary site registry and tag assignments are sourced from ruin-archive. */
+(function () {
+  "use strict";
+
+  var THUMBNAILS = {"瘟猪坝沉墟":"https://ruin-archive.site/thumbnails/effluent-sedimentation.webp","电台路焦土":"https://ruin-archive.site/thumbnails/aether-scorched-earth.webp","山葬灰脉":"https://ruin-archive.site/thumbnails/yellow-mountain.webp","硅脉遗厂":"https://ruin-archive.site/thumbnails/silicon-vein-works.webp","琉棘庭":"https://ruin-archive.site/thumbnails/walled-gallery.webp","裂翼坪":"https://ruin-archive.site/thumbnails/fallen-wing-field.webp","轨畔孤构":"https://ruin-archive.site/thumbnails/rail-side.webp","残柱林":"https://ruin-archive.site/thumbnails/concrete-pole.webp","钟寂残堂":"https://ruin-archive.site/thumbnails/bell-silent-church.webp","池骸湾":"https://ruin-archive.site/thumbnails/bath-crack.webp","毒烬轮冢":"https://ruin-archive.site/thumbnails/toxic-tire-pyre.webp","褶层湾":"https://ruin-archive.site/thumbnails/quarry-bay-stairway.webp","隐染悬里":"https://ruin-archive.site/thumbnails/suspended-homeland.webp","雾蚀空庐":"https://ruin-archive.site/thumbnails/mist-eroded-hut.webp","锈祷圣堂":"https://ruin-archive.site/thumbnails/rust-prayer-sanctuary.webp","釉骸拓壁":"https://ruin-archive.site/thumbnails/membrane.webp","叠骸构阵":"https://ruin-archive.site/thumbnails/fish-mouth.webp","苔网塬":"https://ruin-archive.site/thumbnails/gloss-veil.webp","陆坞舰骸":"https://ruin-archive.site/thumbnails/brick-battleship.webp","墟响厅":"https://ruin-archive.site/thumbnails/mirror.webp","波蚀脊堤":"https://ruin-archive.site/thumbnails/wave-eroded-structure.webp","曜原驿":"https://ruin-archive.site/thumbnails/solar.webp","溶境遗廊":"https://ruin-archive.site/thumbnails/aquarium-bunker.webp","荒娱敖包":"https://ruin-archive.site/thumbnails/mountain-signal.webp","彩壳堡":"https://ruin-archive.site/thumbnails/castle.webp","削岩残居":"https://ruin-archive.site/thumbnails/roof.webp","隐阶空墅":"https://ruin-archive.site/thumbnails/hidden-stair-villa.webp","暮辉骸殿":"https://ruin-archive.site/thumbnails/afterglow-palace.webp","迁痕空埠":"https://ruin-archive.site/thumbnails/dock.webp","山骸窟殿":"https://ruin-archive.site/thumbnails/phospho.webp","山融灶垣":"https://ruin-archive.site/thumbnails/earthwall.webp","崖隐蚀垣":"https://ruin-archive.site/thumbnails/cliff-granary.webp","褶脊胚庭":"https://ruin-archive.site/thumbnails/compressed-courtyard.webp","草间稚居":"https://ruin-archive.site/thumbnails/grass-child-dwelling.webp","圆镜残境":"https://ruin-archive.site/thumbnails/circular-mirror-remnant.webp","火药磨盘":"https://ruin-archive.site/thumbnails/gunpowder-mill.webp","碎璃舍":"https://ruin-archive.site/thumbnails/shattered-glass-lodge.webp","遗廊椅":"https://ruin-archive.site/thumbnails/corridor-chair.webp","穿陨绒厅":"https://ruin-archive.site/thumbnails/meteor-velvet-hall.webp"};
+  var FALLBACK = [{"name":"瘟猪坝沉墟","lat":30.454417,"lng":104.047667,"archiveDate":"2025.04","type":"garden"},{"name":"电台路焦土","lat":31.225833,"lng":121.618333,"archiveDate":"2026.03","type":"garden"},{"name":"山葬灰脉","lat":32.04174,"lng":119.83912,"archiveDate":"2017.08","type":"record"},{"name":"硅脉遗厂","lat":31.1936472,"lng":121.6131444,"archiveDate":"2018.05","type":"record"},{"name":"裂翼坪","lat":41.860278,"lng":-87.606111,"archiveDate":"2021.08","type":"record"},{"name":"钟寂残堂","lat":41.787463,"lng":-87.633307,"archiveDate":"2022.11","type":"record"},{"name":"池骸湾","lat":37.7806,"lng":-122.5137,"archiveDate":"2023.08","type":"record"},{"name":"褶层湾","lat":47.1808,"lng":-122.5537,"archiveDate":"2023.12","type":"record"},{"name":"隐染悬里","lat":37.4543556,"lng":141.0370611,"archiveDate":"2024.01","type":"record"}];
+  var GROUPS = [
+    { key:"terrain", titles:["土地","TERRAIN","土地"], tags:[
+      ["mountain","山","Montane"],["slope","坡","Slope"],["shore","岸","Littoral"],
+      ["bay","湾","Bay"],["port","埠","Port"],["plateau","塬","Plateau"],
+      ["valley","谷","Valley"],["cliff","崖","Cliff"]
+    ]},
+    { key:"structure", titles:["建筑","STRUCTURE","建築"], tags:[
+      ["corridor","廊","Gallery"],["stair","阶","Stair"],["room","厅","Hall"],
+      ["dwelling","居","Dwelling"],["wall","垣","Wall"],["fort","堡","Fort"],
+      ["hall","殿","Palace"],["sacred","圣","Sanctuary"],["tower","塔","Tower"],
+      ["tunnel","甬","Passage"],["column","柱","Column"],["aperture","孔","Opening"],
+      ["factory","厂","Works"],["vessel","舰","Vessel"],["rail","辙","Rail"],
+      ["courtyard","庭","Courtyard"],["dam","坝","Dam"],["chamber","室","Chamber"],
+      ["monument","碑","Monument"],["base","基","Base"],["ring","环","Ring"],
+      ["inn","舍","Lodging"],["mirror","镜","Mirror"]
+    ]},
+    { key:"condition", titles:["状态","CONDITION","状態"], tags:[
+      ["ruin","残","Fragment"],["remains","骸","Skeletal"],["desolate","荒","Derelict"],
+      ["sunken","沉","Sunken"],["scorched","焦","Charred"],["crack","裂","Fissured"],
+      ["eroded","蚀","Eroded"],["relocated","迁","Displaced"],["compressed","压","Compressed"],
+      ["seepage","渗","Infiltrated"],["contaminated","染","Contaminated"],
+      ["placed","置","Placed"],["interstitial","间","Interstice"],
+      ["grind","磨","Grinding"],["attrition","耗","Attrition"]
+    ]},
+    { key:"nature", titles:["自然","NATURE","自然"], tags:[
+      ["vine","蔓","Vine"],["moss","苔","Moss"],["tree","木","Tree"],
+      ["grass","草","Grass"],["spike","棘","Thorn"],["ash","灰","Ash"],
+      ["membrane","膜","Membrane"],["water","水","Water"],["wave","波","Wave"],
+      ["magnetic","磁","Magnetic"],["soil","土","Soil"],["sand","沙","Sand"],
+      ["dust","尘","Dust"],["meteor","陨","Meteor"]
+    ]}
+  ];
+  var COPY = {
+    zh: {
+      title:"— 墟语学索引 —", intro:"土地、建筑、状态、自然。选择语素，逐次排除不符合的地点；每一个留下的名字，仍对应着一处继续变化的遗构。",
+      reset:"清除选择", listing:"— 遗构录地点 —", count:"处地点", filtered:"筛选后", empty:"没有符合这些语素的遗构。",
+      loading:"正在读取遗构录…", unavailable:"暂时无法读取完整名录，以下为部分地点。", map:"在地图中定位"
+    },
+    en: {
+      title:"— RUIN LEXICOLOGY —", intro:"Terrain, structure, condition, and nature. Select morphemes to eliminate sites that do not share them. Each remaining name points to a relic still undergoing change.",
+      reset:"clear selection", listing:"— RECORDED SITES —", count:"sites", filtered:"remaining", empty:"No sites share this combination of signs.",
+      loading:"reading archive…", unavailable:"The complete archive is unavailable; showing a partial list.", map:"Locate on map"
+    },
+    ja: {
+      title:"— 墟語学索引 —", intro:"土地、建築、状態、自然。語素を選び、該当しない地点を順に除いていく。残った名の一つひとつが、今も変わり続ける遺構につながっている。",
+      reset:"選択を解除", listing:"— 遺構録・地点 —", count:"地点", filtered:"該当", empty:"この語素の組み合わせに該当する遺構はない。",
+      loading:"遺構録を読み込み中…", unavailable:"遺構録の全件を取得できないため、一部のみ表示しています。", map:"地図で位置を見る"
+    }
+  };
+
+  var shell = null;
+  var panel = null;
+  var sites = [];
+  var selected = new Set();
+  var hoveredTag = "";
+  var loadingId = 0;
+  var loaded = false;
+
+  function lang() {
+    var value = String(document.documentElement.lang || "zh").toLowerCase();
+    return value.indexOf("ja") === 0 ? "ja" : value.indexOf("en") === 0 ? "en" : "zh";
+  }
+  function indexForLang() { return lang() === "en" ? 1 : lang() === "ja" ? 2 : 0; }
+  function esc(value) {
+    return String(value == null ? "" : value).replace(/&/g,"&amp;")
+      .replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#39;");
+  }
+  function tagsOf(site) {
+    var data = window.siteTagsMapping || {};
+    return String(data[site.name] || "").split(",").map(function(tag){return tag.trim();}).filter(Boolean);
+  }
+  function validSite(site) {
+    return site && site.name && Number.isFinite(Number(site.lat)) && Number.isFinite(Number(site.lng));
+  }
+  function matches(site, wanted) {
+    var tags = tagsOf(site);
+    return wanted.every(function(tag) { return tags.indexOf(tag) >= 0; });
+  }
+  function renderChrome() {
+    if (!panel) return;
+    var copy = COPY[lang()];
+    var idx = indexForLang();
+    panel.setAttribute("aria-label", copy.title.replace(/—/g,"").trim());
+    panel.innerHTML =
+      '<div class="ruin-atlas-index-head"><h2 class="ruin-atlas-index-title">'+esc(copy.title)+'</h2>'+
+        '<span class="ruin-atlas-index-count" aria-live="polite"></span></div>'+
+      '<p class="ruin-atlas-index-intro">'+esc(copy.intro)+'</p>'+
+      '<div class="ruin-atlas-index-groups" role="group" aria-label="'+esc(copy.title)+'">'+
+      GROUPS.map(function(group) {
+        return '<div class="ruin-atlas-index-group">'+
+          '<span class="ruin-atlas-index-category">'+esc(group.titles[idx])+'</span>'+
+          '<div class="ruin-atlas-index-tags">'+group.tags.map(function(item){
+            return '<button type="button" class="ruin-atlas-index-tag" data-tag="'+esc(item[0])+
+              '" aria-pressed="false" title="'+esc(item[2])+'">'+esc(idx === 1 ? item[2] : item[1])+'</button>';
+          }).join("")+'</div></div>';
+      }).join("")+'</div>'+
+      '<div class="ruin-atlas-index-list-head"><h3>'+esc(copy.listing)+'</h3>'+
+        '<button type="button" class="ruin-atlas-index-clear">'+esc(copy.reset)+'</button></div>'+
+      '<div class="ruin-atlas-index-list" role="group" aria-label="'+esc(copy.listing)+'"></div>'+
+      '<p class="ruin-atlas-index-empty" hidden>'+esc(copy.empty)+'</p>'+
+      '<p class="ruin-atlas-index-status" aria-live="polite"></p>'+
+      '<div class="ruin-atlas-index-preview" aria-hidden="true" hidden>'+
+        '<img class="ruin-atlas-index-preview-image" alt="" />'+
+        '<span class="ruin-atlas-index-preview-caption"></span></div>';
+    renderList();
+  }
+  function renderList() {
+    if (!panel) return;
+    var list = panel.querySelector(".ruin-atlas-index-list");
+    var copy = COPY[lang()];
+    list.innerHTML = sites.map(function(site, index) {
+      return '<button type="button" class="ruin-atlas-index-site" data-index="'+index+
+        '" aria-label="'+esc(site.name+" · "+copy.map)+'">'+
+        '<span class="ruin-atlas-index-dot" aria-hidden="true"></span>'+
+        '<span class="ruin-atlas-index-site-name">'+esc(site.name)+'</span></button>';
+    }).join("");
+    update(true);
+  }
+  function update(dispatch) {
+    if (!panel) return;
+    var active = Array.from(selected);
+    var count = 0;
+    panel.querySelectorAll(".ruin-atlas-index-site").forEach(function(button) {
+      var site = sites[Number(button.dataset.index)];
+      var visible = matches(site, active);
+      button.hidden = !visible;
+      button.classList.toggle("is-linked", Boolean(hoveredTag) && tagsOf(site).indexOf(hoveredTag) >= 0);
+      if (visible) count++;
+    });
+    panel.querySelectorAll(".ruin-atlas-index-tag").forEach(function(button) {
+      var tag = button.dataset.tag;
+      var isActive = selected.has(tag);
+      var possible = isActive || sites.some(function(site) { return matches(site, active.concat(tag)); });
+      button.disabled = !possible;
+      button.classList.toggle("is-active", isActive);
+      button.classList.toggle("is-related", hoveredTag === tag);
+      button.setAttribute("aria-pressed", isActive ? "true" : "false");
+    });
+    var copy = COPY[lang()];
+    panel.querySelector(".ruin-atlas-index-count").textContent =
+      (active.length ? copy.filtered+" " : "") + count+" / "+sites.length+" "+copy.count;
+    panel.querySelector(".ruin-atlas-index-clear").disabled = !active.length;
+    panel.querySelector(".ruin-atlas-index-empty").hidden = count > 0 || !sites.length;
+    if (dispatch && shell) {
+      shell.dispatchEvent(new CustomEvent("ruin-mini-index-filter",{detail:{tags:active}}));
+    }
+  }
+  function hidePreview() {
+    if (!panel) return;
+    var preview = panel.querySelector(".ruin-atlas-index-preview");
+    if (preview) preview.hidden = true;
+  }
+  function showPreview(button) {
+    if (!panel || !button) return;
+    var site = sites[Number(button.dataset.index)];
+    if (!site) return;
+    var url = THUMBNAILS[site.name];
+    var preview = panel.querySelector(".ruin-atlas-index-preview");
+    if (!url) { hidePreview(); return; }
+    var image = preview.querySelector("img");
+    image.src = url;
+    image.alt = site.name;
+    preview.querySelector(".ruin-atlas-index-preview-caption").textContent =
+      site.name + (site.archiveDate ? " · " + site.archiveDate : "");
+    var parent = panel.getBoundingClientRect();
+    var anchor = button.getBoundingClientRect();
+    var width = Math.min(190, Math.max(128, parent.width * 0.36));
+    var x = anchor.right - parent.left + 12;
+    if (x + width > parent.width - 4) x = anchor.left - parent.left - width - 12;
+    x = Math.max(5, Math.min(parent.width - width - 5,x));
+    var y = anchor.top - parent.top - 46;
+    y = Math.max(10,Math.min(parent.height - 150,y));
+    preview.style.width = width+"px";
+    preview.style.left = x+"px";
+    preview.style.top = y+"px";
+    preview.hidden = false;
+  }
+  function locate(index) {
+    var site = sites[index];
+    if (!site || !shell) return;
+    hidePreview();
+    shell.dataset.ruinMiniPendingFocus = site.name;
+    shell.dispatchEvent(new CustomEvent("ruin-mini-index-flyto",{detail:{name:site.name}}));
+    // The map is above the list; return it to view as the flight begins.
+    var scroller = shell.closest(".room-scroll");
+    if (scroller) {
+      var rect = shell.getBoundingClientRect();
+      var host = scroller.getBoundingClientRect();
+      var top = scroller.scrollTop + rect.top - host.top - 18;
+      var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      scroller.scrollTo({top:Math.max(0,top),behavior:reduce?"auto":"smooth"});
+    }
+  }
+  function onClick(event) {
+    var tagButton = event.target.closest(".ruin-atlas-index-tag");
+    if (tagButton && panel.contains(tagButton)) {
+      if (tagButton.disabled) return;
+      var tag = tagButton.dataset.tag;
+      if (selected.has(tag)) selected.delete(tag); else selected.add(tag);
+      hidePreview();
+      update(true);
+      return;
+    }
+    var reset = event.target.closest(".ruin-atlas-index-clear");
+    if (reset && panel.contains(reset)) {
+      selected.clear();
+      update(true);
+      return;
+    }
+    var siteButton = event.target.closest(".ruin-atlas-index-site");
+    if (siteButton && panel.contains(siteButton)) locate(Number(siteButton.dataset.index));
+  }
+  function onOver(event) {
+    var tag = event.target.closest(".ruin-atlas-index-tag");
+    if (tag && panel.contains(tag)) {
+      hoveredTag = tag.dataset.tag;
+      update(false);
+    }
+    var button = event.target.closest(".ruin-atlas-index-site");
+    if (button && panel.contains(button) && !button.hidden) showPreview(button);
+  }
+  function onOut(event) {
+    var tag = event.target.closest(".ruin-atlas-index-tag");
+    if (tag && !tag.contains(event.relatedTarget)) {
+      hoveredTag = "";
+      update(false);
+    }
+    var button = event.target.closest(".ruin-atlas-index-site");
+    if (button && !button.contains(event.relatedTarget)) hidePreview();
+  }
+  function mount() {
+    var nextShell = document.querySelector('.room-view[data-room="ruin-atlas"] .ruin-mini-shell:not(.ruin-mini-cabinet-shell)');
+    if (!nextShell) {
+      shell = null;
+      panel = null;
+      sites = [];
+      selected.clear();
+      loadingId++;
+      return;
+    }
+    if (shell === nextShell && panel && panel.isConnected) return;
+    shell = nextShell;
+    selected.clear();
+    hoveredTag = "";
+    sites = [];
+    loaded = false;
+    var section = shell.closest(".ruin-mini-section");
+    if (!section) return;
+    panel = document.createElement("section");
+    panel.className = "ruin-atlas-index";
+    shell.insertAdjacentElement("afterend", panel);
+    panel.addEventListener("click", onClick);
+    panel.addEventListener("pointerover", onOver);
+    panel.addEventListener("pointerout", onOut);
+    panel.addEventListener("focusin", function(event) { onOver(event); });
+    panel.addEventListener("focusout", function(event) { onOut(event); });
+    shell.addEventListener("ruin-mini-map-ready", function() { update(true); });
+    renderChrome();
+    panel.querySelector(".ruin-atlas-index-status").textContent = COPY[lang()].loading;
+    var taskId = ++loadingId;
+
+    function finish(fallback) {
+      if (taskId !== loadingId || !panel || !panel.isConnected) return;
+      var remote = Array.isArray(window.sites) && window.sites.length ? window.sites : null;
+      if (remote) fallback = false;
+      sites = (remote || FALLBACK).filter(validSite);
+      loaded = !fallback;
+      renderList();
+      panel.querySelector(".ruin-atlas-index-status").textContent = fallback ? COPY[lang()].unavailable : "";
+    }
+    if (Array.isArray(window.sites) && window.sites.length) { finish(false); return; }
+    var script = document.getElementById("ruin-mini-site-data");
+    if (!script) {
+      script = document.createElement("script");
+      script.id = "ruin-mini-site-data";
+      script.src = "https://ruin-archive.site/data/site-data.js?v=20261116-index";
+      document.head.appendChild(script);
+    }
+    script.addEventListener("load", function(){finish(false);}, {once:true});
+    script.addEventListener("error",function(){finish(true);},{once:true});
+    window.setTimeout(function(){if (!sites.length) finish(true);},5000);
+  }
+  var app = document.getElementById("app");
+  if (app && window.MutationObserver) {
+    new MutationObserver(mount).observe(app, {childList:true});
+  }
+  if (window.MutationObserver) {
+    new MutationObserver(function(){
+      if (panel && panel.isConnected) {
+        renderChrome();
+        panel.querySelector(".ruin-atlas-index-status").textContent =
+          loaded ? "" : sites.length ? COPY[lang()].unavailable : COPY[lang()].loading;
+      }
+    }).observe(document.documentElement,{attributes:true,attributeFilter:["lang"]});
+  }
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded",mount,{once:true});
+  } else {
+    mount();
+  }
+})();

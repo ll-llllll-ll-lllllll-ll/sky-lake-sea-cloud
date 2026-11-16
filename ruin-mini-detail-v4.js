@@ -250,18 +250,10 @@
   }
 
   function syncViewport(shell) {
-    var mobile = window.matchMedia ? window.matchMedia(MOBILE_QUERY).matches : window.innerWidth <= 760;
+    // The map's lexicon now lives in a full, accessible list immediately below
+    // the frame on every viewport. Remove the obsolete in-map mobile duplicate.
     var drawer = shell.querySelector(".ruin-mini-mobile-index-drawer");
-
-    if (!mobile) {
-      if (drawer) {
-        dispatchFilter(shell, []);
-        drawer.remove();
-      }
-      return;
-    }
-
-    createDrawer(shell);
+    if (drawer) drawer.remove();
   }
 
   function scan() {
