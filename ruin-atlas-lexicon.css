@@ -80,12 +80,27 @@
 .ruin-atlas-index-line {
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   flex-wrap: nowrap;
   gap: 14px;
   width: 100%;
   min-width: 0;
 }
+/* CJK: four distinct, left-aligned semantic lines. Each category starts at
+   the same column; the mineral keys retain their original 22px geometry. */
+.room-view[data-room="ruin-atlas"] .ruin-atlas-index:not([data-lexicon-lang="en"]) .ruin-atlas-index-groups {
+  align-items: stretch;
+  row-gap: 10px;
+}
+.room-view[data-room="ruin-atlas"] .ruin-atlas-index:not([data-lexicon-lang="en"]) .ruin-atlas-index-line {
+  justify-content: flex-start;
+}
+.room-view[data-room="ruin-atlas"] .ruin-atlas-index:not([data-lexicon-lang="en"]) .ruin-atlas-index-category {
+  display: inline-flex;
+  align-items: center;
+  min-width: 28px;
+}
+
 .ruin-atlas-index-group {
   display: flex;
   align-items: center;

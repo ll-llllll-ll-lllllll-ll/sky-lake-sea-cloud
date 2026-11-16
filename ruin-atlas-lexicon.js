@@ -473,12 +473,12 @@
     });
   }
   function renderLexiconGroups(idx) {
-    var isEnglish = lang() === "en";
-    var groups = isEnglish ?
-      GROUPS.map(function(group) {return '<div class="ruin-atlas-index-line">'+renderLexiconGroup(group,idx)+'</div>';}) :
-      ['<div class="ruin-atlas-index-line">'+GROUPS.slice(0,2).map(function(g){return renderLexiconGroup(g,idx);}).join("")+'</div>',
-       '<div class="ruin-atlas-index-line">'+GROUPS.slice(2).map(function(g){return renderLexiconGroup(g,idx);}).join("")+'</div>'];
-    return groups.join("");
+    // One semantic family per row in all three languages: 土地/建筑/状态/自然.
+    // CJK used to squeeze two full families into a line, causing the
+    // 22px mineral keys to touch and overlap at desktop widths.
+    return GROUPS.map(function(group) {
+      return '<div class="ruin-atlas-index-line">'+renderLexiconGroup(group,idx)+'</div>';
+    }).join("");
   }
 
   function renderChrome() {
