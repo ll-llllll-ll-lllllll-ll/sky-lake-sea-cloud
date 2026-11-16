@@ -55,7 +55,7 @@
 
     var coords = document.createElement("div");
     coords.className = "ruin-mini-coords";
-    coords.textContent = "31°49′50″◉ 113°8′34″◉";
+    coords.textContent = "—° --′ --″ ◒   —° --′ --″ ◑";
 
     var frame = document.createElement("div");
     frame.className = "ruin-mini-clean-frame";

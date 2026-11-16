@@ -2499,6 +2499,91 @@ render();
       .replace(/\"/g, "&quot;");
   }
 
+
+  // Public display names; original site keys remain intact for tags and images.
+  function ruinMiniDisplayName(name) {
+    if (name === "瘟猪坝沉墟") return "沉墟心室";
+    if (name === "电台路焦土") return "朽塔焦土";
+    return String(name || "");
+  }
+
+  // Match ruin-archive's recorder rule, including later supplementary records.
+  function ruinMiniRecorderNames(site) {
+    var primary = String(site && site.recorder || "罗清源").trim();
+    var extras = site && Array.isArray(site.secondaryRecords) ? site.secondaryRecords : [];
+    return Array.from(new Set([primary].concat(extras.map(function(record) {
+      return String(record && record.recorder || "").trim();
+    })).filter(Boolean)));
+  }
+
+  // Exact port of ruin-archive's permanent masked DMS format.
+  // Preserve one degree digit only, replace all remaining information with dashes.
+  function ruinMiniMaskedDms(value, axis) {
+    var number = Number(value);
+    if (!Number.isFinite(number)) return "--° --′ --″";
+    var width = axis === "lat" ? 2 : 3;
+    var lead = String(Math.floor(Math.abs(number))).padStart(width, "0").slice(0, 1);
+    var direction = axis === "lat" ? (number >= 0 ? "◒" : "◓") : (number >= 0 ? "◑" : "◐");
+    return "  " + lead + "-".repeat(width - 1) + "° --′ --″" + direction + " ";
+  }
+
+  // Same progressive second -> minute -> degree erasure used for the original
+  // atlas cursor, preserving a single leading degree digit closest to relics.
+  function ruinMiniLiveDms(value, axis, erasure) {
+    var number = Number(value);
+    if (!Number.isFinite(number)) return "--° --′ --″";
+    var abs = Math.abs(number), degrees = Math.floor(abs);
+    var minutesFloat = (abs - degrees) * 60, minutes = Math.floor(minutesFloat);
+    var seconds = Math.floor((minutesFloat - minutes) * 60);
+    var deg = String(degrees).padStart(axis === "lat" ? 2 : 3, "0");
+    var digits = (deg + String(minutes).padStart(2,"0") + String(seconds).padStart(2,"0")).split("");
+    var erased = Math.min(digits.length - 1, Math.max(0,
+      Math.ceil(Math.max(0, Math.min(1,erasure || 0)) * (digits.length - 1) - 0.00001)));
+    for (var i = digits.length - erased; i < digits.length; i++) digits[i] = "-";
+    var direction = axis === "lat" ? (number >= 0 ? "◒" : "◓") : (number >= 0 ? "◑" : "◐");
+    return "  " + digits.slice(0,deg.length).join("") + "°" +
+      digits.slice(deg.length,deg.length+2).join("") + "′" +
+      digits.slice(-2).join("") + "″" + direction + " ";
+  }
+
+  function ruinMiniSvgToGeo(y, x) {
+    // This is the inverse of this miniature's geoToSvg transform, including
+    // its half-world longitudinal shift (not the full site's atlas transform).
+    var longitude = (((Number(x) / 4000 + 0.5) % 1 + 1) % 1) * 360 - 180;
+    return {lat: Number(y) / 3000 * 180 - 90, lng: longitude};
+  }
+
+  function ruinMiniPopupCopy() {
+    var code = String(document.documentElement.lang || "zh").toLowerCase();
+    if (code.indexOf("en") === 0) return {
+      coord:"Approximate coordinates", recorder:"Recorded by",
+      date:"Archive date", details:"Detailed record on Ruin Atlas · Relic Archive"
+    };
+    if (code.indexOf("ja") === 0) return {
+      coord:"概略座標", recorder:"記録者",
+      date:"収録日", details:"詳細は『墟域図・遺構館』のサイトへ"
+    };
+    return {
+      coord:"模糊坐标", recorder:"记录者",
+      date:"归档日期", details:"详细记录见《墟域图·遗构馆》"
+    };
+  }
+  function ruinMiniPopupMarkup(site) {
+    var copy = ruinMiniPopupCopy();
+    var coord = ruinMiniMaskedDms(site.lat,"lat").trim() + "　" +
+      ruinMiniMaskedDms(site.lng,"lng").trim();
+    return '<div class="ruin-mini-record-popup">' +
+      '<div class="ruin-mini-record-title">'+ruinMiniEscape(ruinMiniDisplayName(site.name))+'</div>' +
+      '<dl class="ruin-mini-record-meta">' +
+        '<div><dt>'+ruinMiniEscape(copy.coord)+'</dt><dd>'+ruinMiniEscape(coord)+'</dd></div>' +
+        '<div><dt>'+ruinMiniEscape(copy.recorder)+'</dt><dd>'+ruinMiniEscape(ruinMiniRecorderNames(site).join(" / "))+'</dd></div>' +
+        '<div><dt>'+ruinMiniEscape(copy.date)+'</dt><dd>'+ruinMiniEscape(site.archiveDate || "—")+'</dd></div>' +
+      '</dl>' +
+      '<a class="ruin-mini-record-more" href="https://ruin-archive.site/" target="_blank" rel="noopener noreferrer">' +
+        ruinMiniEscape(copy.details) + '<span aria-hidden="true"> ↗</span></a>' +
+      '</div>';
+  }
+
   function ruinMiniMembraneState(map, tone) {
     var zoom = map.getZoom();
     var ratio = ruinMiniClamp((zoom + 0.20) / 3.15, 0, 1);
@@ -2819,10 +2904,23 @@ render();
         ).addTo(map);
 
         marker.bindTooltip(
-          '<span class="ruin-mini-tooltip-name">' + ruinMiniEscape(site.name) + '</span>' +
+          '<span class="ruin-mini-tooltip-name">' + ruinMiniEscape(ruinMiniDisplayName(site.name)) + '</span>' +
           (site.archiveDate ? '<span class="ruin-mini-tooltip-date">' + ruinMiniEscape(site.archiveDate) + '</span>' : ''),
           { direction: "top", offset: [0, -7], opacity: 1, className: "ruin-mini-tooltip" }
         );
+        marker.bindPopup(ruinMiniPopupMarkup(site), {
+          className: "ruin-mini-detail-popup",
+          closeButton: true,
+          maxWidth: 260,
+          minWidth: 190,
+          autoPan: false,
+          offset: [0, -8]
+        });
+        marker.on("click", function() {
+          ruinMiniManualFocus = true;
+          map.closePopup();
+          marker.openPopup();
+        });
 
         var tags = String(
           window.siteTagsMapping && window.siteTagsMapping[site.name] || ""
@@ -2832,19 +2930,57 @@ render();
       });
 
       var ruinMiniManualFocus = false;
+      var focusFlightId = 0;
+      var focusMoveEnd = null;
+      var focusFallbackTimer = 0;
+      var currentFilterTags = [];
+
+      function cancelMiniFocusFlight() {
+        focusFlightId += 1;
+        if (focusMoveEnd) map.off("moveend", focusMoveEnd);
+        focusMoveEnd = null;
+        if (focusFallbackTimer) window.clearTimeout(focusFallbackTimer);
+        focusFallbackTimer = 0;
+      }
+
       function flyToMiniIndexSite(event) {
         var name = String(event && event.detail && event.detail.name || "");
         var entry = miniMarkerEntries.find(function(item) { return item.site.name === name; });
         if (!entry) return;
         delete shell.dataset.ruinMiniPendingFocus;
+        cancelMiniFocusFlight();
+        var thisFlight = focusFlightId;
         ruinMiniManualFocus = true;
+        map.closePopup();
         map.stop();
-        var coords = ruinMiniGeoToSvg(entry.site.lat, entry.site.lng);
+        var coords = entry.marker.getLatLng();
         var targetZoom = Math.min(map.getMaxZoom(), Math.max(map.getZoom(), 0.85));
-        if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+        var reduced = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+        var finished = false;
+
+        function arrive() {
+          if (finished || thisFlight !== focusFlightId || !shell.isConnected ||
+              token !== ruinMiniMountToken) return;
+          finished = true;
+          if (focusMoveEnd) map.off("moveend", focusMoveEnd);
+          focusMoveEnd = null;
+          if (focusFallbackTimer) window.clearTimeout(focusFallbackTimer);
+          focusFallbackTimer = 0;
+          if (!currentFilterTags.every(function(tag) {
+            return entry.tags.indexOf(tag) !== -1;
+          })) return;
+          entry.marker.openPopup();
+        }
+
+        if (reduced) {
           map.setView(coords, targetZoom, { animate: false });
+          arrive();
         } else {
+          // Register only after map.stop(), which can synchronously emit moveend.
+          focusMoveEnd = function() { arrive(); };
+          map.on("moveend", focusMoveEnd);
           map.flyTo(coords, targetZoom, { animate: true, duration: 2.5 });
+          focusFallbackTimer = window.setTimeout(arrive, 3000);
         }
       }
 
@@ -2853,11 +2989,13 @@ render();
           ? event.detail.tags.map(String).map(function(tag) { return tag.trim(); }).filter(Boolean)
           : [];
 
+        currentFilterTags = activeTags.slice();
         miniMarkerEntries.forEach(function(entry) {
           var visible = activeTags.length === 0 ||
             activeTags.every(function(tag) { return entry.tags.indexOf(tag) !== -1; });
 
           entry.marker.setOpacity(visible ? 1 : 0);
+          if (!visible && entry.marker.isPopupOpen()) entry.marker.closePopup();
           var markerEl = entry.marker.getElement();
           if (markerEl) {
             markerEl.style.display = visible ? "" : "none";
@@ -2871,6 +3009,7 @@ render();
       ruinMiniIndexFilterCleanup = function() {
         shell.removeEventListener("ruin-mini-index-filter", applyMiniIndexFilter);
         shell.removeEventListener("ruin-mini-index-flyto", flyToMiniIndexSite);
+        cancelMiniFocusFlight();
       };
       shell.dispatchEvent(new CustomEvent("ruin-mini-map-ready"));
 
@@ -2926,6 +3065,52 @@ render();
       map.fitBounds(bounds, { padding: [20, 20], animate: false });
       map.setMaxBounds([[-520, -800], [3520, 4800]]);
       applyRuinMiniTone(shell, map, worldPane, initialTone, false);
+
+      /* Ruin Archive's cursor privacy calculation, adapted for this single
+         miniature world. Compare actual marker points even when tag-filtered;
+         hidden records must not become readable from an unmasked cursor HUD. */
+      var coordinateReferenceZoom = map.getZoom() +
+        ((window.innerWidth <= 760) ? 0.35 : 0.65);
+      var coordinateReadout = shell.querySelector(".ruin-mini-coords");
+      var coordinateRaf = 0, pendingCoordinateEvent = null;
+      function coordinateErasure(cursorPoint) {
+        if (!cursorPoint) return 0;
+        var zoomScale = Math.pow(2, map.getZoom() - coordinateReferenceZoom);
+        var radius = 180 * zoomScale;
+        var nearestSq = radius * radius;
+        miniMarkerEntries.forEach(function(entry) {
+          // No visible-only check: an index filter must not bypass the mask.
+          var point = map.latLngToContainerPoint(entry.marker.getLatLng());
+          var dx = point.x - cursorPoint.x, dy = point.y - cursorPoint.y;
+          if (Math.abs(dx) >= radius || Math.abs(dy) >= radius) return;
+          var distanceSq = dx*dx + dy*dy;
+          if (distanceSq < nearestSq) nearestSq = distanceSq;
+        });
+        if (nearestSq >= radius*radius) return 0;
+        var distance = Math.sqrt(nearestSq) / zoomScale;
+        if (distance <= 22) return 1;
+        var proximity = (180-distance)/(180-22);
+        return proximity*proximity*(3-2*proximity);
+      }
+      function paintMaskedCoordinates() {
+        coordinateRaf = 0;
+        if (!pendingCoordinateEvent || !coordinateReadout || !coordinateReadout.isConnected) return;
+        var pt = pendingCoordinateEvent.latlng;
+        var geo = ruinMiniSvgToGeo(pt.lat,pt.lng);
+        var mask = coordinateErasure(pendingCoordinateEvent.containerPoint);
+        coordinateReadout.textContent =
+          ruinMiniLiveDms(geo.lat,"lat",mask) + " " +
+          ruinMiniLiveDms(geo.lng,"lng",mask);
+      }
+      map.on("mousemove", function(event) {
+        pendingCoordinateEvent = event;
+        if (!coordinateRaf) coordinateRaf = requestAnimationFrame(paintMaskedCoordinates);
+      });
+      map.on("mouseout", function() {
+        pendingCoordinateEvent = null;
+        if (coordinateReadout) coordinateReadout.textContent = "—° --′ --″ ◒   —° --′ --″ ◑";
+      });
+
 
       if (ruinMiniParallaxCleanup) {
         ruinMiniParallaxCleanup();

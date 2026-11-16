@@ -72,6 +72,21 @@
     return String(value == null ? "" : value).replace(/&/g,"&amp;")
       .replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#39;");
   }
+  function displayName(name) {
+    if (name === "瘟猪坝沉墟") return "沉墟心室";
+    if (name === "电台路焦土") return "朽塔焦土";
+    return String(name || "");
+  }
+  function recorderNames(site) {
+    var primary = String(site && site.recorder || "罗清源").trim();
+    var secondary = site && Array.isArray(site.secondaryRecords) ? site.secondaryRecords : [];
+    return Array.from(new Set([primary].concat(secondary.map(function(record) {
+      return String(record && record.recorder || "").trim();
+    })).filter(Boolean)));
+  }
+  function recorderLabel() {
+    return lang() === "en" ? "Recorded by" : lang() === "ja" ? "記録者" : "记录者";
+  }
   function tagsOf(site) {
     var data = window.siteTagsMapping || {};
     return String(data[site.name] || "").split(",").map(function(tag){return tag.trim();}).filter(Boolean);
@@ -108,7 +123,10 @@
       '<p class="ruin-atlas-index-status" aria-live="polite"></p>'+
       '<div class="ruin-atlas-index-preview" aria-hidden="true" hidden>'+
         '<img class="ruin-atlas-index-preview-image" alt="" />'+
-        '<span class="ruin-atlas-index-preview-caption"></span></div>';
+        '<span class="ruin-atlas-index-preview-caption">'+
+          '<span class="ruin-atlas-preview-place"></span>'+
+          '<span class="ruin-atlas-preview-recorder"></span>'+
+        '</span></div>';
     renderList();
   }
   function renderList() {
@@ -117,9 +135,9 @@
     var copy = COPY[lang()];
     list.innerHTML = sites.map(function(site, index) {
       return '<button type="button" class="ruin-atlas-index-site" data-index="'+index+
-        '" aria-label="'+esc(site.name+" · "+copy.map)+'">'+
+        '" aria-label="'+esc(displayName(site.name)+" · "+copy.map)+'">'+
         '<span class="ruin-atlas-index-dot" aria-hidden="true"></span>'+
-        '<span class="ruin-atlas-index-site-name">'+esc(site.name)+'</span></button>';
+        '<span class="ruin-atlas-index-site-name">'+esc(displayName(site.name))+'</span></button>';
     }).join("");
     update(true);
   }
@@ -166,17 +184,21 @@
     if (!url) { hidePreview(); return; }
     var image = preview.querySelector("img");
     image.src = url;
-    image.alt = site.name;
-    preview.querySelector(".ruin-atlas-index-preview-caption").textContent =
-      site.name + (site.archiveDate ? " · " + site.archiveDate : "");
+    image.alt = displayName(site.name);
+    preview.querySelector(".ruin-atlas-preview-place").textContent =
+      displayName(site.name) + (site.archiveDate ? " · " + site.archiveDate : "");
+    preview.querySelector(".ruin-atlas-preview-recorder").textContent =
+      recorderLabel() + " · " + recorderNames(site).join(" / ");
     var parent = panel.getBoundingClientRect();
     var anchor = button.getBoundingClientRect();
-    var width = Math.min(190, Math.max(128, parent.width * 0.36));
-    var x = anchor.right - parent.left + 12;
-    if (x + width > parent.width - 4) x = anchor.left - parent.left - width - 12;
+    var compact = window.matchMedia && window.matchMedia("(max-width:760px)").matches;
+    var width = Math.min(compact ? 94 : 118, Math.max(76,parent.width * 0.28));
+    var x = anchor.right - parent.left + 9;
+    if (x + width > parent.width - 4) x = anchor.left - parent.left - width - 9;
     x = Math.max(5, Math.min(parent.width - width - 5,x));
-    var y = anchor.top - parent.top - 46;
-    y = Math.max(10,Math.min(parent.height - 150,y));
+    var previewHeight = width + 54;
+    var y = anchor.top - parent.top - 30;
+    y = Math.max(6,Math.min(Math.max(6,parent.height - previewHeight - 8),y));
     preview.style.width = width+"px";
     preview.style.left = x+"px";
     preview.style.top = y+"px";
