@@ -53,55 +53,259 @@
   line-height: 1.9;
   letter-spacing: .025em;
 }
+/* Index buttons follow the original ruin-archive mineral/glass key language.
+   The compact portfolio version reflows the same semantic families. */
+.ruin-atlas-index {
+  --atlas-key-face: color-mix(in srgb, var(--ruin-mini-paper,#fffffb) 82%, var(--ruin-mini-text,#1c1c1a) 18%);
+  --atlas-key-hover: color-mix(in srgb, var(--ruin-mini-paper,#fffffb) 90%, var(--ruin-mini-text,#1c1c1a) 10%);
+  --atlas-key-pressed: color-mix(in srgb, var(--ruin-mini-paper,#fffffb) 72%, var(--ruin-mini-text,#1c1c1a) 28%);
+  --atlas-key-hi: color-mix(in srgb, var(--ruin-mini-paper,#fffffb) 86%, white 14%);
+  --atlas-key-lo: color-mix(in srgb, var(--ruin-mini-paper,#fffffb) 52%, var(--ruin-mini-text,#1c1c1a) 48%);
+}
+.ruin-atlas-index-heading-controls {
+  display: flex;
+  align-items: center;
+  gap: clamp(12px,2.4vw,34px);
+  flex-wrap: wrap;
+}
 .ruin-atlas-index-groups {
-  display: grid;
-  gap: 9px;
-  padding: 0 0 28px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 7px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 0 0 26px;
+}
+.ruin-atlas-index-line {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: nowrap;
+  gap: 14px;
+  width: 100%;
+  min-width: 0;
 }
 .ruin-atlas-index-group {
-  display: grid;
-  grid-template-columns: clamp(65px,8vw,112px) minmax(0,1fr);
-  align-items: start;
-  gap: clamp(8px,2vw,24px);
+  display: flex;
+  align-items: center;
+  gap: 0;
+  min-width: 0;
+  max-width: 100%;
 }
 .ruin-atlas-index-category {
-  padding-top: 8px;
-  border-top: 1px solid var(--ruin-mini-line, #ddd);
-  color: var(--ruin-mini-muted, #777);
-  font-size: 9px;
-  line-height: 1.5;
-  letter-spacing: .11em;
+  flex: 0 0 auto;
+  padding: 0;
+  margin: 0;
+  border: 0;
+  color: var(--ruin-mini-muted,#777);
+  font: 11px/1.2 var(--sans,sans-serif);
+  letter-spacing: .055em;
+  white-space: nowrap;
+}
+.ruin-atlas-index-separator {
+  display: inline-block;
+  flex: 0 0 auto;
+  margin: 0 5px;
+  color: var(--ruin-mini-muted,#777);
+  font: 10px/1 var(--sans,sans-serif);
+  opacity: .8;
 }
 .ruin-atlas-index-tags {
   display: flex;
-  flex-wrap: wrap;
-  gap: 5px 6px;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: 2px;
+  min-width: 0;
 }
 .room-view[data-room="ruin-atlas"] .ruin-atlas-index-tag {
-  min-width: 28px;
-  min-height: 29px;
-  padding: 4px 8px;
-  border: 1px solid transparent;
+  position: relative;
+  display: inline-flex;
+  flex: 0 0 22px;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  width: 22px;
+  min-width: 22px;
+  height: 22px;
+  min-height: 22px;
+  padding: 0 1px;
+  margin: 0;
+  border: 0;
+  border-top: 1px solid var(--atlas-key-hi);
+  border-left: 1px solid var(--atlas-key-hi);
+  border-right: 1px solid var(--atlas-key-lo);
+  border-bottom: 1px solid var(--atlas-key-lo);
   border-radius: 0;
-  background: transparent;
-  color: var(--ruin-mini-text, #1c1c1a);
-  font: 12px/1.2 var(--sans, sans-serif);
+  background: var(--atlas-key-face);
+  box-shadow: none;
+  color: var(--ruin-mini-text,#1c1c1a);
+  font: 400 12px/1 "IBM Plex Mono",var(--sans,sans-serif),monospace;
+  letter-spacing: 0;
+  white-space: nowrap;
   text-align: center;
   cursor: pointer;
-  transition: border-color .16s ease, color .16s ease, opacity .16s ease;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  transition: background .09s linear,border-color .09s linear,color .09s linear;
 }
 .room-view[data-room="ruin-atlas"] .ruin-atlas-index-tag:hover,
 .room-view[data-room="ruin-atlas"] .ruin-atlas-index-tag:focus-visible {
-  border-color: var(--ruin-mini-line-strong, #777);
+  background: var(--atlas-key-hover);
+  border-top-color: var(--ruin-mini-line,#bbb);
+  border-left-color: var(--ruin-mini-line,#bbb);
+  border-right-color: var(--atlas-key-lo);
+  border-bottom-color: var(--atlas-key-lo);
+  box-shadow: inset 1px 1px 0 color-mix(in srgb,var(--ruin-mini-text,#1c1c1a) 11%,transparent);
+  transform: none;
+  outline-offset: 2px;
 }
-.room-view[data-room="ruin-atlas"] .ruin-atlas-index-tag.is-active {
-  border-color: var(--ruin-mini-line-strong, #777);
-  background: color-mix(in srgb, var(--ruin-mini-text, #1c1c1a) 7%, transparent);
+.room-view[data-room="ruin-atlas"] .ruin-atlas-index-tag.is-active,
+.room-view[data-room="ruin-atlas"] .ruin-atlas-index-tag.is-active:hover {
+  background: var(--atlas-key-pressed);
+  border-top-color: var(--atlas-key-lo);
+  border-left-color: var(--atlas-key-lo);
+  border-right-color: var(--atlas-key-hi);
+  border-bottom-color: var(--atlas-key-hi);
+  box-shadow: inset 1px 1px 0 color-mix(in srgb,var(--ruin-mini-text,#1c1c1a) 21%,transparent);
+  transform: none;
 }
 .room-view[data-room="ruin-atlas"] .ruin-atlas-index-tag:disabled {
-  opacity: .21;
-  cursor: default;
+  color: var(--ruin-mini-muted,#888);
+  opacity: .29;
+  background: var(--atlas-key-face);
+  cursor: not-allowed;
 }
+.room-view[data-room="ruin-atlas"] .ruin-atlas-index[data-lexicon-lang="en"] .ruin-atlas-index-line {
+  justify-content: flex-start;
+  gap: 0;
+}
+.room-view[data-room="ruin-atlas"] .ruin-atlas-index[data-lexicon-lang="en"] .ruin-atlas-index-group {
+  align-items: flex-start;
+}
+.room-view[data-room="ruin-atlas"] .ruin-atlas-index[data-lexicon-lang="en"] .ruin-atlas-index-category,
+.room-view[data-room="ruin-atlas"] .ruin-atlas-index[data-lexicon-lang="en"] .ruin-atlas-index-separator {
+  margin-top: 6px;
+}
+.room-view[data-room="ruin-atlas"] .ruin-atlas-index[data-lexicon-lang="en"] .ruin-atlas-index-tags {
+  flex-wrap: wrap;
+  gap: 4px;
+}
+.room-view[data-room="ruin-atlas"] .ruin-atlas-index[data-lexicon-lang="en"] .ruin-atlas-index-tag {
+  flex: 0 0 auto;
+  width: auto;
+  min-width: 46px;
+  height: 24px;
+  min-height: 24px;
+  padding: 0 7px;
+  font-size: 10px;
+  letter-spacing: .01em;
+}
+.room-view[data-room="ruin-atlas"] .ruin-atlas-index[data-lexicon-lang="en"][data-lexicon-mode="roots"] .ruin-atlas-index-tag {
+  min-width: 49px;
+}
+/* Same two-position vocabulary switch as ruin-archive: ENG | LAT·GR. */
+.room-view[data-room="ruin-atlas"] .ruin-atlas-index-lexicon-switch {
+  display: inline-flex;
+  align-items: center;
+  flex: 0 0 auto;
+  justify-content: center;
+  gap: 7px;
+  width: auto;
+  min-width: 0;
+  min-height: 24px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  color: var(--ruin-mini-text,#222);
+  white-space: nowrap;
+  cursor: pointer;
+}
+.ruin-atlas-index-switch-label {
+  font: 400 9px/1 "IBM Plex Mono",ui-monospace,monospace;
+  letter-spacing: .08em;
+  color: var(--ruin-mini-muted,#777);
+  opacity: .68;
+  transition: opacity .18s ease,color .18s ease;
+}
+.ruin-atlas-index-switch-label.is-active {
+  color: var(--ruin-mini-text,#222);
+  opacity: 1;
+}
+.ruin-atlas-index-switch-track {
+  position: relative;
+  display: inline-block;
+  flex: 0 0 auto;
+  width: 28px;
+  height: 14px;
+  box-sizing: border-box;
+  background: var(--atlas-key-face);
+  border-top: 1px solid var(--atlas-key-hi);
+  border-left: 1px solid var(--atlas-key-hi);
+  border-right: 1px solid var(--atlas-key-lo);
+  border-bottom: 1px solid var(--atlas-key-lo);
+}
+.ruin-atlas-index-switch-thumb {
+  position: absolute;
+  left: 2px;
+  top: 2px;
+  width: 8px;
+  height: 8px;
+  background: var(--ruin-mini-text,#222);
+  transform: translateX(0);
+  transition: transform .18s ease;
+}
+.ruin-atlas-index-lexicon-switch[data-mode="roots"] .ruin-atlas-index-switch-thumb {
+  transform: translateX(14px);
+}
+.ruin-atlas-index-lexicon-switch:hover .ruin-atlas-index-switch-track,
+.ruin-atlas-index-lexicon-switch:focus-visible .ruin-atlas-index-switch-track {
+  background: var(--atlas-key-hover);
+}
+@media (max-width: 1020px) {
+  .ruin-atlas-index-line {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
+    gap: 8px;
+  }
+  .ruin-atlas-index-groups { align-items: stretch; gap: 8px; }
+  .ruin-atlas-index-group { align-items: flex-start; }
+  .ruin-atlas-index-category,.ruin-atlas-index-separator { margin-top: 6px; }
+  .ruin-atlas-index-tags { flex-wrap: wrap; gap: 4px; }
+}
+@media (max-width: 760px) {
+  .ruin-atlas-index-heading-controls { gap: 8px 16px; }
+  .ruin-atlas-index-category {
+    flex: 0 0 42px;
+    font-size: 10px;
+  }
+  .ruin-atlas-index-separator { margin: 0 7px 0 0; }
+  .ruin-atlas-index-tags { gap: 3px; }
+  .room-view[data-room="ruin-atlas"] .ruin-atlas-index-tag {
+    min-width: 21px;
+    width: 21px;
+    flex-basis: 21px;
+    min-height: 22px;
+    height: 22px;
+    font-size: 11px;
+  }
+  .room-view[data-room="ruin-atlas"] .ruin-atlas-index[data-lexicon-lang="en"] .ruin-atlas-index-category {
+    flex: 0 0 61px;
+  }
+  .room-view[data-room="ruin-atlas"] .ruin-atlas-index[data-lexicon-lang="en"] .ruin-atlas-index-tag {
+    min-width: 49px;
+    min-height: 24px;
+    height: 24px;
+    padding: 0 5px;
+    font-size: 9px;
+  }
+}
+
 .ruin-atlas-index-list-head {
   padding: 21px 0 15px;
   border-top: 1px solid var(--ruin-mini-line, #ccc);
@@ -221,15 +425,6 @@
   }
   .ruin-atlas-index-title { font-size: 13px; }
   .ruin-atlas-index-intro { font-size: 11px; }
-  .ruin-atlas-index-group {
-    grid-template-columns: 45px minmax(0,1fr);
-    gap: 7px;
-  }
-  .room-view[data-room="ruin-atlas"] .ruin-atlas-index-tag {
-    padding: 4px 6px;
-    min-height: 28px;
-    font-size: 11px;
-  }
   .ruin-atlas-index-list { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 0 12px; }
   .room-view[data-room="ruin-atlas"] .ruin-atlas-index-site { font-size: 12px; padding: 8px 0; }
   .ruin-atlas-index-preview { max-width: 42vw; }

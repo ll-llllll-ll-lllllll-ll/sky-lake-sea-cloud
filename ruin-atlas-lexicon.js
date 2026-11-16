@@ -6,37 +6,342 @@
   var THUMBNAILS = {"瘟猪坝沉墟":"https://ruin-archive.site/thumbnails/effluent-sedimentation.webp","电台路焦土":"https://ruin-archive.site/thumbnails/aether-scorched-earth.webp","山葬灰脉":"https://ruin-archive.site/thumbnails/yellow-mountain.webp","硅脉遗厂":"https://ruin-archive.site/thumbnails/silicon-vein-works.webp","琉棘庭":"https://ruin-archive.site/thumbnails/walled-gallery.webp","裂翼坪":"https://ruin-archive.site/thumbnails/fallen-wing-field.webp","轨畔孤构":"https://ruin-archive.site/thumbnails/rail-side.webp","残柱林":"https://ruin-archive.site/thumbnails/concrete-pole.webp","钟寂残堂":"https://ruin-archive.site/thumbnails/bell-silent-church.webp","池骸湾":"https://ruin-archive.site/thumbnails/bath-crack.webp","毒烬轮冢":"https://ruin-archive.site/thumbnails/toxic-tire-pyre.webp","褶层湾":"https://ruin-archive.site/thumbnails/quarry-bay-stairway.webp","隐染悬里":"https://ruin-archive.site/thumbnails/suspended-homeland.webp","雾蚀空庐":"https://ruin-archive.site/thumbnails/mist-eroded-hut.webp","锈祷圣堂":"https://ruin-archive.site/thumbnails/rust-prayer-sanctuary.webp","釉骸拓壁":"https://ruin-archive.site/thumbnails/membrane.webp","叠骸构阵":"https://ruin-archive.site/thumbnails/fish-mouth.webp","苔网塬":"https://ruin-archive.site/thumbnails/gloss-veil.webp","陆坞舰骸":"https://ruin-archive.site/thumbnails/brick-battleship.webp","墟响厅":"https://ruin-archive.site/thumbnails/mirror.webp","波蚀脊堤":"https://ruin-archive.site/thumbnails/wave-eroded-structure.webp","曜原驿":"https://ruin-archive.site/thumbnails/solar.webp","溶境遗廊":"https://ruin-archive.site/thumbnails/aquarium-bunker.webp","荒娱敖包":"https://ruin-archive.site/thumbnails/mountain-signal.webp","彩壳堡":"https://ruin-archive.site/thumbnails/castle.webp","削岩残居":"https://ruin-archive.site/thumbnails/roof.webp","隐阶空墅":"https://ruin-archive.site/thumbnails/hidden-stair-villa.webp","暮辉骸殿":"https://ruin-archive.site/thumbnails/afterglow-palace.webp","迁痕空埠":"https://ruin-archive.site/thumbnails/dock.webp","山骸窟殿":"https://ruin-archive.site/thumbnails/phospho.webp","山融灶垣":"https://ruin-archive.site/thumbnails/earthwall.webp","崖隐蚀垣":"https://ruin-archive.site/thumbnails/cliff-granary.webp","褶脊胚庭":"https://ruin-archive.site/thumbnails/compressed-courtyard.webp","草间稚居":"https://ruin-archive.site/thumbnails/grass-child-dwelling.webp","圆镜残境":"https://ruin-archive.site/thumbnails/circular-mirror-remnant.webp","火药磨盘":"https://ruin-archive.site/thumbnails/gunpowder-mill.webp","碎璃舍":"https://ruin-archive.site/thumbnails/shattered-glass-lodge.webp","遗廊椅":"https://ruin-archive.site/thumbnails/corridor-chair.webp","穿陨绒厅":"https://ruin-archive.site/thumbnails/meteor-velvet-hall.webp"};
   var FALLBACK = [{"name":"瘟猪坝沉墟","lat":30.454417,"lng":104.047667,"archiveDate":"2025.04","type":"garden"},{"name":"电台路焦土","lat":31.225833,"lng":121.618333,"archiveDate":"2026.03","type":"garden"},{"name":"山葬灰脉","lat":32.04174,"lng":119.83912,"archiveDate":"2017.08","type":"record"},{"name":"硅脉遗厂","lat":31.1936472,"lng":121.6131444,"archiveDate":"2018.05","type":"record"},{"name":"裂翼坪","lat":41.860278,"lng":-87.606111,"archiveDate":"2021.08","type":"record"},{"name":"钟寂残堂","lat":41.787463,"lng":-87.633307,"archiveDate":"2022.11","type":"record"},{"name":"池骸湾","lat":37.7806,"lng":-122.5137,"archiveDate":"2023.08","type":"record"},{"name":"褶层湾","lat":47.1808,"lng":-122.5537,"archiveDate":"2023.12","type":"record"},{"name":"隐染悬里","lat":37.4543556,"lng":141.0370611,"archiveDate":"2024.01","type":"record"}];
   var GROUPS = [
-    { key:"terrain", titles:["土地","TERRAIN","土地"], tags:[
+    { key:"terrain", titles:["土地","Terrain","土地"], tags:[
       ["mountain","山","Montane"],["slope","坡","Slope"],["shore","岸","Littoral"],
       ["bay","湾","Bay"],["port","埠","Port"],["plateau","塬","Plateau"],
       ["valley","谷","Valley"],["cliff","崖","Cliff"]
     ]},
-    { key:"structure", titles:["建筑","STRUCTURE","建築"], tags:[
+    { key:"structure", titles:["建筑","Structure","建築"], tags:[
       ["corridor","廊","Gallery"],["stair","阶","Stair"],["room","厅","Hall"],
-      ["dwelling","居","Dwelling"],["wall","垣","Wall"],["fort","堡","Fort"],
+      ["dwelling","居","Dwelling"],["inn","驿","Lodging"],["wall","垣","Wall"],["fort","堡","Fort"],
       ["hall","殿","Palace"],["sacred","圣","Sanctuary"],["tower","塔","Tower"],
       ["tunnel","甬","Passage"],["column","柱","Column"],["aperture","孔","Opening"],
-      ["factory","厂","Works"],["vessel","舰","Vessel"],["rail","辙","Rail"],
+      ["mirror","镜","Mirror"],["factory","厂","Works"],["vessel","舰","Vessel"],["rail","辙","Rail"],
       ["courtyard","庭","Courtyard"],["dam","坝","Dam"],["chamber","室","Chamber"],
-      ["monument","碑","Monument"],["base","基","Base"],["ring","环","Ring"],
-      ["inn","舍","Lodging"],["mirror","镜","Mirror"]
+      ["monument","碑","Monument"],["base","基","Base"],["ring","环","Ring"]
     ]},
-    { key:"condition", titles:["状态","CONDITION","状態"], tags:[
+    { key:"condition", titles:["状态","Condition","状態"], tags:[
       ["ruin","残","Fragment"],["remains","骸","Skeletal"],["desolate","荒","Derelict"],
-      ["sunken","沉","Sunken"],["scorched","焦","Charred"],["crack","裂","Fissured"],
+      ["sunken","沉","Sunken"],["scorched","焦","Charred"],["meteor","陨","Meteoric"],["crack","裂","Fissured"],
       ["eroded","蚀","Eroded"],["relocated","迁","Displaced"],["compressed","压","Compressed"],
       ["seepage","渗","Infiltrated"],["contaminated","染","Contaminated"],
       ["placed","置","Placed"],["interstitial","间","Interstice"],
       ["grind","磨","Grinding"],["attrition","耗","Attrition"]
     ]},
-    { key:"nature", titles:["自然","NATURE","自然"], tags:[
+    { key:"nature", titles:["自然","Env. Agency","自然"], tags:[
       ["vine","蔓","Vine"],["moss","苔","Moss"],["tree","木","Tree"],
       ["grass","草","Grass"],["spike","棘","Thorn"],["ash","灰","Ash"],
       ["membrane","膜","Membrane"],["water","水","Water"],["wave","波","Wave"],
       ["magnetic","磁","Magnetic"],["soil","土","Soil"],["sand","沙","Sand"],
-      ["dust","尘","Dust"],["meteor","陨","Meteor"]
+      ["dust","尘","Dust"]
     ]}
   ];
+  // Source: ruin-archive/index.html — 60 Latin / Greek etymons and English labels.
+  // Labels are view-only: data-tag values and intersection filtering remain stable.
+  var ROOT_LEXICON = {
+    "tag_mountain": {
+      "root": "mont-",
+      "source": "Latin",
+      "english": "Montane"
+    },
+    "tag_slope": {
+      "root": "cliv-",
+      "source": "Latin",
+      "english": "Slope"
+    },
+    "tag_shore": {
+      "root": "littor-",
+      "source": "Latin",
+      "english": "Littoral"
+    },
+    "tag_bay": {
+      "root": "sinus-",
+      "source": "Latin",
+      "english": "Embayment"
+    },
+    "tag_port": {
+      "root": "port-",
+      "source": "Latin",
+      "english": "Port"
+    },
+    "tag_plateau": {
+      "root": "plani-",
+      "source": "Latin",
+      "english": "Tableland"
+    },
+    "tag_valley": {
+      "root": "vall-",
+      "source": "Latin",
+      "english": "Valley"
+    },
+    "tag_cliff": {
+      "root": "rup-",
+      "source": "Latin",
+      "english": "Cliff"
+    },
+    "tag_corridor": {
+      "root": "portic-",
+      "source": "Latin",
+      "english": "Gallery"
+    },
+    "tag_stair": {
+      "root": "grad-",
+      "source": "Latin",
+      "english": "Stair"
+    },
+    "tag_room": {
+      "root": "aula-",
+      "source": "Greek",
+      "english": "Hall"
+    },
+    "tag_dwelling": {
+      "root": "dom-",
+      "source": "Latin",
+      "english": "Dwelling"
+    },
+    "tag_inn": {
+      "root": "hospit-",
+      "source": "Latin",
+      "english": "Lodging"
+    },
+    "tag_wall": {
+      "root": "mur-",
+      "source": "Latin",
+      "english": "Wall"
+    },
+    "tag_fort": {
+      "root": "castell-",
+      "source": "Latin",
+      "english": "Fortification"
+    },
+    "tag_hall": {
+      "root": "palat-",
+      "source": "Latin",
+      "english": "Palace"
+    },
+    "tag_sacred": {
+      "root": "sacr-",
+      "source": "Latin",
+      "english": "Sanctuary"
+    },
+    "tag_tower": {
+      "root": "turr-",
+      "source": "Latin",
+      "english": "Tower"
+    },
+    "tag_tunnel": {
+      "root": "via-",
+      "source": "Latin",
+      "english": "Passage"
+    },
+    "tag_column": {
+      "root": "styl-",
+      "source": "Greek",
+      "english": "Column"
+    },
+    "tag_aperture": {
+      "root": "foram-",
+      "source": "Latin",
+      "english": "Aperture"
+    },
+    "tag_mirror": {
+      "root": "specul-",
+      "source": "Latin",
+      "english": "Mirror"
+    },
+    "tag_factory": {
+      "root": "erg-",
+      "source": "Greek",
+      "english": "Works"
+    },
+    "tag_vessel": {
+      "root": "nav-",
+      "source": "Latin",
+      "english": "Vessel"
+    },
+    "tag_rail": {
+      "root": "ferro-",
+      "source": "Latin",
+      "english": "Rail"
+    },
+    "tag_courtyard": {
+      "root": "atri-",
+      "source": "Latin",
+      "english": "Courtyard"
+    },
+    "tag_dam": {
+      "root": "agger-",
+      "source": "Latin",
+      "english": "Dam"
+    },
+    "tag_chamber": {
+      "root": "camer-",
+      "source": "Latin",
+      "english": "Chamber"
+    },
+    "tag_monument": {
+      "root": "mnemo-",
+      "source": "Greek",
+      "english": "Monument"
+    },
+    "tag_base": {
+      "root": "basi-",
+      "source": "Greek",
+      "english": "Base"
+    },
+    "tag_ring": {
+      "root": "annul-",
+      "source": "Latin",
+      "english": "Ring"
+    },
+    "tag_ruin": {
+      "root": "frag-",
+      "source": "Latin",
+      "english": "Fragmentary"
+    },
+    "tag_remains": {
+      "root": "skelet-",
+      "source": "Greek",
+      "english": "Skeletal"
+    },
+    "tag_desolate": {
+      "root": "relict-",
+      "source": "Latin",
+      "english": "Derelict"
+    },
+    "tag_sunken": {
+      "root": "mers-",
+      "source": "Latin",
+      "english": "Sunken"
+    },
+    "tag_scorched": {
+      "root": "carbon-",
+      "source": "Latin",
+      "english": "Charred"
+    },
+    "tag_meteor": {
+      "root": "meteōr-",
+      "source": "Greek",
+      "english": "Meteoric"
+    },
+    "tag_crack": {
+      "root": "fiss-",
+      "source": "Latin",
+      "english": "Fissured"
+    },
+    "tag_eroded": {
+      "root": "erod-",
+      "source": "Latin",
+      "english": "Eroded"
+    },
+    "tag_relocated": {
+      "root": "migr-",
+      "source": "Latin",
+      "english": "Displaced"
+    },
+    "tag_compressed": {
+      "root": "press-",
+      "source": "Latin",
+      "english": "Compressed"
+    },
+    "tag_seepage": {
+      "root": "percol-",
+      "source": "Latin",
+      "english": "Infiltrated"
+    },
+    "tag_contaminated": {
+      "root": "contamin-",
+      "source": "Latin",
+      "english": "Contaminated"
+    },
+    "tag_placed": {
+      "root": "posit-",
+      "source": "Latin",
+      "english": "Emplaced"
+    },
+    "tag_interstitial": {
+      "root": "interstit-",
+      "source": "Latin",
+      "english": "Interstitial"
+    },
+    "tag_grind": {
+      "root": "tribo-",
+      "source": "Greek",
+      "english": "Grinding"
+    },
+    "tag_attrition": {
+      "root": "attrit-",
+      "source": "Latin",
+      "english": "Attrition"
+    },
+    "tag_vine": {
+      "root": "viti-",
+      "source": "Latin",
+      "english": "Vine"
+    },
+    "tag_moss": {
+      "root": "bryo-",
+      "source": "Greek",
+      "english": "Moss"
+    },
+    "tag_tree": {
+      "root": "xylo-",
+      "source": "Greek",
+      "english": "Woody"
+    },
+    "tag_grass": {
+      "root": "herb-",
+      "source": "Latin",
+      "english": "Herbaceous"
+    },
+    "tag_spike": {
+      "root": "acantho-",
+      "source": "Greek",
+      "english": "Thorn"
+    },
+    "tag_ash": {
+      "root": "ciner-",
+      "source": "Latin",
+      "english": "Ash"
+    },
+    "tag_membrane": {
+      "root": "membran-",
+      "source": "Latin",
+      "english": "Membrane"
+    },
+    "tag_water": {
+      "root": "hydro-",
+      "source": "Greek",
+      "english": "Water"
+    },
+    "tag_wave": {
+      "root": "und-",
+      "source": "Latin",
+      "english": "Wave"
+    },
+    "tag_magnetic": {
+      "root": "magneto-",
+      "source": "Greek",
+      "english": "Magnetic"
+    },
+    "tag_soil": {
+      "root": "pedo-",
+      "source": "Greek",
+      "english": "Soil"
+    },
+    "tag_sand": {
+      "root": "aren-",
+      "source": "Latin",
+      "english": "Sand"
+    },
+    "tag_dust": {
+      "root": "pulver-",
+      "source": "Latin",
+      "english": "Dust"
+    }
+  };
+  var lexiconMode = "roots";
+
   var COPY = {
     zh: {
       title:"— 墟语学索引 —", intro:"土地、建筑、状态、自然。选择语素，逐次排除不符合的地点；每一个留下的名字，仍对应着一处继续变化的遗构。",
@@ -98,24 +403,97 @@
     var tags = tagsOf(site);
     return wanted.every(function(tag) { return tags.indexOf(tag) >= 0; });
   }
+
+  function lexiconTerm(item) {
+    var entry = ROOT_LEXICON["tag_" + item[0]];
+    if (lang() !== "en") return item[1];
+    return entry ? (lexiconMode === "roots" ? entry.root : entry.english) : item[2];
+  }
+  function tagAccessibility(item) {
+    var entry = ROOT_LEXICON["tag_" + item[0]];
+    if (lang() !== "en") return { title: item[2] || item[1], label: item[1] };
+    if (!entry) return { title: item[2], label: item[2] };
+    return lexiconMode === "roots" ?
+      {title: entry.english + " · " + entry.source + " root " + entry.root,
+       label: entry.english + "; " + entry.source + " root " + entry.root} :
+      {title: entry.english, label: entry.english};
+  }
+  function renderLexiconGroup(group, idx) {
+    var tags = group.tags.map(function(item) {
+      var meta = tagAccessibility(item);
+      return '<button type="button" class="ruin-atlas-index-tag" data-tag="'+esc(item[0])+
+        '" aria-pressed="false" aria-label="'+esc(meta.label)+'" title="'+esc(meta.title)+'">'+
+        esc(lexiconTerm(item))+'</button>';
+    }).join("");
+    return '<div class="ruin-atlas-index-group" data-group="'+esc(group.key)+'">'+
+      '<span class="ruin-atlas-index-category">'+esc(group.titles[idx])+'</span>'+
+      '<span class="ruin-atlas-index-separator" aria-hidden="true">|</span>'+
+      '<div class="ruin-atlas-index-tags">'+tags+'</div></div>';
+  }
+  function switchMarkup() {
+    if (lang() !== "en") return "";
+    return '<button type="button" class="ruin-atlas-index-lexicon-switch"'+
+      ' role="switch" aria-checked="'+(lexiconMode === "roots")+'"'+
+      ' data-mode="'+esc(lexiconMode)+'" aria-label="Latin / Greek roots or English terms">'+
+      '<span class="ruin-atlas-index-switch-label" data-switch-label="english">ENG</span>'+
+      '<span class="ruin-atlas-index-switch-track" aria-hidden="true">'+
+        '<span class="ruin-atlas-index-switch-thumb"></span></span>'+
+      '<span class="ruin-atlas-index-switch-label" data-switch-label="roots">LAT·GR</span>'+
+      '</button>';
+  }
+  function refreshLexiconSwitch() {
+    if (!panel) return;
+    var rootMode = lexiconMode === "roots";
+    panel.dataset.lexiconLang = lang();
+    panel.dataset.lexiconMode = lexiconMode;
+    panel.querySelectorAll(".ruin-atlas-index-tag").forEach(function(button) {
+      var item = null;
+      GROUPS.some(function(group) {
+        item = group.tags.find(function(tag) { return tag[0] === button.dataset.tag; }) || null;
+        return Boolean(item);
+      });
+      if (!item) return;
+      var meta = tagAccessibility(item);
+      button.textContent = lexiconTerm(item);
+      button.title = meta.title;
+      button.setAttribute("aria-label", meta.label);
+      button.classList.toggle("is-root-lexeme",lang() === "en" && rootMode);
+    });
+    var toggle = panel.querySelector(".ruin-atlas-index-lexicon-switch");
+    if (!toggle) return;
+    toggle.dataset.mode = lexiconMode;
+    toggle.setAttribute("aria-checked",String(rootMode));
+    toggle.setAttribute("aria-label",rootMode ?
+      "Latin / Greek roots selected. Switch to English terms." :
+      "English terms selected. Switch to Latin / Greek roots.");
+    toggle.title = rootMode ? "Latin / Greek roots · switch to English" :
+      "English terms · switch to Latin / Greek roots";
+    toggle.querySelectorAll(".ruin-atlas-index-switch-label").forEach(function(label) {
+      label.classList.toggle("is-active",label.dataset.switchLabel === lexiconMode);
+    });
+  }
+  function renderLexiconGroups(idx) {
+    var isEnglish = lang() === "en";
+    var groups = isEnglish ?
+      GROUPS.map(function(group) {return '<div class="ruin-atlas-index-line">'+renderLexiconGroup(group,idx)+'</div>';}) :
+      ['<div class="ruin-atlas-index-line">'+GROUPS.slice(0,2).map(function(g){return renderLexiconGroup(g,idx);}).join("")+'</div>',
+       '<div class="ruin-atlas-index-line">'+GROUPS.slice(2).map(function(g){return renderLexiconGroup(g,idx);}).join("")+'</div>'];
+    return groups.join("");
+  }
+
   function renderChrome() {
     if (!panel) return;
     var copy = COPY[lang()];
     var idx = indexForLang();
     panel.setAttribute("aria-label", copy.title.replace(/—/g,"").trim());
     panel.innerHTML =
-      '<div class="ruin-atlas-index-head"><h2 class="ruin-atlas-index-title">'+esc(copy.title)+'</h2>'+
+      '<div class="ruin-atlas-index-head"><div class="ruin-atlas-index-heading-controls">'+
+        '<h2 class="ruin-atlas-index-title">'+esc(copy.title)+'</h2>'+
+        switchMarkup()+'</div>'+
         '<span class="ruin-atlas-index-count" aria-live="polite"></span></div>'+
       '<p class="ruin-atlas-index-intro">'+esc(copy.intro)+'</p>'+
       '<div class="ruin-atlas-index-groups" role="group" aria-label="'+esc(copy.title)+'">'+
-      GROUPS.map(function(group) {
-        return '<div class="ruin-atlas-index-group">'+
-          '<span class="ruin-atlas-index-category">'+esc(group.titles[idx])+'</span>'+
-          '<div class="ruin-atlas-index-tags">'+group.tags.map(function(item){
-            return '<button type="button" class="ruin-atlas-index-tag" data-tag="'+esc(item[0])+
-              '" aria-pressed="false" title="'+esc(item[2])+'">'+esc(idx === 1 ? item[2] : item[1])+'</button>';
-          }).join("")+'</div></div>';
-      }).join("")+'</div>'+
+      renderLexiconGroups(idx)+'</div>'+
       '<div class="ruin-atlas-index-list-head"><h3>'+esc(copy.listing)+'</h3>'+
         '<button type="button" class="ruin-atlas-index-clear">'+esc(copy.reset)+'</button></div>'+
       '<div class="ruin-atlas-index-list" role="group" aria-label="'+esc(copy.listing)+'"></div>'+
@@ -127,6 +505,7 @@
           '<span class="ruin-atlas-preview-place"></span>'+
           '<span class="ruin-atlas-preview-recorder"></span>'+
         '</span></div>';
+    refreshLexiconSwitch();
     renderList();
   }
   function renderList() {
@@ -221,6 +600,14 @@
     }
   }
   function onClick(event) {
+    var vocabularySwitch = event.target.closest(".ruin-atlas-index-lexicon-switch");
+    if (vocabularySwitch && panel.contains(vocabularySwitch)) {
+      lexiconMode = lexiconMode === "roots" ? "english" : "roots";
+      // In-place relabeling keeps selected tags, counts, matching dots, focus,
+      // and the current Leaflet map viewport untouched.
+      refreshLexiconSwitch();
+      return;
+    }
     var tagButton = event.target.closest(".ruin-atlas-index-tag");
     if (tagButton && panel.contains(tagButton)) {
       if (tagButton.disabled) return;
