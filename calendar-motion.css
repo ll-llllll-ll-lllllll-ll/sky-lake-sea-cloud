@@ -469,3 +469,40 @@
   .home-view .home-day-calligraphy .home-day-calendar-link-text,
   .home-view .home-day-calligraphy .home-day-date-vertical-text{font-size:9px;}
 }
+
+
+/* v96 · Match the Chrome reference's shared top edge and vertical strokes.
+   Keep the Safari-safe glyph-column architecture from v95 intact. */
+.home-view .home-day-calligraphy .home-day-vertical-glyph.home-day-vertical-separator{
+  display:block;
+  flex:0 0 auto;
+  align-self:center;
+  width:0;
+  height:.82em;
+  min-height:9px;
+  margin:.14em 0;
+  padding:0;
+  border:0;
+  border-left:1px solid currentColor;
+  opacity:.62;
+  font-size:inherit;
+  line-height:0;
+}
+.home-view .home-day-calligraphy .home-day-date-vertical-text.is-rotated-line{
+  /* A rotated run aligns its text top above the first large Han character
+     unless its origin is nudged down. */
+  top:11px;
+}
+.home-view .home-day-calligraphy .home-day-calendar-link-text.is-glyph-column{
+  /* The small glyph column sat lower than the title in the screenshots. */
+  position:relative;
+  top:-8px;
+}
+@media(max-width:760px){
+  .home-view .home-day-calligraphy .home-day-date-vertical-text.is-rotated-line{
+    top:7px;
+  }
+  .home-view .home-day-calligraphy .home-day-calendar-link-text.is-glyph-column{
+    top:-5px;
+  }
+}
