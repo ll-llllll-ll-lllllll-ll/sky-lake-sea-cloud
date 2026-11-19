@@ -6479,3 +6479,8 @@ html:has(.fc-room){
     margin-top:1.15em;
   }
 }
+
+/* Literary work guide copy: natural paragraph spacing, no additional UI. */
+.fc-room .fc-reading-copy {
+  white-space: pre-line;
+}

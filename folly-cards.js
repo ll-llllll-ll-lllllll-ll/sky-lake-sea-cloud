@@ -94,9 +94,9 @@
       heads:['坍塌结构','废墟乐器','废墟剧场'],
       stage:{structure:[['建造','下垂','坍缩'],['垂立','松动','失衡','倒塌']],detail:[['置放','搏动','熔毁'],['悬挂','感应','摔碎']]},
       works:[
-        {garden:'死水心室的构造取自沉墟中失去流动的水域：爆裂的储水形态、残余的心室结构与一潭死水彼此牵连。水体缓慢流失，承托随之消退；原本依靠内部平衡维系的材料在自重中挤压、碎裂、向内收缩，最后仍留在死水里继续腐蚀。',
-         instrument:'「锈心铃」由锈蚀金属碎片与玻璃罩构成，嵌在心室的钢筋与钢索连接之中。心室的下沉牵动滑轮与泵片，将缓慢的坍塌转为急促的敲击；每一次搏动都借来园林衰败的力量，同时耗损维持自身运作的结构。',
-         theatre:'人工湖被引入原本没有湖泊的土地，高处的新城将水作为景观；渗过基岩与破损污水管道的水，却在挡土墙下方的旧址积成死水。上层仍在扩张，低处的残构却被浸泡与掩埋，原本区分新城与旧地的高差，反而被水不断穿过。园林将这种滞留与渗漏转入自己的构造：死水心室的下沉与《锈心铃》的搏动在同一段时间内相互牵动。声音从承重、牵引、碰撞和材料失效中发生，越接近最后一次敲击，乐器便越难继续维持原有形态。',
+        {garden:"死水心室由爆裂形态的储水外壳、残余的心室构造与一潭死水连接而成。它借用了现场一道被挡土墙切开的城市剖面：高处的人工湖成为新城的景观，渗过岩层与破损管道的水却在低处的旧址停滞。\n\n储水构造一旦破裂，水体便缓慢流失。原先由水与连接共同维持的承托逐渐消退，水泥内核在自重中挤压、碎裂、下沉，最后向内收缩。坍塌没有使它离开这处废墟；残部仍浸在死水里，继续腐蚀。",
+         instrument:"心脏原本深藏于身体内部，在这里却像被翻到了废墟的表面。《锈心铃》只有人的心脏般大小：从现场拾来的锈铁碎片被封入玻璃罩，锈痕像一具裸露器官的内部肌理。它没有血液，维持搏动的却是钢缆、滑轮、泵片与电路。\n\n随着死水心室缓缓下沉，穿行于钢筋间、如同「主动脉」的连接将牵引传给泵片，把几乎察觉不到的位移变成越来越急促的敲击。这是一种失调的「器官共鸣」：金属在振动中对抗自己的阻塞，每次发声又耗去一部分维系发声的条件，直到过载使这颗小小的心脏熔毁。",
+         theatre:"一片原本没有湖泊的土地，被人工湖重新划出两种生活。水面上的新城继续扩张，挡土墙下方的旧址却承受着穿过基岩与破损污水管道的渗漏；沉泥与污水在低处积聚，原本被当作景观的水，成了无法止息的残余。挡土墙看似把新旧城市分开，水却不断越过它们之间的界线。\n\n在这道切开的地层里，一颗文明的心脏仿佛正在失去循环：曾经在此流动的生活退去，污泥凝结在创口上，成为一层难以愈合的「血痂」。「心血的干涸」也发生在这些留下的结构中——人们曾倾注的劳动、期待与记忆，随着生活和维护的撤离逐渐失去依托。\n\n园林把这种缓慢的失去交给一颗暴露在外的机械器官。水位下降，心室坍缩，《锈心铃》却借着坍塌传来的力量越敲越快。它无法让旧址重新恢复循环，只能在一次次失调的搏动中耗损自己，直至最后一击毁坏了发声的身体。演奏停止以后，沉墟与残构仍继续留给时间。",
          score:'这份图谱由「坍塌结构：死水心室」的钢筋残片结构设计图与「废墟乐器：锈心铃」循环开关的电路图叠合而成。两套图线在同一平面交错：随着钢筋锈蚀、应力衰减，图谱记录着心室坍缩时构件的位移与机械联动，而坍塌的进程又经感应装置传入电子线路，转化为不断加速的敲击与搏动。位移、断裂与发声逐渐加重「锈心铃」的运行负荷，使它在愈发急促的跳动中最终熔毁；原本用于设计与记录的图纸，也由此成为心室残响的变奏曲乐谱。',
          phases:{
            structure:[
@@ -115,7 +115,7 @@
            ],
            detail:[
              [
-               "锈心铃被置放在心室的传力路径末端。",
+               "锈心铃被置放在心室的传力路径末端，像一颗被翻出体外的器官。",
                "锈蚀金属碎片封存在玻璃罩内，与钢索、滑轮和泵片相连，等待园林传来的牵引。"
              ],
              [
@@ -128,9 +128,9 @@
              ]
            ]
          }},
-        {garden:'朽塔由三组向外牵引的钢缆与中央悬垂的重物勉强维持垂立，底部的玻璃轴球承受着微小的偏移。钢缆逐渐疲劳，张力和重心开始改变；地面的「塌别塔」又反复旋转碾磨，使支撑塔身的结构在持续扰动中走向坍落。',
-         instrument:'「以太琴」将摆动天线、特雷门琴式的频差回路与砂盘连接起来：电磁变化转为频率、声音与振动，再由砂粒留下短暂图形。不断掉落的黑砂与积累的静电噪声，使这套努力维持秩序的装置逐渐逼近自身的负荷极限。',
-         theatre:'短波天线阵列曾与金属玻璃制品加工厂并存，通信信号与铁皮厂房、设备和焊接回路在同一片空间中彼此干扰。旧厂拆除以后，天线塔及放射状伸展的拉线仍限制着周围土地的使用；失去维护的地面则逐渐被积水、草根与海风侵入。无形的通信秩序使这片土地空了下来，裸露的砖石又在风沙中一点点磨损。朽塔、《以太琴》与地面旋转的塌别塔共同参与这场演奏：锚固钢缆承受张力，塔身随扰动摇摆，磨盘反复碾压地表与钢缆；天线间的信号变化化作声音，而这些运动又持续削弱结构的平衡与发声回路。',
+        {garden:"朽塔借一套精巧而勉强的张拉关系站立在焦土上。三处锚点向外牵住钢缆，顶端悬垂的重物将松散构件拉回中心，底部的一颗玻璃轴球容纳细微的摆动。它看似垂直，维持这副姿态的却是几股随时可能不再平衡的力量。\n\n随着钢缆疲劳、重物下滑，塔身的重心逐渐偏移。地面旋转的「磨」又反复掠过混凝土与支撑线，使原先用于维持稳定的连接不断损耗；当偏移越过轴球允许的角度，残余的拉力反而将塔身推向倒塌。",
+         instrument:"《以太琴》被安放在朽塔的天线之间。一层层透明片面像玻璃上用来标记感应范围的刻线，彼此叠合，仿佛能够把空中无形的「以太」暂时捕捉下来。它的形体保留着这种近乎天真的愿望，内部却由天线、特雷门琴式的感应回路与砂盘构成。\n\n塔身摇摆时，天线之间的关系不断变化；电磁信号经由频率与声音转为结构振动，使黑砂聚成短暂的波纹，又在下一次扰动中散开。砂粒像一种不断被耗去的显影材料，让无法看见的变化留下形迹。随着静电、信号干扰与电子噪声累积，试图标记这些力量的回路也逐渐逼近烧毁的边缘。",
+         theatre:"这里曾有短波天线阵列，也有金属玻璃制品加工厂。无线电信号穿过铁皮厂房、机器与焊接回路；厂房拆除以后，天线塔及放射状伸展的拉线仍占据周围土地，使大片地面难以继续使用。失去照料的砖石在海风里磨耗，雨水、草根与尘沙沿裂隙进入。所谓「以太」没有亲手侵蚀土地，却以看不见的通信秩序为荒芜留下了空间。\n\n朽塔在钢缆的张力中勉强垂立；《以太琴》试图把天线之间的无形变化转成声音与砂纹；地面的「磨」则将原本向上攀升的阶梯意象倒转成贴地旋转的齿口，反复碾压砂土、碎石与维系塔身的支撑。一个结构因精密的秩序而发声，另一个结构以同样执拗的运动破坏它的平衡。以太给秩序以混沌，又给混沌以秩序。这场循环的灾难便开始了。\n\n「尘埃的落定」在这里始终只是短暂的一刻。每当「磨」重新掠过，先前沉积的尘土又被扬起，不同时刻留下的残屑混在一起，像是连时间也被反复碾磨。即使朽塔最终倾覆，砂粒、风与残余构件仍会继续改变地面的痕迹；这场演奏没有一个能够长久保持的终止姿态。",
          score:'这份图谱由「坍塌结构：朽塔」的摆动结构设计图与「废墟乐器：以太琴」的频差电路图叠合而成。两套图线在同一平面交错：随着张拉结构的松动、塔体失衡，图谱记录着朽塔天线重叠时构件的位移与信号干扰，而干扰的信号又经感应装置传入信号回路与电磁系统，转化为不断变换频率的声音。干扰的叠加与过载逐渐加重「以太琴」的运行负荷，使它在愈发嘈杂的振动中最终烧毁；原本用于设计与记录的图纸，也由此成为朽塔以太的谐虐曲乐谱。',
          phases:{
            structure:[
@@ -140,7 +140,7 @@
              ],
              [
                "连接与牵引开始松动。",
-               "钢缆逐渐疲劳，地面磨盘的反复扰动传入支撑部位，原本紧绷的关系出现间隙。"
+               "钢缆逐渐疲劳，地面「磨」的反复扰动传入支撑部位，原本紧绷的关系出现间隙。"
              ],
              [
                "重心偏移，朽塔进入失衡。",
@@ -148,12 +148,12 @@
              ],
              [
                "张拉结构失效，朽塔最终倒塌。",
-               "塔身越过底部轴球允许的角度并撞向地面，残余钢缆与磨盘继续搅动散落的材料。"
+               "塔身越过底部轴球允许的角度并撞向地面，残余钢缆与「磨」继续搅动散落的材料。"
              ]
            ],
            detail:[
              [
-               "以太琴的感应部件被悬挂起来。",
+               "以太琴的透明片层与感应部件被悬挂起来。",
                "天线、线缆与砂盘建立起尚未运作的联系，乐器暂时维持着等待感应的姿态。"
              ],
              [
@@ -172,9 +172,9 @@
       heads:['Collapsing Structure','Ruin Instrument','Ruin Theater'],
       stage:{structure:[['Construction','Sagging','Inward Collapse'],['Upright','Loosening','Imbalance','Collapse']],detail:[['Placement','Pulsation','Meltdown'],['Suspension','Sensing','Shattering']]},
       works:[
-        {garden:'The stagnant-heart structure grows from a reservoir shell, the remains of a heart chamber and a pool of still water. As the water drains, internal support gives way. Under its own weight the construction compresses, fractures and contracts, leaving parts immersed and exposed to further corrosion.',
-         instrument:'The strain organ encloses pieces of corroded metal in glass, connected to the ruined chamber by steel cables, pulleys and a pump blade. The chamber’s slow descent is transmitted as increasingly rapid knocks: each beat borrows energy from the garden’s collapse while consuming the instrument itself.',
-         theatre:'An artificial lake was brought to land where none had existed. Above the retaining wall, water serves the new district as scenery; after seeping through bedrock and damaged sewage pipes, it collects below among the remains of the old site. The expanding city and the submerged ruins occupy the same section of ground, linked by water that continues to cross their boundary. The Folly takes this seepage and stagnation into its construction: the sinking chamber and the pulses of the strain organ move through the same time. Sound arises from load, tension, collision, and structural failure; as the last blow approaches, the instrument loses the conditions that held it together.',
+        {garden:"The Stagnant Heart Chamber joins the ruptured shell of a reservoir, the remains of a ventricular structure, and a pool of standing water. Its form draws on a section of the city split by a retaining wall: above, an artificial lake is presented as scenery for the new district; below, water seeping through rock and damaged pipes collects among the old remains.\n\nOnce the reservoir shell breaks, its water slowly drains away. The support that once held the concrete core in place recedes; under its own weight, it compresses, fractures, sinks, and contracts inward. Collapse does not remove it from the site. Its surviving parts remain immersed, where corrosion continues.",
+         instrument:"A heart is ordinarily hidden deep within a body. Here it seems to have been brought out into the open, among the ruins. No larger than a human heart, the strain organ encloses rusted iron fragments gathered on site in a glass vessel. Their corroded surfaces resemble the exposed interior of an organ. What makes it beat is not blood but cables, pulleys, a pump plate, and a circuit.\n\nAs the chamber settles, connections running through the rebar like an aorta transmit its pull to the pump plate. Displacement too slow to notice becomes a succession of increasingly rapid blows. This is an organ resonance out of joint: the metal trembles against its own resistance, and every sound uses up a little of what allows it to sound, until overload destroys the small heart.",
+         theatre:"An artificial lake divided a place that had never held one into two kinds of urban life. The new district continues to grow above the waterline, while the old ground below the retaining wall receives seepage passing through rock and broken sewage pipes. Mud and wastewater gather beneath the landscape designed for the city above. The wall appears to separate the two, yet the water keeps crossing that boundary.\n\nWithin this exposed section of ground, a city's heart seems to be losing its circulation. The life once sustained here has withdrawn; silt clings to the wound like a scab that will not heal. When the heart's blood runs dry, it is also the labor, hopes, and memories once invested in these buildings that lose their place as daily life and maintenance disappear.\n\nThe Folly entrusts this slow loss to a small mechanical organ laid bare. As the water falls and the chamber contracts, the strain organ borrows force from the collapse and beats faster. It cannot restore circulation to the abandoned ground. Each uneven pulse instead wears away its own means of sounding, until the final blow destroys it. The performance ends; the remaining structures continue to weather.",
          score:'This score overlays the structural drawing of the rebar fragments in “Collapsing Structure: Stagnant Heart Chamber” with the circuit diagram of the cycling switch in “Ruin Instrument: strain organ.” Their lines intersect on a single plane: as the steel corrodes and its stresses diminish, the drawing records the shifting components and mechanical linkages of the chamber’s collapse, while sensors carry the progress of that collapse into an electronic circuit, turning it into increasingly rapid knocks and pulses. Each displacement, fracture and sound adds to the load on strain organ, driving its beat faster until it finally melts down. What began as a drawing for design and documentation thus becomes the score of variations on the chamber’s lingering echoes.',
          phases:{
            structure:[
@@ -193,7 +193,7 @@
            ],
            detail:[
              [
-               "The strain organ is placed at the end of the chamber’s force-transmission path.",
+               "The strain organ sits at the end of the chamber’s force-transmission path, like a heart brought out into the open.",
                "Rusted fragments are sealed in glass and connected to cables, pulleys, and a pump blade, awaiting the pull of the garden."
              ],
              [
@@ -206,9 +206,9 @@
              ]
            ]
          }},
-        {garden:'Three outward cable anchors and a suspended weight hold the Rusted Tower upright around a glass pivot. As cable tension weakens, its center of gravity shifts. The ground-level grinding structure repeatedly wears at its supports until the tower can no longer keep its precarious balance.',
-         instrument:'Aether Loom links moving antennas, a theremin-like interference field and a sand plate. Electromagnetic changes become frequency, sound and vibration before briefly appearing in the sand. Falling grains, static charge and electronic noise gradually burden the apparatus.',
-         theatre:'Shortwave antenna arrays once stood beside a metal-and-glass factory. Radio signals and the sheet-metal buildings, machinery, and welding circuits interacted across the same site. After the factory was demolished, the antenna tower and its radiating guy wires still restricted the use of the surrounding ground. Water, grass roots, and sea wind gradually entered the unattended cracks, wearing exposed masonry into sand. An invisible order of transmission kept the land vacant while weathering continued to alter it. Here the tower, the Aether Loom, and the ground-level grinder perform together: anchored cables hold tension, the tower sways, and the wheel repeatedly wears against the ground and its supports. Changes between the antennas become sound, while the same movements gradually undermine the balance and circuits that sustain the performance.',
+        {garden:"The Rusted Tower stands through a precise yet precarious arrangement of tension. Guy wires pull outward toward three anchors, a suspended weight draws its loose members toward the center, and a glass bearing ball at the base admits the slightest sway. The tower appears upright, but its posture depends on forces that can cease to balance at any moment.\n\nAs the cables fatigue and the weight slips lower, the center of gravity shifts. The Grind turns along the ground, repeatedly wearing at the concrete and supporting lines. Connections built to keep the tower standing are slowly consumed; once the tilt exceeds the angle its glass pivot can bear, the remaining tension itself draws the tower into collapse.",
+         instrument:"The Aether Loom hangs among the tower's antennas. Its successive transparent layers resemble sensing marks traced on glass. As they overlap, they seem almost capable of catching the invisible \"aether\" that passes between them. The form holds on to that improbable wish; within it, antennas, a theremin-like sensing circuit, and a sand plate form a tangible chain of transmission.\n\nAs the tower sways, the relationships between its antennas change. Electromagnetic signals are carried into frequency, sound, and structural vibration, gathering black sand into fleeting ripples that disperse at the next disturbance. The grains act like a reagent slowly being used up, allowing unseen changes to leave visible traces. Accumulating static, interference, and electronic noise gradually push the circuit toward burnout.",
+         theatre:"Shortwave antenna arrays once occupied this ground beside a metal-and-glass factory. Radio signals passed through the sheet-metal workshops, machines, and welding circuits. After the factory was demolished, the tower and its radiating guy wires continued to occupy the surrounding land, restricting how it could be used. Without maintenance, rainwater, roots, and sea wind entered the cracks and wore the exposed masonry down. \"Aether\" did not erode the ground itself; the invisible order of transmission left room for that desolation to take hold.\n\nThe tower barely stands within the pull of its cables. The Aether Loom turns unseen changes between the antennas into sound and patterns in sand. At ground level, the Grind inverts the image of an ascending stairway into teeth that revolve against the earth, repeatedly wearing down the sand, rubble, and supports beneath the tower. One structure sounds through its carefully arranged order; another, no less insistent, grinds that balance away. Aether gives chaos to order, and order to chaos. Thus begins this cycle of calamity.\n\nThe settling of dust is only ever temporary here. Each return of the Grind lifts what has already fallen, mixing fragments deposited at different moments, as though time itself were passing repeatedly beneath its teeth. Even after the tower falls, sand, wind, and broken members continue to alter what the performance has left behind.",
          score:'This score overlays the drawing of the tower’s oscillating structure in “Collapsing Structure: Rusted Tower” with the beat-frequency circuit diagram of “Ruin Instrument: Aether Loom.” Their lines intersect on a single plane: as the tensioned structure loosens and the tower loses its balance, the drawing records the displacement of components and signal interference between the tower’s overlapping antennas. Sensors carry those disrupted signals into the signal circuits and electromagnetic system, where they become sounds of continually shifting frequency. The accumulation of interference and overload steadily increases the strain on Aether Loom, until the instrument finally burns out amid ever noisier vibrations. What began as a drawing for design and documentation thus becomes the score of a cruel scherzo for the tower’s aether.',
          phases:{
            structure:[
@@ -231,7 +231,7 @@
            ],
            detail:[
              [
-               "The sensing parts of Aether Loom are suspended.",
+               "The transparent layers and sensing elements of Aether Loom are suspended.",
                "Antennas, cables and a sand plate are connected but still at rest, holding the instrument in readiness."
              ],
              [
@@ -250,9 +250,9 @@
       heads:['崩壊する構造','廃墟の楽器','廃墟劇場'],
       stage:{structure:[['構築','垂下','圧潰'],['直立','緩み','均衡喪失','倒壊']],detail:[['設置','鼓動','溶融崩壊'],['懸架','感応','落下破砕']]},
       works:[
-        {garden:'「死水心室」は破裂した貯水槽の形態、心室の残存構造、淀んだ水から組み立てられる。水が失われるにつれ内部の支持も消え、構造は自重で押し潰され、割れ、内側へと縮む。残った部分は水に浸されたまま腐食を続ける。',
-         instrument:'錆びた金属片をガラスに封じた「錆心鈴」は、鋼索と滑車、ポンプ片を通じて心室につながる。ゆっくりした沈下が急速な打撃へと変わり、一度の鼓動ごとに園林の崩壊から力を借りながら、自らの構造も消耗する。',
-         theatre:'もともと湖のなかった土地に人工湖が造られ、高台の新市街では水が景観として扱われている。その水は岩盤や破損した下水管を通って擁壁の下へ染み出し、旧市街の跡に淀みをつくった。上では新たな建設が続き、下では残構が水に浸かって埋もれていく。二つの場所を隔てるはずの高低差を、水は今も越え続ける。フォリーはこの浸透と滞留を構造に取り込む。沈む心室と「錆心鈴」の鼓動が同じ時間の中で結びつき、荷重、張力、衝突、部材の損傷から音が生まれる。最後の一打に近づくほど、楽器は自らを支える構造を失っていく。',
+        {garden:"「死水心室」は、破裂したような貯水殻、心室を思わせる残構、そして一潭の淀んだ水をつないで造られている。その形は擁壁によって切り分けられた都市の断面に由来する。上では人工湖が新市街の景観となり、下では岩盤や破損した管を通った水が旧市街の跡に滞留している。\n\n貯水部が破れると、水はゆっくり失われていく。水と接続によって保たれていた支えが退き、コンクリートの核は自重で圧縮され、亀裂を生じ、沈み込み、内側へ縮んでいく。崩壊後も残部は水中にとどまり、腐食を続ける。",
+         instrument:"心臓は本来、身体の奥に隠されている。ここではその器官が廃墟の表面へ引き出されたかのように見える。人の心臓ほどの大きさの「錆心鈴」は、現場で拾った錆びた鉄片をガラス容器に封じたものだ。酸化した表面は、むき出しになった器官の内側を思わせる。血液に代わって鼓動を生むのは、鋼索と滑車、ポンプ片、そして回路である。\n\n心室が沈むにつれ、鉄筋のあいだを大動脈のように通る接続が力をポンプ片へ伝え、ほとんど目に見えない変位を次第に速まる打撃へ変える。それは調子の外れた「器官の共鳴」でもある。金属は自らの詰まりに抗うように震え、音を発するたびに発声の条件をすり減らし、ついには過負荷によって小さな心臓を壊してしまう。",
+         theatre:"もともと湖のなかった土地に人工湖が造られ、そこには二つの都市の暮らしが重なることになった。水面の上では新市街の開発が続き、擁壁の下では岩盤や破損した下水管を通った水が旧市街の跡に染み出す。景観のための水が、下方では泥や汚水を伴う淀みとなる。壁は新旧の街を隔てているようでいて、水は今もその境界を越え続けている。\n\n切り開かれた地層の中で、都市の心臓は循環を失いつつあるように見える。かつての生活が退き、沈泥は癒えない傷口のかさぶたのようにとどまる。「心血の枯渇」は、建築に注がれた労働や期待、記憶が、日々の暮らしと維持管理を失って行き場をなくすことでもある。\n\nフォリーはこの緩やかな喪失を、外へさらされた小さな機械の器官に託す。水位が下がり、心室が縮むほど、「錆心鈴」は崩壊から力を借りて速く打ち続ける。失われた循環を取り戻すことはできず、不揃いな鼓動のたびに自らの発声機構を消耗し、最後の一打で壊れていく。演奏が終わっても、残構の風化は続いている。",
          score:'この譜面は、「崩壊構造：死水心室」の鉄筋残片の構造設計図と、「廃墟の楽器：錆心鈴」の循環スイッチの回路図を重ね合わせて生まれた。二つの図面の線は同じ平面で交わり、鉄筋の腐食と応力の低下に伴って心室が圧潰していく過程で、部材の変位と機械的な連動を記録する。同時に、崩壊の進行は感知装置から電子回路へと伝えられ、次第に速まる打撃と鼓動の音へと変わっていく。変位と断裂、発声を重ねるほど「錆心鈴」にかかる負荷は増し、鼓動を速めながら、ついには溶け崩れる。こうして設計と記録のために引かれた線は、心室に残る響きの変奏曲の譜面となる。',
          phases:{
            structure:[
@@ -271,7 +271,7 @@
            ],
            detail:[
              [
-               "錆心鈴が心室の力の伝達経路の末端に置かれる。",
+               "錆心鈴は心室の力の伝達経路の末端に、体の外へ引き出された器官のように置かれる。",
                "錆びた金属片はガラスに封じられ、鋼索、滑車、ポンプ片を通じて園林からの牽引を待つ。"
              ],
              [
@@ -284,9 +284,9 @@
              ]
            ]
          }},
-        {garden:'「朽塔」は外側へ伸びる三本の鋼索と吊り下げた重りによって、ガラスの軸球の上で辛うじて直立する。張力が衰え、重心が揺らぎ、地上の磨盤が支持部を繰り返し削ることで、塔はついに均衡を失う。',
-         instrument:'「エーテル琴」は揺れるアンテナ、テルミンに似た干渉場、砂盤を一つの回路につなぐ。電磁的な変化は周波数、音、振動となり、砂に短い模様を残す。砂の流出と静電気、電子雑音は装置への負荷を増していく。',
-         theatre:'この一帯には、短波アンテナ群と金属・ガラス製品の加工工場が隣り合っていた。通信の電波は鉄板の建屋や機械、溶接回路と干渉し合い、工場の撤去後も鉄塔と放射状の支線が周囲の土地の利用を制限している。手入れの途絶えた地面には水と草の根が入り込み、海風が露出した煉瓦や石を少しずつ砂に変えていく。見えない通信の秩序が土地を空白にし、その空白を風と時間が変え続ける。ここでは朽塔と「エーテル琴」、地上の磨盤が一つの演奏に加わる。張り詰めた鋼索のもとで塔身が揺れ、磨盤が地面と支持部を削り、アンテナ間の信号の変化が音になる。その運動は同時に、構造の均衡と発声回路を少しずつ失わせていく。',
+        {garden:"「朽塔」は、精密でありながら危うい張力の関係によって立っている。三つの地上の錨点へ伸びる鋼索が塔を引き、頂部から吊られた重りが部材を中心へ寄せる。基部のガラス球はわずかな揺れを受け止める。直立して見える姿も、いくつもの力がかろうじて釣り合うことで保たれている。\n\n鋼索が疲労し、重りが下がるにつれ、重心はずれていく。地表では「磨」が回転し、コンクリートや支持線を繰り返し削る。塔を立たせるための接続が消耗し、傾きがガラス球の許容角を越えると、残された張力そのものが塔を倒壊へと引き込む。",
+         instrument:"「エーテル琴」は朽塔のアンテナのあいだに吊られる。透明な板が層をなして重なり、ガラスに引かれた感応範囲の目盛りのように見える。目に見えない「エーテル」を、この層で一瞬だけ捉えられるかのようだ。その不思議な願いをかたちにしながら、内部ではアンテナとテルミンに似た感応回路、砂盤が一つの伝達経路をつくっている。\n\n塔が揺れるたび、アンテナ相互の関係が変わる。電磁信号の変化は周波数、音、構造の振動へと伝わり、黒砂に短い波紋をつくるが、次の揺らぎでまた散ってしまう。砂粒は次第に使い尽くされる現像の材料のように、不可視の変化を一時だけ残す。静電気と干渉、電子雑音が積み重なり、回路もやがて焼損の限界へ近づいていく。",
+         theatre:"この一帯には短波アンテナ群と金属・ガラス製品の加工工場が並んでいた。電波は鉄板の工場建屋、機械、溶接回路のあいだを通っていた。工場が撤去されたあとも、鉄塔と放射状の支線は周囲の土地を占め、利用を制限し続ける。管理の途絶えた地面には雨水と草の根が入り、海風が露出した煉瓦や石を磨耗させる。「エーテル」が直接大地を侵食したわけではない。目に見えない通信の秩序が、人の去った空白を長く残したのである。\n\n朽塔は鋼索の張力の中でかろうじて立ち、「エーテル琴」はアンテナ間の見えない変化を音と砂紋に変えようとする。地面を回る「磨」は、天へ伸びる階段のイメージを反転させ、地表を削り続ける歯となって、砂と瓦礫、塔の支持部を繰り返し削る。一つの構造は緻密な秩序によって音を生み、もう一つの構造は同じように頑なな運動でその均衡を壊していく。エーテルは秩序に混沌を与え、混沌に秩序を与える。こうして災厄の循環が始まる。\n\n「塵埃の沈降」はここでは一瞬のことに過ぎない。「磨」が通るたび、すでに積もった砂塵は再び舞い上がり、異なる時刻に残された破片が混ざり合う。まるで時間まで繰り返しすり潰されているかのように。塔が倒れたあとも、砂と風、残された部材は、演奏の痕跡を少しずつ書き換え続ける。",
          score:'この図譜は、「崩壊構造：朽塔」の揺動構造の設計図と、「廃墟の楽器：エーテル琴」の周波数差を利用する回路図を重ね合わせて生まれた。二つの図面の線は同じ平面で交わる。張力によって保たれた構造が緩み、塔が均衡を失うにつれ、図譜は朽塔のアンテナが重なり合うときの部材の変位と信号干渉を記録する。干渉した信号は感知装置を通じて信号回路と電磁系へ伝えられ、周波数を絶えず変える音となる。干渉の重なりと過負荷は「エーテル琴」の稼働負荷を徐々に高め、騒々しさを増す振動のなかで、ついには焼損に至る。こうして設計と記録のために引かれた線は、朽塔のエーテルをめぐる諧虐曲の譜面となる。',
          phases:{
            structure:[
@@ -309,7 +309,7 @@
            ],
            detail:[
              [
-               "エーテル琴の感応部が宙に吊られる。",
+               "エーテル琴の透明な層と感応部が宙に吊られる。",
                "アンテナ、鋼索、砂盤が接続され、まだ動き出さない楽器は感応を待つ姿勢を保つ。"
              ],
              [
