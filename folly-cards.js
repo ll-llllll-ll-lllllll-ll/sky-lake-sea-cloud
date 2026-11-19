@@ -129,7 +129,7 @@
            ]
          }},
         {garden:"朽塔借一套精巧而勉强的张拉关系站立在焦土上。三处锚点向外牵住钢缆，顶端悬垂的重物将松散构件拉回中心，底部的一颗玻璃轴球容纳细微的摆动。它看似垂直，维持这副姿态的却是几股随时可能不再平衡的力量。\n\n随着钢缆疲劳、重物下滑，塔身的重心逐渐偏移。地面旋转的「磨」又反复掠过混凝土与支撑线，使原先用于维持稳定的连接不断损耗；当偏移越过轴球允许的角度，残余的拉力反而将塔身推向倒塌。",
-         instrument:"《以太琴》被安放在朽塔的天线之间。一层层透明片面像玻璃上用来标记感应范围的刻线，彼此叠合，仿佛能够把空中无形的「以太」暂时捕捉下来。它的形体保留着这种近乎天真的愿望，内部却由天线、特雷门琴式的感应回路与砂盘构成。\n\n塔身摇摆时，天线之间的关系不断变化；电磁信号经由频率与声音转为结构振动，使黑砂聚成短暂的波纹，又在下一次扰动中散开。砂粒像一种不断被耗去的显影材料，让无法看见的变化留下形迹。随着静电、信号干扰与电子噪声累积，试图标记这些力量的回路也逐渐逼近烧毁的边缘。",
+         instrument:"《以太琴》被安放在朽塔的天线之间。一层层有机玻璃片面像标记感应范围的刻线，彼此叠合，既呼应着旧玻璃制品厂的遗址，也仿佛能够把空中无形的「以太」暂时捕捉下来。它的形体保留着这种近乎天真的愿望，内部却由天线、特雷门琴式的感应回路与砂盘构成。\n\n塔身摇摆时，天线之间的关系不断变化；电磁信号经由频率与声音转为结构振动，使黑砂聚成短暂的波纹，又在下一次扰动中散开。砂粒像一种不断被耗去的显影材料，让无法看见的变化留下形迹。随着静电、信号干扰与电子噪声累积，试图标记这些力量的回路也逐渐逼近烧毁的边缘。",
          theatre:"这里曾有短波天线阵列，也有金属玻璃制品加工厂。无线电信号穿过铁皮厂房、机器与焊接回路；厂房拆除以后，天线塔及放射状伸展的拉线仍占据周围土地，使大片地面难以继续使用。失去照料的砖石在海风里磨耗，雨水、草根与尘沙沿裂隙进入。所谓「以太」没有亲手侵蚀土地，却以看不见的通信秩序为荒芜留下了空间。\n\n朽塔在钢缆的张力中勉强垂立；《以太琴》试图把天线之间的无形变化转成声音与砂纹；地面的「磨」则将原本向上攀升的阶梯意象倒转成贴地旋转的齿口，反复碾压砂土、碎石与维系塔身的支撑。一个结构因精密的秩序而发声，另一个结构以同样执拗的运动破坏它的平衡。以太给秩序以混沌，又给混沌以秩序。这场循环的灾难便开始了。\n\n「尘埃的落定」在这里始终只是短暂的一刻。每当「磨」重新掠过，先前沉积的尘土又被扬起，不同时刻留下的残屑混在一起，像是连时间也被反复碾磨。即使朽塔最终倾覆，砂粒、风与残余构件仍会继续改变地面的痕迹；这场演奏没有一个能够长久保持的终止姿态。",
          score:'这份图谱由「坍塌结构：朽塔」的摆动结构设计图与「废墟乐器：以太琴」的频差电路图叠合而成。两套图线在同一平面交错：随着张拉结构的松动、塔体失衡，图谱记录着朽塔天线重叠时构件的位移与信号干扰，而干扰的信号又经感应装置传入信号回路与电磁系统，转化为不断变换频率的声音。干扰的叠加与过载逐渐加重「以太琴」的运行负荷，使它在愈发嘈杂的振动中最终烧毁；原本用于设计与记录的图纸，也由此成为朽塔以太的谐虐曲乐谱。',
          phases:{
@@ -207,7 +207,7 @@
            ]
          }},
         {garden:"The Rusted Tower stands through a precise yet precarious arrangement of tension. Guy wires pull outward toward three anchors, a suspended weight draws its loose members toward the center, and a glass bearing ball at the base admits the slightest sway. The tower appears upright, but its posture depends on forces that can cease to balance at any moment.\n\nAs the cables fatigue and the weight slips lower, the center of gravity shifts. The Grind turns along the ground, repeatedly wearing at the concrete and supporting lines. Connections built to keep the tower standing are slowly consumed; once the tilt exceeds the angle its glass pivot can bear, the remaining tension itself draws the tower into collapse.",
-         instrument:"The Aether Loom hangs among the tower's antennas. Its successive transparent layers resemble sensing marks traced on glass. As they overlap, they seem almost capable of catching the invisible \"aether\" that passes between them. The form holds on to that improbable wish; within it, antennas, a theremin-like sensing circuit, and a sand plate form a tangible chain of transmission.\n\nAs the tower sways, the relationships between its antennas change. Electromagnetic signals are carried into frequency, sound, and structural vibration, gathering black sand into fleeting ripples that disperse at the next disturbance. The grains act like a reagent slowly being used up, allowing unseen changes to leave visible traces. Accumulating static, interference, and electronic noise gradually push the circuit toward burnout.",
+         instrument:"The Aether Loom hangs among the tower's antennas. Its layers of acrylic glass resemble marks tracing the reach of a sensor. Their overlapping transparency recalls the site's former glassworks, while seeming almost capable of catching the invisible \"aether\" between the antennas. The form holds on to that improbable wish; within it, antennas, a theremin-like sensing circuit, and a sand plate form a tangible chain of transmission.\n\nAs the tower sways, the relationships between its antennas change. Electromagnetic signals are carried into frequency, sound, and structural vibration, gathering black sand into fleeting ripples that disperse at the next disturbance. The grains act like a reagent slowly being used up, allowing unseen changes to leave visible traces. Accumulating static, interference, and electronic noise gradually push the circuit toward burnout.",
          theatre:"Shortwave antenna arrays once occupied this ground beside a metal-and-glass factory. Radio signals passed through the sheet-metal workshops, machines, and welding circuits. After the factory was demolished, the tower and its radiating guy wires continued to occupy the surrounding land, restricting how it could be used. Without maintenance, rainwater, roots, and sea wind entered the cracks and wore the exposed masonry down. \"Aether\" did not erode the ground itself; the invisible order of transmission left room for that desolation to take hold.\n\nThe tower barely stands within the pull of its cables. The Aether Loom turns unseen changes between the antennas into sound and patterns in sand. At ground level, the Grind inverts the image of an ascending stairway into teeth that revolve against the earth, repeatedly wearing down the sand, rubble, and supports beneath the tower. One structure sounds through its carefully arranged order; another, no less insistent, grinds that balance away. Aether gives chaos to order, and order to chaos. Thus begins this cycle of calamity.\n\nThe settling of dust is only ever temporary here. Each return of the Grind lifts what has already fallen, mixing fragments deposited at different moments, as though time itself were passing repeatedly beneath its teeth. Even after the tower falls, sand, wind, and broken members continue to alter what the performance has left behind.",
          score:'This score overlays the drawing of the tower’s oscillating structure in “Collapsing Structure: Rusted Tower” with the beat-frequency circuit diagram of “Ruin Instrument: Aether Loom.” Their lines intersect on a single plane: as the tensioned structure loosens and the tower loses its balance, the drawing records the displacement of components and signal interference between the tower’s overlapping antennas. Sensors carry those disrupted signals into the signal circuits and electromagnetic system, where they become sounds of continually shifting frequency. The accumulation of interference and overload steadily increases the strain on Aether Loom, until the instrument finally burns out amid ever noisier vibrations. What began as a drawing for design and documentation thus becomes the score of a cruel scherzo for the tower’s aether.',
          phases:{
@@ -285,7 +285,7 @@
            ]
          }},
         {garden:"「朽塔」は、精密でありながら危うい張力の関係によって立っている。三つの地上の錨点へ伸びる鋼索が塔を引き、頂部から吊られた重りが部材を中心へ寄せる。基部のガラス球はわずかな揺れを受け止める。直立して見える姿も、いくつもの力がかろうじて釣り合うことで保たれている。\n\n鋼索が疲労し、重りが下がるにつれ、重心はずれていく。地表では「磨」が回転し、コンクリートや支持線を繰り返し削る。塔を立たせるための接続が消耗し、傾きがガラス球の許容角を越えると、残された張力そのものが塔を倒壊へと引き込む。",
-         instrument:"「エーテル琴」は朽塔のアンテナのあいだに吊られる。透明な板が層をなして重なり、ガラスに引かれた感応範囲の目盛りのように見える。目に見えない「エーテル」を、この層で一瞬だけ捉えられるかのようだ。その不思議な願いをかたちにしながら、内部ではアンテナとテルミンに似た感応回路、砂盤が一つの伝達経路をつくっている。\n\n塔が揺れるたび、アンテナ相互の関係が変わる。電磁信号の変化は周波数、音、構造の振動へと伝わり、黒砂に短い波紋をつくるが、次の揺らぎでまた散ってしまう。砂粒は次第に使い尽くされる現像の材料のように、不可視の変化を一時だけ残す。静電気と干渉、電子雑音が積み重なり、回路もやがて焼損の限界へ近づいていく。",
+         instrument:"「エーテル琴」は朽塔のアンテナのあいだに吊られる。有機ガラスの板が層をなして重なり、感応範囲を示す目盛りのように見える。その透明な層は、かつてのガラス製品工場の跡を思わせるとともに、目に見えない「エーテル」を一瞬だけ捉えられるかのようだ。その不思議な願いをかたちにしながら、内部ではアンテナとテルミンに似た感応回路、砂盤が一つの伝達経路をつくっている。\n\n塔が揺れるたび、アンテナ相互の関係が変わる。電磁信号の変化は周波数、音、構造の振動へと伝わり、黒砂に短い波紋をつくるが、次の揺らぎでまた散ってしまう。砂粒は次第に使い尽くされる現像の材料のように、不可視の変化を一時だけ残す。静電気と干渉、電子雑音が積み重なり、回路もやがて焼損の限界へ近づいていく。",
          theatre:"この一帯には短波アンテナ群と金属・ガラス製品の加工工場が並んでいた。電波は鉄板の工場建屋、機械、溶接回路のあいだを通っていた。工場が撤去されたあとも、鉄塔と放射状の支線は周囲の土地を占め、利用を制限し続ける。管理の途絶えた地面には雨水と草の根が入り、海風が露出した煉瓦や石を磨耗させる。「エーテル」が直接大地を侵食したわけではない。目に見えない通信の秩序が、人の去った空白を長く残したのである。\n\n朽塔は鋼索の張力の中でかろうじて立ち、「エーテル琴」はアンテナ間の見えない変化を音と砂紋に変えようとする。地面を回る「磨」は、天へ伸びる階段のイメージを反転させ、地表を削り続ける歯となって、砂と瓦礫、塔の支持部を繰り返し削る。一つの構造は緻密な秩序によって音を生み、もう一つの構造は同じように頑なな運動でその均衡を壊していく。エーテルは秩序に混沌を与え、混沌に秩序を与える。こうして災厄の循環が始まる。\n\n「塵埃の沈降」はここでは一瞬のことに過ぎない。「磨」が通るたび、すでに積もった砂塵は再び舞い上がり、異なる時刻に残された破片が混ざり合う。まるで時間まで繰り返しすり潰されているかのように。塔が倒れたあとも、砂と風、残された部材は、演奏の痕跡を少しずつ書き換え続ける。",
          score:'この図譜は、「崩壊構造：朽塔」の揺動構造の設計図と、「廃墟の楽器：エーテル琴」の周波数差を利用する回路図を重ね合わせて生まれた。二つの図面の線は同じ平面で交わる。張力によって保たれた構造が緩み、塔が均衡を失うにつれ、図譜は朽塔のアンテナが重なり合うときの部材の変位と信号干渉を記録する。干渉した信号は感知装置を通じて信号回路と電磁系へ伝えられ、周波数を絶えず変える音となる。干渉の重なりと過負荷は「エーテル琴」の稼働負荷を徐々に高め、騒々しさを増す振動のなかで、ついには焼損に至る。こうして設計と記録のために引かれた線は、朽塔のエーテルをめぐる諧虐曲の譜面となる。',
          phases:{
@@ -1701,7 +1701,7 @@
           },
           instrument:{
             dimensions:'高约 60 cm；中央最大水平截面为边长约 23 cm 的等边三角形',
-            materials:'亚克力、天线、电磁铁、特雷门琴'
+            materials:'有机玻璃、天线、电磁铁、特雷门琴'
           }
         }
       ]
@@ -1726,7 +1726,7 @@
           },
           instrument:{
             dimensions:'H approx. 60 cm; widest central cross-section is an equilateral triangle with sides approx. 23 cm long',
-            materials:'Acrylic, antennas, electromagnets, and theremin'
+            materials:'Acrylic glass, antennas, electromagnets, and theremin'
           }
         }
       ]
@@ -1751,7 +1751,7 @@
           },
           instrument:{
             dimensions:'高さ約 60 cm。中央の最大水平断面は一辺約 23 cm の正三角形',
-            materials:'アクリル、アンテナ、電磁石、テルミン'
+            materials:'有機ガラス、アンテナ、電磁石、テルミン'
           }
         }
       ]
@@ -1782,8 +1782,8 @@
         },
         instrument:{
           dimensions:'高约 60 cm · 中央边长约 23 cm',
-          materials:'亚克力、天线、电子元件',
-          materialsFull:'亚克力、特雷门琴、电磁铁与天线'
+          materials:'有机玻璃、天线、电子元件',
+          materialsFull:'有机玻璃、特雷门琴、电磁铁与天线'
         }
       }
     ],
@@ -1808,8 +1808,8 @@
         },
         instrument:{
           dimensions:'H ~60 cm · triangle side ~23 cm',
-          materials:'Acrylic, antennas, and electronics',
-          materialsFull:'Acrylic, theremin, electromagnets, and antennas'
+          materials:'Acrylic glass, antennas, and electronics',
+          materialsFull:'Acrylic glass, theremin, electromagnets, and antennas'
         }
       }
     ],
@@ -1834,8 +1834,8 @@
         },
         instrument:{
           dimensions:'高さ約 60 cm · 中央の一辺約 23 cm',
-          materials:'アクリル、アンテナ、電子部品',
-          materialsFull:'アクリル、テルミン、電磁石、アンテナ'
+          materials:'有機ガラス、アンテナ、電子部品',
+          materialsFull:'有機ガラス、テルミン、電磁石、アンテナ'
         }
       }
     ]
