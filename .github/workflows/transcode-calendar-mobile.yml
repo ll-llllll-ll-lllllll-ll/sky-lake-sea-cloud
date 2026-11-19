@@ -1,4 +1,4 @@
-name: Build mobile calendar video fallbacks
+name: Build high-quality mobile calendar video fallbacks
 
 on:
   push:
@@ -6,94 +6,128 @@ on:
       - 'calendar/**/*.webm'
       - '.github/workflows/transcode-calendar-mobile.yml'
   workflow_dispatch:
+    inputs:
+      rebuild_all:
+        description: 'Regenerate every calendar MP4 using the current quality preset'
+        required: false
+        type: boolean
+        default: false
 
 permissions:
   contents: write
 
 concurrency:
   group: calendar-mobile-fallbacks
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   transcode:
     if: github.actor != 'github-actions[bot]'
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 60
     steps:
-      - name: Checkout
+      - name: Checkout full history
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: Install ffmpeg
+      - name: Install FFmpeg
         run: sudo apt-get update && sudo apt-get install -y ffmpeg
 
-      - name: Create Safari-safe H.264 MP4 fallbacks in parallel
+      - name: Re-encode low-resolution MP4s and changed sources
         shell: bash
+        env:
+          REBUILD_ALL: ${{ inputs.rebuild_all || 'false' }}
         run: |
           set -euo pipefail
 
-          transcode_one() {
-            input="$1"
-            output="${input%.webm}.mp4"
+          # Bump this marker when the preset changes. The absent v2 marker
+          # triggers a one-time rebuild of ALL pre-existing 854px/CRF26 MP4s.
+          PRESET_MARKER="calendar/.h264-1080p-crf20-v2"
+          CHANGED_LIST="$RUNNER_TEMP/changed-calendar-webms.txt"
+          : > "$CHANGED_LIST"
+          if [[ "$GITHUB_EVENT_NAME" == "push" && -n "$(git rev-parse HEAD^ 2>/dev/null)" ]]; then
+            git diff --name-only HEAD^ HEAD -- calendar/ | grep -E '\.webm$' > "$CHANGED_LIST" || true
+          fi
 
-            if [[ -f "$output" ]]; then
-              echo "Already present: $output"
+          if [[ ! -f "$PRESET_MARKER" || "$REBUILD_ALL" == "true" ]]; then
+            export FORCE_REBUILD=true
+            echo "Upgrading every existing mobile MP4 to the new preset."
+          else
+            export FORCE_REBUILD=false
+          fi
+          export CHANGED_LIST
+
+          transcode_one() {
+            local input="$1"
+            local output="${input%.webm}.mp4"
+            local temp="${output%.mp4}.v2-encoding.mp4"
+
+            if [[ -s "$output" && "$FORCE_REBUILD" != "true" ]] &&
+               ! grep -Fxq "$input" "$CHANGED_LIST"; then
+              echo "Unchanged, keeping: $output"
               return 0
             fi
 
-            echo "Transcoding $input -> $output"
-            ffmpeg -hide_banner -loglevel error -y -i "$input" \
+            echo "Encoding: $input => $output (up to 1920x1080, CRF20)"
+            rm -f "$temp"
+            if ! ffmpeg -nostdin -hide_banner -loglevel error -y -i "$input" \
               -map 0:v:0 -an \
-              -vf "scale='min(854,iw)':-2:flags=lanczos" \
-              -c:v libx264 \
-              -profile:v main \
-              -level:v 3.1 \
-              -pix_fmt yuv420p \
-              -preset superfast \
-              -crf 26 \
-              -movflags +faststart \
-              "$output"
-
-            ffmpeg -v error -ss 1 -i "$output" -frames:v 1 -f null -
-            echo "Validated: $output"
+              -vf "scale=w='min(1920,iw)':h='min(1080,ih)':force_original_aspect_ratio=decrease:force_divisible_by=2:flags=lanczos" \
+              -c:v libx264 -profile:v high -pix_fmt yuv420p \
+              -preset medium -crf 20 -movflags +faststart \
+              "$temp"; then
+              rm -f "$temp"
+              echo "::error::Encoding failed: $input"
+              return 1
+            fi
+            if ! ffprobe -v error -select_streams v:0 \
+              -show_entries stream=codec_name,width,height,pix_fmt \
+              -of csv=p=0 "$temp"; then
+              rm -f "$temp"
+              echo "::error::Encoded MP4 failed validation: $temp"
+              return 1
+            fi
+            mv -f "$temp" "$output"
           }
           export -f transcode_one
 
-          find calendar -type f -name '*.webm' -print0 \
-            | xargs -0 -r -n 1 -P 3 bash -c 'transcode_one "$1"' _
+          find calendar -type f -name '*.webm' -print0 |
+            xargs -0 -r -n 1 -P 2 bash -c 'set -euo pipefail; transcode_one "$1"' _
 
-      - name: Verify every WebM has a decoded MP4 companion
+          printf 'H.264 High/yuv420p; max 1920x1080; lanczos; CRF20; preset medium\n' > "$PRESET_MARKER"
+
+      - name: Verify all MP4 fallbacks
         shell: bash
         run: |
           set -euo pipefail
-          missing=0
           while IFS= read -r -d '' input; do
             output="${input%.webm}.mp4"
-            if [[ ! -s "$output" ]]; then
-              echo "MISSING: $output"
-              missing=1
-              continue
-            fi
-            ffprobe -v error \
-              -select_streams v:0 \
-              -show_entries stream=codec_name,profile,pix_fmt,width,height \
-              -of compact=p=0:nk=1 \
-              "$output"
+            test -s "$output"
+            codec="$(ffprobe -v error -select_streams v:0 -show_entries stream=codec_name -of default=nk=1:nw=1 "$output")"
+            pix_fmt="$(ffprobe -v error -select_streams v:0 -show_entries stream=pix_fmt -of default=nk=1:nw=1 "$output")"
+            width="$(ffprobe -v error -select_streams v:0 -show_entries stream=width -of default=nk=1:nw=1 "$output")"
+            height="$(ffprobe -v error -select_streams v:0 -show_entries stream=height -of default=nk=1:nw=1 "$output")"
+            test "$codec" = "h264"
+            test "$pix_fmt" = "yuv420p"
+            test "$width" -le 1920
+            test "$height" -le 1080
+            echo "OK: $output  ${width}x${height}  $codec/$pix_fmt"
           done < <(find calendar -type f -name '*.webm' -print0)
-          test "$missing" -eq 0
 
-      - name: Commit generated fallbacks
+      - name: Publish rebuilt mobile videos
         shell: bash
         run: |
+          set -euo pipefail
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add calendar
+          git add -A -- calendar/
           if git diff --cached --quiet; then
-            echo 'No MP4 changes to commit.'
+            echo "Mobile videos already match the preset."
           else
-            git commit -m 'Generate Safari-safe calendar video fallbacks'
+            git commit -m "Rebuild calendar MP4s up to 1080p, H.264 CRF20"
             git push
           fi
 
-# MP4 is only the iPhone/iPad compatibility layer. Original WebM files stay intact.
+# WebM originals are untouched. The version marker prevents stale MP4s from
+# being skipped on upgrade, then limits future rebuilds to changed WebMs.

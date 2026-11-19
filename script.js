@@ -2120,12 +2120,14 @@ render();
 
     var webm = entry.src;
     var mp4 = entry.mp4 || webm.replace(/\.webm(?:\?.*)?$/i, ".mp4");
+    // Safari must not retain the old 854px MP4 after the 1080p replacement.
+    var mp4HighQuality = mp4 + (mp4.indexOf("?") < 0 ? "?" : "&") + "v=calendar-h264-1080p-crf20-v2";
     var poster = entry.poster ? ' poster="' + escapeHtml(entry.poster) + '"' : "";
     var sources = isIOS
-      ? '<source src="' + escapeHtml(mp4) + '" type="video/mp4">' +
+      ? '<source src="' + escapeHtml(mp4HighQuality) + '" type="video/mp4">' +
         '<source src="' + escapeHtml(webm) + '" type="video/webm">'
       : '<source src="' + escapeHtml(webm) + '" type="video/webm">' +
-        '<source src="' + escapeHtml(mp4) + '" type="video/mp4">';
+        '<source src="' + escapeHtml(mp4HighQuality) + '" type="video/mp4">';
 
     return '<video class="ambient-video" autoplay muted playsinline webkit-playsinline loop preload="auto"' + poster + '>' +
       sources +
@@ -2312,11 +2314,12 @@ render();
     */
     if (isIOSLike() && /\.webm(?:$|\?)/i.test(source)) {
       var mp4 = source.replace(/\.webm(?:\?.*)?$/i, ".mp4");
-      if (video.dataset.mobileMp4 !== mp4) {
-        video.dataset.mobileMp4 = mp4;
+      var mp4HighQuality = mp4 + (mp4.indexOf("?") < 0 ? "?" : "&") + "v=calendar-h264-1080p-crf20-v2";
+      if (video.dataset.mobileMp4 !== mp4HighQuality) {
+        video.dataset.mobileMp4 = mp4HighQuality;
         video.pause();
         video.removeAttribute("src");
-        video.src = mp4;
+        video.src = mp4HighQuality;
         video.preload = "auto";
         video.load();
       }
