@@ -207,9 +207,9 @@
            ]
          }},
         {garden:"The Rusted Tower stands through a precise yet precarious arrangement of tension. Guy wires pull outward toward three anchors, a suspended weight draws its loose members toward the center, and a glass bearing ball at the base admits the slightest sway. The tower appears upright, but its posture depends on forces that can cease to balance at any moment.\n\nAs the cables fatigue and the weight slips lower, the center of gravity shifts. The Grind turns along the ground, repeatedly wearing at the concrete and supporting lines. Connections built to keep the tower standing are slowly consumed; once the tilt exceeds the angle its glass pivot can bear, the remaining tension itself draws the tower into collapse.",
-         instrument:"The Aether Loom hangs among the tower's antennas. Its layers of acrylic glass resemble marks tracing the reach of a sensor. Their overlapping transparency recalls the site's former glassworks, while seeming almost capable of catching the invisible \"aether\" between the antennas. The form holds on to that improbable wish; within it, antennas, a theremin-like sensing circuit, and a sand plate form a tangible chain of transmission.\n\nAs the tower sways, the relationships between its antennas change. Electromagnetic signals are carried into frequency, sound, and structural vibration, gathering black sand into fleeting ripples that disperse at the next disturbance. The grains act like a reagent slowly being used up, allowing unseen changes to leave visible traces. Accumulating static, interference, and electronic noise gradually push the circuit toward burnout.",
-         theatre:"Shortwave antenna arrays once occupied this ground beside a metal-and-glass factory. Radio signals passed through the sheet-metal workshops, machines, and welding circuits. After the factory was demolished, the tower and its radiating guy wires continued to occupy the surrounding land, restricting how it could be used. Without maintenance, rainwater, roots, and sea wind entered the cracks and wore the exposed masonry down. \"Aether\" did not erode the ground itself; the invisible order of transmission left room for that desolation to take hold.\n\nThe tower barely stands within the pull of its cables. The Aether Loom turns unseen changes between the antennas into sound and patterns in sand. At ground level, the Grind inverts the image of an ascending stairway into teeth that revolve against the earth, repeatedly wearing down the sand, rubble, and supports beneath the tower. One structure sounds through its carefully arranged order; another, no less insistent, grinds that balance away. Aether gives chaos to order, and order to chaos. Thus begins this cycle of calamity.\n\nThe settling of dust is only ever temporary here. Each return of the Grind lifts what has already fallen, mixing fragments deposited at different moments, as though time itself were passing repeatedly beneath its teeth. Even after the tower falls, sand, wind, and broken members continue to alter what the performance has left behind.",
-         score:'This score overlays the drawing of the tower’s oscillating structure in “Collapsing Structure: Rusted Tower” with the beat-frequency circuit diagram of “Ruin Instrument: Aether Loom.” Their lines intersect on a single plane: as the tensioned structure loosens and the tower loses its balance, the drawing records the displacement of components and signal interference between the tower’s overlapping antennas. Sensors carry those disrupted signals into the signal circuits and electromagnetic system, where they become sounds of continually shifting frequency. The accumulation of interference and overload steadily increases the strain on Aether Loom, until the instrument finally burns out amid ever noisier vibrations. What began as a drawing for design and documentation thus becomes the score of a cruel scherzo for the tower’s aether.',
+         instrument:"The aether loom hangs among the tower's antennas. Its layers of acrylic glass resemble marks tracing the reach of a sensor. Their overlapping transparency recalls the site's former glassworks, while seeming almost capable of catching the invisible \"aether\" between the antennas. The form holds on to that improbable wish; within it, antennas, a theremin-like sensing circuit, and a sand plate form a tangible chain of transmission.\n\nAs the tower sways, the relationships between its antennas change. Electromagnetic signals are carried into frequency, sound, and structural vibration, gathering black sand into fleeting ripples that disperse at the next disturbance. The grains act like a reagent slowly being used up, allowing unseen changes to leave visible traces. Accumulating static, interference, and electronic noise gradually push the circuit toward burnout.",
+         theatre:"Shortwave antenna arrays once occupied this ground beside a metal-and-glass factory. Radio signals passed through the sheet-metal workshops, machines, and welding circuits. After the factory was demolished, the tower and its radiating guy wires continued to occupy the surrounding land, restricting how it could be used. Without maintenance, rainwater, roots, and sea wind entered the cracks and wore the exposed masonry down. \"Aether\" did not erode the ground itself; the invisible order of transmission left room for that desolation to take hold.\n\nThe tower barely stands within the pull of its cables. The aether loom turns unseen changes between the antennas into sound and patterns in sand. At ground level, the Grind inverts the image of an ascending stairway into teeth that revolve against the earth, repeatedly wearing down the sand, rubble, and supports beneath the tower. One structure sounds through its carefully arranged order; another, no less insistent, grinds that balance away. Aether gives chaos to order, and order to chaos. Thus begins this cycle of calamity.\n\nThe settling of dust is only ever temporary here. Each return of the Grind lifts what has already fallen, mixing fragments deposited at different moments, as though time itself were passing repeatedly beneath its teeth. Even after the tower falls, sand, wind, and broken members continue to alter what the performance has left behind.",
+         score:'This score overlays the drawing of the tower’s oscillating structure in “Collapsing Structure: Rusted Tower” with the beat-frequency circuit diagram of “Ruin Instrument: aether loom.” Their lines intersect on a single plane: as the tensioned structure loosens and the tower loses its balance, the drawing records the displacement of components and signal interference between the tower’s overlapping antennas. Sensors carry those disrupted signals into the signal circuits and electromagnetic system, where they become sounds of continually shifting frequency. The accumulation of interference and overload steadily increases the strain on aether loom, until the instrument finally burns out amid ever noisier vibrations. What began as a drawing for design and documentation thus becomes the score of a cruel scherzo for the tower’s aether.',
          phases:{
            structure:[
              [
@@ -231,7 +231,7 @@
            ],
            detail:[
              [
-               "The transparent layers and sensing elements of Aether Loom are suspended.",
+               "The transparent layers and sensing elements of aether loom are suspended.",
                "Antennas, cables and a sand plate are connected but still at rest, holding the instrument in readiness."
              ],
              [
@@ -240,7 +240,7 @@
              ],
              [
                "The instrument shatters under the transmitted impact.",
-               "The garden’s loss of balance reaches Aether Loom through its connections, breaking the components of sensing and sound."
+               "The garden’s loss of balance reaches aether loom through its connections, breaking the components of sensing and sound."
              ]
            ]
          }}
@@ -1652,7 +1652,7 @@
   };
   var INSTRUMENT_TITLES={
     zh:['锈心铃','以太琴'],
-    en:['strain organ / Ferrhythm','Aether Loom / Interferium'],
+    en:['strain organ · Ferrhythm','aether loom · Interferium'],
     ja:['錆心鈴','エーテル琴']
   };
   function folioIntro(key){return (FOLLY_INTRO[state.lang]||FOLLY_INTRO.zh)[key];}
@@ -1662,7 +1662,7 @@
   // The overall theatre title may differ from the structure's name.
   var READING_PART_NAMES={
     zh:[['死水心室','锈心铃','沉墟心室'],['朽塔','以太琴','朽塔焦土']],
-    en:[['Stagnant Heart Chamber','strain organ / Ferrhythm','Sunken Ventricle'],['Rusted Tower','Aether Loom / Interferium','Rusted Tower · Scorched Earth']],
+    en:[['Stagnant Heart Chamber','strain organ · Ferrhythm','Sunken Ventricle'],['Rusted Tower','aether loom · Interferium','Rusted Tower · Scorched Earth']],
     ja:[['死水心室','錆心鈴','沈墟の心室'],['朽塔','エーテル琴','朽塔の焦土']]
   };
   function readingSectionName(si,i){
