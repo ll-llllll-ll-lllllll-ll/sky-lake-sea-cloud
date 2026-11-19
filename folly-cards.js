@@ -95,9 +95,9 @@
       stage:{structure:[['建造','下垂','坍缩'],['垂立','松动','失衡','倒塌']],detail:[['置放','搏动','熔毁'],['悬挂','感应','摔碎']]},
       works:[
         {garden:'死水心室的构造取自沉墟中失去流动的水域：爆裂的储水形态、残余的心室结构与一潭死水彼此牵连。水体缓慢流失，承托随之消退；原本依靠内部平衡维系的材料在自重中挤压、碎裂、向内收缩，最后仍留在死水里继续腐蚀。',
-         instrument:'「锈血心脏」由锈蚀金属碎片与玻璃罩构成，嵌在心室的钢筋与钢索连接之中。心室的下沉牵动滑轮与泵片，将缓慢的坍塌转为急促的敲击；每一次搏动都借来园林衰败的力量，同时耗损维持自身运作的结构。',
-         theatre:'死水心室的下沉与锈血心脏的搏动在同一段时间内相互牵动。声音从承重、牵引、碰撞和材料失效中发生，越接近最后一次敲击，乐器便越难继续维持原有形态。',
-         score:'这份图谱由「坍塌结构：死水心室」的钢筋残片结构设计图与「废墟乐器：锈血心脏」循环开关的电路图叠合而成。两套图线在同一平面交错：随着钢筋锈蚀、应力衰减，图谱记录着心室坍缩时构件的位移与机械联动，而坍塌的进程又经感应装置传入电子线路，转化为不断加速的敲击与搏动。位移、断裂与发声逐渐加重「锈血心脏」的运行负荷，使它在愈发急促的跳动中最终熔毁；原本用于设计与记录的图纸，也由此成为心室残响的变奏曲乐谱。',
+         instrument:'「锈心铃」由锈蚀金属碎片与玻璃罩构成，嵌在心室的钢筋与钢索连接之中。心室的下沉牵动滑轮与泵片，将缓慢的坍塌转为急促的敲击；每一次搏动都借来园林衰败的力量，同时耗损维持自身运作的结构。',
+         theatre:'人工湖被引入原本没有湖泊的土地，高处的新城将水作为景观；渗过基岩与破损污水管道的水，却在挡土墙下方的旧址积成死水。上层仍在扩张，低处的残构却被浸泡与掩埋，原本区分新城与旧地的高差，反而被水不断穿过。园林将这种滞留与渗漏转入自己的构造：死水心室的下沉与《锈心铃》的搏动在同一段时间内相互牵动。声音从承重、牵引、碰撞和材料失效中发生，越接近最后一次敲击，乐器便越难继续维持原有形态。',
+         score:'这份图谱由「坍塌结构：死水心室」的钢筋残片结构设计图与「废墟乐器：锈心铃」循环开关的电路图叠合而成。两套图线在同一平面交错：随着钢筋锈蚀、应力衰减，图谱记录着心室坍缩时构件的位移与机械联动，而坍塌的进程又经感应装置传入电子线路，转化为不断加速的敲击与搏动。位移、断裂与发声逐渐加重「锈心铃」的运行负荷，使它在愈发急促的跳动中最终熔毁；原本用于设计与记录的图纸，也由此成为心室残响的变奏曲乐谱。',
          phases:{
            structure:[
              [
@@ -115,7 +115,7 @@
            ],
            detail:[
              [
-               "锈血心脏被置放在心室的传力路径末端。",
+               "锈心铃被置放在心室的传力路径末端。",
                "锈蚀金属碎片封存在玻璃罩内，与钢索、滑轮和泵片相连，等待园林传来的牵引。"
              ],
              [
@@ -123,15 +123,15 @@
                "金属摩擦、泵片运动和渐密的敲击共同构成声音，乐器在运作中不断耗损维持自身的连接。"
              ],
              [
-               "锈血心脏在终末运动中熔毁。",
+               "锈心铃在终末运动中熔毁。",
                "由园林传来的力量和持续的过载终于破坏其发声构造；这场执意的销毁使原先的运作秩序无法恢复。"
              ]
            ]
          }},
         {garden:'朽塔由三组向外牵引的钢缆与中央悬垂的重物勉强维持垂立，底部的玻璃轴球承受着微小的偏移。钢缆逐渐疲劳，张力和重心开始改变；地面的「塌别塔」又反复旋转碾磨，使支撑塔身的结构在持续扰动中走向坍落。',
-         instrument:'「以太狭间」把摆动天线、以太琴的干涉场和砂盘连接为一条回路：电磁变化转为频率、声音与振动，再由砂粒留下短暂图形。不断掉落的黑砂与积累的静电噪声，使这套努力维持秩序的装置逐渐逼近自身的负荷极限。',
-         theatre:'朽塔、以太狭间与地面旋转的塌别塔共同参与这场演奏。砂粒聚散，塔身摇摆，磨盘反复碾压地表与钢缆；一种秩序持续制造声音，又以自己的运作削弱另一种秩序。',
-         score:'这份图谱由「坍塌结构：朽塔」的摆动结构设计图与「废墟乐器：以太狭间」的频差电路图叠合而成。两套图线在同一平面交错：随着张拉结构的松动、塔体失衡，图谱记录着朽塔天线重叠时构件的位移与信号干扰，而干扰的信号又经感应装置传入信号回路与电磁系统，转化为不断变换频率的声音。干扰的叠加与过载逐渐加重「以太狭间」的运行负荷，使它在愈发嘈杂的振动中最终烧毁；原本用于设计与记录的图纸，也由此成为朽塔以太的谐虐曲乐谱。',
+         instrument:'「以太琴」将摆动天线、特雷门琴式的频差回路与砂盘连接起来：电磁变化转为频率、声音与振动，再由砂粒留下短暂图形。不断掉落的黑砂与积累的静电噪声，使这套努力维持秩序的装置逐渐逼近自身的负荷极限。',
+         theatre:'短波天线阵列曾与金属玻璃制品加工厂并存，通信信号与铁皮厂房、设备和焊接回路在同一片空间中彼此干扰。旧厂拆除以后，天线塔及放射状伸展的拉线仍限制着周围土地的使用；失去维护的地面则逐渐被积水、草根与海风侵入。无形的通信秩序使这片土地空了下来，裸露的砖石又在风沙中一点点磨损。朽塔、《以太琴》与地面旋转的塌别塔共同参与这场演奏：锚固钢缆承受张力，塔身随扰动摇摆，磨盘反复碾压地表与钢缆；天线间的信号变化化作声音，而这些运动又持续削弱结构的平衡与发声回路。',
+         score:'这份图谱由「坍塌结构：朽塔」的摆动结构设计图与「废墟乐器：以太琴」的频差电路图叠合而成。两套图线在同一平面交错：随着张拉结构的松动、塔体失衡，图谱记录着朽塔天线重叠时构件的位移与信号干扰，而干扰的信号又经感应装置传入信号回路与电磁系统，转化为不断变换频率的声音。干扰的叠加与过载逐渐加重「以太琴」的运行负荷，使它在愈发嘈杂的振动中最终烧毁；原本用于设计与记录的图纸，也由此成为朽塔以太的谐虐曲乐谱。',
          phases:{
            structure:[
              [
@@ -153,7 +153,7 @@
            ],
            detail:[
              [
-               "以太狭间的感应部件被悬挂起来。",
+               "以太琴的感应部件被悬挂起来。",
                "天线、线缆与砂盘建立起尚未运作的联系，乐器暂时维持着等待感应的姿态。"
              ],
              [
@@ -162,7 +162,7 @@
              ],
              [
                "乐器在传来的冲击中摔碎。",
-               "园林失衡的力量沿连接传至以太狭间，感应与发声的构件遭到破坏，原有回路随之终止。"
+               "园林失衡的力量沿连接传至以太琴，感应与发声的构件遭到破坏，原有回路随之终止。"
              ]
            ]
          }}
@@ -173,9 +173,9 @@
       stage:{structure:[['Construction','Sagging','Inward Collapse'],['Upright','Loosening','Imbalance','Collapse']],detail:[['Placement','Pulsation','Meltdown'],['Suspension','Sensing','Shattering']]},
       works:[
         {garden:'The stagnant-heart structure grows from a reservoir shell, the remains of a heart chamber and a pool of still water. As the water drains, internal support gives way. Under its own weight the construction compresses, fractures and contracts, leaving parts immersed and exposed to further corrosion.',
-         instrument:'The Rust-Blood Heart encloses pieces of corroded metal in glass, connected to the ruined chamber by steel cables, pulleys and a pump blade. The chamber’s slow descent is transmitted as increasingly rapid knocks: each beat borrows energy from the garden’s collapse while consuming the instrument itself.',
-         theatre:'The sinking chamber and the beating heart move through the same time. Sound arises from load, tension, collision, and structural failure; as the final blow approaches, the instrument loses the conditions that held it together.',
-         score:'This score overlays the structural drawing of the rebar fragments in “Collapsing Structure: Stagnant Heart Chamber” with the circuit diagram of the cycling switch in “Ruin Instrument: Rust-Blood Heart.” Their lines intersect on a single plane: as the steel corrodes and its stresses diminish, the drawing records the shifting components and mechanical linkages of the chamber’s collapse, while sensors carry the progress of that collapse into an electronic circuit, turning it into increasingly rapid knocks and pulses. Each displacement, fracture and sound adds to the load on Rust-Blood Heart, driving its beat faster until it finally melts down. What began as a drawing for design and documentation thus becomes the score of variations on the chamber’s lingering echoes.',
+         instrument:'The strain organ encloses pieces of corroded metal in glass, connected to the ruined chamber by steel cables, pulleys and a pump blade. The chamber’s slow descent is transmitted as increasingly rapid knocks: each beat borrows energy from the garden’s collapse while consuming the instrument itself.',
+         theatre:'An artificial lake was brought to land where none had existed. Above the retaining wall, water serves the new district as scenery; after seeping through bedrock and damaged sewage pipes, it collects below among the remains of the old site. The expanding city and the submerged ruins occupy the same section of ground, linked by water that continues to cross their boundary. The Folly takes this seepage and stagnation into its construction: the sinking chamber and the pulses of the strain organ move through the same time. Sound arises from load, tension, collision, and structural failure; as the last blow approaches, the instrument loses the conditions that held it together.',
+         score:'This score overlays the structural drawing of the rebar fragments in “Collapsing Structure: Stagnant Heart Chamber” with the circuit diagram of the cycling switch in “Ruin Instrument: strain organ.” Their lines intersect on a single plane: as the steel corrodes and its stresses diminish, the drawing records the shifting components and mechanical linkages of the chamber’s collapse, while sensors carry the progress of that collapse into an electronic circuit, turning it into increasingly rapid knocks and pulses. Each displacement, fracture and sound adds to the load on strain organ, driving its beat faster until it finally melts down. What began as a drawing for design and documentation thus becomes the score of variations on the chamber’s lingering echoes.',
          phases:{
            structure:[
              [
@@ -193,7 +193,7 @@
            ],
            detail:[
              [
-               "The Rust-Blood Heart is placed at the end of the chamber’s force-transmission path.",
+               "The strain organ is placed at the end of the chamber’s force-transmission path.",
                "Rusted fragments are sealed in glass and connected to cables, pulleys, and a pump blade, awaiting the pull of the garden."
              ],
              [
@@ -201,15 +201,15 @@
                "Friction, the pump blade and increasingly frequent impacts make sound while wearing away the connections that sustain the instrument."
              ],
              [
-               "The Rust-Blood Heart melts apart in its final motion.",
+               "The strain organ melts apart in its final motion.",
                "Force transmitted from the garden and continuing overload destroy its sounding structure; this deliberate destruction ends its former order of operation."
              ]
            ]
          }},
         {garden:'Three outward cable anchors and a suspended weight hold the Rusted Tower upright around a glass pivot. As cable tension weakens, its center of gravity shifts. The ground-level grinding structure repeatedly wears at its supports until the tower can no longer keep its precarious balance.',
-         instrument:'Aether Interval links moving antennas, a theremin-like interference field and a sand plate. Electromagnetic changes become frequency, sound and vibration before briefly appearing in the sand. Falling grains, static charge and electronic noise gradually burden the apparatus.',
-         theatre:'The tower, the aether interval, and the ground-level grinder perform together. Sand gathers and disperses, cables tremble, and the wheel abrades the ground. One order produces sound through the very motions that undermine another.',
-         score:'This score overlays the drawing of the tower’s oscillating structure in “Collapsing Structure: Rusted Tower” with the beat-frequency circuit diagram of “Ruin Instrument: Aether Interval.” Their lines intersect on a single plane: as the tensioned structure loosens and the tower loses its balance, the drawing records the displacement of components and signal interference between the tower’s overlapping antennas. Sensors carry those disrupted signals into the signal circuits and electromagnetic system, where they become sounds of continually shifting frequency. The accumulation of interference and overload steadily increases the strain on Aether Interval, until the instrument finally burns out amid ever noisier vibrations. What began as a drawing for design and documentation thus becomes the score of a cruel scherzo for the tower’s aether.',
+         instrument:'Aether Loom links moving antennas, a theremin-like interference field and a sand plate. Electromagnetic changes become frequency, sound and vibration before briefly appearing in the sand. Falling grains, static charge and electronic noise gradually burden the apparatus.',
+         theatre:'Shortwave antenna arrays once stood beside a metal-and-glass factory. Radio signals and the sheet-metal buildings, machinery, and welding circuits interacted across the same site. After the factory was demolished, the antenna tower and its radiating guy wires still restricted the use of the surrounding ground. Water, grass roots, and sea wind gradually entered the unattended cracks, wearing exposed masonry into sand. An invisible order of transmission kept the land vacant while weathering continued to alter it. Here the tower, the Aether Loom, and the ground-level grinder perform together: anchored cables hold tension, the tower sways, and the wheel repeatedly wears against the ground and its supports. Changes between the antennas become sound, while the same movements gradually undermine the balance and circuits that sustain the performance.',
+         score:'This score overlays the drawing of the tower’s oscillating structure in “Collapsing Structure: Rusted Tower” with the beat-frequency circuit diagram of “Ruin Instrument: Aether Loom.” Their lines intersect on a single plane: as the tensioned structure loosens and the tower loses its balance, the drawing records the displacement of components and signal interference between the tower’s overlapping antennas. Sensors carry those disrupted signals into the signal circuits and electromagnetic system, where they become sounds of continually shifting frequency. The accumulation of interference and overload steadily increases the strain on Aether Loom, until the instrument finally burns out amid ever noisier vibrations. What began as a drawing for design and documentation thus becomes the score of a cruel scherzo for the tower’s aether.',
          phases:{
            structure:[
              [
@@ -231,7 +231,7 @@
            ],
            detail:[
              [
-               "The sensing parts of Aether Interval are suspended.",
+               "The sensing parts of Aether Loom are suspended.",
                "Antennas, cables and a sand plate are connected but still at rest, holding the instrument in readiness."
              ],
              [
@@ -240,7 +240,7 @@
              ],
              [
                "The instrument shatters under the transmitted impact.",
-               "The garden’s loss of balance reaches Aether Interval through its connections, breaking the components of sensing and sound."
+               "The garden’s loss of balance reaches Aether Loom through its connections, breaking the components of sensing and sound."
              ]
            ]
          }}
@@ -251,9 +251,9 @@
       stage:{structure:[['構築','垂下','圧潰'],['直立','緩み','均衡喪失','倒壊']],detail:[['設置','鼓動','溶融崩壊'],['懸架','感応','落下破砕']]},
       works:[
         {garden:'「死水心室」は破裂した貯水槽の形態、心室の残存構造、淀んだ水から組み立てられる。水が失われるにつれ内部の支持も消え、構造は自重で押し潰され、割れ、内側へと縮む。残った部分は水に浸されたまま腐食を続ける。',
-         instrument:'錆びた金属片をガラスに封じた「錆血の心臓」は、鋼索と滑車、ポンプ片を通じて心室につながる。ゆっくりした沈下が急速な打撃へと変わり、一度の鼓動ごとに園林の崩壊から力を借りながら、自らの構造も消耗する。',
-         theatre:'沈む心室と鼓動する心臓は同じ時間を生きる。音は荷重、張力、衝突、構造の失効から生まれ、最後の一打に近づくほど、楽器は元の姿を維持できなくなる。',
-         score:'この譜面は、「崩壊構造：死水心室」の鉄筋残片の構造設計図と、「廃墟の楽器：錆血の心臓」の循環スイッチの回路図を重ね合わせて生まれた。二つの図面の線は同じ平面で交わり、鉄筋の腐食と応力の低下に伴って心室が圧潰していく過程で、部材の変位と機械的な連動を記録する。同時に、崩壊の進行は感知装置から電子回路へと伝えられ、次第に速まる打撃と鼓動の音へと変わっていく。変位と断裂、発声を重ねるほど「錆血の心臓」にかかる負荷は増し、鼓動を速めながら、ついには溶け崩れる。こうして設計と記録のために引かれた線は、心室に残る響きの変奏曲の譜面となる。',
+         instrument:'錆びた金属片をガラスに封じた「錆心鈴」は、鋼索と滑車、ポンプ片を通じて心室につながる。ゆっくりした沈下が急速な打撃へと変わり、一度の鼓動ごとに園林の崩壊から力を借りながら、自らの構造も消耗する。',
+         theatre:'もともと湖のなかった土地に人工湖が造られ、高台の新市街では水が景観として扱われている。その水は岩盤や破損した下水管を通って擁壁の下へ染み出し、旧市街の跡に淀みをつくった。上では新たな建設が続き、下では残構が水に浸かって埋もれていく。二つの場所を隔てるはずの高低差を、水は今も越え続ける。フォリーはこの浸透と滞留を構造に取り込む。沈む心室と「錆心鈴」の鼓動が同じ時間の中で結びつき、荷重、張力、衝突、部材の損傷から音が生まれる。最後の一打に近づくほど、楽器は自らを支える構造を失っていく。',
+         score:'この譜面は、「崩壊構造：死水心室」の鉄筋残片の構造設計図と、「廃墟の楽器：錆心鈴」の循環スイッチの回路図を重ね合わせて生まれた。二つの図面の線は同じ平面で交わり、鉄筋の腐食と応力の低下に伴って心室が圧潰していく過程で、部材の変位と機械的な連動を記録する。同時に、崩壊の進行は感知装置から電子回路へと伝えられ、次第に速まる打撃と鼓動の音へと変わっていく。変位と断裂、発声を重ねるほど「錆心鈴」にかかる負荷は増し、鼓動を速めながら、ついには溶け崩れる。こうして設計と記録のために引かれた線は、心室に残る響きの変奏曲の譜面となる。',
          phases:{
            structure:[
              [
@@ -271,7 +271,7 @@
            ],
            detail:[
              [
-               "錆血の心臓が心室の力の伝達経路の末端に置かれる。",
+               "錆心鈴が心室の力の伝達経路の末端に置かれる。",
                "錆びた金属片はガラスに封じられ、鋼索、滑車、ポンプ片を通じて園林からの牽引を待つ。"
              ],
              [
@@ -279,15 +279,15 @@
                "摩擦、ポンプ片の運動、密度を増す打撃が音を生み、楽器は発声しながら自らの接続をすり減らす。"
              ],
              [
-               "錆血の心臓は最後の運動のなかで溶融し、壊れていく。",
+               "錆心鈴は最後の運動のなかで溶融し、壊れていく。",
                "園林から届く力と過負荷が発声の構造を破壊し、意図された終結によって元の運作秩序は失われる。"
              ]
            ]
          }},
         {garden:'「朽塔」は外側へ伸びる三本の鋼索と吊り下げた重りによって、ガラスの軸球の上で辛うじて直立する。張力が衰え、重心が揺らぎ、地上の磨盤が支持部を繰り返し削ることで、塔はついに均衡を失う。',
-         instrument:'「エーテルの狭間」は揺れるアンテナ、テルミンに似た干渉場、砂盤を一つの回路につなぐ。電磁的な変化は周波数、音、振動となり、砂に短い模様を残す。砂の流出と静電気、電子雑音は装置への負荷を増していく。',
-         theatre:'朽塔、エーテルの狭間、地上の磨盤が一つの演奏に加わる。砂は集まり散り、鋼索は揺れ、磨盤は地表を削る。一つの秩序が音を生みながら、別の秩序の足場を失わせていく。',
-         score:'この図譜は、「崩壊構造：朽塔」の揺動構造の設計図と、「廃墟の楽器：エーテルの狭間」の周波数差を利用する回路図を重ね合わせて生まれた。二つの図面の線は同じ平面で交わる。張力によって保たれた構造が緩み、塔が均衡を失うにつれ、図譜は朽塔のアンテナが重なり合うときの部材の変位と信号干渉を記録する。干渉した信号は感知装置を通じて信号回路と電磁系へ伝えられ、周波数を絶えず変える音となる。干渉の重なりと過負荷は「エーテルの狭間」の稼働負荷を徐々に高め、騒々しさを増す振動のなかで、ついには焼損に至る。こうして設計と記録のために引かれた線は、朽塔のエーテルをめぐる諧虐曲の譜面となる。',
+         instrument:'「エーテル琴」は揺れるアンテナ、テルミンに似た干渉場、砂盤を一つの回路につなぐ。電磁的な変化は周波数、音、振動となり、砂に短い模様を残す。砂の流出と静電気、電子雑音は装置への負荷を増していく。',
+         theatre:'この一帯には、短波アンテナ群と金属・ガラス製品の加工工場が隣り合っていた。通信の電波は鉄板の建屋や機械、溶接回路と干渉し合い、工場の撤去後も鉄塔と放射状の支線が周囲の土地の利用を制限している。手入れの途絶えた地面には水と草の根が入り込み、海風が露出した煉瓦や石を少しずつ砂に変えていく。見えない通信の秩序が土地を空白にし、その空白を風と時間が変え続ける。ここでは朽塔と「エーテル琴」、地上の磨盤が一つの演奏に加わる。張り詰めた鋼索のもとで塔身が揺れ、磨盤が地面と支持部を削り、アンテナ間の信号の変化が音になる。その運動は同時に、構造の均衡と発声回路を少しずつ失わせていく。',
+         score:'この図譜は、「崩壊構造：朽塔」の揺動構造の設計図と、「廃墟の楽器：エーテル琴」の周波数差を利用する回路図を重ね合わせて生まれた。二つの図面の線は同じ平面で交わる。張力によって保たれた構造が緩み、塔が均衡を失うにつれ、図譜は朽塔のアンテナが重なり合うときの部材の変位と信号干渉を記録する。干渉した信号は感知装置を通じて信号回路と電磁系へ伝えられ、周波数を絶えず変える音となる。干渉の重なりと過負荷は「エーテル琴」の稼働負荷を徐々に高め、騒々しさを増す振動のなかで、ついには焼損に至る。こうして設計と記録のために引かれた線は、朽塔のエーテルをめぐる諧虐曲の譜面となる。',
          phases:{
            structure:[
              [
@@ -309,7 +309,7 @@
            ],
            detail:[
              [
-               "エーテルの狭間の感応部が宙に吊られる。",
+               "エーテル琴の感応部が宙に吊られる。",
                "アンテナ、鋼索、砂盤が接続され、まだ動き出さない楽器は感応を待つ姿勢を保つ。"
              ],
              [
@@ -318,7 +318,7 @@
              ],
              [
                "伝わってきた衝撃によって楽器が落下し、砕ける。",
-               "園林の均衡喪失が接続を通じてエーテルの狭間に及び、感応と発声を担う部材を破壊する。"
+               "園林の均衡喪失が接続を通じてエーテル琴に及び、感応と発声を担う部材を破壊する。"
              ]
            ]
          }}
@@ -1651,9 +1651,9 @@
     ja:{lead:'一つのフォリーは、完成したときから自らの崩壊を稽古し始める。\n\nそれは、今なお崩れ続ける廃墟の中に建てられる。墟構師は新たな構造を残構につなぎ、瓦礫のあいだに残る偶発的で無秩序な、まだ鎮まらない力を借りる。かすかな引っ張りや変位は機械的な連結を通じて廃墟楽器へと伝わり、打撃や振動、絶えず変化する音となる。それまでほとんど感じ取れなかった力は、こうして耳で捉えられる形を得て、廃墟の変化とともに展開する一度の演奏へと集まっていく。\n\n演奏が続くにつれ、当初は綿密に組み立てられていた動きが次第に秩序を失い、楽器は摩耗し、園林の構造も混沌を増す運動の中で崩れ落ちる。演奏が終わったあとも、残された形は廃墟の中にとどまり、その先を時間に委ねる。',about:'フォリーについて',contents:'作品目次',next:'続きを読む'}
   };
   var INSTRUMENT_TITLES={
-    zh:['锈血心脏','以太狭间'],
-    en:['Rust-Blood Heart','Aether Interval'],
-    ja:['錆血の心臓','エーテルの狭間']
+    zh:['锈心铃','以太琴'],
+    en:['strain organ / Ferrhythm','Aether Loom / Interferium'],
+    ja:['錆心鈴','エーテル琴']
   };
   function folioIntro(key){return (FOLLY_INTRO[state.lang]||FOLLY_INTRO.zh)[key];}
   function instrumentLead(si){return (INSTRUMENT_TITLES[state.lang]||INSTRUMENT_TITLES.zh)[si];}
@@ -1661,9 +1661,9 @@
   // Site-specific names for the three successive parts of each Folly.
   // The overall theatre title may differ from the structure's name.
   var READING_PART_NAMES={
-    zh:[['死水心室','锈血心脏','沉墟心室'],['朽塔','以太狭间','朽塔焦土']],
-    en:[['Stagnant Heart Chamber','Rust-Blood Heart','Sunken Ventricle'],['Rusted Tower','Aether Interval','Rusted Tower · Scorched Earth']],
-    ja:[['死水心室','錆血の心臓','沈墟の心室'],['朽塔','エーテルの狭間','朽塔の焦土']]
+    zh:[['死水心室','锈心铃','沉墟心室'],['朽塔','以太琴','朽塔焦土']],
+    en:[['Stagnant Heart Chamber','strain organ / Ferrhythm','Sunken Ventricle'],['Rusted Tower','Aether Loom / Interferium','Rusted Tower · Scorched Earth']],
+    ja:[['死水心室','錆心鈴','沈墟の心室'],['朽塔','エーテル琴','朽塔の焦土']]
   };
   function readingSectionName(si,i){
     return (READING_PART_NAMES[state.lang]||READING_PART_NAMES.zh)[si][i];
