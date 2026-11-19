@@ -149,7 +149,7 @@ const collections = [
   {
     slug: "ruin-atlas",
     group: "collection",
-    title: { zh: "墟域图·遗构馆", en: "Ruin Archive", ja: "墟域図・遺構館" },
+    title: { zh: "墟域图·遗构馆", en: "Ruin Atlas · Relic Archive", ja: "墟域図・遺構館" },
     intro: {
       zh: [
         "人造的疆域不断向地表扩张，许多建筑与设施早在我们理解它们之前，便已成为熟悉的日常。直到墙体剥落、路径断裂，那些曾被完整外貌遮蔽的构造才逐渐显露。失去用途的造物仍在原地承重、下坠，继续经受风雨、侵蚀与植物的生长。",
@@ -202,7 +202,7 @@ const collections = [
       {
         titleHtml: {
           zh: "<strong>·遗构馆</strong>——残破画框",
-          en: "<strong>· Archive</strong>—The Broken Frame",
+          en: "<strong>· Relic Archive</strong>—The Broken Frame",
           ja: "<strong>·遺構館</strong>——壊れた額縁"
         },
         bodyHtml: {
@@ -912,12 +912,12 @@ function renderRuinAtlasPreview() {
   };
   var sourceCopy = {
     zh: { before: "地图取自 ", label: "《墟域图·遗构馆》", after: " 网站。" },
-    en: { before: "Map from ", label: "Ruin Archive", after: "." },
+    en: { before: "Map from ", label: "Ruin Atlas · Relic Archive", after: "." },
     ja: { before: "地図は ", label: "『墟域図・遺構館』", after: " より。" }
   };
   var ariaCopy = {
     zh: "墟域图·遗构馆 互动地图",
-    en: "Ruin Archive interactive map",
+    en: "Ruin Atlas · Relic Archive interactive map",
     ja: "墟域図・遺構館 インタラクティブ地図"
   };
   var source = sourceCopy[state.lang] || sourceCopy.en;
@@ -939,12 +939,12 @@ function renderRuinAtlasPreview() {
 function renderRuinArchiveCabinetPreview() {
   var sourceCopy = {
     zh: { before: "档案界面取自 ", label: "《墟域图·遗构馆》", after: " 网站。" },
-    en: { before: "Archive interface from ", label: "Ruin Archive", after: "." },
+    en: { before: "Archive interface from ", label: "Ruin Atlas · Relic Archive", after: "." },
     ja: { before: "档案界面は ", label: "『墟域図・遺構館』", after: " より。" }
   };
   var ariaCopy = {
     zh: "遗构馆 archive-doc 与 index-drawer 缩小系统",
-    en: "Scaled Ruin Archive archive-doc and index-drawer system",
+    en: "Scaled archive-doc and index-drawer from Ruin Atlas · Relic Archive",
     ja: "遺構館 archive-doc / index-drawer 縮小システム"
   };
   var drawerCopy = {
@@ -963,7 +963,7 @@ function renderRuinArchiveCabinetPreview() {
       record: "RECORDS · VOL.",
       center: "ARCHIVE",
       garden: "⁙FOLLY · SERIES",
-      intro: "Ruin Archive gathers artificial remnants, wastelands, and forgotten landscapes encountered while roaming the world.",
+      intro: "Ruin Atlas · Relic Archive gathers artificial remnants, wastelands, and forgotten landscapes encountered while roaming the world.",
       p1: "Each record preserves a fleeting picturesque condition while carrying the beginning of another collapse.",
       p2: "Images, sounds, and relics return to the Archive as an expanding atlas of ruins.",
       title: "— RUIN LEXICOLOGY —",

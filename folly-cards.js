@@ -1610,7 +1610,7 @@
       {name:'《墟构师宣言》',description:'从对废墟的观察出发，沿着建造、材料与声音展开的十则及后续文字，记录“墟构师”如何将这些认识带入《废墟园林》的实践。',link:'阅读宣言',slug:'ruinwright-manifesto'}
     ]},
     en:{heading:'Further reading',entries:[
-      {name:'Ruin Archive',description:'Cities stain the map like ink. The recorded ruins settle into their margins and gaps as the atlas grows through continued wandering and observation.',link:'Enter the archive',slug:'ruin-atlas'},
+      {name:'Ruin Atlas · Relic Archive',description:'Cities stain the map like ink. The recorded ruins settle into their margins and gaps as the atlas grows through continued wandering and observation.',link:'Enter the archive',slug:'ruin-atlas'},
       {name:'Manifesto of the Ruinwright',description:'Ten tenets and the writing that follows trace a way of working with ruins, material, construction, and sound, extending into the practice of the Folly series.',link:'Read the manifesto',slug:'ruinwright-manifesto'}
     ]},
     ja:{heading:'関連する記録',entries:[
