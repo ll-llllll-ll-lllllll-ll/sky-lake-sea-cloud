@@ -1083,7 +1083,7 @@ function renderSeawaterSpaceTimeChart(item) {
       close: "汇聚",
       open: "展开",
       note: "页面滚动：空间轴的视角改变　／　拖动滑条：时间切面的间距改变。",
-      demo: "据原始手写名录录入 · 最后一条仅记至2025年7月",
+      demo: "依据手写名录与后续采集记录持续增补",
       locations: "采集地点",
       entries: "条记录"
     },
@@ -1094,7 +1094,7 @@ function renderSeawaterSpaceTimeChart(item) {
       close: "gather",
       open: "unfold",
       note: "Scroll to shift the spatial projection; move the bar to widen the intervals between moments.",
-      demo: "Transcribed from the handwritten ledger · final date recorded only as July 2025",
+      demo: "Transcribed from the handwritten ledger and subsequent collection records",
       locations: "Sample locations",
       entries: "records"
     },
@@ -1105,7 +1105,7 @@ function renderSeawaterSpaceTimeChart(item) {
       close: "集約",
       open: "展開",
       note: "ページをスクロールすると空間軸の投影が変わり、バーを動かすと時間の断面の間隔が広がる。",
-      demo: "手書き記録から転記 · 最後の採取日は2025年7月まで記載",
+      demo: "手書きの名簿と、その後の採水記録から随時追記",
       locations: "採水地点",
       entries: "件の記録"
     }
@@ -1633,9 +1633,8 @@ render();
     // Keep artwork captions and the chart's annotations, without older essays.
     seawater.notes = [];
 
-    // 16 entries transcribed from the original handwritten seawater ledger.
-    // Preserve recorded coordinates, including coastal points. The final
-    // entry supplies only a month (2025-07): do not invent a calendar day.
+    // 17 records: the original handwritten seawater ledger plus later additions.
+    // Preserve measured coordinates, including nearshore and open-water points.
     seawater.spaceTimeRecords = [
       {
         "date": "2023-02-23",
@@ -1788,13 +1787,23 @@ render();
         }
       },
       {
-        "date": "2025-07",
+        "date": "2025-07-07",
         "lat": 35.299972,
         "lng": 139.474611,
         "name": {
           "zh": "北太平洋",
           "en": "North Pacific",
           "ja": "北太平洋"
+        }
+      },
+      {
+        "date": "2026-04-23",
+        "lat": 3.5938,
+        "lng": 73.4978,
+        "name": {
+          "zh": "拉克代夫海",
+          "en": "Laccadive Sea",
+          "ja": "ラッカディブ海"
         }
       }
     ];
